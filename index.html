@@ -103,6 +103,17 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
   z-index:601;
 }
 .sidebar-backdrop{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:600; }
+/* Requirement: a collapse/expand toggle for the sidebar on desktop too (not
+   just the mobile off-canvas drawer) — clearing it frees that width for the
+   page content, and clicking again restores everything exactly as it was.
+   Scoped to desktop widths only so it never fights with the mobile
+   transform-based show/hide below. */
+@media (min-width:901px){
+  #hamburgerBtn{ display:flex; }
+  .sidebar{ transition: width .22s ease, min-width .22s ease, border-color .22s ease; }
+  .sidebar.sidebar-collapsed{ width:0; min-width:0; border-left-color:transparent; overflow:hidden; }
+  .sidebar.sidebar-collapsed > *{ opacity:0; pointer-events:none; }
+}
 @media (max-width:900px){
   .sidebar{
     position:fixed; top:0; right:0; height:100vh; width:min(280px,82vw);
@@ -482,6 +493,23 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
   .filters{ width:100%; }
   .grid-2, .grid-3, .grid-4{ gap:10px; }
   button, .btn, .chip, select.input, input.input{ min-height:36px; }
+  /* Item: header filters looked cramped/misaligned on mobile — the
+     multiselect toggle buttons (year/month/accounts/etc.) each carry a
+     170px min-width meant for desktop, which alone is nearly half a phone
+     screen; combined with the date pickers and preset chips all trying to
+     sit on one flexible row, the result wrapped unevenly. Give every filter
+     control a consistent, smaller footprint and let them form clean full-
+     or half-width rows instead. */
+  .topbar-compact-controls{ flex-direction:column; align-items:stretch; gap:8px; }
+  .filters{ gap:6px; padding:8px; }
+  .filters label{ font-size:10px; flex:0 0 auto; }
+  .filters .date-input-wrap{ flex:1 1 auto; min-width:0; }
+  .filters .date-text-input{ width:100%; min-width:0; font-size:11.5px; }
+  .multiselect{ flex:1 1 120px; min-width:0; }
+  .multiselect .ms-toggle{ min-width:0 !important; width:100%; font-size:11.5px; padding:7px 8px; }
+  .filters .chip-btns{ width:100%; justify-content:flex-start; }
+  .filters .chip-btns .chip{ flex:1 1 auto; text-align:center; }
+  .topbar-compact-controls > div:not(.filters){ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
 }
 @media (max-width:480px){
   .kpi .val{ font-size:16px; }
@@ -934,6 +962,8 @@ const I18N = {
     driveSignInError:'فشل تسجيل الدخول', driveLoadingAuth:'جاري تحميل خدمة تسجيل الدخول من جوجل، حاول تاني بعد لحظة', driveDisconnected:'تم قطع الاتصال بـ Google Drive',
     driveSessionExpired:'انتهت صلاحية جلسة الدخول، سجّل دخول تاني', driveDataLoaded:'تم تحميل بياناتك من Google Drive', driveSyncError:'حدث خطأ أثناء المزامنة مع Drive',
     driveNeverSynced:'لسه ما تمتش أي مزامنة',
+    driveSessionExpiringSoon:'جلسة تسجيل الدخول بـ Google Drive هتنتهي قريبًا. اضغط "تسجيل الدخول بجوجل والمزامنة" تاني عشان تجدّدها من غير ما تفقد أي بيانات.',
+    driveExpiringSoonLabel:'الجلسة هتنتهي قريبًا ⚠', toggleSidebarLabel:'القائمة', navBackLabel:'رجوع للخلف', navFwdLabel:'تقدم للأمام',
     chatCapabilitiesTitle:'أقدر أساعدك في:', chatCapCat1:'كشوف الحسابات والعملاء والموردين', chatCapCat2:'مراكز التكلفة والمشاريع', chatCapCat3:'تحليل الإيرادات والمصروفات والربحية',
     chatCapCat4:'التدفقات النقدية والنسب المالية', chatCapCat5:'فحص جودة البيانات (تكرار، قيود غير متوازنة، حركات غريبة)', chatCapCat6:'مقارنة الفترات وتفسير التغيرات',
     chatSuggestionsTitle:'أسئلة سريعة:', clearConversation:'مسح المحادثة',
@@ -996,6 +1026,8 @@ const I18N = {
     driveSignInError:'Sign-in failed', driveLoadingAuth:'Loading Google sign-in, try again in a moment', driveDisconnected:'Disconnected from Google Drive',
     driveSessionExpired:'Your sign-in session expired, please sign in again', driveDataLoaded:'Your data was loaded from Google Drive', driveSyncError:'An error occurred while syncing with Drive',
     driveNeverSynced:'No sync yet',
+    driveSessionExpiringSoon:'Your Google Drive sign-in session is about to expire. Click "Sign in with Google & sync" again to renew it without losing any data.',
+    driveExpiringSoonLabel:'Session expiring soon ⚠', toggleSidebarLabel:'Menu', navBackLabel:'Go back', navFwdLabel:'Go forward',
     chatCapabilitiesTitle:'I can help you with:', chatCapCat1:'Account, customer & vendor statements', chatCapCat2:'Cost centers and projects', chatCapCat3:'Revenue, expense & profitability analysis',
     chatCapCat4:'Cash flow and financial ratios', chatCapCat5:'Data quality checks (duplicates, unbalanced entries, unusual activity)', chatCapCat6:'Period comparisons and explaining changes',
     chatSuggestionsTitle:'Quick questions:', clearConversation:'Clear conversation',
@@ -1808,7 +1840,7 @@ async function storeDelete(key){
 const GOOGLE_CLIENT_ID = '27976090337-jd4aq3p738rj579vj1ki7gcfis68m9g6.apps.googleusercontent.com';
 const GOOGLE_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FILE_NAME = 'mizan_erp_data.json';
-const DRIVE = { tokenClient:null, ready:false, accessToken:null, signedIn:false, fileId:null, syncing:false, lastSyncAt:null, lastError:null, pendingTimer:null, applyingRemote:false };
+const DRIVE = { tokenClient:null, ready:false, accessToken:null, signedIn:false, fileId:null, syncing:false, lastSyncAt:null, lastError:null, pendingTimer:null, applyingRemote:false, sessionWarnTimer:null, sessionExpiringSoon:false };
 
 function initGoogleAuth(){
   if(!(window.google && google.accounts && google.accounts.oauth2)){ setTimeout(initGoogleAuth, 300); return; }
@@ -1820,6 +1852,7 @@ function initGoogleAuth(){
       DRIVE.accessToken = resp.access_token;
       DRIVE.signedIn = true;
       DRIVE.lastError = null;
+      scheduleDriveSessionWarning();
       renderApp(); // show "connected, syncing..." immediately
       await driveInitialSync();
     },
@@ -1832,7 +1865,8 @@ function signInWithGoogle(){
 }
 function signOutFromGoogle(){
   if(DRIVE.accessToken && window.google && google.accounts && google.accounts.oauth2) google.accounts.oauth2.revoke(DRIVE.accessToken, () => {});
-  DRIVE.accessToken = null; DRIVE.signedIn = false; DRIVE.fileId = null; DRIVE.lastSyncAt = null;
+  if(DRIVE.sessionWarnTimer){ clearTimeout(DRIVE.sessionWarnTimer); DRIVE.sessionWarnTimer = null; }
+  DRIVE.accessToken = null; DRIVE.signedIn = false; DRIVE.fileId = null; DRIVE.lastSyncAt = null; DRIVE.sessionExpiringSoon = false;
   showToast(t('driveDisconnected'));
   renderApp();
 }
@@ -1901,6 +1935,22 @@ async function driveInitialSync(){
     renderApp();
   }finally{ DRIVE.syncing = false; }
 }
+// Google's access tokens from this client-only flow typically last ~1 hour
+// with no silent refresh available (that needs a backend). Rather than only
+// finding out when a save silently fails partway through a work session,
+// warn proactively a few minutes before it's due to expire so the person can
+// refresh it with one click and never lose unsynced work.
+function scheduleDriveSessionWarning(){
+  if(DRIVE.sessionWarnTimer) clearTimeout(DRIVE.sessionWarnTimer);
+  DRIVE.sessionExpiringSoon = false;
+  DRIVE.sessionWarnTimer = setTimeout(() => {
+    if(!DRIVE.signedIn) return;
+    DRIVE.sessionExpiringSoon = true;
+    showToast(t('driveSessionExpiringSoon'), 9000);
+    renderApp();
+  }, 50 * 60 * 1000); // ~50 min — tokens are typically valid ~60 min
+}
+
 async function performDriveSync(){
   DRIVE.syncing = true; renderApp();
   try{
@@ -1954,6 +2004,7 @@ const STATE = {
     comparisonMonthYear: null,
     comparisonMonths: [],
     sidebarOpen: false,
+    sidebarCollapsed: false,
     pending: null, // pending import preview
   }
 };
@@ -2457,6 +2508,20 @@ function answerQuery(question){
       action: { label:'عرض كشف حسابه', view:'partnerstatement', partner: top.name } };
   }
 
+  // 2c) Top N customers / suppliers list (not just the single biggest)
+  if(q.includes('اعلي العملاء') || q.includes('اكبر 5 عملاء') || q.includes('اكبر عملاء') || q.includes('top customers') || q.includes('top 5 customers')){
+    const partners = partnerBalances(STATE.journal, '', f.end).filter(p=>p.balance>0).slice(0,5);
+    if(!partners.length) return { text: 'لا توجد أرصدة عملاء مدينة حالياً.' };
+    const txt = partners.map((p,i)=>`${i+1}. ${p.name}: ${fmt(p.balance)} ج.م`).join('، ');
+    return { text: `أعلى ${partners.length} عملاء برصيد مدين: ${txt}.`, action: { label:'عرض كشف عميل/مورد', view:'partnerstatement' } };
+  }
+  if(q.includes('اعلي الموردين') || q.includes('اكبر 5 موردين') || q.includes('اكبر موردين') || q.includes('top suppliers') || q.includes('top 5 suppliers') || q.includes('top vendors')){
+    const partners = partnerBalances(STATE.journal, '', f.end).filter(p=>p.balance<0).slice(0,5);
+    if(!partners.length) return { text: 'لا توجد أرصدة موردين دائنة حالياً.' };
+    const txt = partners.map((p,i)=>`${i+1}. ${p.name}: ${fmt(Math.abs(p.balance))} ج.م`).join('، ');
+    return { text: `أعلى ${partners.length} موردين برصيد دائن مستحق: ${txt}.`, action: { label:'عرض كشف عميل/مورد', view:'partnerstatement' } };
+  }
+
   // 2b) Biggest supplier — symmetric to #2, credit-balance partners
   if((q.includes('اكبر مورد') || q.includes('اكبر الموردين') || q.includes('biggest supplier') || q.includes('largest supplier') || q.includes('biggest vendor'))){
     const partners = partnerBalances(STATE.journal, '', f.end).filter(p=>p.balance<0);
@@ -2645,6 +2710,27 @@ function answerQuery(question){
     const txt = top.map(l => `${l.date} — ${accName(l.code)}: ${fmt(l.amt)} ج.م (متوسط الحساب المعتاد ~${fmt(l.avg)} ج.م)`).join('؛ ');
     return { text: `وجدت ${flagged.length} حركة مصروفات أعلى بشكل ملحوظ (أكثر من 3 أضعاف) من متوسط نفس الحساب. أبرزها: ${txt}.`,
       action: { label:'فتح قيود اليومية', view:'journalentries' } };
+  }
+
+  // 16b) Monthly revenue trend (last 6 months)
+  if(q.includes('اتجاه الايرادات') || q.includes('تطور المبيعات') || q.includes('revenue trend') || q.includes('sales trend')){
+    const months = [];
+    let cursor = f.end ? new Date(f.end) : new Date(todayISO());
+    for(let i=5;i>=0;i--){
+      const d = new Date(cursor.getFullYear(), cursor.getMonth()-i, 1);
+      const start = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+      const end = new Date(d.getFullYear(), d.getMonth()+1, 0).toISOString().slice(0,10);
+      const is = incomeStatement(STATE.journal, start, end);
+      months.push({ label: start.slice(0,7), revenue: is.revenue + is.otherIncome });
+    }
+    const txt = months.map(m=>`${m.label}: ${fmt(m.revenue)} ج.م`).join('، ');
+    return { text: `اتجاه الإيرادات على مدار آخر 6 شهور: ${txt}.`, action: { label:'عرض قائمة الدخل', view:'statements' } };
+  }
+
+  // 16c) Data sanity: how many entries/lines are loaded
+  if(q.includes('عدد القيود') || q.includes('عدد الاسطر') || q.includes('عدد الحركات') || q.includes('كام قيد') || q.includes('number of entries') || q.includes('how many entries')){
+    const uniqueEntries = new Set(STATE.journal.map(l=>l.entry+'|'+l.date)).size;
+    return { text: `محمّل حاليًا ${fmtInt(STATE.journal.length)} سطر قيد، موزّعة على ${fmtInt(uniqueEntries)} قيد يومية (voucher) تقريبًا، عبر ${fmtInt(STATE.accounts.length)} حساب في شجرة الحسابات.` };
   }
 
   // 17) Help / capabilities
@@ -3411,6 +3497,7 @@ async function initApp(){
 
   let settings = await storeGet('settings');
   STATE.settings = settings || { companyName:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  STATE.ui.sidebarCollapsed = !!STATE.settings.sidebarCollapsed;
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
   if(!STATE.settings.lang) STATE.settings.lang = 'ar';
   if(!STATE.settings.palette) STATE.settings.palette = 'gold';
@@ -3661,7 +3748,7 @@ function renderApp(){
   document.body.classList.toggle('light-mode', STATE.settings.theme === 'light');
   app.innerHTML = `
     <div class="sidebar-backdrop ${STATE.ui.sidebarOpen?'show':''}" id="sidebarBackdrop"></div>
-    <div class="sidebar ${STATE.ui.sidebarOpen?'open':''}">
+    <div class="sidebar ${STATE.ui.sidebarOpen?'open':''} ${STATE.ui.sidebarCollapsed?'sidebar-collapsed':''}">
       <div class="brand">
         ${ICONS.scale.replace('currentColor','var(--gold-light)')}
         <div class="brand-text">
@@ -3689,8 +3776,8 @@ function renderApp(){
       <div style="padding:10px 10px 4px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
           <span style="font-size:10.5px;color:var(--paper-3);font-weight:700">${t('driveStatusTitle')}</span>
-          <span style="font-size:10px;font-weight:800;color:${DRIVE.syncing?'var(--gold-light)':DRIVE.signedIn?'#5FBF8F':'var(--paper-3)'}">
-            ${DRIVE.syncing ? t('driveSyncingLabel') : DRIVE.signedIn ? t('driveConnectedLabel') : t('driveNotConnectedLabel')}
+          <span style="font-size:10px;font-weight:800;color:${DRIVE.syncing?'var(--gold-light)':DRIVE.sessionExpiringSoon?'#E0A93A':DRIVE.signedIn?'#5FBF8F':'var(--paper-3)'}">
+            ${DRIVE.syncing ? t('driveSyncingLabel') : DRIVE.sessionExpiringSoon ? t('driveExpiringSoonLabel') : DRIVE.signedIn ? t('driveConnectedLabel') : t('driveNotConnectedLabel')}
           </span>
         </div>
         ${DRIVE.signedIn ? `
@@ -3711,10 +3798,10 @@ function renderApp(){
     <div class="main">
       <div class="topbar-title-row">
         <div style="display:flex;align-items:center;gap:10px;">
-          <button id="hamburgerBtn" title="القائمة" aria-label="القائمة">☰</button>
+          <button id="hamburgerBtn" title="${t('toggleSidebarLabel')}" aria-label="${t('toggleSidebarLabel')}">☰</button>
           <div class="nav-arrows">
-            <button id="navBackBtn" title="رجوع للخلف" aria-label="رجوع للخلف">→</button>
-            <button id="navFwdBtn" title="تقدم للأمام" aria-label="تقدم للأمام">←</button>
+            <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">→</button>
+            <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">←</button>
           </div>
           <div>
             <h1>${navLabel(NAV.find(n=>n.id===STATE.ui.view)||{}) || ''}</h1>
@@ -3766,7 +3853,13 @@ function renderApp(){
     switchView(el.dataset.nav);
   }));
   const hamburger = document.getElementById('hamburgerBtn');
-  if(hamburger) hamburger.addEventListener('click', () => { STATE.ui.sidebarOpen = !STATE.ui.sidebarOpen; renderApp(); });
+  if(hamburger) hamburger.addEventListener('click', async () => {
+    STATE.ui.sidebarOpen = !STATE.ui.sidebarOpen; // mobile off-canvas drawer
+    STATE.ui.sidebarCollapsed = !STATE.ui.sidebarCollapsed; // desktop collapse — only one of the two has any visual effect at the current screen width, via CSS media-query scoping
+    STATE.settings.sidebarCollapsed = STATE.ui.sidebarCollapsed;
+    await storeSet('settings', STATE.settings);
+    renderApp();
+  });
   const backdrop = document.getElementById('sidebarBackdrop');
   if(backdrop) backdrop.addEventListener('click', () => { STATE.ui.sidebarOpen = false; renderApp(); });
   attachFilterEvents();
@@ -5947,7 +6040,7 @@ function renderAiChatView(root){
           ${[
             'كم بلغت المبيعات هذا الشهر؟','من أكبر عميل؟','من أكبر مورد؟','اعرض أرصدة البنوك','اعرض أكبر المصروفات',
             'ما هو هامش الربح؟','نسبة التداول كام؟','التدفق النقدي','هل ميزان المراجعة متوازن؟','فيه قيود مكررة؟',
-            'قارن هذا الشهر بالشهر اللي فات','مساعدة',
+            'أعلى 5 عملاء','أعلى 5 موردين','اتجاه الإيرادات آخر 6 شهور','عدد القيود المحمّلة','قارن هذا الشهر بالشهر اللي فات','مساعدة',
           ].map(s=>`<button class="chip" onclick="sendChatQuestion('${jsAttrEscape(s)}')">${escapeHtml(s)}</button>`).join('')}
         </div>
       </div>
