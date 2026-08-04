@@ -1583,9 +1583,14 @@ function attachMultiSelectEvents(onChange){
     const id = btn.dataset.ms;
     const panel = document.getElementById(id + '_panel');
     const isOpen = panel.style.display !== 'none';
-    document.querySelectorAll('.ms-panel').forEach(p => p.style.display = 'none');
-    if(isOpen){ panel.style.display = 'none'; STATE.ui.openMultiSelect = null; }
-    else { panel.style.display = 'block'; STATE.ui.openMultiSelect = id; }
+    if(isOpen){
+      panel.style.display = 'none';
+      STATE.ui.openMultiSelect = null;
+    } else {
+      document.querySelectorAll('.ms-panel').forEach(p => p.style.display = 'none');
+      STATE.ui.openMultiSelect = id;
+      renderApp(); // needed now: this panel's items/tree are built lazily, only during a real render
+    }
   }));
   document.querySelectorAll('.ms-panel').forEach(p => p.addEventListener('click', e => e.stopPropagation()));
   document.querySelectorAll('[data-tree-toggle]').forEach(btn => btn.addEventListener('click', () => {
