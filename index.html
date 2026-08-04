@@ -574,6 +574,7 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
 <button id="scrollTopBtn" title="العودة لأعلى الصفحة" aria-label="العودة لأعلى الصفحة">↑</button>
 <div id="confirmModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="editEntryModalOverlay" class="modal-overlay" style="display:none"></div>
+<div id="auditLogModalOverlay" class="modal-overlay" style="display:none"></div>
 <script>window.__ACCOUNTS__ = []; // PRIVACY: real chart of accounts removed from source — this file is hosted on a public GitHub repo, so anything baked in here is visible to anyone. Import your real chart of accounts via Setup & Import (Excel) instead; it will then sync privately through your own Google Drive, not sit in the public source.
 window.__GROUPS__ = []; // PRIVACY: same reasoning — import your real account groups via Setup & Import instead.
 window.__DEV_LOGO_B64__ = "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AXxWXR13gBexyy672Lzv3Kdv33+Ulnf7DgBe/80s98TZT/XONDW/+6/X500f0LuisGeP6JcAamfOnJnZ76ATTl347Yqp4UjBbltUjZv1h9k3Pg4A/Su61ffsU/FYNBrhzUbvOb9P78rn3rGMfpV93upWXpwGgFtvSab2rTnr9EXfLL2gT2X/A0aN6H/XrNsufxYASit6NBSHo08Duc7UbTTn+nbYTEhrI2H1VgatwvmK1goOOo6G4+i1AoaOVtBtNtgmAKGQu9Znua6z1ntbeQQgolaPO75mnbs+Zqb88hd97/dc8x2OVnAdBcfRcB291nVpTe1+h9bXR+2fm/LX2N7fKwm1Cpsget9WqtTaEesg+SAej7e3xtne80CwTkpt35s7X3ufR20e04Zf89qyg7XXaltdU7uvAbENudZ4Z/5eEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARBEARB+D/F/wdCI1ivXe8oygAAAABJRU5ErkJggg==";</script>
@@ -886,6 +887,14 @@ const I18N = {
     reconciliationDiff:'يوجد فارق — قد يرجع لمعاملات غير معتادة (مثل تسويات يدوية على حساب رأس المال) تحتاج مراجعة.', reconciliationOk:'القائمة متطابقة تماماً مع الحركة الفعلية للنقدية.',
     viewSourceEntries:'عرض القيود المصدر', activityStart:'بداية النشاط',
     actionsCol:'إجراءات', editEntry:'تعديل القيد', editEntryTitle:'تعديل القيد',
+    editAuditLogBtn:'سجل التعديلات والحذف', editAuditLogTitle:'سجل تعديل وحذف القيود', editAuditLogEmpty:'لا يوجد أي تعديل أو حذف مسجّل حتى الآن.',
+    auditActionEdit:'تعديل', auditActionDelete:'حذف', auditBeforeLabel:'قبل', auditAfterLabel:'بعد', auditDeletedLabel:'(محذوف بالكامل)',
+    auditDateTimeCol:'وقت الإجراء', auditEntryCol:'رقم القيد وتاريخه', auditActionCol:'الإجراء', auditDetailsCol:'التفاصيل',
+    downloadFullBackupBtn:'⬇ تنزيل نسخة احتياطية كاملة', restoreFromBackupBtn:'⬆ استعادة من نسخة احتياطية',
+    backupDownloaded:'تم تنزيل النسخة الاحتياطية', backupDownloadError:'تعذّر إنشاء النسخة الاحتياطية', backupRestored:'تمت الاستعادة بنجاح — تم تحديث النظام',
+    backupRestoreError:'تعذّرت الاستعادة — تأكد أن الملف نسخة احتياطية صحيحة من هذا النظام', restoreConfirmTitle:'استعادة نسخة احتياطية',
+    restoreConfirmMsg:'هذا الإجراء سيستبدل كل البيانات الحالية (شجرة الحسابات، المجموعات، القيود، الإعدادات) بمحتوى الملف المُختار. لا يمكن التراجع عن هذا الإجراء إلا برفع نسخة احتياطية أخرى. هل أنت متأكد؟',
+    backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، المجموعات، القيود، الإعدادات) في ملف واحد يمكن الاحتفاظ به في مكان آمن، أو استخدمه لاستعادة النظام على جهاز آخر أو بعد أي مشكلة.',
     productCol:'المنتج', origCurrencyAmountCol:'المبلغ بالعملة الأصلية', conversionFactorCol:'معامل التحويل',
     downloadTemplate:'⬇ تنزيل تمبلت فارغ (Excel)',
     editEntryDesc:'عدّل بيانات هذا القيد مباشرة. يجب أن يتساوى إجمالي المدين مع إجمالي الدائن قبل الحفظ.',
@@ -1034,6 +1043,14 @@ const I18N = {
     asOfRatiosNote:'These are point-in-time balances from the Balance Sheet, calculated "as of" a specific date — so they change when you adjust the "To" date in the filter, not necessarily when you switch the period type (Current Month / Year to Date / All Periods) if they all end on the same date. Date currently used:',
     viewSourceEntries:'View source entries', activityStart:'Start of activity',
     actionsCol:'Actions', editEntry:'Edit entry', editEntryTitle:'Edit Journal Entry',
+    editAuditLogBtn:'Edit & Delete Log', editAuditLogTitle:'Journal Entry Edit/Delete Log', editAuditLogEmpty:'No edits or deletions have been recorded yet.',
+    auditActionEdit:'Edit', auditActionDelete:'Delete', auditBeforeLabel:'Before', auditAfterLabel:'After', auditDeletedLabel:'(fully deleted)',
+    auditDateTimeCol:'When', auditEntryCol:'Entry # & Date', auditActionCol:'Action', auditDetailsCol:'Details',
+    downloadFullBackupBtn:'⬇ Download Full Backup', restoreFromBackupBtn:'⬆ Restore From Backup',
+    backupDownloaded:'Backup downloaded', backupDownloadError:'Could not create the backup', backupRestored:'Restore successful — the system has been updated',
+    backupRestoreError:'Restore failed — make sure the file is a valid backup from this system', restoreConfirmTitle:'Restore Backup',
+    restoreConfirmMsg:'This will replace ALL current data (chart of accounts, groups, journal entries, settings) with the content of the selected file. This cannot be undone except by uploading another backup. Are you sure?',
+    backupSectionTitle:'Backup & Restore', backupSectionDesc:'Download a complete copy of all system data (chart of accounts, groups, journal entries, settings) in a single file you can keep somewhere safe, or use it to restore the system on another device or after a problem.',
     productCol:'Product', origCurrencyAmountCol:'Amount in Original Currency', conversionFactorCol:'Conversion Factor',
     downloadTemplate:'⬇ Download blank template (Excel)',
     editEntryDesc:'Edit this entry directly. Total debit must equal total credit before saving.',
@@ -1907,6 +1924,36 @@ async function applyRemoteDataToLocal(dataObj){
   DRIVE.applyingRemote = true;
   try{ for(const k of Object.keys(dataObj||{})) await storeSet(k, dataObj[k]); }
   finally{ DRIVE.applyingRemote = false; }
+}
+// Full backup/restore: a single downloadable JSON file with everything the
+// system stores (chart of accounts, groups, every year's journal shard,
+// meta, settings, audit log) — independent of Google Drive, for a manual
+// safety copy or moving to a fresh browser/device by hand.
+async function downloadFullBackup(){
+  try{
+    const data = await collectAllLocalData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mizan_backup_${todayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(t('backupDownloaded'));
+  }catch(e){ showToast(t('backupDownloadError') + ': ' + e.message, 5000); }
+}
+async function restoreFromBackupFile(file){
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('invalid file');
+    await applyRemoteDataToLocal(data);
+    showToast(t('backupRestored'));
+    await initApp(); // reload STATE fresh from the newly-restored local storage
+    scheduleDriveSync(); // if signed in to Drive, push the restored data up too
+  }catch(e){ showToast(t('backupRestoreError') + ': ' + e.message, 5000); }
 }
 // Runs once right after sign-in: Drive is treated as the source of truth for
 // cross-device use, so if a file already exists there it OVERWRITES whatever
@@ -3271,6 +3318,39 @@ function showResetConfirmModal(onConfirm){
 // / General Ledger table. A voucher = every line sharing the same entry
 // number AND date; the whole voucher is edited together (not one lone
 // one-sided line) so double-entry balance can be enforced before saving.
+// Read-only viewer for the edit/delete audit log recorded by commitEntryEdit.
+async function openEditAuditLogModal(){
+  const overlay = document.getElementById('auditLogModalOverlay');
+  if(!overlay) return;
+  const log = (await storeGet('edit_audit_log')) || [];
+  const rowSnapshot = lines => lines.length
+    ? lines.map(l => `${l.date} · ${l.code} ${escapeHtml(l.name||'')} · ${t('debit')} ${fmt(l.debit)} / ${t('credit')} ${fmt(l.credit)}${l.partner?` · ${escapeHtml(l.partner)}`:''}${l.ref?` · ${escapeHtml(l.ref)}`:''}`).join('<br>')
+    : `<em>${t('auditDeletedLabel')}</em>`;
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:820px;width:96%">
+      <h3>${t('editAuditLogTitle')}</h3>
+      ${log.length ? `<div class="table-wrap" style="max-height:60vh;overflow:auto">
+        <table><thead><tr>
+          <th>${t('auditDateTimeCol')}</th><th>${t('auditEntryCol')}</th><th>${t('auditActionCol')}</th><th>${t('auditBeforeLabel')}</th><th>${t('auditAfterLabel')}</th>
+        </tr></thead><tbody>
+          ${log.map(a => `<tr>
+            <td class="num" style="font-size:11px;white-space:nowrap">${fmtDateTime(a.at)}</td>
+            <td class="num" style="font-size:11px">${escapeHtml(a.entry)}<br>${a.date}</td>
+            <td><span class="pill ${a.action==='delete'?'pill-brick':'pill-gold'}">${a.action==='delete'?t('auditActionDelete'):t('auditActionEdit')}</span></td>
+            <td style="font-size:11px">${rowSnapshot(a.before)}</td>
+            <td style="font-size:11px">${rowSnapshot(a.after)}</td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>` : `<div class="empty">${t('editAuditLogEmpty')}</div>`}
+      <div class="modal-actions"><button class="btn btn-outline" id="auditLogCloseBtn">${t('done')}</button></div>
+    </div>
+  `;
+  overlay.style.display = 'flex';
+  document.getElementById('auditLogCloseBtn').addEventListener('click', () => { overlay.style.display = 'none'; overlay.innerHTML = ''; });
+  overlay.addEventListener('click', (e) => { if(e.target === overlay){ overlay.style.display = 'none'; overlay.innerHTML = ''; } });
+}
+
+
 function openEditJournalEntryModal(entry, date){
   const overlay = document.getElementById('editEntryModalOverlay');
   if(!overlay) return;
@@ -3389,6 +3469,23 @@ async function commitEntryEdit(originalLines, newLines){
   const affectedYears = new Set();
   originalLines.forEach(l => affectedYears.add(l.date.slice(0,4)));
   newLines.forEach(l => affectedYears.add(l.date.slice(0,4)));
+
+  // Requirement: keep a record of every edit/delete made to a journal entry
+  // through the app (not the import process), so a mistake can be reviewed —
+  // what the entry looked like before, and what it became after.
+  const snapshot = l => ({ code:l.code, name:accName(l.code), debit:l.debit, credit:l.credit, partner:l.partner||'', ref:l.ref||'', date:l.date });
+  const auditEntry = {
+    at: new Date().toISOString(),
+    entry: (originalLines[0]||newLines[0]||{}).entry || '',
+    date: (originalLines[0]||newLines[0]||{}).date || '',
+    action: newLines.length ? 'edit' : 'delete',
+    before: originalLines.map(snapshot),
+    after: newLines.map(snapshot),
+  };
+  const auditLog = (await storeGet('edit_audit_log')) || [];
+  auditLog.unshift(auditEntry);
+  if(auditLog.length > 200) auditLog.length = 200; // cap growth — this is a review log, not a full ledger history
+  await storeSet('edit_audit_log', auditLog);
 
   const toRemove = new Set(originalLines);
   STATE.journal = STATE.journal.filter(l => !toRemove.has(l));
@@ -4471,6 +4568,18 @@ function renderImportView(root){
     </div>
 
     <div class="card">
+      <h2>${ICONS.download.replace('currentColor','var(--gold-dim)')} ${t('backupSectionTitle')}</h2>
+      <div class="desc">${t('backupSectionDesc')}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button type="button" class="btn btn-gold" id="downloadBackupBtn">${t('downloadFullBackupBtn')}</button>
+        <label class="btn btn-outline" style="cursor:pointer;margin:0">
+          ${t('restoreFromBackupBtn')}
+          <input type="file" id="restoreBackupInput" accept=".json" style="display:none">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>${ICONS.clock.replace('currentColor','var(--gold-dim)')} ${t('updateLogTitle')} <span class="badge-count">${STATE.meta.log.length}</span></h2>
       ${STATE.meta.log.length ? STATE.meta.log.map(l => `
         <div class="log-item">
@@ -4486,6 +4595,15 @@ function renderImportView(root){
   document.querySelectorAll('[data-dl-template]').forEach(btn => btn.addEventListener('click', () => {
     downloadImportTemplate(btn.dataset.dlTemplate);
   }));
+
+  const downloadBackupBtn = document.getElementById('downloadBackupBtn');
+  if(downloadBackupBtn) downloadBackupBtn.addEventListener('click', downloadFullBackup);
+  const restoreBackupInput = document.getElementById('restoreBackupInput');
+  if(restoreBackupInput) restoreBackupInput.addEventListener('change', (e) => {
+    const file = e.target.files[0]; if(!file) return;
+    showConfirmModal(t('restoreConfirmTitle'), t('restoreConfirmMsg'), () => restoreFromBackupFile(file));
+    e.target.value = ''; // allow re-selecting the same file later
+  });
 
   document.getElementById('fileAccounts').addEventListener('change', async (e) => {
     const file = e.target.files[0]; if(!file) return;
@@ -4959,7 +5077,10 @@ function renderAccountStatementView(root, alwaysCombined){
 
   const filterBarHtml = `
     <div class="card">
-      <h2>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${pageTitle}</h2>
+      <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${pageTitle}</span>
+        <button type="button" class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openEditAuditLogModal()">${t('editAuditLogBtn')}</button>
+      </h2>
       <div style="display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px;">
         ${multiSelectHtml('gl_accounts', t('accountsFilterLabel'), accountLabels, selectedAccLabels, {isAccounts:true, tree: !(STATE.ui.accountTreeMode && STATE.ui.accountTreeMode['gl_accounts']===false)})}
         ${multiSelectHtml('gl_partners', t('partnersFilterLabel'), allPartners, selectedPartners)}
