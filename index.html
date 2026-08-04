@@ -27,8 +27,9 @@
   --brick-light:#C4574B;
   --ink-soft:#5B6A72;
   --ink-faint:#8B978D;
-  --shadow: 0 8px 24px rgba(16,24,32,.18);
-  --radius: 10px;
+  --shadow: 0 1px 2px rgba(80,60,20,.06), 0 10px 28px rgba(40,30,10,.14);
+  --shadow-lift: 0 4px 10px rgba(80,60,20,.08), 0 18px 40px rgba(40,30,10,.18);
+  --radius: 12px;
 }
 
 /* Item 6: Color Palette selector. Every accent element in the app already
@@ -258,22 +259,23 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 
 /* Cards / paper sheets */
 .card{
-  background: var(--paper);
+  background: linear-gradient(175deg, var(--paper) 0%, var(--paper-2) 130%);
   color: var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding:16px 18px;
-  margin-bottom:14px;
+  padding:18px 20px;
+  margin-bottom:16px;
   position:relative;
-  border-top:3px solid var(--gold);
+  border-top:3px solid transparent;
+  border-image: linear-gradient(90deg, var(--gold-dim), var(--gold-light) 55%, var(--gold-dim)) 1;
   transition: box-shadow .22s ease, transform .22s ease;
 }
-.card:hover{ box-shadow: 0 10px 28px rgba(0,0,0,.16), var(--shadow); }
-.card h2{ font-size:14.5px; margin:0 0 10px; color:var(--ink-2); display:flex; align-items:center; gap:8px;}
+.card:hover{ box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+.card h2{ font-size:14.5px; margin:0 0 12px; color:var(--ink-2); display:flex; align-items:center; gap:9px; letter-spacing:.15px; font-weight:800; }
 .card h2 svg{ width:16px; height:16px; flex:0 0 16px; }
 .card h2 .badge-count{ font-size:11px; background:var(--paper-3); color:var(--ink-soft); padding:2px 8px; border-radius:10px; font-weight:700; transition: background .18s ease, color .18s ease; }
 .card h2 .badge-count.drill:hover{ background:var(--gold); color:var(--ink); }
-.card .desc{ color:var(--ink-soft); font-size:12px; margin-top:-4px; margin-bottom:10px; }
+.card .desc{ color:var(--ink-soft); font-size:12px; margin-top:-6px; margin-bottom:12px; line-height:1.6; }
 
 .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; min-width:0; }
 .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; min-width:0; }
@@ -895,6 +897,8 @@ const I18N = {
     backupRestoreError:'تعذّرت الاستعادة — تأكد أن الملف نسخة احتياطية صحيحة من هذا النظام', restoreConfirmTitle:'استعادة نسخة احتياطية',
     restoreConfirmMsg:'هذا الإجراء سيستبدل كل البيانات الحالية (شجرة الحسابات، المجموعات، القيود، الإعدادات) بمحتوى الملف المُختار. لا يمكن التراجع عن هذا الإجراء إلا برفع نسخة احتياطية أخرى. هل أنت متأكد؟',
     backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، المجموعات، القيود، الإعدادات) في ملف واحد يمكن الاحتفاظ به في مكان آمن، أو استخدمه لاستعادة النظام على جهاز آخر أو بعد أي مشكلة.',
+    glPageIndicator:'صفحة ${page} من ${total} — إجمالي ${count} حركة (الإجماليات والتصدير يشملان كل الحركات المطابقة للفلاتر، مش الصفحة الحالية بس)',
+    glPagePrev:'◀ السابق', glPageNext:'التالي ▶',
     productCol:'المنتج', origCurrencyAmountCol:'المبلغ بالعملة الأصلية', conversionFactorCol:'معامل التحويل',
     downloadTemplate:'⬇ تنزيل تمبلت فارغ (Excel)',
     editEntryDesc:'عدّل بيانات هذا القيد مباشرة. يجب أن يتساوى إجمالي المدين مع إجمالي الدائن قبل الحفظ.',
@@ -1051,6 +1055,8 @@ const I18N = {
     backupRestoreError:'Restore failed — make sure the file is a valid backup from this system', restoreConfirmTitle:'Restore Backup',
     restoreConfirmMsg:'This will replace ALL current data (chart of accounts, groups, journal entries, settings) with the content of the selected file. This cannot be undone except by uploading another backup. Are you sure?',
     backupSectionTitle:'Backup & Restore', backupSectionDesc:'Download a complete copy of all system data (chart of accounts, groups, journal entries, settings) in a single file you can keep somewhere safe, or use it to restore the system on another device or after a problem.',
+    glPageIndicator:'Page ${page} of ${total} — ${count} movements total (totals and export cover every matching movement, not just this page)',
+    glPagePrev:'◀ Previous', glPageNext:'Next ▶',
     productCol:'Product', origCurrencyAmountCol:'Amount in Original Currency', conversionFactorCol:'Conversion Factor',
     downloadTemplate:'⬇ Download blank template (Excel)',
     editEntryDesc:'Edit this entry directly. Total debit must equal total credit before saving.',
@@ -5188,6 +5194,18 @@ function renderAccountStatementView(root, alwaysCombined){
     `).join('');
   }else{
     const colCount = singleForeign ? 17 : 15;
+    // Performance fix: with the full real journal loaded (potentially many
+    // thousands of lines), rendering every matching row as a <tr> — then
+    // rebuilding that entire table from scratch on every single filter
+    // click, checkbox, or keystroke — was the actual cause of the General
+    // Ledger / Journal Entries pages feeling slow to open and laggy to
+    // filter. Only the visible page of rows is now rendered in the DOM;
+    // totals and the Excel export above still cover every matching row
+    // regardless of page.
+    const GL_PAGE_SIZE = 300;
+    const glTotalPages = Math.max(1, Math.ceil(displayRows.length / GL_PAGE_SIZE));
+    const glPage = Math.min(Math.max(0, STATE.ui.glPage||0), glTotalPages-1);
+    const pageRows = displayRows.slice(glPage*GL_PAGE_SIZE, (glPage+1)*GL_PAGE_SIZE);
     bodyHtml = `
       <div class="card">
         <div class="table-wrap" style="max-height:600px;overflow-y:auto">
@@ -5198,8 +5216,8 @@ function renderAccountStatementView(root, alwaysCombined){
             ${sortTh(viewKey,'movement',t('movement'))}${sortTh(viewKey,'running',t('runningBalance'))}
             <th>${t('actionsCol')}</th>
           </tr></thead><tbody>
-            ${showOpening ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td><td></td></tr>` : ''}
-            ${displayRows.length ? displayRows.map(r=>{
+            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td><td></td></tr>` : ''}
+            ${pageRows.length ? pageRows.map(r=>{
               const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
               const convFactor = hasFx ? (r.debit||r.credit)/Math.abs(r.curAmt) : null;
               return `<tr>
@@ -5232,6 +5250,14 @@ function renderAccountStatementView(root, alwaysCombined){
             </tr>` : ''}
           </tbody></table>
         </div>
+        ${glTotalPages > 1 ? `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
+          <span class="hint">${tf('glPageIndicator', {page: glPage+1, total: glTotalPages, count: fmtInt(displayRows.length)})}</span>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="btn btn-outline" style="padding:5px 12px;font-size:11.5px" id="glPagePrev" ${glPage===0?'disabled':''}>${t('glPagePrev')}</button>
+            <button type="button" class="btn btn-outline" style="padding:5px 12px;font-size:11.5px" id="glPageNext" ${glPage>=glTotalPages-1?'disabled':''}>${t('glPageNext')}</button>
+          </div>
+        </div>` : ''}
       </div>
     `;
   }
@@ -5253,6 +5279,10 @@ function renderAccountStatementView(root, alwaysCombined){
     STATE.ui.glCurrencyFilter = btn.dataset.glCur;
     renderApp();
   }));
+  const glPagePrev = document.getElementById('glPagePrev');
+  if(glPagePrev) glPagePrev.addEventListener('click', () => { STATE.ui.glPage = Math.max(0, (STATE.ui.glPage||0) - 1); renderApp(); });
+  const glPageNext = document.getElementById('glPageNext');
+  if(glPageNext) glPageNext.addEventListener('click', () => { STATE.ui.glPage = (STATE.ui.glPage||0) + 1; renderApp(); });
 }
 
 /* =========================================================================
