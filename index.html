@@ -918,6 +918,8 @@ const I18N = {
     projectAllCurrencies:'كل العملات', projectAllSellers:'كل البائعين', projectAllStatuses:'كل الحالات',
     totalRemainingEgpLabel:'إجمالي الباقي (مشاريع بالجنيه)', totalRemainingUsdLabel:'إجمالي الباقي (مشاريع بالدولار)', projectsCountLabel:'عدد المشاريع',
     ledgerVsRealNote:'الفرق بين رصيد الدفاتر والباقي الحقيقي غالبًا معناه إيراد لسه ما اتسجّلش محاسبيًا رغم إن العميل دفع.',
+    importProjectsExcelBtn:'استيراد من ملف الإكسل', importProjectsResult:'تم: ${added} مشروع جديد، ${updated} تحديث، ${txAdded} حركة جديدة (${txSkipped} متكررة تم تجاهلها).',
+    importProjectsError:'تعذّرت قراءة الملف — تأكد أنه يحتوي على شيتات ID-EGP / ID-USD أو Data بنفس التنسيق المعتاد.', editTxBtn:'تعديل',
     productCol:'المنتج', origCurrencyAmountCol:'المبلغ بالعملة الأصلية', conversionFactorCol:'معامل التحويل',
     downloadTemplate:'⬇ تنزيل تمبلت فارغ (Excel)',
     editEntryDesc:'عدّل بيانات هذا القيد مباشرة. يجب أن يتساوى إجمالي المدين مع إجمالي الدائن قبل الحفظ.',
@@ -1090,6 +1092,8 @@ const I18N = {
     projectAllCurrencies:'All Currencies', projectAllSellers:'All Sellers', projectAllStatuses:'All Statuses',
     totalRemainingEgpLabel:'Total Remaining (EGP projects)', totalRemainingUsdLabel:'Total Remaining (USD projects)', projectsCountLabel:'Number of Projects',
     ledgerVsRealNote:'A gap between the ledger balance and the real remaining amount usually means revenue that hasn\u2019t been booked yet even though the customer already paid.',
+    importProjectsExcelBtn:'Import from Excel', importProjectsResult:'Done: ${added} new project(s), ${updated} updated, ${txAdded} new transaction(s) (${txSkipped} duplicates skipped).',
+    importProjectsError:'Could not read the file — make sure it has ID-EGP / ID-USD or Data sheets in the usual format.', editTxBtn:'Edit',
     productCol:'Product', origCurrencyAmountCol:'Amount in Original Currency', conversionFactorCol:'Conversion Factor',
     downloadTemplate:'⬇ Download blank template (Excel)',
     editEntryDesc:'Edit this entry directly. Total debit must equal total credit before saving.',
@@ -2987,6 +2991,71 @@ function generateAnalysis(lines, start, end){
    balance for the same name to show the gap between "recognized in the
    books so far" and "actually still owed by the customer".
    ========================================================================= */
+// Imports directly from the user's existing spreadsheet structure:
+// ID-EGP / ID-USD sheets = project registry (Code, Customer/Project, Project
+// Amount, Seller, Deal Date, at header row 2 / data from row 3), and a
+// "Data" sheet = the transaction log (Customer Type, ID, Date, Description
+// [Deals/Collection/Invoicing], Customer, Amount, Seller, Invoice No., ...,
+// Ex. Rate, Amount USD — header row 3 / data from row 4). Existing projects
+// are matched by (id + currency) and updated in place; transactions are
+// deduped by (project, date, type, amount) so re-importing an updated
+// export never creates duplicates.
+async function importProjectsExcelFile(file){
+  const wb = await readWorkbook(file);
+  const date1904 = !!(wb && wb.Workbook && wb.Workbook.WBProps && wb.Workbook.WBProps.date1904);
+  let added = 0, updated = 0, txAdded = 0, txSkipped = 0;
+
+  for(const [sheetName, currency] of [['ID-EGP','EGP'], ['ID-USD','USD']]){
+    if(!wb.SheetNames.includes(sheetName)) continue;
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header:1, raw:true, defval:null });
+    for(let i = 2; i < rows.length; i++){ // data starts at row 3 (1-based)
+      const r = rows[i];
+      if(!r) continue;
+      const code = r[0];
+      if(typeof code !== 'number') continue;
+      const name = (r[1]||'').toString().trim();
+      if(!name) continue;
+      const amount = Number(r[2]) || 0;
+      const seller = (r[3]||'').toString().trim();
+      const startDate = r[4] ? toISODate(r[4], date1904) : '';
+      const idx = STATE.projects.findIndex(p => p.id===code && p.currency===currency);
+      if(idx >= 0){ Object.assign(STATE.projects[idx], { name, amount, seller, startDate }); updated++; }
+      else { STATE.projects.push({ id:code, name, currency, amount, seller, startDate }); added++; }
+    }
+  }
+
+  if(wb.SheetNames.includes('Data')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Data'], { header:1, raw:true, defval:null });
+    const existingKeys = new Set(STATE.projectTx.map(t => t.importKey).filter(Boolean));
+    for(let i = 3; i < rows.length; i++){ // data starts at row 4 (1-based)
+      const r = rows[i];
+      if(!r) continue;
+      const custType = (r[2]||'').toString();
+      const id = r[3];
+      const rawDate = r[4];
+      const desc = (r[5]||'').toString().trim();
+      if(typeof id !== 'number' || !rawDate || !desc) continue;
+      const type = desc === 'Deals' ? 'deal' : desc === 'Collection' ? 'collection' : desc === 'Invoicing' ? 'invoicing' : null;
+      if(!type) continue;
+      const currency = custType.includes('USD') ? 'USD' : 'EGP';
+      const amount = currency === 'USD' ? (Number(r[14]) || 0) : (Number(r[7]) || 0); // col15 Amount USD / col8 Amount(EGP)
+      if(!amount) continue;
+      const invoiceNo = r[9] != null ? r[9].toString().trim() : '';
+      const exRate = currency === 'USD' ? (Number(r[13]) || null) : null; // col14 Ex. Rate
+      const isoDate = toISODate(rawDate, date1904);
+      const importKey = `${id}|${isoDate}|${type}|${amount}`;
+      if(existingKeys.has(importKey)){ txSkipped++; continue; }
+      existingKeys.add(importKey);
+      STATE.projectTx.push({ rowId:'tx_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), projectId:id, date:isoDate, type, amount, invoiceNo, exRate, remarks:'', importKey });
+      txAdded++;
+    }
+  }
+
+  await storeSet('projects', STATE.projects);
+  await storeSet('projectTx', STATE.projectTx);
+  return { added, updated, txAdded, txSkipped };
+}
+
 function nextProjectId(currency){
   const base = currency === 'USD' ? 5000 : 10000;
   const existing = STATE.projects.filter(p=>p.currency===currency).map(p=>p.id);
@@ -4368,6 +4437,37 @@ function renderApp(){
   document.querySelectorAll('.ms-panel').forEach(el => {
     if(Object.prototype.hasOwnProperty.call(__msScrollSave, el.id)) el.scrollTop = __msScrollSave[el.id];
   });
+  // BUG FIX (filter panel appearing behind the table/content below it):
+  // raising .ms-panel's z-index was NOT reliable across every page, because
+  // whether the panel visually escapes the card it's nested in depends on
+  // the stacking context of THAT card relative to sibling cards — which
+  // varies per page layout and isn't something a single CSS rule can
+  // guarantee everywhere. The robust fix: for the panel that is actually
+  // open, compute its position directly from the toggle button's real
+  // on-screen location and pin it there with position:fixed — this escapes
+  // the containing card's stacking context entirely, so it always renders
+  // above the rest of the page no matter what structure it's inside.
+  // Desktop only — mobile already uses its own fixed bottom-sheet layout.
+  if(STATE.ui.openMultiSelect && window.innerWidth > 900){
+    const openId = STATE.ui.openMultiSelect;
+    const btn = document.querySelector(`[data-ms="${openId}"]`);
+    const panel = document.getElementById(openId + '_panel');
+    if(btn && panel){
+      const rect = btn.getBoundingClientRect();
+      const panelWidth = Math.max(rect.width, 240);
+      let left = rect.left;
+      if(left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8;
+      if(left < 8) left = 8;
+      let top = rect.bottom + 4;
+      const maxHeight = 260;
+      if(top + maxHeight > window.innerHeight - 8) top = Math.max(8, rect.top - maxHeight - 4); // flip above the button if there's no room below
+      panel.style.position = 'fixed';
+      panel.style.top = top + 'px';
+      panel.style.left = left + 'px';
+      panel.style.width = panelWidth + 'px';
+      panel.style.margin = '0';
+    }
+  }
 }
 
 function needsFilters(view){
@@ -5772,7 +5872,13 @@ function renderProjectsView(root){
           <h2>${ICONS.target.replace('currentColor','var(--gold-dim)')} ${t('projectsPageTitle')}</h2>
           <div class="desc">${t('projectsPageDesc')}</div>
         </div>
-        <button type="button" class="btn btn-gold" id="addProjectBtn">${t('addProjectBtn')}</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label class="btn btn-outline" style="cursor:pointer;margin:0">
+            📥 ${t('importProjectsExcelBtn')}
+            <input type="file" id="importProjectsFile" accept=".xlsx,.xls,.xlsm" style="display:none">
+          </label>
+          <button type="button" class="btn btn-gold" id="addProjectBtn">${t('addProjectBtn')}</button>
+        </div>
       </div>
       <div class="grid-3" style="margin-bottom:14px">
         ${kpi(t('projectsCountLabel'), fmtInt(STATE.projects.length), '', '')}
@@ -5830,6 +5936,18 @@ function renderProjectsView(root){
   bindFilter('pfCurrency','currency'); bindFilter('pfSeller','seller'); bindFilter('pfStatus','status');
   const addBtn = document.getElementById('addProjectBtn');
   if(addBtn) addBtn.addEventListener('click', () => openProjectFormModal(null));
+  const importInput = document.getElementById('importProjectsFile');
+  if(importInput) importInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0]; if(!file) return;
+    try{
+      const res = await importProjectsExcelFile(file);
+      showToast(tf('importProjectsResult', res));
+      renderApp();
+    }catch(err){
+      showToast(t('importProjectsError') + ': ' + err.message, 5000);
+    }
+    e.target.value = '';
+  });
 }
 
 
