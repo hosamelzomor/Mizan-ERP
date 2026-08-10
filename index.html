@@ -910,7 +910,8 @@ const I18N = {
     glPageIndicator:'صفحة ${page} من ${total} — إجمالي ${count} حركة (الإجماليات والتصدير يشملان كل الحركات المطابقة للفلاتر، مش الصفحة الحالية بس)',
     glPagePrev:'◀ السابق', glPageNext:'التالي ▶',
     projectsPageTitle:'متابعة المشاريع والتحصيل', projectsPageDesc:'دفتر منفصل لمتابعة قيمة كل مشروع والدفعات المحصّلة منه فعليًا — بغض النظر عن توقيت تسجيل الإيراد محاسبيًا. لو اسم المشروع مطابق لاسم شريك في القيود، هيظهرلك رصيده في الدفاتر جنب الباقي الحقيقي للمقارنة.',
-    resetProjectsPageBtn:'↺ إعادة تعيين الصفحة', projectsPageResetToast:'تم إرجاع الصفحة لوضعها الافتراضي',
+    resetProjectsPageBtn:'🗑 مسح بيانات الصفحة', projectsPageResetToast:'تم مسح كل المشاريع وحركاتها — جاهز لاستيراد ملف إكسل جديد',
+    resetProjectsPageConfirmMsg:'سيتم حذف كل المشاريع المسجّلة وكل حركاتها (الصفقات، التحصيلات، الفواتير) في هذه الصفحة نهائيًا، حتى تقدر تستوردها من إكسل من جديد. هذا لا يؤثر على القيود اليومية ولا باقي بيانات النظام. هذا الإجراء لا يمكن التراجع عنه.',
     addProjectBtn:'+ مشروع جديد', projectIdCol:'الكود', projectNameCol:'اسم المشروع', projectCurrencyCol:'العملة', projectAmountCol:'قيمة المشروع',
     projectCollectedCol:'المحصّل', projectRemainingCol:'الباقي', projectStatusCol:'الحالة', projectLedgerBalanceCol:'رصيده بالدفاتر', projectSellerCol:'البائع', projectStartDateCol:'تاريخ البدء',
     statusComplete:'مكتمل التحصيل', statusPartial:'تحصيل جزئي', statusNotStarted:'لسه ما بدأش',
@@ -1085,7 +1086,8 @@ const I18N = {
     glPageIndicator:'Page ${page} of ${total} — ${count} movements total (totals and export cover every matching movement, not just this page)',
     glPagePrev:'◀ Previous', glPageNext:'Next ▶',
     projectsPageTitle:'Project & Collection Tracking', projectsPageDesc:'A separate ledger tracking each project\u2019s value and what has actually been collected — regardless of when revenue gets recognized in the books. If the project name matches a partner name in the journal, its ledger balance is shown alongside the real remaining amount for comparison.',
-    resetProjectsPageBtn:'↺ Reset Page', projectsPageResetToast:'Page reset to its default state',
+    resetProjectsPageBtn:'🗑 Clear Page Data', projectsPageResetToast:'All projects and their transactions were cleared — ready for a fresh Excel import',
+    resetProjectsPageConfirmMsg:'This will permanently delete every project and all its transactions (deals, collections, invoices) on this page, so you can re-import from Excel. It does not affect the journal or any other data in the system. This cannot be undone.',
     addProjectBtn:'+ New Project', projectIdCol:'ID', projectNameCol:'Project Name', projectCurrencyCol:'Currency', projectAmountCol:'Project Amount',
     projectCollectedCol:'Collected', projectRemainingCol:'Remaining', projectStatusCol:'Status', projectLedgerBalanceCol:'Ledger Balance', projectSellerCol:'Seller', projectStartDateCol:'Start Date',
     statusComplete:'Fully Collected', statusPartial:'Partially Collected', statusNotStarted:'Not Started',
@@ -5997,27 +5999,11 @@ function renderProjectsView(root){
         ${kpi(t('totalRemainingEgpLabel'), fmt(totalRemainingEGP), totalRemainingEGP>0?'neg':'pos', '')}
         ${kpi(t('totalRemainingUsdLabel'), fmt(totalRemainingUSD)+' USD', totalRemainingUSD>0?'neg':'pos', '')}
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px">
-        <div><label class="lbl">${t('projectCurrencyCol')}</label>
-          <select class="input" id="pfCurrency">
-            <option value="ALL" ${pf.currency==='ALL'?'selected':''}>${t('projectAllCurrencies')}</option>
-            <option value="EGP" ${pf.currency==='EGP'?'selected':''}>EGP</option>
-            <option value="USD" ${pf.currency==='USD'?'selected':''}>USD</option>
-          </select>
-        </div>
-        <div><label class="lbl">${t('projectSellerCol')}</label>
-          <select class="input" id="pfSeller">
-            <option value="ALL" ${pf.seller==='ALL'?'selected':''}>${t('projectAllSellers')}</option>
-            ${sellers.map(s=>`<option value="${escapeHtml(s)}" ${pf.seller===s?'selected':''}>${escapeHtml(s)}</option>`).join('')}
-          </select>
-        </div>
-        <div><label class="lbl">${t('projectStatusCol')}</label>
-          <select class="input" id="pfStatus">
-            <option value="ALL" ${pf.status==='ALL'?'selected':''}>${t('projectAllStatuses')}</option>
-            <option value="complete" ${pf.status==='complete'?'selected':''}>${t('statusComplete')}</option>
-            <option value="partial" ${pf.status==='partial'?'selected':''}>${t('statusPartial')}</option>
-            <option value="notStarted" ${pf.status==='notStarted'?'selected':''}>${t('statusNotStarted')}</option>
-          </select>
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+          ${multiSelectHtml('pf_currency', t('projectCurrencyCol'), ['EGP','USD'], pf.currency)}
+          ${sellers.length ? multiSelectHtml('pf_seller', t('projectSellerCol'), sellers, pf.seller) : ''}
+          ${multiSelectHtml('pf_status', t('projectStatusCol'), statusValues, pf.status, {displayLabel: statusLabel})}
         </div>
         ${exportBtnHtml('projects')}
       </div>
@@ -6044,18 +6030,30 @@ function renderProjectsView(root){
     </div>
   `;
 
-  const bindFilter = (id, key) => { const el = document.getElementById(id); if(el) el.addEventListener('change', () => { pf[key] = el.value; renderApp(); }); };
-  bindFilter('pfCurrency','currency'); bindFilter('pfSeller','seller'); bindFilter('pfStatus','status');
-  // Page-only Reset: restores this page's own UI state (filters — the only
-  // page-level state this view has, since it has no search box, sorting,
-  // pagination, or row-selection of its own) back to its defaults. Never
-  // touches STATE.projects / STATE.projectTx or any other stored data — it
-  // only overwrites STATE.ui.projectsFilter, a plain UI-state object.
+  STATE.ui.__msHandler = (id, values) => {
+    if(id === 'pf_currency'){ pf.currency = values; renderApp(); }
+    else if(id === 'pf_seller'){ pf.seller = values; renderApp(); }
+    else if(id === 'pf_status'){ pf.status = values; renderApp(); }
+  };
+  // Reset: per explicit request, this wipes this page's own stored data
+  // (STATE.projects + STATE.projectTx) — NOT just UI state — so the user can
+  // re-import a fresh Excel file from scratch. It never touches STATE.journal,
+  // the Chart of Accounts, or anything outside this page's two data arrays.
+  // Irreversible, so it's gated behind the same in-app confirm modal used for
+  // every other destructive action in this file (deleting a project, etc.).
   const resetBtn = document.getElementById('resetProjectsPageBtn');
   if(resetBtn) resetBtn.addEventListener('click', () => {
-    STATE.ui.projectsFilter = { currency:'ALL', seller:'ALL', status:'ALL' };
-    renderApp();
-    showToast(t('projectsPageResetToast'));
+    showConfirmModal(t('resetProjectsPageBtn'), t('resetProjectsPageConfirmMsg'), async () => {
+      STATE.projects = [];
+      STATE.projectTx = [];
+      await storeSet('projects', STATE.projects);
+      await storeSet('projectTx', STATE.projectTx);
+      STATE.ui.projectsFilter = { currency:[], seller:[], status:[] };
+      if(STATE.ui.msTouched){ delete STATE.ui.msTouched.pf_currency; delete STATE.ui.msTouched.pf_seller; delete STATE.ui.msTouched.pf_status; }
+      STATE.ui.openMultiSelect = null;
+      renderApp();
+      showToast(t('projectsPageResetToast'));
+    });
   });
   const addBtn = document.getElementById('addProjectBtn');
   if(addBtn) addBtn.addEventListener('click', () => openProjectFormModal(null));
