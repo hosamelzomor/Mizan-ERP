@@ -1559,7 +1559,11 @@ const TREE_ICON_LEAF = '<svg class="tree-icon" viewBox="0 0 24 24" fill="none" s
 function renderTreeNode(node, selected, depth){
   const codes = collectTreeAccountCodes(node);
   const labels = codes.map(c => `${c} — ${accName(c)}`);
-  const nothingExplicitlySelected = selected.length === 0; // the default "all" state — show every checkbox as checked instead of an empty-looking list
+  // BUG FIX: see multiSelectHtml — only the untouched-empty state should
+  // render as "select all"; once the user has explicitly cleared the
+  // selection (None button), it must render as nothing checked.
+  const touched = !!(STATE.ui.msTouched && STATE.ui.msTouched[STATE.ui.openMultiSelect]);
+  const nothingExplicitlySelected = selected.length === 0 && !touched; // the untouched default "all" state — show every checkbox as checked instead of an empty-looking list
   const selectedCount = labels.filter(l=>selected.includes(l)).length;
   const allChecked = nothingExplicitlySelected || (labels.length > 0 && selectedCount === labels.length);
   const someChecked = !nothingExplicitlySelected && selectedCount > 0 && !allChecked;
@@ -1599,8 +1603,19 @@ function multiSelectHtml(id, label, options, selected, opts){
   opts = opts || {};
   const isAccountList = !!opts.isAccounts;
   const disp = opts.displayLabel || (o => o); // e.g. translates journal/book names for display only
-  const allSelected = selected.length === 0 || selected.length === options.length;
-  const summary = allSelected ? t('all') : (selected.length === 1 ? disp(selected[0]) : `${selected.length} ${t('selectedCountSuffix')}`);
+  // BUG FIX (None button appeared to do nothing): an empty `selected` array is
+  // the default "no filter set yet / show everything" state, so a NEVER
+  // TOUCHED filter should render with every box checked. But once the user
+  // has explicitly changed the selection (most importantly, pressed "None"),
+  // an empty array means "user picked nothing" and must render as nothing
+  // checked — otherwise every checkbox snaps right back to checked on the
+  // very next render, making None look broken. STATE.ui.msTouched tracks
+  // that distinction (see attachMultiSelectEvents, which sets it centrally
+  // for every mutation path: None/All/leaf click/group click/search commit).
+  const touched = !!(STATE.ui.msTouched && STATE.ui.msTouched[id]);
+  const untouchedEmpty = selected.length === 0 && !touched;
+  const allSelected = untouchedEmpty || selected.length === options.length;
+  const summary = allSelected ? t('all') : (selected.length === 0 ? t('none') : selected.length === 1 ? disp(selected[0]) : `${selected.length} ${t('selectedCountSuffix')}`);
   const stayOpen = STATE.ui.openMultiSelect === id;
   const useTree = isAccountList && opts.tree;
   return `
@@ -1621,7 +1636,7 @@ function multiSelectHtml(id, label, options, selected, opts){
           </div>
         ` : `
           <div class="ms-items" data-ms-items="${id}">
-            ${options.map(o => `<label class="ms-item" data-ms-item-text="${escapeHtml(disp(o).toLowerCase())}"><input type="checkbox" class="ms-leaf" value="${escapeHtml(o)}" ${(selected.length===0 || selected.includes(o))?'checked':''}> ${escapeHtml(disp(o))}</label>`).join('')}
+            ${options.map(o => `<label class="ms-item" data-ms-item-text="${escapeHtml(disp(o).toLowerCase())}"><input type="checkbox" class="ms-leaf" value="${escapeHtml(o)}" ${(untouchedEmpty || selected.includes(o))?'checked':''}> ${escapeHtml(disp(o))}</label>`).join('')}
           </div>
         `) : ''}
       </div>
@@ -1629,6 +1644,16 @@ function multiSelectHtml(id, label, options, selected, opts){
   `;
 }
 function attachMultiSelectEvents(onChange){
+  // BUG FIX: every mutation path below (All/None/leaf checkbox/group checkbox/
+  // search commit) calls onChange(id, values) — wrapping it once here, instead
+  // of touching each call site, is enough to mark msTouched[id] for all of
+  // them. See multiSelectHtml/renderTreeNode for what this fixes.
+  const rawOnChange = onChange;
+  onChange = (id, values) => {
+    STATE.ui.msTouched = STATE.ui.msTouched || {};
+    STATE.ui.msTouched[id] = true;
+    rawOnChange(id, values);
+  };
   document.querySelectorAll('.ms-toggle').forEach(btn => btn.addEventListener('click', (e) => {
     e.stopPropagation();
     const id = btn.dataset.ms;
@@ -2102,6 +2127,7 @@ const STATE = {
     glShowOpening: true,
     openMultiSelect: null,
     msSearchQuery: {}, // BUG FIX: id -> in-progress search text, so it survives the renderApp() a checkbox click triggers
+    msTouched: {}, // BUG FIX: id -> has the user explicitly changed this filter's selection at least once? An empty `selected` array means "no filter / show everything", which is ALSO the correct meaning for a never-touched filter — but once the user has explicitly interacted with it (e.g. pressed "None"), an empty array must instead render as "nothing checked", not silently snap back to "everything checked". See multiSelectHtml/renderTreeNode.
     chatMessages: [],
     partnerCurrencyFilter: 'ALL',
     comparisonMode: 'none',
@@ -4676,10 +4702,15 @@ function attachFilterEvents(){
     if(r==='ytd'){ STATE.ui.filters.start = yearStartISO(); STATE.ui.filters.end = todayISO(); }
     if(r==='all'){ STATE.ui.filters.start = ''; STATE.ui.filters.end = ''; }
     STATE.ui.filters.years = []; STATE.ui.filters.months = [];
+    if(STATE.ui.msTouched){ delete STATE.ui.msTouched.filterYears; delete STATE.ui.msTouched.filterMonths; }
     renderApp();
   }));
   const clearYM = document.getElementById('clearYearMonthFilter');
-  if(clearYM) clearYM.addEventListener('click', () => { STATE.ui.filters.years = []; STATE.ui.filters.months = []; renderApp(); });
+  if(clearYM) clearYM.addEventListener('click', () => {
+    STATE.ui.filters.years = []; STATE.ui.filters.months = [];
+    if(STATE.ui.msTouched){ delete STATE.ui.msTouched.filterYears; delete STATE.ui.msTouched.filterMonths; }
+    renderApp();
+  });
 }
 
 /* =========================================================================
@@ -5927,12 +5958,13 @@ function ccDrill(ccName, kind){
 }
 
 function renderProjectsView(root){
-  STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:'ALL', seller:'ALL', status:'ALL' };
+  STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:[], seller:[], status:[] };
   const pf = STATE.ui.projectsFilter;
   const sellers = uniq(STATE.projects.map(p=>p.seller).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
+  const statusValues = ['complete','partial','notStarted'];
 
   const rows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
-    .filter(r => (pf.currency==='ALL' || r.p.currency===pf.currency) && (pf.seller==='ALL' || r.p.seller===pf.seller) && (pf.status==='ALL' || r.t.status===pf.status))
+    .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)))
     .sort((a,b) => (a.p.startDate||'').localeCompare(b.p.startDate||''));
 
   const totalRemainingEGP = STATE.projects.filter(p=>p.currency==='EGP').reduce((s,p)=>s+projectTotals(p).remaining,0);
