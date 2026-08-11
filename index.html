@@ -974,7 +974,7 @@ const I18N = {
     revaluationTitle:'إعادة تقييم الأرصدة بالعملة الأجنبية', nativeBalance:'الرصيد بالعملة الأصلية', bookBalanceEGP:'الرصيد الدفتري (EGP)',
     avgBookRate:'متوسط السعر الدفتري', enteredRate:'السعر المُدخل', revaluedBalanceEGP:'الرصيد بعد إعادة التقييم (EGP)', diffGainLoss:'الفرق (ربح/خسارة)',
     incompleteData:'بيانات غير مكتملة', netRevaluationDiff:'صافي فرق إعادة التقييم (للحسابات ذات البيانات السليمة فقط)',
-    anomalyWarning1:'تنبيه: الحسابات المُعلَّمة بـ "بيانات غير مكتملة" (', anomalyWarning2:') رصيدها الدفتري بالجنيه في القيود المستوردة لا يتناسب منطقياً مع رصيدها بالعملة الأصلية (غالباً لأن قيمة الجنيه لم تُسجَّل وقت إدخال بعض القيود). يُفضّل مراجعة هذه الحسابات يدوياً قبل ترحيل أي قيد فروق عملة بشأنها — لذلك تم استبعادها من القيد المقترح تلقائياً.',
+    anomalyWarning1:'تنبيه: الحسابات المُعلَّمة بـ "بيانات غير مكتملة" (', anomalyWarning2:') عندها رصيد بالعملة الأصلية في القيود المستوردة، لكن متوسط سعر الصرف الضمني المحسوب من رصيدها بالجنيه غير منطقي (خارج نطاق الأسعار المعقولة) — غالباً بسبب مبلغ بالعملة الأصلية أو بالجنيه مُدخل بالغلط في أحد القيود. يُفضّل مراجعة هذه الحسابات يدوياً قبل ترحيل أي قيد فروق عملة بشأنها — لذلك تم استبعادها من القيد المقترح تلقائياً.',
     suggestedEntryTitle:'القيد المقترح لترحيل فروق العملة', suggestedEntryDesc:'هذا القيد للاسترشاد به عند الترحيل يدوياً في أودو أو أي نظام آخر — النظام لا يرحّله تلقائياً حتى لا يتعارض مع القيود المستوردة لاحقاً.',
     revalDesc:'إعادة تقييم رصيد', accordingToRate:'حسب سعر', gainAccountUnset:'حساب أرباح فروق العملة (لم يُحدد)', lossAccountUnset:'حساب خسائر فروق العملة (لم يُحدد)',
     recordFxGain:'إثبات ربح فروق عملة', recordFxLoss:'إثبات خسارة فروق عملة', totalEntry:'إجمالي القيد',
@@ -1038,7 +1038,7 @@ const I18N = {
     revaluationTitle:'Foreign Currency Balance Revaluation', nativeBalance:'Native Currency Balance', bookBalanceEGP:'Book Balance (EGP)',
     avgBookRate:'Average Book Rate', enteredRate:'Entered Rate', revaluedBalanceEGP:'Revalued Balance (EGP)', diffGainLoss:'Difference (Gain/Loss)',
     incompleteData:'Incomplete data', netRevaluationDiff:'Net Revaluation Difference (accounts with valid data only)',
-    anomalyWarning1:'Note: accounts flagged "Incomplete data" (', anomalyWarning2:') have an EGP book balance in the imported entries that is not logically consistent with their native-currency balance (usually because the EGP value wasn\'t recorded when some entries were entered). It is best to review these accounts manually before posting any FX revaluation entry for them — so they have been automatically excluded from the suggested entry.',
+    anomalyWarning1:'Note: accounts flagged "Incomplete data" (', anomalyWarning2:') do have a native-currency balance in the imported entries, but the implied historical exchange rate computed from their EGP balance is implausible (outside a sane range) — usually a native-currency or EGP amount mistyped on one of the entries. It is best to review these accounts manually before posting any FX revaluation entry for them — so they have been automatically excluded from the suggested entry.',
     suggestedEntryTitle:'Suggested Entry for Posting FX Differences', suggestedEntryDesc:'This entry is a reference for manual posting in Odoo or any other system — the system does not post it automatically, to avoid conflicting with entries imported later.',
     revalDesc:'Revaluation of', accordingToRate:'balance at rate', gainAccountUnset:'FX Gain Account (not set)', lossAccountUnset:'FX Loss Account (not set)',
     recordFxGain:'Record FX gain', recordFxLoss:'Record FX loss', totalEntry:'Entry Total',
@@ -2493,11 +2493,20 @@ function fxRevaluation(lines, asOf, rates){
       // timeframe is roughly 5–100; anything outside that signals the EGP
       // book value wasn't tracked consistently for that account.
       anomaly = impliedRate <= 0 || impliedRate < 5 || impliedRate > 100;
-    } else if(hasMeaningfulEgp){
-      // A real EGP balance exists with no matching foreign-currency movement at all.
-      anomaly = true;
     }
-    const revaluedEGP = rate ? nativeBalance * rate : egpBook;
+    // BUG FIX: a near-zero NATIVE balance with a real EGP book balance is NOT
+    // bad data — it's the ordinary case of an account that's fully cleared
+    // out in its own currency (e.g. every dollar deposited was eventually
+    // withdrawn) but still carries a leftover EGP amount, because each of
+    // those native-currency movements was booked at a different historical
+    // rate. The correctly revalued EGP balance for a ~0 native balance is
+    // always ~0 too — 0 × any rate is 0 — regardless of today's entered
+    // rate, so this is fully computable with no rate needed at all: the
+    // entire remaining EGP balance IS the accumulated FX gain/loss to sweep.
+    // This was previously (and wrongly) flagged as "anomaly", which silently
+    // excluded the account from the suggested entry even though its book
+    // showed a perfectly real, correctly-EGP-recorded balance.
+    const revaluedEGP = hasMeaningfulNative ? (rate ? nativeBalance * rate : egpBook) : 0;
     const diff = revaluedEGP - egpBook;
     rows.push({ code:a.code, name:accName(a.code), currency:a.currency, nativeBalance, egpBook, impliedRate, rate, revaluedEGP, diff, anomaly });
   });
@@ -5369,6 +5378,13 @@ function renderLiquidityView(root){
   if(!STATE.journal.length){ root.innerHTML = emptyState(t('noDataYet'),t('startImporting'),'import'); return; }
   const f = STATE.ui.filters;
   const liq = liquidityPosition(STATE.journal, f.end, f.start);
+  const viewKey = 'liquidity';
+  const colf = { code:'colf_liq_code', name:'colf_liq_name', currency:'colf_liq_currency', opening:'colf_liq_opening', debit:'colf_liq_debit', credit:'colf_liq_credit', closing:'colf_liq_closing', native:'colf_liq_native' };
+  const liqRowsF = liq.rows.filter(r =>
+    passesColFilter(colf.code, r.code) && passesColFilter(colf.name, r.name) && passesColFilter(colf.currency, r.currency) &&
+    passesColFilter(colf.opening, r.opening) && passesColFilter(colf.debit, r.debit) && passesColFilter(colf.credit, r.credit) &&
+    passesColFilter(colf.closing, r.closing) && passesColFilter(colf.native, r.nativeBalance));
+  const liqSorted = applySort(viewKey, liqRowsF, (r,col) => r[col]);
 
   root.innerHTML = `
     <div class="grid-3">
@@ -5380,12 +5396,19 @@ function renderLiquidityView(root){
       ${Object.entries(liq.nativeTotals).map(([cur,v])=>kpi(`${t('totalBalancesOf')} ${cur}`, fmt(v), v>=0?'pos':'neg', t('allAccountsOfCurrency'))).join('')}
     </div>` : ''}
     <div class="card">
-      <h2>${ICONS.droplet.replace('currentColor','var(--gold-dim)')} ${t('cashBankDetailTitle')} <span class="badge-count">${liq.rows.length}</span></h2>
+      <h2>${ICONS.droplet.replace('currentColor','var(--gold-dim)')} ${t('cashBankDetailTitle')} <span class="badge-count">${liqRowsF.length}</span></h2>
       <div class="desc">${t('cashBankDetailDesc')}</div>
       ${liq.rows.length ? `<div class="table-wrap"><table><thead><tr>
-        <th>${t('codeCol')}</th><th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('openingBalanceEgpCol')}</th><th class="num-cell">${t('inflowEgpCol')}</th><th class="num-cell">${t('outflowEgpCol')}</th><th class="num-cell">${t('currentBalanceEgpCol')}</th><th class="num-cell">${t('nativeCurrencyBalanceCol')}</th>
+        ${filterableTh(viewKey,'code',t('codeCol'),colf.code,liq.rows.map(r=>r.code))}
+        ${filterableTh(viewKey,'name',t('account'),colf.name,liq.rows.map(r=>r.name))}
+        ${filterableTh(viewKey,'currency',t('currency'),colf.currency,liq.rows.map(r=>r.currency))}
+        ${filterableTh(viewKey,'opening',t('openingBalanceEgpCol'),colf.opening,liq.rows.map(r=>r.opening),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'debit',t('inflowEgpCol'),colf.debit,liq.rows.map(r=>r.debit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'credit',t('outflowEgpCol'),colf.credit,liq.rows.map(r=>r.credit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'closing',t('currentBalanceEgpCol'),colf.closing,liq.rows.map(r=>r.closing),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'nativeBalance',t('nativeCurrencyBalanceCol'),colf.native,liq.rows.map(r=>r.nativeBalance).filter(v=>v!=null),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
-        ${liq.rows.map(r=>`<tr>
+        ${liqSorted.map(r=>`<tr>
           <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
           <td>${escapeHtml(r.name)}</td>
           <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
@@ -5395,11 +5418,13 @@ function renderLiquidityView(root){
           <td class="num-cell num ${r.closing>=0?'pos-text':'neg-text'}">${fmt(r.closing)}</td>
           <td class="num-cell num">${r.nativeBalance!=null ? fmt(r.nativeBalance)+' '+escapeHtml(r.currency) : '—'}</td>
         </tr>`).join('')}
-        <tr class="total-row"><td colspan="6">${t('totalLiquidityEgpEquiv')}</td><td class="num-cell num">${fmt(liq.total)}</td><td></td></tr>
+        <tr class="total-row"><td colspan="6">${t('totalLiquidityEgpEquiv')}</td><td class="num-cell num">${fmt(liqRowsF.reduce((s,r)=>s+r.closing,0))}</td><td></td></tr>
         ${Object.entries(liq.nativeTotals).map(([cur,v])=>`<tr class="total-row"><td colspan="7">${t('totalBalancesOf')} ${escapeHtml(cur)}</td><td class="num-cell num">${fmt(v)} ${escapeHtml(cur)}</td></tr>`).join('')}
       </tbody></table></div>` : emptyMini(t('noCashBankAccounts'))}
     </div>
   `;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
 }
 
 /* =========================================================================
@@ -5423,6 +5448,12 @@ function renderFxRevaluationView(root){
 
   const rowsWithDiff = rev.rows.filter(r => !r.anomaly && Math.abs(r.diff) >= 0.01 && r.rate > 0);
   const anomalyRows = rev.rows.filter(r => r.anomaly);
+  const revColf = { code:'colf_fxreval_code', name:'colf_fxreval_name', currency:'colf_fxreval_currency', nativeBalance:'colf_fxreval_native', egpBook:'colf_fxreval_egpBook', rate:'colf_fxreval_rate', diff:'colf_fxreval_diff' };
+  const revRowsF = rev.rows.filter(r =>
+    passesColFilter(revColf.code, r.code) && passesColFilter(revColf.name, r.name) && passesColFilter(revColf.currency, r.currency) &&
+    passesColFilter(revColf.nativeBalance, r.nativeBalance) && passesColFilter(revColf.egpBook, r.egpBook) &&
+    passesColFilter(revColf.rate, r.rate) && passesColFilter(revColf.diff, r.diff));
+  const revSorted = applySort('fxreval', revRowsF, (r,col) => r[col]);
 
   root.innerHTML = `
     <div class="card">
@@ -5452,11 +5483,19 @@ function renderFxRevaluationView(root){
 
     ${rev.rows.length ? `
     <div class="card">
-      <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('revaluationTitle')} <span class="badge-count">${rev.rows.length}</span></h2>
+      <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('revaluationTitle')} <span class="badge-count">${revRowsF.length}</span></h2>
       <div class="table-wrap"><table><thead><tr>
-        <th>${t('code')}</th><th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('nativeBalance')}</th><th class="num-cell">${t('bookBalanceEGP')}</th><th class="num-cell">${t('avgBookRate')}</th><th class="num-cell">${t('enteredRate')}</th><th class="num-cell">${t('revaluedBalanceEGP')}</th><th class="num-cell">${t('diffGainLoss')}</th>
+        ${filterableTh('fxreval','code',t('code'),revColf.code,rev.rows.map(r=>r.code))}
+        ${filterableTh('fxreval','name',t('account'),revColf.name,rev.rows.map(r=>r.name))}
+        ${filterableTh('fxreval','currency',t('currency'),revColf.currency,rev.rows.map(r=>r.currency))}
+        ${filterableTh('fxreval','nativeBalance',t('nativeBalance'),revColf.nativeBalance,rev.rows.map(r=>r.nativeBalance),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh('fxreval','egpBook',t('bookBalanceEGP'),revColf.egpBook,rev.rows.map(r=>r.egpBook),{extraClass:'num-cell',displayLabel:fmt})}
+        ${sortTh('fxreval','impliedRate',t('avgBookRate'),'num-cell')}
+        ${filterableTh('fxreval','rate',t('enteredRate'),revColf.rate,rev.rows.map(r=>r.rate).filter(Boolean),{extraClass:'num-cell',displayLabel:fmt})}
+        ${sortTh('fxreval','revaluedEGP',t('revaluedBalanceEGP'),'num-cell')}
+        ${filterableTh('fxreval','diff',t('diffGainLoss'),revColf.diff,rev.rows.map(r=>r.diff),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
-        ${rev.rows.map(r=>`<tr>
+        ${revSorted.map(r=>`<tr>
           <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
           <td>${escapeHtml(r.name)}</td>
           <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
@@ -5467,7 +5506,7 @@ function renderFxRevaluationView(root){
           <td class="num-cell num">${r.rate&&!r.anomaly?fmt(r.revaluedEGP):'—'}</td>
           <td class="num-cell num ${r.diff>=0?'pos-text':'neg-text'}">${r.rate&&!r.anomaly?fmt(r.diff):'—'}</td>
         </tr>`).join('')}
-        <tr class="total-row"><td colspan="8">${t('netRevaluationDiff')}</td><td class="num-cell num ${rev.rows.filter(r=>!r.anomaly).reduce((s,r)=>s+r.diff,0)>=0?'pos-text':'neg-text'}">${fmt(rev.rows.filter(r=>!r.anomaly).reduce((s,r)=>s+r.diff,0))}</td></tr>
+        <tr class="total-row"><td colspan="8">${t('netRevaluationDiff')}</td><td class="num-cell num ${revRowsF.filter(r=>!r.anomaly).reduce((s,r)=>s+r.diff,0)>=0?'pos-text':'neg-text'}">${fmt(revRowsF.filter(r=>!r.anomaly).reduce((s,r)=>s+r.diff,0))}</td></tr>
       </tbody></table></div>
       ${anomalyRows.length ? `<div class="progress-note" style="color:var(--brick)">${t('anomalyWarning1')}${anomalyRows.map(r=>r.code).join('، ')}${t('anomalyWarning2')}</div>` : ''}
     </div>
@@ -5540,6 +5579,8 @@ function renderFxRevaluationView(root){
   lsel.addEventListener('change', async () => { STATE.settings.fxLossAccount = lsel.value; await storeSet('settings', STATE.settings); });
   document.getElementById('fxApplyBtn').addEventListener('click', () => renderApp());
   document.getElementById('fxFetchLiveBtn').addEventListener('click', () => fetchLiveFxRates(currencies));
+  attachSortEvents();
+  bindColFilterHandler(Object.values(revColf));
 }
 
 async function fetchLiveFxRates(currencies){
@@ -6665,10 +6706,15 @@ function renderCashFlowView(root){
   // every individual cash/bank account), and the total of those components
   // must equal the actual total of the liquidity accounts.
   const cashBal = computeBalances(STATE.journal, _r.end, _r.start);
-  const cashRows = Object.values(cashBal)
+  const cashRowsAll = Object.values(cashBal)
     .filter(r => r.type === 'البنك والنقد' && (r.opening!==0||r.debit!==0||r.credit!==0||r.closing!==0))
     .sort((a,b)=>a.code.localeCompare(b.code));
+  const cfColf = { code:'colf_cf_code', opening:'colf_cf_opening', debit:'colf_cf_debit', credit:'colf_cf_credit', movement:'colf_cf_movement', closing:'colf_cf_closing' };
+  const cashRows = cashRowsAll.filter(r =>
+    passesColFilter(cfColf.code, r.code+' '+r.name) && passesColFilter(cfColf.opening, r.opening) && passesColFilter(cfColf.debit, r.debit) &&
+    passesColFilter(cfColf.credit, r.credit) && passesColFilter(cfColf.movement, r.debit-r.credit) && passesColFilter(cfColf.closing, r.closing));
   const cashRowsTotal = cashRows.reduce((s,r)=> s + (r.debit - r.credit), 0);
+  const cashRowsSorted = applySort('cashflow', cashRows, (r,col) => col==='movement' ? (r.debit-r.credit) : col==='code' ? r.code+' '+r.name : r[col]);
 
   root.innerHTML = `
     ${currencyNote()}
@@ -6705,9 +6751,14 @@ function renderCashFlowView(root){
       <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('cfNetChangeDetail')}</h2>
       <div class="desc">${t('cfNetChangeDesc')}</div>
       <div class="table-wrap"><table><thead><tr>
-        <th>${t('account')}</th><th class="num-cell">${t('openingBalanceShort2')}</th><th class="num-cell">${t('debitDeposits')}</th><th class="num-cell">${t('creditWithdrawals')}</th><th class="num-cell">${t('netMovement')}</th><th class="num-cell">${t('closingBalanceShort2')}</th>
+        ${filterableTh('cashflow','code',t('account'),cfColf.code,cashRowsAll.map(r=>r.code+' '+r.name))}
+        ${filterableTh('cashflow','opening',t('openingBalanceShort2'),cfColf.opening,cashRowsAll.map(r=>r.opening),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh('cashflow','debit',t('debitDeposits'),cfColf.debit,cashRowsAll.map(r=>r.debit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh('cashflow','credit',t('creditWithdrawals'),cfColf.credit,cashRowsAll.map(r=>r.credit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh('cashflow','movement',t('netMovement'),cfColf.movement,cashRowsAll.map(r=>r.debit-r.credit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh('cashflow','closing',t('closingBalanceShort2'),cfColf.closing,cashRowsAll.map(r=>r.closing),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
-        ${cashRows.length ? cashRows.map(r=>`<tr>
+        ${cashRows.length ? cashRowsSorted.map(r=>`<tr>
           <td class="drill" onclick="cfDrill(null,'${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
           <td class="num-cell num">${fmt(r.opening)}</td>
           <td class="num-cell num">${fmt(r.debit)}</td>
@@ -6744,6 +6795,8 @@ function renderCashFlowView(root){
       ${Math.abs(cf.endingDiff)>=1 ? `<div class="progress-note" style="color:var(--brick)">⚠ ${t('cfEndingVarianceWarning')} ${fmt(cf.endingDiff)}</div>` : `<div class="progress-note" style="color:var(--emerald)">${t('cfEndingVarianceOk')}</div>`}
     </div>
   `;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(cfColf));
 }
 
 /* =========================================================================
