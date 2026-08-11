@@ -5736,6 +5736,7 @@ function renderAccountStatementView(root, alwaysCombined){
 
   // 4.5 Separate table per account when filtering by one or more accounts
   let bodyHtml;
+  const accColfIds = [];
   if(!alwaysCombined && selectedCodes.length){
     // Re-derive per-account data with the SAME filters (partners/journals/desc/currency/period)
     // except the account itself, then reuse the well-tested accountStatement() calc so opening
@@ -5762,13 +5763,33 @@ function renderAccountStatementView(root, alwaysCombined){
       }
       return { code, name: acc?acc.name:'', currency: acc?acc.currency:'EGP', opening: stmt.opening, rows: stmt.rows, closing: stmt.closing, totD, totC, nativeStmt };
     });
-    function accLedgerTable(rows, curLabel, opening, totD, totC){
+    function accLedgerTable(rows, curLabel, opening, totD, totC, idPrefix){
+      const vk = 'accledger_' + idPrefix;
+      const colf = { date:'colf_'+idPrefix+'_date', entry:'colf_'+idPrefix+'_entry', ref:'colf_'+idPrefix+'_ref', partner:'colf_'+idPrefix+'_partner', debit:'colf_'+idPrefix+'_debit', credit:'colf_'+idPrefix+'_credit', product:'colf_'+idPrefix+'_product', curAmt:'colf_'+idPrefix+'_curAmt', running:'colf_'+idPrefix+'_running' };
+      accColfIds.push(...Object.values(colf));
+      const rowsF = rows.filter(r =>
+        passesColFilter(colf.date, r.date) && passesColFilter(colf.entry, r.entry) && passesColFilter(colf.ref, r.ref||'') &&
+        passesColFilter(colf.partner, r.partner||'') && passesColFilter(colf.debit, r.dispDebit||0) && passesColFilter(colf.credit, r.dispCredit||0) &&
+        passesColFilter(colf.product, r.product||'') && passesColFilter(colf.curAmt, r.curAmt||0) && passesColFilter(colf.running, r.running));
+      const sorted = applySort(vk, rowsF, (r,col) => col==='seq' ? (r.seq||0) : r[col]);
+      const totDF = rowsF.reduce((s,r)=>s+(r.dispDebit||0),0);
+      const totCF = rowsF.reduce((s,r)=>s+(r.dispCredit||0),0);
       return `<div class="table-wrap" style="max-height:500px;overflow-y:auto">
         <table><thead><tr>
-          <th>#</th><th>${t('date')}</th><th>${t('entry')}</th><th>${t('description')}</th><th>${t('partner')}</th><th class="num-cell">${t('debit')} ${curLabel}</th><th class="num-cell">${t('credit')} ${curLabel}</th><th>${t('productCol')}</th><th class="num-cell">${t('origCurrencyAmountCol')}</th><th class="num-cell">${t('conversionFactorCol')}</th><th class="num-cell">${t('runningBalance')}</th>
+          ${sortTh(vk,'seq','#')}
+          ${filterableTh(vk,'date',t('date'),colf.date,rows.map(r=>r.date))}
+          ${filterableTh(vk,'entry',t('entry'),colf.entry,rows.map(r=>r.entry))}
+          ${filterableTh(vk,'ref',t('description'),colf.ref,rows.map(r=>r.ref||''))}
+          ${filterableTh(vk,'partner',t('partner'),colf.partner,rows.map(r=>r.partner||''))}
+          ${filterableTh(vk,'dispDebit',t('debit')+' '+curLabel,colf.debit,rows.map(r=>r.dispDebit||0),{extraClass:'num-cell',displayLabel:fmt})}
+          ${filterableTh(vk,'dispCredit',t('credit')+' '+curLabel,colf.credit,rows.map(r=>r.dispCredit||0),{extraClass:'num-cell',displayLabel:fmt})}
+          ${filterableTh(vk,'product',t('productCol'),colf.product,rows.map(r=>r.product||''))}
+          ${filterableTh(vk,'curAmt',t('origCurrencyAmountCol'),colf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
+          ${sortTh(vk,'convFactor',t('conversionFactorCol'),'num-cell')}
+          ${filterableTh(vk,'running',t('runningBalance'),colf.running,rows.map(r=>r.running),{extraClass:'num-cell',displayLabel:fmt})}
         </tr></thead><tbody>
           <tr class="total-row"><td colspan="7">${t('openingBalance')}</td><td></td><td></td><td class="num-cell num">${fmt(opening)}</td></tr>
-          ${rows.length ? rows.map(r=>{
+          ${sorted.length ? sorted.map(r=>{
             const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
             const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : null;
             return `<tr>
@@ -5784,7 +5805,7 @@ function renderAccountStatementView(root, alwaysCombined){
             <td class="num-cell num">${convFactor!=null?fmt(convFactor):'—'}</td>
             <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
           </tr>`;}).join('') : `<tr><td colspan="11" class="empty">${t('noMatchingFilterMovement')}</td></tr>`}
-          ${rows.length ? `<tr class="total-row"><td colspan="5">${t('total')}</td><td class="num-cell num">${fmt(totD)}</td><td class="num-cell num">${fmt(totC)}</td><td></td><td></td><td></td><td></td></tr>` : ''}
+          ${sorted.length ? `<tr class="total-row"><td colspan="5">${t('total')}</td><td class="num-cell num">${fmt(totDF)}</td><td class="num-cell num">${fmt(totCF)}</td><td></td><td></td><td></td><td></td></tr>` : ''}
         </tbody></table>
       </div>`;
     }
@@ -5794,10 +5815,10 @@ function renderAccountStatementView(root, alwaysCombined){
           <span class="hint">${t('openingBalance')}: ${fmt(a.opening)} — ${t('closingBalance')}: ${fmt(a.closing)}</span>
         </div>
         <div class="desc" style="margin-bottom:6px">${t('inEgpLabel')}</div>
-        ${accLedgerTable(a.rows, 'EGP', a.opening, a.totD, a.totC)}
+        ${accLedgerTable(a.rows, 'EGP', a.opening, a.totD, a.totC, a.code+'_egp')}
         ${a.nativeStmt ? `
           <div class="desc" style="margin:14px 0 6px">${t('inOriginalAccountCurrencyLabel')} (${escapeHtml(a.currency)})</div>
-          ${accLedgerTable(a.nativeStmt.rows, escapeHtml(a.currency), a.nativeStmt.opening, a.nativeStmt.rows.reduce((s,r)=>s+r.dispDebit,0), a.nativeStmt.rows.reduce((s,r)=>s+r.dispCredit,0))}
+          ${accLedgerTable(a.nativeStmt.rows, escapeHtml(a.currency), a.nativeStmt.opening, a.nativeStmt.rows.reduce((s,r)=>s+r.dispDebit,0), a.nativeStmt.rows.reduce((s,r)=>s+r.dispCredit,0), a.code+'_native')}
         ` : ''}
       </div>
     `).join('');
@@ -5890,7 +5911,7 @@ function renderAccountStatementView(root, alwaysCombined){
     if(id === 'gl_costcenters') STATE.ui.glCostCenters = values;
     renderApp();
   };
-  bindColFilterHandler(Object.values(glColf));
+  bindColFilterHandler([...Object.values(glColf), ...accColfIds]);
   const chk = document.getElementById('glShowOpeningChk');
   if(chk) chk.addEventListener('change', () => { STATE.ui.glShowOpening = chk.checked; renderApp(); });
   attachDebouncedSearchInput('glVoucherSearch', v => { STATE.ui.glVoucherSearch = v; });
@@ -5951,14 +5972,32 @@ function renderCustomerLedgerPage(root, cfg){
   const selectedPartners = (STATE.ui[cfg.uiSelKey]||[]).filter(p=>allPartners.includes(p));
   const displayPartners = selectedPartners.length ? selectedPartners : allPartners;
 
-  function ledgerTable(rows, curLabel){
-    const totalDebit = rows.reduce((s,r)=>s+(r.dispDebit||0),0);
-    const totalCredit = rows.reduce((s,r)=>s+(r.dispCredit||0),0);
+  const ledgerColfIds = [];
+  function ledgerTable(rows, curLabel, idPrefix){
+    const vk = 'custledger_' + idPrefix;
+    const colf = { date:'colf_'+idPrefix+'_date', entry:'colf_'+idPrefix+'_entry', account:'colf_'+idPrefix+'_account', ref:'colf_'+idPrefix+'_ref', debit:'colf_'+idPrefix+'_debit', credit:'colf_'+idPrefix+'_credit', product:'colf_'+idPrefix+'_product', curAmt:'colf_'+idPrefix+'_curAmt', balance:'colf_'+idPrefix+'_balance' };
+    ledgerColfIds.push(...Object.values(colf));
+    const rowsF = rows.filter(r =>
+      passesColFilter(colf.date, r.date) && passesColFilter(colf.entry, r.entry) && passesColFilter(colf.account, r.code+' '+(accName(r.code)||r.name||'')) &&
+      passesColFilter(colf.ref, r.ref||'') && passesColFilter(colf.debit, r.dispDebit||0) && passesColFilter(colf.credit, r.dispCredit||0) &&
+      passesColFilter(colf.product, r.product||'') && passesColFilter(colf.curAmt, r.curAmt||0) && passesColFilter(colf.balance, r.running));
+    const sorted = applySort(vk, rowsF, (r,col) => col==='account' ? r.code+' '+(accName(r.code)||r.name||'') : r[col]);
+    const totalDebit = rowsF.reduce((s,r)=>s+(r.dispDebit||0),0);
+    const totalCredit = rowsF.reduce((s,r)=>s+(r.dispCredit||0),0);
     return `<div class="table-wrap" style="max-height:400px;overflow-y:auto">
       <table><thead><tr>
-        <th>${t('date')}</th><th>${t('entry')}</th><th>${t('account')}</th><th>${t('description')}</th><th class="num-cell">${t('debit')} (${curLabel})</th><th class="num-cell">${t('credit')} (${curLabel})</th><th>${t('productCol')}</th><th class="num-cell">${t('origCurrencyAmountCol')}</th><th class="num-cell">${t('conversionFactorCol')}</th><th class="num-cell">${t('balance')}</th>
+        ${filterableTh(vk,'date',t('date'),colf.date,rows.map(r=>r.date))}
+        ${filterableTh(vk,'entry',t('entry'),colf.entry,rows.map(r=>r.entry))}
+        ${filterableTh(vk,'account',t('account'),colf.account,rows.map(r=>r.code+' '+(accName(r.code)||r.name||'')))}
+        ${filterableTh(vk,'ref',t('description'),colf.ref,rows.map(r=>r.ref||''))}
+        ${filterableTh(vk,'dispDebit',t('debit')+' ('+curLabel+')',colf.debit,rows.map(r=>r.dispDebit||0),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(vk,'dispCredit',t('credit')+' ('+curLabel+')',colf.credit,rows.map(r=>r.dispCredit||0),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(vk,'product',t('productCol'),colf.product,rows.map(r=>r.product||''))}
+        ${filterableTh(vk,'curAmt',t('origCurrencyAmountCol'),colf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
+        ${sortTh(vk,'convFactor',t('conversionFactorCol'),'num-cell')}
+        ${filterableTh(vk,'running',t('balance'),colf.balance,rows.map(r=>r.running),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
-        ${rows.length ? rows.map(r=>{
+        ${sorted.length ? sorted.map(r=>{
           const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
           const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : null;
           return `<tr>
@@ -5973,7 +6012,7 @@ function renderCustomerLedgerPage(root, cfg){
           <td class="num-cell num">${convFactor!=null?fmt(convFactor):'—'}</td>
           <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
         </tr>`;}).join('') : `<tr><td colspan="10" class="empty">${t('noMovementInPeriod')}</td></tr>`}
-        ${rows.length ? `<tr class="total-row"><td colspan="4">${t('total')}</td><td class="num-cell num">${fmt(totalDebit)}</td><td class="num-cell num">${fmt(totalCredit)}</td><td></td><td></td><td></td><td></td></tr>` : ''}
+        ${sorted.length ? `<tr class="total-row"><td colspan="4">${t('total')}</td><td class="num-cell num">${fmt(totalDebit)}</td><td class="num-cell num">${fmt(totalCredit)}</td><td></td><td></td><td></td><td></td></tr>` : ''}
       </tbody></table>
     </div>`;
   }
@@ -6013,26 +6052,28 @@ function renderCustomerLedgerPage(root, cfg){
         ${exportBtnHtml(cfg.exportKey)}
       </div>
     </div>
-    ${perPartner.map(p => `
+    ${perPartner.map((p, pIdx) => `
       <div class="card">
         <div class="section-title"><span>${escapeHtml(p.name)}</span>
           <span class="hint">${t('currentBalance')}: ${fmt(Math.abs(p.stmt.closing))} (${p.stmt.closing>=0?t('debtorTo'):t('creditorFrom')})</span>
         </div>
-        ${curFilter==='ALL' || curFilter==='EGP' ? ledgerTable(p.stmt.rows, 'EGP') : ''}
+        ${curFilter==='ALL' || curFilter==='EGP' ? ledgerTable(p.stmt.rows, 'EGP', cfg.exportKey+'_'+pIdx+'_egp') : ''}
         ${(curFilter==='ALL' || curFilter!=='EGP') && p.foreignGroups.length ? `
           ${curFilter==='ALL' ? `<div class="hint" style="margin:14px 0 4px">${t('foreignCurrencyNote')}</div>` : ''}
           ${p.foreignGroups.filter(g=>curFilter==='ALL'||g.currency===curFilter).map(g => `
             <div class="section-title"><span>${t('currencyOf')} ${escapeHtml(g.currency)}</span><span class="hint">${t('openingShort')} ${fmt(g.opening)} — ${t('closingShort')} ${fmt(g.closing)}</span></div>
-            ${ledgerTable(g.rows, g.currency)}
+            ${ledgerTable(g.rows, g.currency, cfg.exportKey+'_'+pIdx+'_'+g.currency)}
           `).join('')}
         ` : ''}
       </div>
     `).join('')}
   `;
+  attachSortEvents();
   STATE.ui.__msHandler = (id, values) => {
     if(id === cfg.msId){ STATE.ui[cfg.uiSelKey] = values; renderApp(); }
     if(id === cfg.accMsId){ STATE.ui[cfg.uiAccKey] = values; renderApp(); }
   };
+  bindColFilterHandler(ledgerColfIds);
   document.querySelectorAll('[data-cust-cur]').forEach(btn => btn.addEventListener('click', () => {
     STATE.ui[cfg.uiCurKey] = btn.dataset.custCur;
     // NOTE: previously this reset the partner selection to [] on every currency
