@@ -344,7 +344,7 @@ thead th{
 tbody td{ padding:6px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); }
 tbody tr:hover{ background:var(--paper-2); }
 tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); background:var(--paper-3); }
-td.num-cell{ text-align:left; }
+.num-cell{ text-align:left; }
 .drill{ cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-decoration-color:var(--gold-dim); text-underline-offset:2px; }
 .drill:hover{ color:var(--gold-dim); font-weight:700; }
 .pos-text{ color:var(--emerald); font-weight:700; }
@@ -381,6 +381,7 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .pill-gold{ background:rgba(184,144,46,.15); color:var(--gold-dim); }
 .pill-em{ background:rgba(31,109,90,.14); color:var(--emerald); }
 .pill-brick{ background:rgba(162,59,49,.13); color:var(--brick); }
+.pill-blue{ background:rgba(91,106,114,.14); color:var(--ink-soft); }
 
 .empty{ text-align:center; padding:36px 10px; color:var(--ink-faint); font-size:13px; }
 .empty svg{ width:52px; height:52px; opacity:.35; margin-bottom:10px; }
@@ -417,8 +418,23 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 }
 .ms-panel-actions{ display:flex; gap:6px; margin-bottom:6px; padding-bottom:6px; border-bottom:1px solid var(--line); }
 .ms-panel-actions .chip{ color:var(--ink-soft); border-color:var(--line); }
+.ms-panel-actions .chip.active{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
 .ms-item{ display:flex; align-items:center; gap:7px; padding:4px 2px; font-size:12.5px; color:var(--ink); cursor:pointer; }
 .ms-item:hover{ background:var(--paper-2); }
+
+/* Excel-style table header filter+sort (compact icon-only multiselect embedded in a <th>, see filterableTh) */
+.multiselect-icon-only{ display:inline-flex; vertical-align:middle; }
+.th-filter-icon{
+  display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; padding:0;
+  background:transparent; border:1px solid transparent; border-radius:4px; color:var(--gold-light); opacity:.75; cursor:pointer;
+  transition: background .14s ease, opacity .14s ease, color .14s ease;
+}
+.th-filter-icon:hover{ opacity:1; background:rgba(255,255,255,.12); }
+.th-filter-icon.active{ opacity:1; color:var(--ink); background:var(--gold); border-color:var(--gold); }
+.th-header-row{ display:inline-flex; align-items:center; gap:5px; }
+.th-sort-label{ cursor:pointer; user-select:none; }
+.th-sort-label:hover{ color:#fff; }
+th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn't inherit a num-cell header's left text-align */
 /* Item 1 — Account Tree Filter redesign: clearer hierarchy via generous
    indentation + a dashed guide rail per level, a folder/leaf icon so groups
    and accounts are visually distinct at a glance, a smooth height/opacity
@@ -817,6 +833,7 @@ const I18N = {
     from:'من', to:'إلى', currentMonth:'الشهر الحالي', yearToDate:'من بداية السنة', allPeriods:'كل الفترات',
     year:'السنة (أكثر من سنة)', month:'الشهر (أكثر من شهر)', clearYearMonth:'✕ مسح فلتر السنة/الشهر',
     all:'الكل', none:'لا شيء', done:'تم', searchPlaceholder:'بحث بالاسم أو الرقم...', selectedCountSuffix:'محدد',
+    sortAscBtn:'▲ ترتيب تصاعدي', sortDescBtn:'▼ ترتيب تنازلي',
     date:'التاريخ', entry:'رقم القيد', account:'الحساب', partner:'الشريك', description:'البيان',
     debit:'مدين', credit:'دائن', balance:'الرصيد', runningBalance:'الرصيد التراكمي', total:'الإجمالي',
     currency:'العملة', resetSystem:'إعادة تعيين النظام بالكامل', companyNamePlaceholder:'اسم الشركة...',
@@ -913,8 +930,9 @@ const I18N = {
     resetProjectsPageBtn:'🗑 مسح بيانات الصفحة', projectsPageResetToast:'تم مسح كل المشاريع وحركاتها — جاهز لاستيراد ملف إكسل جديد',
     resetProjectsPageConfirmMsg:'سيتم حذف كل المشاريع المسجّلة وكل حركاتها (الصفقات، التحصيلات، الفواتير) في هذه الصفحة نهائيًا، حتى تقدر تستوردها من إكسل من جديد. هذا لا يؤثر على القيود اليومية ولا باقي بيانات النظام. هذا الإجراء لا يمكن التراجع عنه.',
     addProjectBtn:'+ مشروع جديد', projectIdCol:'الكود', projectNameCol:'اسم المشروع', projectCurrencyCol:'العملة', projectAmountCol:'قيمة المشروع',
+    searchByProjectNameLabel:'اسم المشروع', searchByProjectNamePlaceholder:'بحث باسم المشروع...',
     projectCollectedCol:'المحصّل', projectRemainingCol:'الباقي', projectStatusCol:'الحالة', projectLedgerBalanceCol:'رصيده بالدفاتر', projectSellerCol:'البائع', projectStartDateCol:'تاريخ البدء',
-    statusComplete:'مكتمل التحصيل', statusPartial:'تحصيل جزئي', statusNotStarted:'لسه ما بدأش',
+    statusComplete:'مكتمل التحصيل', statusPartial:'تحصيل جزئي', statusNotStarted:'لسه ما بدأش', statusInvoicedNotCollected:'مفوترة ولم تحصل',
     noProjectsYet:'لا توجد مشاريع مسجّلة بعد', viewTransactionsBtn:'عرض الحركات', editProjectBtn:'تعديل',
     projectFormTitle:'مشروع جديد', editProjectFormTitle:'تعديل مشروع', projectNameLabel:'اسم المشروع (نفس اسم الشريك في القيود لو موجود)',
     projectCurrencyLabel:'العملة', projectAmountLabel:'قيمة المشروع الحالية', projectSellerLabel:'البائع', projectStartDateLabel:'تاريخ البدء',
@@ -1089,8 +1107,9 @@ const I18N = {
     resetProjectsPageBtn:'🗑 Clear Page Data', projectsPageResetToast:'All projects and their transactions were cleared — ready for a fresh Excel import',
     resetProjectsPageConfirmMsg:'This will permanently delete every project and all its transactions (deals, collections, invoices) on this page, so you can re-import from Excel. It does not affect the journal or any other data in the system. This cannot be undone.',
     addProjectBtn:'+ New Project', projectIdCol:'ID', projectNameCol:'Project Name', projectCurrencyCol:'Currency', projectAmountCol:'Project Amount',
+    searchByProjectNameLabel:'Project Name', searchByProjectNamePlaceholder:'Search by project name...',
     projectCollectedCol:'Collected', projectRemainingCol:'Remaining', projectStatusCol:'Status', projectLedgerBalanceCol:'Ledger Balance', projectSellerCol:'Seller', projectStartDateCol:'Start Date',
-    statusComplete:'Fully Collected', statusPartial:'Partially Collected', statusNotStarted:'Not Started',
+    statusComplete:'Fully Collected', statusPartial:'Partially Collected', statusNotStarted:'Not Started', statusInvoicedNotCollected:'Invoiced, Not Collected',
     noProjectsYet:'No projects recorded yet', viewTransactionsBtn:'View Transactions', editProjectBtn:'Edit',
     projectFormTitle:'New Project', editProjectFormTitle:'Edit Project', projectNameLabel:'Project Name (same as the partner name in the journal, if any)',
     projectCurrencyLabel:'Currency', projectAmountLabel:'Current Project Amount', projectSellerLabel:'Seller', projectStartDateLabel:'Start Date',
@@ -1157,6 +1176,7 @@ const I18N = {
     from:'From', to:'To', currentMonth:'This Month', yearToDate:'Year to Date', allPeriods:'All Periods',
     year:'Year (multi-select)', month:'Month (multi-select)', clearYearMonth:'✕ Clear year/month filter',
     all:'All', none:'None', done:'Done', searchPlaceholder:'Search by name or number...', selectedCountSuffix:'selected',
+    sortAscBtn:'▲ Sort Ascending', sortDescBtn:'▼ Sort Descending',
     date:'Date', entry:'Entry No.', account:'Account', partner:'Partner', description:'Description',
     debit:'Debit', credit:'Credit', balance:'Balance', runningBalance:'Running Balance', total:'Total',
     currency:'Currency', resetSystem:'Full System Reset', companyNamePlaceholder:'Company name...',
@@ -1476,16 +1496,61 @@ function applySort(viewKey, rows, accessor){
   if(s.dir === 'desc') sorted.reverse();
   return sorted;
 }
-function sortTh(viewKey, col, label){
+function sortTh(viewKey, col, label, extraClass){
   const s = getSortState(viewKey, null);
   const active = s.col === col;
   const arrow = active ? (s.dir === 'asc' ? ' ▲' : ' ▼') : '';
-  return `<th class="sortable-th" data-sort-view="${viewKey}" data-sort-col="${col}">${label}${arrow}</th>`;
+  return `<th class="sortable-th${extraClass?' '+extraClass:''}" data-sort-view="${viewKey}" data-sort-col="${col}">${label}${arrow}</th>`;
 }
 function attachSortEvents(){
   document.querySelectorAll('[data-sort-view]').forEach(th => th.addEventListener('click', () => {
     toggleSort(th.dataset.sortView, th.dataset.sortCol);
   }));
+}
+
+/* ---------- Excel-style table header: sort + per-column value filter ----------
+   filterableTh() renders a header that combines the existing click-to-sort
+   label with a compact funnel-icon dropdown (built on the same multiSelectHtml
+   component used everywhere else) offering Sort Ascending/Descending plus a
+   searchable checklist of every distinct value in that column — i.e. the
+   same interaction Excel's AutoFilter offers. Column-filter selections are
+   kept in STATE.ui.colFilters[colFilterId], a plain array (empty = show all,
+   same convention as every other filter in the app). getColFilterValues()
+   applies it; callers just need to pass an accessor for the raw value. */
+function getColFilterValues(colFilterId){
+  return (STATE.ui.colFilters && STATE.ui.colFilters[colFilterId]) || [];
+}
+function passesColFilter(colFilterId, rawValue){
+  const sel = getColFilterValues(colFilterId);
+  return sel.length === 0 || sel.includes(rawValue);
+}
+function filterableTh(viewKey, col, label, colFilterId, values, opts){
+  opts = opts || {};
+  const s = getSortState(viewKey, null);
+  const active = s.col === col;
+  const arrow = active ? (s.dir === 'asc' ? ' ▲' : ' ▼') : '';
+  const uniqueValues = uniq(values.filter(v => v !== '' && v != null));
+  return `<th class="filter-th${opts.extraClass?' '+opts.extraClass:''}">
+    <span class="th-header-row">
+      <span class="th-sort-label" data-sort-view="${viewKey}" data-sort-col="${col}">${label}${arrow}</span>
+      ${multiSelectHtml(colFilterId, label, uniqueValues, getColFilterValues(colFilterId), {iconOnly:true, sortConfig:{viewKey,col}, displayLabel: opts.displayLabel})}
+    </span>
+  </th>`;
+}
+function bindColFilterHandler(colFilterIds){
+  // Routes onChange for a batch of colFilterIds (from one table) into
+  // STATE.ui.colFilters, alongside whatever __msHandler the view already
+  // uses for its own (non-header) filters — chains rather than overwrites.
+  const prevHandler = STATE.ui.__msHandler;
+  STATE.ui.__msHandler = (id, values) => {
+    if(colFilterIds.includes(id)){
+      STATE.ui.colFilters = STATE.ui.colFilters || {};
+      STATE.ui.colFilters[id] = values;
+      renderApp();
+    } else if(prevHandler){
+      prevHandler(id, values);
+    }
+  };
 }
 
 /* ---------- multi-select dropdown ----------
@@ -1620,11 +1685,25 @@ function multiSelectHtml(id, label, options, selected, opts){
   const summary = allSelected ? t('all') : (selected.length === 0 ? t('none') : selected.length === 1 ? disp(selected[0]) : `${selected.length} ${t('selectedCountSuffix')}`);
   const stayOpen = STATE.ui.openMultiSelect === id;
   const useTree = isAccountList && opts.tree;
+  const isActive = selected.length > 0 && !untouchedEmpty; // for the compact "Excel-style" header icon: is a real (non-default) filter applied?
+  const toggleBtn = opts.iconOnly
+    ? `<button type="button" class="ms-toggle th-filter-icon${isActive?' active':''}" data-ms="${id}" title="${escapeHtml(label)}">${ICONS.filterFunnel}</button>`
+    : `<button type="button" class="input ms-toggle" data-ms="${id}" style="text-align:right;min-width:170px">${escapeHtml(summary)} ▾</button>`;
+  const sortRow = opts.sortConfig ? (() => {
+    const s = getSortState(opts.sortConfig.viewKey, null);
+    const isAsc = s.col === opts.sortConfig.col && s.dir === 'asc';
+    const isDesc = s.col === opts.sortConfig.col && s.dir === 'desc';
+    return `<div class="ms-panel-actions">
+      <button type="button" class="chip${isAsc?' active':''}" data-sort-set="${opts.sortConfig.viewKey}|${opts.sortConfig.col}|asc">${t('sortAscBtn')}</button>
+      <button type="button" class="chip${isDesc?' active':''}" data-sort-set="${opts.sortConfig.viewKey}|${opts.sortConfig.col}|desc">${t('sortDescBtn')}</button>
+    </div>`;
+  })() : '';
   return `
-    <div class="multiselect" id="${id}">
-      <label class="lbl">${label}</label>
-      <button type="button" class="input ms-toggle" data-ms="${id}" style="text-align:right;min-width:170px">${escapeHtml(summary)} ▾</button>
+    <div class="multiselect${opts.iconOnly?' multiselect-icon-only':''}" id="${id}">
+      ${opts.iconOnly ? '' : `<label class="lbl">${label}</label>`}
+      ${toggleBtn}
       <div class="ms-panel" id="${id}_panel" style="display:${stayOpen?'block':'none'}">
+        ${sortRow}
         <input type="text" class="input ms-search" data-ms-search="${id}" value="${escapeHtml((STATE.ui.msSearchQuery && STATE.ui.msSearchQuery[id]) || '')}" placeholder="${t('searchPlaceholder')}" style="width:100%;margin-bottom:6px;box-sizing:border-box">
         <div class="ms-panel-actions">
           <button type="button" class="chip" data-ms-all="${id}">${t('all')}</button>
@@ -1671,6 +1750,12 @@ function attachMultiSelectEvents(onChange){
     }
   }));
   document.querySelectorAll('.ms-panel').forEach(p => p.addEventListener('click', e => e.stopPropagation()));
+  document.querySelectorAll('[data-sort-set]').forEach(btn => btn.addEventListener('click', () => {
+    const [viewKey, col, dir] = btn.dataset.sortSet.split('|');
+    const s = getSortState(viewKey, col);
+    s.col = col; s.dir = dir;
+    renderApp();
+  }));
   document.querySelectorAll('[data-tree-toggle]').forEach(btn => btn.addEventListener('click', () => {
     const target = document.getElementById(btn.dataset.treeToggle);
     if(!target) return;
@@ -3108,6 +3193,7 @@ function projectTotals(project){
   let status = 'notStarted';
   if(collections > 0 && remaining <= 0.01) status = 'complete';
   else if(collections > 0) status = 'partial';
+  else if(invoiced > 0) status = 'invoicedNotCollected'; // has an invoice on record, but zero collected — distinct from a project that was never invoiced at all
   return { deals, collections, invoiced, remaining, status, txCount: txs.length };
 }
 // Cross-reference: the actual ledger balance for a partner with this exact
@@ -3609,7 +3695,7 @@ function openProjectTxModal(projectId){
         </div>
         <div class="table-wrap" style="max-height:320px;overflow:auto">
           <table><thead><tr>
-            <th>${t('txDateCol')}</th><th>${t('txTypeCol')}</th><th>${t('txAmountCol')}</th><th>${t('txInvoiceNoCol')}</th><th>${t('txExRateCol')}</th><th>${t('txRemarksCol')}</th><th></th>
+            <th>${t('txDateCol')}</th><th>${t('txTypeCol')}</th><th class="num-cell">${t('txAmountCol')}</th><th>${t('txInvoiceNoCol')}</th><th>${t('txExRateCol')}</th><th>${t('txRemarksCol')}</th><th></th>
           </tr></thead><tbody>
             ${txs.length ? txs.map(tx=>`<tr>
               <td class="num">${tx.date}</td>
@@ -4075,6 +4161,7 @@ const ICONS = {
   sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12h2.5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>',
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>',
   download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>',
+  filterFunnel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>',
 };
 
 /* =========================================================================
@@ -4767,7 +4854,7 @@ function renderDashboard(root){
           ${kpi(t('periodPayments'), fmt(liq.outflow), '', '')}
         </div>
         <div class="table-wrap" style="max-height:260px;overflow-y:auto"><table><thead><tr>
-          <th>${t('account')}</th><th>${t('currency')}</th><th>${t('balanceEGP')}</th><th>${t('nativeCurrency')}</th>
+          <th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('balanceEGP')}</th><th class="num-cell">${t('nativeCurrency')}</th>
         </tr></thead><tbody>
           ${liq.rows.map(r=>`<tr>
             <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
@@ -4783,7 +4870,7 @@ function renderDashboard(root){
         <h2>${ICONS.users.replace('currentColor','var(--gold-dim)')} ${t('currentAccountsBalances')} <span class="badge-count">${currentAccounts.length}</span></h2>
         <div class="desc">${t('currentAccountsDesc')}</div>
         ${currentAccounts.length ? `<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr>
-          <th>${t('account')}</th><th>${t('currency')}</th><th>${t('balanceEGP')}</th><th>${t('nativeCurrency')}</th>
+          <th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('balanceEGP')}</th><th class="num-cell">${t('nativeCurrency')}</th>
         </tr></thead><tbody>
           ${currentAccounts.map(r=>`<tr>
             <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
@@ -4979,7 +5066,7 @@ function emptyState(title,msg,goto){
 
 function tableCostCenters(cc, compact){
   return `<div class="table-wrap"><table><thead><tr>
-    <th>${t('costCenterProject')}</th><th>${t('revenue')}</th><th>${t('cost')}</th><th>${t('profitLoss')}</th>${compact?'':'<th>'+t('margin')+'</th>'}
+    <th>${t('costCenterProject')}</th><th class="num-cell">${t('revenue')}</th><th class="num-cell">${t('cost')}</th><th class="num-cell">${t('profitLoss')}</th>${compact?'':'<th class="num-cell">'+t('margin')+'</th>'}
   </tr></thead><tbody>
     ${cc.map(r=>`<tr>
       <td>${escapeHtml(r.name)}</td>
@@ -4992,7 +5079,7 @@ function tableCostCenters(cc, compact){
 }
 function tablePartners(list, compact){
   return `<div class="table-wrap"><table><thead><tr>
-    <th>${t('partnerColLabel')}</th><th>${t('debitEgpCol')}</th><th>${t('creditEgpCol')}</th><th>${t('balance')}</th>
+    <th>${t('partnerColLabel')}</th><th class="num-cell">${t('debitEgpCol')}</th><th class="num-cell">${t('creditEgpCol')}</th><th class="num-cell">${t('balance')}</th>
   </tr></thead><tbody>
     ${list.map(r=>`<tr>
       <td class="drill" onclick="drillToPartner('${jsAttrEscape(r.name)}')">${escapeHtml(r.name)}</td>
@@ -5187,10 +5274,14 @@ function renderTrialBalanceView(root){
 
   function groupTable(g){
     const viewKey = 'trialbalance_' + g.currency;
-    const sorted = applySort(viewKey, g.rows, (r,col) => r[col]);
+    const colf = { code:'colf_tb_'+g.currency+'_code', name:'colf_tb_'+g.currency+'_name', type:'colf_tb_'+g.currency+'_type', opening:'colf_tb_'+g.currency+'_opening', debit:'colf_tb_'+g.currency+'_debit', credit:'colf_tb_'+g.currency+'_credit', closing:'colf_tb_'+g.currency+'_closing' };
+    const filteredRows = g.rows.filter(r =>
+      passesColFilter(colf.code, r.code) && passesColFilter(colf.name, r.name) && passesColFilter(colf.type, r.type) &&
+      passesColFilter(colf.opening, r.opening) && passesColFilter(colf.debit, r.debit) && passesColFilter(colf.credit, r.credit) && passesColFilter(colf.closing, r.closing));
+    const sorted = applySort(viewKey, filteredRows, (r,col) => r[col]);
     registerExport(viewKey, `trial_balance_${g.currency}.xlsx`,
       [t('code'),t('accountName'),t('classification'),t('openingBalance'),t('debit'),t('credit'),t('closingBalance')],
-      g.rows.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]));
+      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]));
 
     const byCat = TB_CATEGORIES.map(cat => ({ ...cat, rows: sorted.filter(r=>cat.types.includes(r.type)) })).filter(c=>c.rows.length);
     const otherRows = sorted.filter(r => !TB_CATEGORIES.some(c=>c.types.includes(r.type)));
@@ -5221,7 +5312,13 @@ function renderTrialBalanceView(root){
       </div>
       <div class="table-wrap" style="max-height:560px;overflow-y:auto">
         <table><thead><tr>
-          ${sortTh(viewKey,'code',t('code'))}${sortTh(viewKey,'name',t('accountName'))}${sortTh(viewKey,'type',t('classification'))}${sortTh(viewKey,'opening',t('openingBalance'))}${sortTh(viewKey,'debit',t('debit'))}${sortTh(viewKey,'credit',t('credit'))}${sortTh(viewKey,'closing',t('closingBalance'))}
+          ${filterableTh(viewKey,'code',t('code'),colf.code,g.rows.map(r=>r.code))}
+          ${filterableTh(viewKey,'name',t('accountName'),colf.name,g.rows.map(r=>r.name))}
+          ${filterableTh(viewKey,'type',t('classification'),colf.type,g.rows.map(r=>r.type),{displayLabel:v=>accountTypeDisplay(v)||'—'})}
+          ${filterableTh(viewKey,'opening',t('openingBalance'),colf.opening,g.rows.map(r=>r.opening),{extraClass:'num-cell',displayLabel:fmt})}
+          ${filterableTh(viewKey,'debit',t('debit'),colf.debit,g.rows.map(r=>r.debit),{extraClass:'num-cell',displayLabel:fmt})}
+          ${filterableTh(viewKey,'credit',t('credit'),colf.credit,g.rows.map(r=>r.credit),{extraClass:'num-cell',displayLabel:fmt})}
+          ${filterableTh(viewKey,'closing',t('closingBalance'),colf.closing,g.rows.map(r=>r.closing),{extraClass:'num-cell',displayLabel:fmt})}
         </tr></thead><tbody>
           ${byCat.map(catBlock).join('')}
           ${otherRows.length ? `<tr class="total-row"><td colspan="7">${t('otherCategoryLabel')}</td></tr>` + otherRows.map(r=>`<tr>
@@ -5232,10 +5329,10 @@ function renderTrialBalanceView(root){
           </tr>`).join('') : ''}
           <tr class="total-row">
             <td colspan="3">${t('totalOfCurrency')} (${escapeHtml(g.currency)})</td>
-            <td class="num-cell num">${fmt(g.totals.opening)}</td>
-            <td class="num-cell num">${fmt(g.totals.debit)}</td>
-            <td class="num-cell num">${fmt(g.totals.credit)}</td>
-            <td class="num-cell num">${fmt(g.totals.closing)}</td>
+            <td class="num-cell num">${fmt(filteredRows.reduce((s,r)=>s+r.opening,0))}</td>
+            <td class="num-cell num">${fmt(filteredRows.reduce((s,r)=>s+r.debit,0))}</td>
+            <td class="num-cell num">${fmt(filteredRows.reduce((s,r)=>s+r.credit,0))}</td>
+            <td class="num-cell num">${fmt(filteredRows.reduce((s,r)=>s+r.closing,0))}</td>
           </tr>
         </tbody></table>
       </div>
@@ -5262,6 +5359,7 @@ function renderTrialBalanceView(root){
     STATE.ui.tbCurrencyFilter = btn.dataset.tbCur;
     renderApp();
   }));
+  bindColFilterHandler(tb.groups.flatMap(g => ['code','name','type','opening','debit','credit','closing'].map(col => 'colf_tb_'+g.currency+'_'+col)));
 }
 
 /* =========================================================================
@@ -5285,7 +5383,7 @@ function renderLiquidityView(root){
       <h2>${ICONS.droplet.replace('currentColor','var(--gold-dim)')} ${t('cashBankDetailTitle')} <span class="badge-count">${liq.rows.length}</span></h2>
       <div class="desc">${t('cashBankDetailDesc')}</div>
       ${liq.rows.length ? `<div class="table-wrap"><table><thead><tr>
-        <th>${t('codeCol')}</th><th>${t('account')}</th><th>${t('currency')}</th><th>${t('openingBalanceEgpCol')}</th><th>${t('inflowEgpCol')}</th><th>${t('outflowEgpCol')}</th><th>${t('currentBalanceEgpCol')}</th><th>${t('nativeCurrencyBalanceCol')}</th>
+        <th>${t('codeCol')}</th><th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('openingBalanceEgpCol')}</th><th class="num-cell">${t('inflowEgpCol')}</th><th class="num-cell">${t('outflowEgpCol')}</th><th class="num-cell">${t('currentBalanceEgpCol')}</th><th class="num-cell">${t('nativeCurrencyBalanceCol')}</th>
       </tr></thead><tbody>
         ${liq.rows.map(r=>`<tr>
           <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
@@ -5356,7 +5454,7 @@ function renderFxRevaluationView(root){
     <div class="card">
       <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('revaluationTitle')} <span class="badge-count">${rev.rows.length}</span></h2>
       <div class="table-wrap"><table><thead><tr>
-        <th>${t('code')}</th><th>${t('account')}</th><th>${t('currency')}</th><th>${t('nativeBalance')}</th><th>${t('bookBalanceEGP')}</th><th>${t('avgBookRate')}</th><th>${t('enteredRate')}</th><th>${t('revaluedBalanceEGP')}</th><th>${t('diffGainLoss')}</th>
+        <th>${t('code')}</th><th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('nativeBalance')}</th><th class="num-cell">${t('bookBalanceEGP')}</th><th class="num-cell">${t('avgBookRate')}</th><th class="num-cell">${t('enteredRate')}</th><th class="num-cell">${t('revaluedBalanceEGP')}</th><th class="num-cell">${t('diffGainLoss')}</th>
       </tr></thead><tbody>
         ${rev.rows.map(r=>`<tr>
           <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
@@ -5378,7 +5476,7 @@ function renderFxRevaluationView(root){
       <h2>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${t('suggestedEntryTitle')}</h2>
       <div class="desc">${t('suggestedEntryDesc')}</div>
       ${rowsWithDiff.length ? `<div class="table-wrap"><table><thead><tr>
-        <th>${t('account')}</th><th>${t('description')}</th><th>${t('debit')}</th><th>${t('credit')}</th>
+        <th>${t('account')}</th><th>${t('description')}</th><th class="num-cell">${t('debit')}</th><th class="num-cell">${t('credit')}</th>
       </tr></thead><tbody>
         ${rowsWithDiff.map(r=>{
           const gainAcc = STATE.accountsByCode[STATE.settings.fxGainAccount];
@@ -5510,12 +5608,23 @@ function renderAccountStatementView(root, alwaysCombined){
   const { opening, rows: rowsAll } = generalLedgerRows(periodLines, selectedCodes, selectedPartners, selectedJournals, rangeStart, rangeEnd, { descSearch, currencyFilter, costCenters: selectedCostCenters });
   const rows = voucherSearch ? rowsAll.filter(l => (l.entry||'').toLowerCase().includes(voucherSearch)) : rowsAll;
 
+  const viewKey = 'gl';
+  // Excel-style per-column filters (funnel icon on each header) — kept
+  // distinct from the account/partner/journal/cost-center/search filters
+  // above, which stay as they are. `rows` above is the base used to build
+  // each column's checklist; `rowsF` is what's actually shown/sorted/totalled.
+  const glColf = { seq:'colf_gl_seq', date:'colf_gl_date', entry:'colf_gl_entry', ref:'colf_gl_ref', account:'colf_gl_account', partner:'colf_gl_partner', cur:'colf_gl_cur', debit:'colf_gl_debit', credit:'colf_gl_credit', product:'colf_gl_product', curAmt:'colf_gl_curAmt', movement:'colf_gl_movement' };
+  const rowsF = rows.filter(r =>
+    passesColFilter(glColf.seq, r.seq||'') && passesColFilter(glColf.date, r.date) && passesColFilter(glColf.entry, r.entry) &&
+    passesColFilter(glColf.ref, r.ref||'') && passesColFilter(glColf.account, r.code+' '+accName(r.code)) && passesColFilter(glColf.partner, r.partner||'') &&
+    passesColFilter(glColf.cur, r.cur||'EGP') && passesColFilter(glColf.debit, r.debit||0) && passesColFilter(glColf.credit, r.credit||0) &&
+    passesColFilter(glColf.product, r.product||'') && passesColFilter(glColf.curAmt, r.curAmt||0) && passesColFilter(glColf.movement, r.movement));
+
   // Determine if the filtered set is single-currency (so a native-currency column makes sense)
-  const involvedCurrencies = uniq(rows.map(l => (STATE.accountsByCode[l.code]||{}).currency || 'EGP'));
+  const involvedCurrencies = uniq(rowsF.map(l => (STATE.accountsByCode[l.code]||{}).currency || 'EGP'));
   const singleForeign = involvedCurrencies.length === 1 && involvedCurrencies[0] !== 'EGP' ? involvedCurrencies[0] : null;
 
-  const viewKey = 'gl';
-  const sorted = applySort(viewKey, rows, (r,col) => {
+  const sorted = applySort(viewKey, rowsF, (r,col) => {
     if(col==='account') return r.code + ' ' + accName(r.code);
     if(col==='movement') return r.movement;
     if(col==='seq') return r.seq||0;
@@ -5577,7 +5686,7 @@ function renderAccountStatementView(root, alwaysCombined){
         <button class="btn btn-outline" style="padding:8px 14px;font-size:12px" onclick="printCurrentView()">${t('printPdf')}</button>
       </div>
       <div class="grid-3" style="margin-bottom:14px">
-        ${kpi(t('movementsCountLabel'), fmtInt(rows.length), '', '')}
+        ${kpi(t('movementsCountLabel'), fmtInt(rowsF.length), '', '')}
         ${showOpening ? kpi(t('openingBalanceBeforePeriod'), fmt(opening), opening>=0?'pos':'neg', '') : ''}
         ${kpi(t('finalRunningBalanceLabel'), fmt(displayRows.length?displayRows[displayRows.length-1].running:opening), '', '')}
       </div>
@@ -5615,7 +5724,7 @@ function renderAccountStatementView(root, alwaysCombined){
     function accLedgerTable(rows, curLabel, opening, totD, totC){
       return `<div class="table-wrap" style="max-height:500px;overflow-y:auto">
         <table><thead><tr>
-          <th>#</th><th>${t('date')}</th><th>${t('entry')}</th><th>${t('description')}</th><th>${t('partner')}</th><th>${t('debit')} ${curLabel}</th><th>${t('credit')} ${curLabel}</th><th>${t('productCol')}</th><th>${t('origCurrencyAmountCol')}</th><th>${t('conversionFactorCol')}</th><th>${t('runningBalance')}</th>
+          <th>#</th><th>${t('date')}</th><th>${t('entry')}</th><th>${t('description')}</th><th>${t('partner')}</th><th class="num-cell">${t('debit')} ${curLabel}</th><th class="num-cell">${t('credit')} ${curLabel}</th><th>${t('productCol')}</th><th class="num-cell">${t('origCurrencyAmountCol')}</th><th class="num-cell">${t('conversionFactorCol')}</th><th class="num-cell">${t('runningBalance')}</th>
         </tr></thead><tbody>
           <tr class="total-row"><td colspan="7">${t('openingBalance')}</td><td></td><td></td><td class="num-cell num">${fmt(opening)}</td></tr>
           ${rows.length ? rows.map(r=>{
@@ -5669,10 +5778,20 @@ function renderAccountStatementView(root, alwaysCombined){
       <div class="card">
         <div class="table-wrap" style="max-height:600px;overflow-y:auto">
           <table><thead><tr>
-            ${sortTh(viewKey,'seq','#')}${sortTh(viewKey,'date',t('date'))}${sortTh(viewKey,'entry',t('entry'))}${sortTh(viewKey,'ref',t('description'))}${sortTh(viewKey,'account',t('account'))}${sortTh(viewKey,'partner',t('partner'))}${sortTh(viewKey,'cur',t('currency'))}${sortTh(viewKey,'debit',t('debit')+' EGP')}${sortTh(viewKey,'credit',t('credit')+' EGP')}
-            ${sortTh(viewKey,'product',t('productCol'))}${sortTh(viewKey,'curAmt',t('origCurrencyAmountCol'))}${sortTh(viewKey,'convFactor',t('conversionFactorCol'))}
-            ${singleForeign ? `<th>${t('debit')} ${escapeHtml(singleForeign)}</th><th>${t('credit')} ${escapeHtml(singleForeign)}</th>` : ''}
-            ${sortTh(viewKey,'movement',t('movement'))}${sortTh(viewKey,'running',t('runningBalance'))}
+            ${filterableTh(viewKey,'seq','#',glColf.seq,rows.map(r=>r.seq||''))}
+            ${filterableTh(viewKey,'date',t('date'),glColf.date,rows.map(r=>r.date))}
+            ${filterableTh(viewKey,'entry',t('entry'),glColf.entry,rows.map(r=>r.entry))}
+            ${filterableTh(viewKey,'ref',t('description'),glColf.ref,rows.map(r=>r.ref||''))}
+            ${filterableTh(viewKey,'account',t('account'),glColf.account,rows.map(r=>r.code+' '+accName(r.code)))}
+            ${filterableTh(viewKey,'partner',t('partner'),glColf.partner,rows.map(r=>r.partner||''))}
+            ${filterableTh(viewKey,'cur',t('currency'),glColf.cur,rows.map(r=>r.cur||'EGP'))}
+            ${filterableTh(viewKey,'debit',t('debit')+' EGP',glColf.debit,rows.map(r=>r.debit||0),{extraClass:'num-cell',displayLabel:fmt})}
+            ${filterableTh(viewKey,'credit',t('credit')+' EGP',glColf.credit,rows.map(r=>r.credit||0),{extraClass:'num-cell',displayLabel:fmt})}
+            ${filterableTh(viewKey,'product',t('productCol'),glColf.product,rows.map(r=>r.product||''))}
+            ${filterableTh(viewKey,'curAmt',t('origCurrencyAmountCol'),glColf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
+            ${sortTh(viewKey,'convFactor',t('conversionFactorCol'),'num-cell')}
+            ${singleForeign ? `<th class="num-cell">${t('debit')} ${escapeHtml(singleForeign)}</th><th class="num-cell">${t('credit')} ${escapeHtml(singleForeign)}</th>` : ''}
+            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance'),'num-cell')}
             <th>${t('actionsCol')}</th>
           </tr></thead><tbody>
             ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td><td></td></tr>` : ''}
@@ -5730,6 +5849,7 @@ function renderAccountStatementView(root, alwaysCombined){
     if(id === 'gl_costcenters') STATE.ui.glCostCenters = values;
     renderApp();
   };
+  bindColFilterHandler(Object.values(glColf));
   const chk = document.getElementById('glShowOpeningChk');
   if(chk) chk.addEventListener('change', () => { STATE.ui.glShowOpening = chk.checked; renderApp(); });
   attachDebouncedSearchInput('glVoucherSearch', v => { STATE.ui.glVoucherSearch = v; });
@@ -5795,7 +5915,7 @@ function renderCustomerLedgerPage(root, cfg){
     const totalCredit = rows.reduce((s,r)=>s+(r.dispCredit||0),0);
     return `<div class="table-wrap" style="max-height:400px;overflow-y:auto">
       <table><thead><tr>
-        <th>${t('date')}</th><th>${t('entry')}</th><th>${t('account')}</th><th>${t('description')}</th><th>${t('debit')} (${curLabel})</th><th>${t('credit')} (${curLabel})</th><th>${t('productCol')}</th><th>${t('origCurrencyAmountCol')}</th><th>${t('conversionFactorCol')}</th><th>${t('balance')}</th>
+        <th>${t('date')}</th><th>${t('entry')}</th><th>${t('account')}</th><th>${t('description')}</th><th class="num-cell">${t('debit')} (${curLabel})</th><th class="num-cell">${t('credit')} (${curLabel})</th><th>${t('productCol')}</th><th class="num-cell">${t('origCurrencyAmountCol')}</th><th class="num-cell">${t('conversionFactorCol')}</th><th class="num-cell">${t('balance')}</th>
       </tr></thead><tbody>
         ${rows.length ? rows.map(r=>{
           const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
@@ -5963,20 +6083,34 @@ function renderProjectsView(root){
   STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:[], seller:[], status:[] };
   const pf = STATE.ui.projectsFilter;
   const sellers = uniq(STATE.projects.map(p=>p.seller).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
-  const statusValues = ['complete','partial','notStarted'];
+  const statusValues = ['complete','partial','invoicedNotCollected','notStarted'];
+  const nameSearch = (STATE.ui.projectsNameSearch || '').trim().toLowerCase();
+  const viewKey = 'projects';
+  const colf = { id:'colf_pj_id', name:'colf_pj_name', currency:'colf_pj_currency', amount:'colf_pj_amount', collected:'colf_pj_collected', remaining:'colf_pj_remaining', status:'colf_pj_status', ledger:'colf_pj_ledger', seller:'colf_pj_seller', startDate:'colf_pj_startDate' };
 
-  const rows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
-    .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)))
-    .sort((a,b) => (a.p.startDate||'').localeCompare(b.p.startDate||''));
+  const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
+    .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)) && (!nameSearch || (r.p.name||'').toLowerCase().includes(nameSearch)));
+  const rows = baseRows.filter(r =>
+    passesColFilter(colf.id, r.p.id) && passesColFilter(colf.name, r.p.name) && passesColFilter(colf.currency, r.p.currency) &&
+    passesColFilter(colf.amount, r.p.amount) && passesColFilter(colf.collected, r.t.collections) && passesColFilter(colf.remaining, r.t.remaining) &&
+    passesColFilter(colf.status, r.t.status) && passesColFilter(colf.ledger, r.ledger) && passesColFilter(colf.seller, r.p.seller||'') && passesColFilter(colf.startDate, r.p.startDate||''));
+  const sortAccessor = (r, col) => {
+    if(col==='id') return r.p.id; if(col==='name') return r.p.name; if(col==='currency') return r.p.currency;
+    if(col==='amount') return r.p.amount; if(col==='collected') return r.t.collections; if(col==='remaining') return r.t.remaining;
+    if(col==='status') return r.t.status; if(col==='ledger') return r.ledger; if(col==='seller') return r.p.seller||'';
+    if(col==='startDate') return r.p.startDate||''; return '';
+  };
+  getSortState(viewKey, 'startDate', 'asc'); // preserves the table's previous default order until the user picks a column
+  const sortedRows = applySort(viewKey, rows, sortAccessor);
 
   const totalRemainingEGP = STATE.projects.filter(p=>p.currency==='EGP').reduce((s,p)=>s+projectTotals(p).remaining,0);
   const totalRemainingUSD = STATE.projects.filter(p=>p.currency==='USD').reduce((s,p)=>s+projectTotals(p).remaining,0);
-  const statusLabel = s => s==='complete'?t('statusComplete'):s==='partial'?t('statusPartial'):t('statusNotStarted');
-  const statusPillClass = s => s==='complete'?'pill-em':s==='partial'?'pill-gold':'pill-brick';
+  const statusLabel = s => s==='complete'?t('statusComplete'):s==='partial'?t('statusPartial'):s==='invoicedNotCollected'?t('statusInvoicedNotCollected'):t('statusNotStarted');
+  const statusPillClass = s => s==='complete'?'pill-em':s==='partial'?'pill-gold':s==='invoicedNotCollected'?'pill-blue':'pill-brick';
 
   registerExport('projects', 'projects_tracking.xlsx',
     [t('projectIdCol'),t('projectNameCol'),t('projectCurrencyCol'),t('projectAmountCol'),t('projectCollectedCol'),t('projectRemainingCol'),t('projectStatusCol'),t('projectLedgerBalanceCol'),t('projectSellerCol'),t('projectStartDateCol')],
-    rows.map(r=>[r.p.id, r.p.name, r.p.currency, r.p.amount, r.t.collections, r.t.remaining, statusLabel(r.t.status), r.ledger!=null?r.ledger:'', r.p.seller||'', r.p.startDate||'']));
+    sortedRows.map(r=>[r.p.id, r.p.name, r.p.currency, r.p.amount, r.t.collections, r.t.remaining, statusLabel(r.t.status), r.ledger!=null?r.ledger:'', r.p.seller||'', r.p.startDate||'']));
 
   root.innerHTML = `
     <div class="card">
@@ -6001,6 +6135,9 @@ function renderProjectsView(root){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+          <div><label class="lbl">${t('searchByProjectNameLabel')}</label>
+            <input type="text" id="pfNameSearch" class="input" style="min-width:180px" placeholder="${t('searchByProjectNamePlaceholder')}" value="${escapeHtml(STATE.ui.projectsNameSearch||'')}">
+          </div>
           ${multiSelectHtml('pf_currency', t('projectCurrencyCol'), ['EGP','USD'], pf.currency)}
           ${sellers.length ? multiSelectHtml('pf_seller', t('projectSellerCol'), sellers, pf.seller) : ''}
           ${multiSelectHtml('pf_status', t('projectStatusCol'), statusValues, pf.status, {displayLabel: statusLabel})}
@@ -6008,11 +6145,19 @@ function renderProjectsView(root){
         ${exportBtnHtml('projects')}
       </div>
       ${rows.length ? `<div class="table-wrap"><table><thead><tr>
-        <th>${t('projectIdCol')}</th><th>${t('projectNameCol')}</th><th>${t('projectCurrencyCol')}</th><th>${t('projectAmountCol')}</th>
-        <th>${t('projectCollectedCol')}</th><th>${t('projectRemainingCol')}</th><th>${t('projectStatusCol')}</th><th>${t('projectLedgerBalanceCol')}</th>
-        <th>${t('projectSellerCol')}</th><th>${t('projectStartDateCol')}</th><th></th>
+        ${filterableTh(viewKey,'id',t('projectIdCol'),colf.id,STATE.projects.map(p=>p.id))}
+        ${filterableTh(viewKey,'name',t('projectNameCol'),colf.name,STATE.projects.map(p=>p.name))}
+        ${filterableTh(viewKey,'currency',t('projectCurrencyCol'),colf.currency,STATE.projects.map(p=>p.currency))}
+        ${filterableTh(viewKey,'amount',t('projectAmountCol'),colf.amount,STATE.projects.map(p=>p.amount),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'collected',t('projectCollectedCol'),colf.collected,baseRows.map(r=>r.t.collections),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'remaining',t('projectRemainingCol'),colf.remaining,baseRows.map(r=>r.t.remaining),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'status',t('projectStatusCol'),colf.status,statusValues,{displayLabel:statusLabel})}
+        ${filterableTh(viewKey,'ledger',t('projectLedgerBalanceCol'),colf.ledger,baseRows.map(r=>r.ledger).filter(v=>v!=null),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'seller',t('projectSellerCol'),colf.seller,sellers)}
+        ${filterableTh(viewKey,'startDate',t('projectStartDateCol'),colf.startDate,STATE.projects.map(p=>p.startDate).filter(Boolean))}
+        <th></th>
       </tr></thead><tbody>
-        ${rows.map(r=>`<tr>
+        ${sortedRows.map(r=>`<tr>
           <td class="num">${r.p.id}</td>
           <td class="drill" onclick="openProjectTxModal(${r.p.id})">${escapeHtml(r.p.name)}</td>
           <td><span class="pill pill-gold">${r.p.currency}</span></td>
@@ -6030,11 +6175,13 @@ function renderProjectsView(root){
     </div>
   `;
 
+  attachDebouncedSearchInput('pfNameSearch', v => { STATE.ui.projectsNameSearch = v; });
   STATE.ui.__msHandler = (id, values) => {
     if(id === 'pf_currency'){ pf.currency = values; renderApp(); }
     else if(id === 'pf_seller'){ pf.seller = values; renderApp(); }
     else if(id === 'pf_status'){ pf.status = values; renderApp(); }
   };
+  bindColFilterHandler(Object.values(colf));
   // Reset: per explicit request, this wipes this page's own stored data
   // (STATE.projects + STATE.projectTx) — NOT just UI state — so the user can
   // re-import a fresh Excel file from scratch. It never touches STATE.journal,
@@ -6049,7 +6196,10 @@ function renderProjectsView(root){
       await storeSet('projects', STATE.projects);
       await storeSet('projectTx', STATE.projectTx);
       STATE.ui.projectsFilter = { currency:[], seller:[], status:[] };
+      STATE.ui.projectsNameSearch = '';
       if(STATE.ui.msTouched){ delete STATE.ui.msTouched.pf_currency; delete STATE.ui.msTouched.pf_seller; delete STATE.ui.msTouched.pf_status; }
+      Object.values(colf).forEach(id => { if(STATE.ui.colFilters) delete STATE.ui.colFilters[id]; if(STATE.ui.msTouched) delete STATE.ui.msTouched[id]; });
+      if(STATE.ui.sort) delete STATE.ui.sort[viewKey];
       STATE.ui.openMultiSelect = null;
       renderApp();
       showToast(t('projectsPageResetToast'));
@@ -6085,7 +6235,11 @@ function renderCostCentersView(root){
   const totalProfit = cc.reduce((s,r)=>s+r.profit,0);
   const winners = cc.filter(r=>r.profit>=0).length;
   const viewKey = 'costcenters';
-  const sorted = applySort(viewKey, cc, (r,col)=>r[col]);
+  const colf = { name:'colf_cc_name', revenue:'colf_cc_revenue', cost:'colf_cc_cost', profit:'colf_cc_profit', margin:'colf_cc_margin' };
+  const ccFiltered = cc.filter(r =>
+    passesColFilter(colf.name, r.name) && passesColFilter(colf.revenue, r.revenue) &&
+    passesColFilter(colf.cost, r.cost) && passesColFilter(colf.profit, r.profit) && passesColFilter(colf.margin, r.margin));
+  const sorted = applySort(viewKey, ccFiltered, (r,col)=>r[col]);
   registerExport(viewKey, 'cost_centers.xlsx', [t('costCentersFilterLabel'),t('costCenterRevenueCol'),t('costCenterCostsCol'),t('costCenterNetCol'),t('costCenterMarginCol')],
     cc.map(r=>[r.name, r.revenue, r.cost, r.profit, r.margin]));
 
@@ -6103,10 +6257,14 @@ function renderCostCentersView(root){
       ${kpi(activeFilter?t('selectedCostCentersTotal'):t('totalNetProfitLossLabel'), fmt(totalProfit), totalProfit>=0?'pos':'neg', '')}
     </div>
     <div class="card">
-      <h2>${ICONS.target.replace('currentColor','var(--gold-dim)')} ${t('costCentersPerformanceTitle')} <span class="badge-count">${cc.length}</span></h2>
+      <h2>${ICONS.target.replace('currentColor','var(--gold-dim)')} ${t('costCentersPerformanceTitle')} <span class="badge-count">${ccFiltered.length}</span></h2>
       <div class="desc">${t('costCentersPerformanceDesc')}</div>
       ${cc.length ? `<div class="table-wrap" style="max-height:600px;overflow-y:auto"><table><thead><tr>
-        ${sortTh(viewKey,'name',t('costCenterProject'))}${sortTh(viewKey,'revenue',t('revenue'))}${sortTh(viewKey,'cost',t('cost'))}${sortTh(viewKey,'profit',t('profitLoss'))}${sortTh(viewKey,'margin',t('margin'))}
+        ${filterableTh(viewKey,'name',t('costCenterProject'),colf.name,cc.map(r=>r.name))}
+        ${filterableTh(viewKey,'revenue',t('revenue'),colf.revenue,cc.map(r=>r.revenue),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'cost',t('cost'),colf.cost,cc.map(r=>r.cost),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'profit',t('profitLoss'),colf.profit,cc.map(r=>r.profit),{extraClass:'num-cell',displayLabel:fmt})}
+        ${filterableTh(viewKey,'margin',t('margin'),colf.margin,cc.map(r=>r.margin),{extraClass:'num-cell',displayLabel:v=>v==null?'—':fmt(v)+'%'})}
       </tr></thead><tbody>
         ${sorted.map(r=>`<tr>
           <td>${escapeHtml(r.name)}</td>
@@ -6117,9 +6275,9 @@ function renderCostCentersView(root){
         </tr>`).join('')}
         <tr class="total-row">
           <td>${activeFilter?t('selectedCostCentersTotal'):t('total')}</td>
-          <td class="num-cell num drill" onclick="ccDrill(null,'revenue')">${fmt(cc.reduce((s,r)=>s+r.revenue,0))}</td>
-          <td class="num-cell num drill" onclick="ccDrill(null,'cost')">${fmt(cc.reduce((s,r)=>s+r.cost,0))}</td>
-          <td class="num-cell num drill ${totalProfit>=0?'pos-text':'neg-text'}" onclick="ccDrill(null,'profit')">${fmt(totalProfit)}</td>
+          <td class="num-cell num drill" onclick="ccDrill(null,'revenue')">${fmt(ccFiltered.reduce((s,r)=>s+r.revenue,0))}</td>
+          <td class="num-cell num drill" onclick="ccDrill(null,'cost')">${fmt(ccFiltered.reduce((s,r)=>s+r.cost,0))}</td>
+          <td class="num-cell num drill ${ccFiltered.reduce((s,r)=>s+r.profit,0)>=0?'pos-text':'neg-text'}" onclick="ccDrill(null,'profit')">${fmt(ccFiltered.reduce((s,r)=>s+r.profit,0))}</td>
           <td></td>
         </tr>
       </tbody></table></div>` : emptyMini(t('noCostCenterEntries'))}
@@ -6129,6 +6287,7 @@ function renderCostCentersView(root){
   STATE.ui.__msHandler = (id, values) => {
     if(id === 'cc_filter'){ STATE.ui.selectedCostCenters = values; renderApp(); }
   };
+  bindColFilterHandler(Object.values(colf));
 }
 
 /* =========================================================================
@@ -6376,7 +6535,7 @@ function renderComparisonTables(){
     <div class="grid-2">
       <div class="card">
         <h2>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('incomeStatementComparisonTitle')}</h2>
-        <div class="table-wrap"><table><thead><tr><th>${t('itemCol')}</th>${columns.map(c=>`<th>${escapeHtml(c.label)}</th>`).join('')}</tr></thead><tbody>
+        <div class="table-wrap"><table><thead><tr><th>${t('itemCol')}</th>${columns.map(c=>`<th class="num-cell">${escapeHtml(c.label)}</th>`).join('')}</tr></thead><tbody>
           ${isRow(t('revenueLine'), is=>is.revenue)}
           ${isRow(t('cogsLine'), is=>-is.cogs)}
           ${isRow(t('grossProfit'), is=>is.grossProfit, true)}
@@ -6389,7 +6548,7 @@ function renderComparisonTables(){
       </div>
       <div class="card">
         <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('balanceSheetComparisonTitle')}</h2>
-        <div class="table-wrap"><table><thead><tr><th>${t('itemCol')}</th>${columns.map(c=>`<th>${escapeHtml(c.label)}</th>`).join('')}</tr></thead><tbody>
+        <div class="table-wrap"><table><thead><tr><th>${t('itemCol')}</th>${columns.map(c=>`<th class="num-cell">${escapeHtml(c.label)}</th>`).join('')}</tr></thead><tbody>
           ${bsRow(t('currentAssets'), bs=>bs.currentAssets)}
           ${bsRow(t('fixedAssetsNet'), bs=>bs.fixedAssets)}
           ${bsRow(t('totalAssets'), bs=>bs.assets, true)}
@@ -6546,7 +6705,7 @@ function renderCashFlowView(root){
       <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('cfNetChangeDetail')}</h2>
       <div class="desc">${t('cfNetChangeDesc')}</div>
       <div class="table-wrap"><table><thead><tr>
-        <th>${t('account')}</th><th>${t('openingBalanceShort2')}</th><th>${t('debitDeposits')}</th><th>${t('creditWithdrawals')}</th><th>${t('netMovement')}</th><th>${t('closingBalanceShort2')}</th>
+        <th>${t('account')}</th><th class="num-cell">${t('openingBalanceShort2')}</th><th class="num-cell">${t('debitDeposits')}</th><th class="num-cell">${t('creditWithdrawals')}</th><th class="num-cell">${t('netMovement')}</th><th class="num-cell">${t('closingBalanceShort2')}</th>
       </tr></thead><tbody>
         ${cashRows.length ? cashRows.map(r=>`<tr>
           <td class="drill" onclick="cfDrill(null,'${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
