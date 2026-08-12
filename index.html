@@ -3689,9 +3689,26 @@ function openProjectTxModal(projectId){
   if(!project) return;
   let showAddForm = false;
   let editingRowId = null; // null = adding a new transaction; set = editing this existing one
+  let localSort = { col: 'date', dir: 'asc' }; // this modal has its own render() loop (not the global renderApp()), so sorting is handled locally rather than via the shared filterableTh/toggleSort machinery
+  function txSortValue(tx, col){
+    if(col==='amount') return tx.amount||0;
+    if(col==='exRate') return tx.exRate||0;
+    if(col==='type') return tx.type==='deal'?t('txTypeDeal'):tx.type==='collection'?t('txTypeCollection'):t('txTypeInvoicing');
+    return tx[col]||'';
+  }
+  function localSortTh(col, label, extraClass){
+    const active = localSort.col === col;
+    const arrow = active ? (localSort.dir==='asc'?' ▲':' ▼') : '';
+    return `<th class="sortable-th${extraClass?' '+extraClass:''}" data-local-sort-col="${col}">${label}${arrow}</th>`;
+  }
 
   function render(){
     const txs = projectTxFor(projectId);
+    const sortedTxs = [...txs].sort((a,b) => {
+      const va = txSortValue(a, localSort.col), vb = txSortValue(b, localSort.col);
+      const cmp = (typeof va === 'number' && typeof vb === 'number') ? va - vb : String(va).localeCompare(String(vb), 'ar');
+      return localSort.dir === 'asc' ? cmp : -cmp;
+    });
     const tot = projectTotals(project);
     const editing = editingRowId ? txs.find(tx=>tx.rowId===editingRowId) : null;
     overlay.innerHTML = `
@@ -3704,9 +3721,9 @@ function openProjectTxModal(projectId){
         </div>
         <div class="table-wrap" style="max-height:320px;overflow:auto">
           <table><thead><tr>
-            <th>${t('txDateCol')}</th><th>${t('txTypeCol')}</th><th class="num-cell">${t('txAmountCol')}</th><th>${t('txInvoiceNoCol')}</th><th>${t('txExRateCol')}</th><th>${t('txRemarksCol')}</th><th></th>
+            ${localSortTh('date',t('txDateCol'))}${localSortTh('type',t('txTypeCol'))}${localSortTh('amount',t('txAmountCol'),'num-cell')}${localSortTh('invoiceNo',t('txInvoiceNoCol'))}${localSortTh('exRate',t('txExRateCol'))}${localSortTh('remarks',t('txRemarksCol'))}<th></th>
           </tr></thead><tbody>
-            ${txs.length ? txs.map(tx=>`<tr>
+            ${sortedTxs.length ? sortedTxs.map(tx=>`<tr>
               <td class="num">${tx.date}</td>
               <td><span class="pill pill-gold">${tx.type==='deal'?t('txTypeDeal'):tx.type==='collection'?t('txTypeCollection'):t('txTypeInvoicing')}</span></td>
               <td class="num-cell num">${fmt(tx.amount)}</td>
@@ -3749,6 +3766,12 @@ function openProjectTxModal(projectId){
     overlay.style.display = 'flex';
     document.getElementById('txClose').addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+    overlay.querySelectorAll('[data-local-sort-col]').forEach(th => th.addEventListener('click', () => {
+      const col = th.dataset.localSortCol;
+      if(localSort.col === col) localSort.dir = localSort.dir === 'asc' ? 'desc' : 'asc';
+      else { localSort.col = col; localSort.dir = 'asc'; }
+      render();
+    }));
     document.getElementById('txAddToggle').addEventListener('click', () => { showAddForm = !showAddForm; editingRowId = null; render(); });
     const cancelEditBtn = document.getElementById('txCancelEdit');
     if(cancelEditBtn) cancelEditBtn.addEventListener('click', () => { editingRowId = null; render(); });
@@ -5071,34 +5094,6 @@ function emptyState(title,msg,goto){
     <div>${msg}</div>
     <div style="margin-top:16px"><button class="btn btn-gold" onclick="switchView('${goto}')">${t('goToImport')}</button></div>
   </div></div>`;
-}
-
-function tableCostCenters(cc, compact){
-  return `<div class="table-wrap"><table><thead><tr>
-    <th>${t('costCenterProject')}</th><th class="num-cell">${t('revenue')}</th><th class="num-cell">${t('cost')}</th><th class="num-cell">${t('profitLoss')}</th>${compact?'':'<th class="num-cell">'+t('margin')+'</th>'}
-  </tr></thead><tbody>
-    ${cc.map(r=>`<tr>
-      <td>${escapeHtml(r.name)}</td>
-      <td class="num-cell num">${fmt(r.revenue)}</td>
-      <td class="num-cell num">${fmt(r.cost)}</td>
-      <td class="num-cell num ${r.profit>=0?'pos-text':'neg-text'}">${fmt(r.profit)}</td>
-      ${compact?'':`<td class="num-cell num">${r.margin==null?'—':fmt(r.margin)+'%'}</td>`}
-    </tr>`).join('')}
-  </tbody></table></div>`;
-}
-function tablePartners(list, compact){
-  return `<div class="table-wrap"><table><thead><tr>
-    <th>${t('partnerColLabel')}</th><th class="num-cell">${t('debitEgpCol')}</th><th class="num-cell">${t('creditEgpCol')}</th><th class="num-cell">${t('balance')}</th>
-  </tr></thead><tbody>
-    ${list.map(r=>`<tr>
-      <td class="drill" onclick="drillToPartner('${jsAttrEscape(r.name)}')">${escapeHtml(r.name)}</td>
-      <td class="num-cell num">${fmt(r.debit)}</td>
-      <td class="num-cell num">${fmt(r.credit)}</td>
-      <td class="num-cell num ${r.balance>=0?'pos-text':'neg-text'}">${fmt(r.balance)}
-        ${(r.nativeByCur||[]).map(([cur,v])=>`<div class="hint" style="margin-top:2px">${escapeHtml(cur)} ${fmt(v)}</div>`).join('')}
-      </td>
-    </tr>`).join('')}
-  </tbody></table></div>`;
 }
 
 /* =========================================================================
