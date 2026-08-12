@@ -6157,16 +6157,17 @@ function ccDrill(ccName, kind){
 }
 
 function renderProjectsView(root){
-  STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:[], seller:[], status:[] };
+  STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:[], seller:[], status:[], name:[] };
   const pf = STATE.ui.projectsFilter;
+  if(!pf.name) pf.name = []; // upgrade older saved state that predates this filter
   const sellers = uniq(STATE.projects.map(p=>p.seller).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
+  const projectNames = uniq(STATE.projects.map(p=>p.name).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
   const statusValues = ['complete','partial','invoicedNotCollected','notStarted'];
-  const nameSearch = (STATE.ui.projectsNameSearch || '').trim().toLowerCase();
   const viewKey = 'projects';
   const colf = { id:'colf_pj_id', name:'colf_pj_name', currency:'colf_pj_currency', amount:'colf_pj_amount', collected:'colf_pj_collected', remaining:'colf_pj_remaining', status:'colf_pj_status', ledger:'colf_pj_ledger', seller:'colf_pj_seller', startDate:'colf_pj_startDate' };
 
   const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
-    .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)) && (!nameSearch || (r.p.name||'').toLowerCase().includes(nameSearch)));
+    .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)) && (pf.name.length===0 || pf.name.includes(r.p.name)));
   const rows = baseRows.filter(r =>
     passesColFilter(colf.id, r.p.id) && passesColFilter(colf.name, r.p.name) && passesColFilter(colf.currency, r.p.currency) &&
     passesColFilter(colf.amount, r.p.amount) && passesColFilter(colf.collected, r.t.collections) && passesColFilter(colf.remaining, r.t.remaining) &&
@@ -6212,9 +6213,7 @@ function renderProjectsView(root){
       </div>
       <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
-          <div><label class="lbl">${t('searchByProjectNameLabel')}</label>
-            <input type="text" id="pfNameSearch" class="input" style="min-width:180px" placeholder="${t('searchByProjectNamePlaceholder')}" value="${escapeHtml(STATE.ui.projectsNameSearch||'')}">
-          </div>
+          ${projectNames.length ? multiSelectHtml('pf_name', t('projectNameCol'), projectNames, pf.name) : ''}
           ${multiSelectHtml('pf_currency', t('projectCurrencyCol'), ['EGP','USD'], pf.currency)}
           ${sellers.length ? multiSelectHtml('pf_seller', t('projectSellerCol'), sellers, pf.seller) : ''}
           ${multiSelectHtml('pf_status', t('projectStatusCol'), statusValues, pf.status, {displayLabel: statusLabel})}
@@ -6252,9 +6251,9 @@ function renderProjectsView(root){
     </div>
   `;
 
-  attachDebouncedSearchInput('pfNameSearch', v => { STATE.ui.projectsNameSearch = v; });
   STATE.ui.__msHandler = (id, values) => {
-    if(id === 'pf_currency'){ pf.currency = values; renderApp(); }
+    if(id === 'pf_name'){ pf.name = values; renderApp(); }
+    else if(id === 'pf_currency'){ pf.currency = values; renderApp(); }
     else if(id === 'pf_seller'){ pf.seller = values; renderApp(); }
     else if(id === 'pf_status'){ pf.status = values; renderApp(); }
   };
@@ -6272,9 +6271,8 @@ function renderProjectsView(root){
       STATE.projectTx = [];
       await storeSet('projects', STATE.projects);
       await storeSet('projectTx', STATE.projectTx);
-      STATE.ui.projectsFilter = { currency:[], seller:[], status:[] };
-      STATE.ui.projectsNameSearch = '';
-      if(STATE.ui.msTouched){ delete STATE.ui.msTouched.pf_currency; delete STATE.ui.msTouched.pf_seller; delete STATE.ui.msTouched.pf_status; }
+      STATE.ui.projectsFilter = { currency:[], seller:[], status:[], name:[] };
+      if(STATE.ui.msTouched){ delete STATE.ui.msTouched.pf_currency; delete STATE.ui.msTouched.pf_seller; delete STATE.ui.msTouched.pf_status; delete STATE.ui.msTouched.pf_name; }
       Object.values(colf).forEach(id => { if(STATE.ui.colFilters) delete STATE.ui.colFilters[id]; if(STATE.ui.msTouched) delete STATE.ui.msTouched[id]; });
       if(STATE.ui.sort) delete STATE.ui.sort[viewKey];
       STATE.ui.openMultiSelect = null;
