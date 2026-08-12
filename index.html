@@ -409,6 +409,7 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .chart-box{ position:relative; height:280px; }
 .chart-box.sm{ height:220px; }
 
+.mobile-filters-toggle{ display:none; }
 /* Multi-select filter */
 .multiselect{ position:relative; z-index:2; }
 .ms-toggle{ cursor:pointer; }
@@ -531,6 +532,20 @@ th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn'
   .filters .chip-btns{ width:100%; justify-content:flex-start; }
   .filters .chip-btns .chip{ flex:1 1 auto; text-align:center; }
   .topbar-compact-controls > div:not(.filters){ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  /* Item: the filter bar (date range + preset chips + year/month) stayed
+     permanently expanded and full-width on mobile, pushing page content far
+     down the screen before the user saw anything useful. Collapse it behind
+     a small toggle by default on mobile only — desktop is untouched, since
+     .mobile-filters-toggle is display:none by default (see base rule below)
+     and only turns on inside this media query. */
+  .mobile-filters-toggle{
+    display:flex; align-items:center; justify-content:space-between; width:100%;
+    background:rgba(217,180,92,.06); border:1px solid var(--line-dark, rgba(217,180,92,.25));
+    color:var(--gold-light); border-radius:10px; padding:8px 12px; font-size:12px; font-weight:700;
+    font-family:'Cairo'; cursor:pointer; margin-bottom:6px;
+  }
+  .mobile-filters-toggle-arrow{ font-size:10px; }
+  .filters.filters-collapsed-mobile{ display:none; }
 }
 @media (max-width:480px){
   .kpi .val{ font-size:16px; }
@@ -1023,6 +1038,7 @@ const I18N = {
     driveNeverSynced:'لسه ما تمتش أي مزامنة',
     driveSessionExpiringSoon:'جلسة تسجيل الدخول بـ Google Drive هتنتهي قريبًا. اضغط "تسجيل الدخول بجوجل والمزامنة" تاني عشان تجدّدها من غير ما تفقد أي بيانات.',
     driveExpiringSoonLabel:'الجلسة هتنتهي قريبًا ⚠', toggleSidebarLabel:'القائمة', navBackLabel:'رجوع للخلف', navFwdLabel:'تقدم للأمام',
+    filtersToggleLabel:'🔍 فلاتر الفترة',
     chatCapabilitiesTitle:'أقدر أساعدك في:', chatCapCat1:'كشوف الحسابات والعملاء والموردين', chatCapCat2:'مراكز التكلفة والمشاريع', chatCapCat3:'تحليل الإيرادات والمصروفات والربحية',
     chatCapCat4:'التدفقات النقدية والنسب المالية', chatCapCat5:'فحص جودة البيانات (تكرار، قيود غير متوازنة، حركات غريبة)', chatCapCat6:'مقارنة الفترات وتفسير التغيرات',
     chatSuggestionsTitle:'أسئلة سريعة:', clearConversation:'مسح المحادثة',
@@ -1087,6 +1103,7 @@ const I18N = {
     driveNeverSynced:'No sync yet',
     driveSessionExpiringSoon:'Your Google Drive sign-in session is about to expire. Click "Sign in with Google & sync" again to renew it without losing any data.',
     driveExpiringSoonLabel:'Session expiring soon ⚠', toggleSidebarLabel:'Menu', navBackLabel:'Go back', navFwdLabel:'Go forward',
+    filtersToggleLabel:'🔍 Period Filters',
     chatCapabilitiesTitle:'I can help you with:', chatCapCat1:'Account, customer & vendor statements', chatCapCat2:'Cost centers and projects', chatCapCat3:'Revenue, expense & profitability analysis',
     chatCapCat4:'Cash flow and financial ratios', chatCapCat5:'Data quality checks (duplicates, unbalanced entries, unusual activity)', chatCapCat6:'Period comparisons and explaining changes',
     chatSuggestionsTitle:'Quick questions:', clearConversation:'Clear conversation',
@@ -4729,7 +4746,10 @@ function renderFilterBar(){
   const monthLabels = monthDefs.map(([n,name])=>`${n} - ${name}`);
   const selectedMonthLabels = (f.months||[]).map(m => { const d = monthDefs.find(x=>x[0]===m); return d ? `${d[0]} - ${d[1]}` : m; });
   return `
-    <div class="filters">
+    <button type="button" class="mobile-filters-toggle" id="mobileFiltersToggle" aria-expanded="${STATE.ui.mobileFiltersOpen?'true':'false'}">
+      ${t('filtersToggleLabel')} <span class="mobile-filters-toggle-arrow">${STATE.ui.mobileFiltersOpen?'▲':'▼'}</span>
+    </button>
+    <div class="filters${STATE.ui.mobileFiltersOpen?'':' filters-collapsed-mobile'}">
       <label>${t('from')}</label>
       <span class="date-input-wrap">
         <input type="text" id="filterStartText" class="input date-text-input" value="${formatDateForDisplay(f.start)}" placeholder="DD-MM-YYYY" inputmode="numeric" autocomplete="off">
@@ -4781,6 +4801,11 @@ function formatDateForDisplay(iso){
 }
 
 function attachFilterEvents(){
+  const mobileFiltersToggle = document.getElementById('mobileFiltersToggle');
+  if(mobileFiltersToggle) mobileFiltersToggle.addEventListener('click', () => {
+    STATE.ui.mobileFiltersOpen = !STATE.ui.mobileFiltersOpen;
+    renderApp();
+  });
   function wireDateInput(textId, pickerId, filterKey){
     const textEl = document.getElementById(textId);
     const pickerEl = document.getElementById(pickerId);
