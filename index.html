@@ -216,11 +216,11 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 /* Item 6: color palette selector */
 .palette-picker{ position:relative; display:inline-block; }
 .palette-toggle{
-  width:30px; height:30px; border-radius:50%; border:2px solid rgba(255,255,255,.25); cursor:pointer; padding:0;
-  background:conic-gradient(from 180deg, #B8902E, #1F6D5A, #2A5DB0, #6B3FA0, #A23B4E, #B8902E);
-  transition: transform .16s ease, border-color .16s ease;
+  width:30px; height:30px; border-radius:50%; border:1px solid rgba(217,180,92,.35); cursor:pointer; padding:0;
+  background:transparent; color:var(--gold-light); display:flex; align-items:center; justify-content:center;
+  transition: background .14s ease, border-color .16s ease;
 }
-.palette-toggle:hover{ transform:scale(1.08); border-color:rgba(255,255,255,.5); }
+.palette-toggle:hover{ background:rgba(217,180,92,.1); border-color:rgba(217,180,92,.6); }
 .palette-panel{
   position:absolute; top:calc(100% + 6px); left:0; z-index:60; background:var(--paper); border:1px solid var(--line);
   border-radius:10px; box-shadow:var(--shadow); padding:10px; display:flex; flex-wrap:wrap; gap:8px; width:250px; max-width:80vw;
@@ -473,7 +473,12 @@ th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn'
 .sortable-th:hover{ color:#fff; }
 
 /* Theme toggle */
-.theme-toggle{ background:transparent; border:1px solid rgba(217,180,92,.35); color:var(--gold-light); border-radius:20px; padding:5px 12px; font-size:11.5px; font-weight:700; display:flex; align-items:center; gap:5px; }
+.theme-toggle{
+  width:30px; height:30px; border-radius:50%; border:1px solid rgba(217,180,92,.35); cursor:pointer; padding:0;
+  background:transparent; color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-size:15px;
+  transition: background .14s ease, border-color .16s ease;
+}
+.theme-toggle:hover{ background:rgba(217,180,92,.1); border-color:rgba(217,180,92,.6); }
 .nav-arrows{ display:flex; gap:4px; flex:0 0 auto; }
 .nav-arrows button{
   width:30px; height:30px; border-radius:8px; border:1px solid rgba(217,180,92,.3);
@@ -518,8 +523,7 @@ th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn'
      desktop is unaffected since .mobile-quick-controls stays empty/hidden there. */
   .mobile-quick-controls{ display:flex; align-items:center; gap:5px; flex-shrink:0; margin-inline-start:auto; }
   .mobile-quick-controls .lang-toggle{ padding:4px 8px; font-size:10.5px; }
-  .mobile-quick-controls .theme-toggle{ padding:5px 6px; }
-  .mobile-quick-controls .theme-toggle-label{ display:none; }
+  .mobile-quick-controls .theme-toggle,
   .mobile-quick-controls .palette-toggle{ width:24px; height:24px; }
   .mobile-quick-controls .palette-panel{ left:auto; right:0; }
   .topbar-compact-controls{ width:100%; }
@@ -4228,6 +4232,7 @@ const ICONS = {
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>',
   download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>',
   filterFunnel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>',
+  palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2c2 0 4-2 4-4a10 10 0 0 0-9-9z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/><circle cx="17" cy="11" r="1"/></svg>',
 };
 
 /* =========================================================================
@@ -4453,7 +4458,7 @@ function renderApp(){
           ${needsFilters(STATE.ui.view) ? renderFilterBar() : ''}
           <button class="lang-toggle" id="langToggleBtn" title="Switch language">${STATE.settings.lang==='en'?'AR':'EN'}</button>
           <div class="palette-picker">
-            <button class="palette-toggle" id="paletteToggleBtn" title="${t('colorPalette')}" aria-label="${t('colorPalette')}"></button>
+            <button class="palette-toggle" id="paletteToggleBtn" title="${t('colorPalette')}" aria-label="${t('colorPalette')}">${ICONS.palette}</button>
             <div class="palette-panel" id="palettePanel" style="display:${STATE.ui.paletteOpen?'flex':'none'}">
               <div style="display:flex;gap:6px;flex-wrap:wrap">
                 ${PALETTES.map(p => `<button type="button" class="palette-swatch ${STATE.settings.palette===p.id?'active':''}" data-palette-id="${p.id}" style="background:${p.swatch}" title="${t(p.labelKey)}"></button>`).join('')}
@@ -4474,7 +4479,7 @@ function renderApp(){
               </div>
             </div>
           </div>
-          <button class="theme-toggle" id="themeToggleBtn">${STATE.settings.theme==='light'?ICONS.moon:ICONS.sun} <span class="theme-toggle-label">${STATE.settings.theme==='light'?t('darkMode'):t('lightMode')}</span></button>
+          <button class="theme-toggle" id="themeToggleBtn" title="${STATE.settings.theme==='light'?t('darkMode'):t('lightMode')}" aria-label="${STATE.settings.theme==='light'?t('darkMode'):t('lightMode')}">${STATE.settings.theme==='light'?ICONS.moon:ICONS.sun}</button>
         </div>
       </div>
       <div id="viewRoot"></div>
