@@ -180,6 +180,7 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 }
 .topbar-title-row h1{ font-size:17px; color:var(--paper); margin:0; font-weight:800; letter-spacing:.2px; }
 .topbar-title-row .sub{ color:var(--ink-faint); font-size:11.5px; margin-top:2px; }
+.mobile-quick-controls{ display:none; } /* populated + shown on mobile only — see renderApp()'s reparent step and the max-width:900px rules below */
 /* Compact area (was "box 3"): now hosts the period filters (moved from the old
    separate controls row) plus the language and theme toggles, all in one
    place. Same filter functionality/props as before — only location + look
@@ -505,7 +506,22 @@ th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn'
 @media (max-width:900px){
   .main{ padding:0 14px 60px; }
   .topbar-title-row{ margin:0 -14px 0; padding:12px 14px 8px; }
-  .topbar-title-row h1{ font-size:15px; }
+  .topbar-title-row h1{ font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-title-row .sub{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topbar-title-row > div:first-child{ min-width:0; flex:1 1 auto; }
+  .topbar-title-block{ min-width:0; overflow:hidden; }
+  /* The lang/palette/dark-mode buttons used to sit inside .topbar-compact-controls,
+     which on mobile rendered as its own big full-width block under the title
+     (see the collapsible-filters fix above for the other half of that
+     block). They're moved here, next to the title, by renderApp() (mobile
+     width only) so that reclaimed space goes to actual page content instead —
+     desktop is unaffected since .mobile-quick-controls stays empty/hidden there. */
+  .mobile-quick-controls{ display:flex; align-items:center; gap:5px; flex-shrink:0; margin-inline-start:auto; }
+  .mobile-quick-controls .lang-toggle{ padding:4px 8px; font-size:10.5px; }
+  .mobile-quick-controls .theme-toggle{ padding:5px 6px; }
+  .mobile-quick-controls .theme-toggle-label{ display:none; }
+  .mobile-quick-controls .palette-toggle{ width:24px; height:24px; }
+  .mobile-quick-controls .palette-panel{ left:auto; right:0; }
   .topbar-compact-controls{ width:100%; }
   .card{ padding:16px 14px; }
   .nav-arrows{ display:none; }
@@ -1539,7 +1555,8 @@ function getColFilterValues(colFilterId){
 }
 function passesColFilter(colFilterId, rawValue){
   const sel = getColFilterValues(colFilterId);
-  return sel.length === 0 || sel.includes(rawValue);
+  if(sel.length === 0) return true;
+  return sel.some(v => String(v) === String(rawValue));
 }
 function filterableTh(viewKey, col, label, colFilterId, values, opts){
   opts = opts || {};
@@ -1734,7 +1751,7 @@ function multiSelectHtml(id, label, options, selected, opts){
           </div>
         ` : `
           <div class="ms-items" data-ms-items="${id}">
-            ${options.map(o => `<label class="ms-item" data-ms-item-text="${escapeHtml(disp(o).toLowerCase())}"><input type="checkbox" class="ms-leaf" value="${escapeHtml(o)}" ${(untouchedEmpty || selected.includes(o))?'checked':''}> ${escapeHtml(disp(o))}</label>`).join('')}
+            ${options.map(o => `<label class="ms-item" data-ms-item-text="${escapeHtml(disp(o).toLowerCase())}"><input type="checkbox" class="ms-leaf" value="${escapeHtml(o)}" ${(untouchedEmpty || selected.some(v=>String(v)===String(o)))?'checked':''}> ${escapeHtml(disp(o))}</label>`).join('')}
           </div>
         `) : ''}
       </div>
@@ -4426,10 +4443,11 @@ function renderApp(){
             <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">→</button>
             <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">←</button>
           </div>
-          <div>
+          <div class="topbar-title-block">
             <h1>${navLabel(NAV.find(n=>n.id===STATE.ui.view)||{}) || ''}</h1>
             <div class="sub">${escapeHtml(STATE.settings.companyName || t('enterCompanyNameHint'))}</div>
           </div>
+          <div class="mobile-quick-controls" id="mobileQuickControls"></div>
         </div>
         <div class="topbar-compact-controls">
           ${needsFilters(STATE.ui.view) ? renderFilterBar() : ''}
@@ -4456,7 +4474,7 @@ function renderApp(){
               </div>
             </div>
           </div>
-          <button class="theme-toggle" id="themeToggleBtn">${STATE.settings.theme==='light'?ICONS.moon:ICONS.sun} ${STATE.settings.theme==='light'?t('darkMode'):t('lightMode')}</button>
+          <button class="theme-toggle" id="themeToggleBtn">${STATE.settings.theme==='light'?ICONS.moon:ICONS.sun} <span class="theme-toggle-label">${STATE.settings.theme==='light'?t('darkMode'):t('lightMode')}</span></button>
         </div>
       </div>
       <div id="viewRoot"></div>
@@ -4709,6 +4727,25 @@ function renderApp(){
         panel.style.width = '';
         panel.style.margin = '';
       }
+    }
+  }
+  // Mobile only: relocate the lang/palette/dark-mode buttons out of the big
+  // .topbar-compact-controls block (which used to force a full extra row
+  // under the title on phones) and into the small placeholder next to the
+  // title instead, freeing that space for actual page content. This moves
+  // the real nodes (appendChild keeps their event listeners), so no
+  // duplicate ids and no extra binding needed. Desktop is untouched: at
+  // window widths above 900px this is simply skipped, leaving every button
+  // in its normal .topbar-compact-controls position.
+  if(window.innerWidth <= 900){
+    const mobileQuickControls = document.getElementById('mobileQuickControls');
+    if(mobileQuickControls){
+      const langBtn = document.getElementById('langToggleBtn');
+      const palettePicker = document.querySelector('.topbar-compact-controls .palette-picker');
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if(langBtn) mobileQuickControls.appendChild(langBtn);
+      if(palettePicker) mobileQuickControls.appendChild(palettePicker);
+      if(themeBtn) mobileQuickControls.appendChild(themeBtn);
     }
   }
 }
