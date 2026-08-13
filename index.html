@@ -3312,9 +3312,11 @@ function generalLedgerRows(lines, accountCodes, partnerNames, journals, start, e
     && (!descSearch || (l.ref||'').toLowerCase().includes(descSearch))
     && (currencyFilter==='ALL' || (l.cur||'EGP')===currencyFilter);
   const opening = lines.filter(l => matches(l) && start && l.date < start).reduce((s,l)=> s + l.debit - l.credit, 0);
+  const openingNative = lines.filter(l => matches(l) && start && l.date < start)
+    .reduce((s,l)=> { const a = lineNative(l); return s + a.debit - a.credit; }, 0);
   const rows = lines.filter(l => matches(l) && (!start || l.date >= start) && (!end || l.date <= end))
     .map(l => ({ ...l, movement: l.debit - l.credit }));
-  return { opening, rows };
+  return { opening, openingNative, rows };
 }
 
 function accountStatement(lines, code, start, end, opts){
@@ -5708,7 +5710,7 @@ function renderAccountStatementView(root, alwaysCombined){
   const rangeStart = _r2.start, rangeEnd = periodFilterActive(f) ? '' : f.end;
   const periodLines = filterLinesByPeriod(STATE.journal, f);
 
-  const { opening, rows: rowsAll } = generalLedgerRows(periodLines, selectedCodes, selectedPartners, selectedJournals, rangeStart, rangeEnd, { descSearch, currencyFilter, costCenters: selectedCostCenters });
+  const { opening, openingNative, rows: rowsAll } = generalLedgerRows(periodLines, selectedCodes, selectedPartners, selectedJournals, rangeStart, rangeEnd, { descSearch, currencyFilter, costCenters: selectedCostCenters });
   const rows = voucherSearch ? rowsAll.filter(l => (l.entry||'').toLowerCase().includes(voucherSearch)) : rowsAll;
 
   const viewKey = 'gl';
@@ -5735,10 +5737,18 @@ function renderAccountStatementView(root, alwaysCombined){
     return r[col];
   });
   const showOpening = STATE.ui.glShowOpening;
-  let running = showOpening ? opening : 0;
+  // BUG FIX: the running/cumulative balance used to always accumulate the EGP
+  // movement, even when every row on screen is the same foreign currency
+  // (the "دولار" chip, or account selection narrowed to one USD account) and
+  // the table is already showing native Debit/Credit columns for that
+  // currency — leaving the one column that's supposed to tell the user
+  // "where does my dollar balance stand" stuck in EGP. When singleForeign is
+  // set, accumulate the native amounts (and start from the native opening
+  // balance) instead.
+  let running = showOpening ? (singleForeign ? openingNative : opening) : 0;
   const displayRows = sorted.map(l => {
-    running += l.movement;
     const native = singleForeign ? lineNative(l) : null;
+    running += singleForeign ? (native.debit - native.credit) : l.movement;
     return {...l, running, nativeDebit: native?native.debit:null, nativeCredit: native?native.credit:null};
   });
 
@@ -5790,8 +5800,8 @@ function renderAccountStatementView(root, alwaysCombined){
       </div>
       <div class="grid-3" style="margin-bottom:14px">
         ${kpi(t('movementsCountLabel'), fmtInt(rowsF.length), '', '')}
-        ${showOpening ? kpi(t('openingBalanceBeforePeriod'), fmt(opening), opening>=0?'pos':'neg', '') : ''}
-        ${kpi(t('finalRunningBalanceLabel'), fmt(displayRows.length?displayRows[displayRows.length-1].running:opening), '', '')}
+        ${showOpening ? kpi(t('openingBalanceBeforePeriod')+(singleForeign?' ('+singleForeign+')':''), fmt(singleForeign?openingNative:opening), opening>=0?'pos':'neg', '') : ''}
+        ${kpi(t('finalRunningBalanceLabel')+(singleForeign?' ('+singleForeign+')':''), fmt(displayRows.length?displayRows[displayRows.length-1].running:(singleForeign?openingNative:opening)), '', '')}
       </div>
     </div>
   `;
@@ -5915,10 +5925,10 @@ function renderAccountStatementView(root, alwaysCombined){
             ${filterableTh(viewKey,'curAmt',t('origCurrencyAmountCol'),glColf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
             ${sortTh(viewKey,'convFactor',t('conversionFactorCol'),'num-cell')}
             ${singleForeign ? `<th class="num-cell">${t('debit')} ${escapeHtml(singleForeign)}</th><th class="num-cell">${t('credit')} ${escapeHtml(singleForeign)}</th>` : ''}
-            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance'),'num-cell')}
+            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance')+(singleForeign?' '+singleForeign:''),'num-cell')}
             <th>${t('actionsCol')}</th>
           </tr></thead><tbody>
-            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td><td></td></tr>` : ''}
+            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(singleForeign?openingNative:opening)}</td><td></td></tr>` : ''}
             ${pageRows.length ? pageRows.map(r=>{
               const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
               const convFactor = hasFx ? (r.debit||r.credit)/Math.abs(r.curAmt) : null;
