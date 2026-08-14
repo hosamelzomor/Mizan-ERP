@@ -342,6 +342,10 @@ thead th{
   font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky; top:0;
   border-bottom:2px solid var(--gold);
 }
+/* Column drag-to-reorder (desktop only — see attachColumnReordering) */
+thead th.col-draggable{ cursor:grab; }
+thead th.col-dragging{ opacity:.4; cursor:grabbing; }
+thead th.col-drop-target{ box-shadow: inset 2px 0 0 var(--gold-light), inset -2px 0 0 var(--gold-light); }
 tbody td{ padding:6px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); }
 tbody tr:hover{ background:var(--paper-2); }
 tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); background:var(--paper-3); }
@@ -1505,8 +1509,25 @@ function exportTableToExcel(tableEl, filename){
     // Drop action-icon columns (edit/delete pencils etc.) — never real data.
     const keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
     const filteredHeaders = keepIdx.map(i => headers[i]);
+    const colCount = headers.length;
+    // A row using colspan (opening-balance/total summary rows) has FEWER DOM
+    // cells than header columns — a plain tr.children[i] lookup would shift
+    // every value after the colspan cell into the wrong column. Expand each
+    // colspan cell to occupy all the logical column slots it visually spans
+    // (keeping its content in only the first of those slots) so indexing by
+    // header position is always correct, colspan or not.
+    function expandRowCells(tr){
+      const out = [];
+      Array.from(tr.children).forEach(td => {
+        const span = parseInt(td.getAttribute('colspan') || '1', 10) || 1;
+        out.push(td);
+        for(let i=1;i<span;i++) out.push(null);
+      });
+      while(out.length < colCount) out.push(null);
+      return out;
+    }
     const bodyRows = Array.from(tableEl.querySelectorAll('tbody tr')).map(tr => {
-      const cells = Array.from(tr.children);
+      const cells = expandRowCells(tr);
       return keepIdx.map(i => {
         const td = cells[i];
         if(!td) return '';
@@ -1536,7 +1557,7 @@ function attachTableExportButtons(){
   const root = document.getElementById('viewRoot');
   if(!root) return;
   const usedNames = {};
-  root.querySelectorAll('.table-wrap').forEach(wrap => {
+  root.querySelectorAll('.table-wrap').forEach((wrap, tableIdx) => {
     const tableEl = wrap.querySelector('table');
     if(!tableEl || !tableEl.rows.length) return; // nothing to export
     const card = wrap.closest('.card');
@@ -1558,6 +1579,80 @@ function attachTableExportButtons(){
     btn.addEventListener('click', () => exportTableToExcel(tableEl, filename));
     toolbar.appendChild(btn);
     wrap.parentNode.insertBefore(toolbar, wrap);
+    // Table identity for saved column order: keyed by view + position on the
+    // page (NOT by translated header text, so it survives language switches
+    // and doesn't depend on which currency/account happens to be selected).
+    attachColumnReordering(tableEl, (STATE.ui.view||'view') + '_t' + tableIdx);
+  });
+}
+// Lets the user drag a column header left/right to reorder it — desktop
+// only (native HTML5 drag-and-drop isn't a touch gesture, and dragging would
+// fight with tapping the filter/sort controls already packed into each
+// header on mobile). The chosen order is saved per table (STATE.ui.colOrder)
+// and re-applied every render, including immediately here for the very
+// table just rendered.
+function attachColumnReordering(tableEl, tableKey){
+  if(window.innerWidth <= 900) return;
+  const headRow = tableEl.querySelector('thead tr');
+  if(!headRow) return;
+  const ths = Array.from(headRow.children);
+  if(ths.length < 2) return;
+  ths.forEach((th, i) => {
+    if(!th.dataset.colKey) th.dataset.colKey = th.dataset.sortCol || ('idx_' + i);
+    th.classList.add('col-draggable');
+    th.draggable = true;
+    // Drag should only start from the header's own background/padding, not
+    // from clicking the sort label or the filter dropdown button inside it —
+    // otherwise a quick click-drag on those would hijack the click.
+    th.querySelectorAll('.th-sort-label, .multiselect, .ms-toggle').forEach(el => { el.draggable = false; });
+  });
+  const saved = STATE.ui.colOrder && STATE.ui.colOrder[tableKey];
+  if(saved && saved.length) reorderTableColumns(tableEl, saved);
+
+  let dragSrcKey = null;
+  headRow.querySelectorAll('th').forEach(th => {
+    th.addEventListener('dragstart', e => {
+      dragSrcKey = th.dataset.colKey;
+      th.classList.add('col-dragging');
+      if(e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+    });
+    th.addEventListener('dragend', () => th.classList.remove('col-dragging'));
+    th.addEventListener('dragover', e => { e.preventDefault(); th.classList.add('col-drop-target'); });
+    th.addEventListener('dragleave', () => th.classList.remove('col-drop-target'));
+    th.addEventListener('drop', e => {
+      e.preventDefault();
+      th.classList.remove('col-drop-target');
+      const targetKey = th.dataset.colKey;
+      if(!dragSrcKey || dragSrcKey === targetKey) return;
+      const currentOrder = Array.from(headRow.children).map(el => el.dataset.colKey);
+      const from = currentOrder.indexOf(dragSrcKey);
+      const to = currentOrder.indexOf(targetKey);
+      if(from === -1 || to === -1) return;
+      currentOrder.splice(to, 0, currentOrder.splice(from, 1)[0]);
+      reorderTableColumns(tableEl, currentOrder);
+      STATE.ui.colOrder = STATE.ui.colOrder || {};
+      STATE.ui.colOrder[tableKey] = currentOrder;
+    });
+  });
+}
+// Physically reorders every row's cells (header + body) to match `order`
+// (an array of colKey). Rows whose cell count doesn't match the header's
+// column count — colspan-based opening-balance/total rows — are left as-is
+// rather than risk corrupting them.
+function reorderTableColumns(tableEl, order){
+  const headRow = tableEl.querySelector('thead tr');
+  if(!headRow) return;
+  const headerCells = Array.from(headRow.children);
+  const colCount = headerCells.length;
+  const keyToIndex = {};
+  headerCells.forEach((th,i) => { keyToIndex[th.dataset.colKey || ('idx_'+i)] = i; });
+  const rows = [headRow, ...Array.from(tableEl.querySelectorAll('tbody tr'))];
+  rows.forEach(row => {
+    const cells = Array.from(row.children);
+    if(cells.length !== colCount) return; // skip colspan summary rows
+    const newCells = order.map(key => cells[keyToIndex[key]]).filter(Boolean);
+    if(newCells.length !== colCount) return; // stale/unknown key — don't risk it
+    newCells.forEach(cell => row.appendChild(cell));
   });
 }
 window.__exportData = window.__exportData || {};
