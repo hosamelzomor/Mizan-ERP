@@ -110,9 +110,9 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
    Scoped to desktop widths only so it never fights with the mobile
    transform-based show/hide below. */
 @media (min-width:901px){
-  #hamburgerBtn{ display:flex; }
+  #hamburgerBtn{ display:flex !important; }
   .sidebar{ transition: width .22s ease, min-width .22s ease, border-color .22s ease; }
-  .sidebar.sidebar-collapsed{ width:0; min-width:0; border-left-color:transparent; overflow:hidden; }
+  .sidebar.sidebar-collapsed{ width:0; min-width:0; flex:0 0 0; border-left-color:transparent; overflow:hidden; }
   .sidebar.sidebar-collapsed > *{ opacity:0; pointer-events:none; }
 }
 @media (max-width:900px){
@@ -5737,19 +5737,18 @@ function renderAccountStatementView(root, alwaysCombined){
     return r[col];
   });
   const showOpening = STATE.ui.glShowOpening;
-  // BUG FIX: the running/cumulative balance used to always accumulate the EGP
-  // movement, even when every row on screen is the same foreign currency
-  // (the "دولار" chip, or account selection narrowed to one USD account) and
-  // the table is already showing native Debit/Credit columns for that
-  // currency — leaving the one column that's supposed to tell the user
-  // "where does my dollar balance stand" stuck in EGP. When singleForeign is
-  // set, accumulate the native amounts (and start from the native opening
-  // balance) instead.
-  let running = showOpening ? (singleForeign ? openingNative : opening) : 0;
+  // Per request: when every row on screen is the same foreign currency (the
+  // "دولار" chip, or account selection narrowed to one USD account), show
+  // BOTH running balances side by side — EGP (as always) AND native currency
+  // — rather than one replacing the other, so the user can see where they
+  // stand in both at a glance.
+  let runningEGP = showOpening ? opening : 0;
+  let runningNative = showOpening ? openingNative : 0;
   const displayRows = sorted.map(l => {
     const native = singleForeign ? lineNative(l) : null;
-    running += singleForeign ? (native.debit - native.credit) : l.movement;
-    return {...l, running, nativeDebit: native?native.debit:null, nativeCredit: native?native.credit:null};
+    runningEGP += l.movement;
+    if(singleForeign) runningNative += native.debit - native.credit;
+    return {...l, running: runningEGP, runningNative: singleForeign?runningNative:null, nativeDebit: native?native.debit:null, nativeCredit: native?native.credit:null};
   });
 
   registerExport(viewKey, exportName,
@@ -5800,9 +5799,13 @@ function renderAccountStatementView(root, alwaysCombined){
       </div>
       <div class="grid-3" style="margin-bottom:14px">
         ${kpi(t('movementsCountLabel'), fmtInt(rowsF.length), '', '')}
-        ${showOpening ? kpi(t('openingBalanceBeforePeriod')+(singleForeign?' ('+singleForeign+')':''), fmt(singleForeign?openingNative:opening), opening>=0?'pos':'neg', '') : ''}
-        ${kpi(t('finalRunningBalanceLabel')+(singleForeign?' ('+singleForeign+')':''), fmt(displayRows.length?displayRows[displayRows.length-1].running:(singleForeign?openingNative:opening)), '', '')}
+        ${showOpening ? kpi(t('openingBalanceBeforePeriod'), fmt(opening), opening>=0?'pos':'neg', '') : ''}
+        ${kpi(t('finalRunningBalanceLabel'), fmt(displayRows.length?displayRows[displayRows.length-1].running:opening), '', '')}
       </div>
+      ${singleForeign ? `<div class="grid-3" style="margin-bottom:14px">
+        ${showOpening ? kpi(t('openingBalanceBeforePeriod')+' ('+singleForeign+')', fmt(openingNative), openingNative>=0?'pos':'neg', '') : ''}
+        ${kpi(t('finalRunningBalanceLabel')+' ('+singleForeign+')', fmt(displayRows.length?displayRows[displayRows.length-1].runningNative:openingNative), '', '')}
+      </div>` : ''}
     </div>
   `;
 
@@ -5895,7 +5898,7 @@ function renderAccountStatementView(root, alwaysCombined){
       </div>
     `).join('');
   }else{
-    const colCount = singleForeign ? 17 : 15;
+    const colCount = singleForeign ? 18 : 15;
     // Performance fix: with the full real journal loaded (potentially many
     // thousands of lines), rendering every matching row as a <tr> — then
     // rebuilding that entire table from scratch on every single filter
@@ -5925,10 +5928,11 @@ function renderAccountStatementView(root, alwaysCombined){
             ${filterableTh(viewKey,'curAmt',t('origCurrencyAmountCol'),glColf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
             ${sortTh(viewKey,'convFactor',t('conversionFactorCol'),'num-cell')}
             ${singleForeign ? `<th class="num-cell">${t('debit')} ${escapeHtml(singleForeign)}</th><th class="num-cell">${t('credit')} ${escapeHtml(singleForeign)}</th>` : ''}
-            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance')+(singleForeign?' '+singleForeign:''),'num-cell')}
+            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance')+(singleForeign?' (EGP)':''),'num-cell')}
+            ${singleForeign ? sortTh(viewKey,'runningNative',t('runningBalance')+' ('+singleForeign+')','num-cell') : ''}
             <th>${t('actionsCol')}</th>
           </tr></thead><tbody>
-            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(singleForeign?openingNative:opening)}</td><td></td></tr>` : ''}
+            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td>${singleForeign?`<td class="num-cell num">${fmt(openingNative)}</td>`:''}<td></td></tr>` : ''}
             ${pageRows.length ? pageRows.map(r=>{
               const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
               const convFactor = hasFx ? (r.debit||r.credit)/Math.abs(r.curAmt) : null;
@@ -5948,6 +5952,7 @@ function renderAccountStatementView(root, alwaysCombined){
               ${singleForeign ? `<td class="num-cell num">${r.nativeDebit?fmt(r.nativeDebit):''}</td><td class="num-cell num">${r.nativeCredit?fmt(r.nativeCredit):''}</td>` : ''}
               <td class="num-cell num ${r.movement>=0?'pos-text':'neg-text'}">${fmt(r.movement)}</td>
               <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
+              ${singleForeign ? `<td class="num-cell num ${r.runningNative>=0?'pos-text':'neg-text'}">${fmt(r.runningNative)}</td>` : ''}
               <td class="num-cell"><span class="drill" title="${t('editEntry')}" onclick="openEditJournalEntryModal('${jsAttrEscape(r.entry)}','${r.date}')">✎</span></td>
             </tr>`;}).join('') : `<tr><td colspan="${colCount}" class="empty">${t('noMatchingFilterMovement')}</td></tr>`}
             ${displayRows.length ? `<tr class="total-row">
@@ -5958,6 +5963,7 @@ function renderAccountStatementView(root, alwaysCombined){
               ${singleForeign ? `<td class="num-cell num">${fmt(totalNativeDebit)}</td><td class="num-cell num">${fmt(totalNativeCredit)}</td>` : ''}
               <td class="num-cell num">${fmt(totalMovement)}</td>
               <td></td>
+              ${singleForeign ? '<td></td>' : ''}
               <td></td>
             </tr>` : ''}
           </tbody></table>
