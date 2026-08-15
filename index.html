@@ -342,10 +342,6 @@ thead th{
   font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky; top:0;
   border-bottom:2px solid var(--gold);
 }
-/* Column drag-to-reorder (desktop only — see attachColumnReordering) */
-thead th.col-draggable{ cursor:grab; }
-thead th.col-dragging{ opacity:.4; cursor:grabbing; }
-thead th.col-drop-target{ box-shadow: inset 2px 0 0 var(--gold-light), inset -2px 0 0 var(--gold-light); }
 tbody td{ padding:6px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); }
 tbody tr:hover{ background:var(--paper-2); }
 tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); background:var(--paper-3); }
@@ -1389,175 +1385,31 @@ function attachDebouncedSearchInput(id, onCommit, ms){
 }
 
 /* ---------- export helpers ---------- */
-const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const NUMERIC_TEXT_RE = /^-?[\d,]+(\.\d+)?$/;
-
-// Converts an ISO 'YYYY-MM-DD' string to an Excel date serial number using
-// pure UTC day-count arithmetic — Date.UTC() is used only as a calendar day
-// counter here (the difference between two UTC timestamps), never read back
-// with a timezone-sensitive getter, so this carries none of the "date is one
-// day off" risk that a round-tripped JS Date object would (see toISODate's
-// comment above for the full story on why this app avoids Date objects for
-// calendar dates). An Excel date is just a formatted number, so writing a
-// plain numeric cell with a date format is also the most native possible
-// representation, not a workaround.
-function isoDateToExcelSerial(iso){
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-  if(!m) return null;
-  const ms = Date.UTC(+m[1], +m[2]-1, +m[3]) - Date.UTC(1899, 11, 30);
-  return Math.round(ms / 86400000);
-}
-function detectColumnType(values){
-  const present = values.filter(v => v !== '' && v != null);
-  if(!present.length) return 'text';
-  if(present.every(v => typeof v === 'number')) return 'number';
-  if(present.every(v => typeof v === 'string' && ISO_DATE_RE.test(v.trim()))) return 'date';
-  if(present.every(v => typeof v === 'number' || (typeof v === 'string' && NUMERIC_TEXT_RE.test(v.trim().replace(/,/g,''))))) return 'number';
-  return 'text';
-}
-// The single core every export button funnels through. headers: string[].
-// rows: array of arrays of raw values (numbers, ISO date strings, or text —
-// exactly what's already used throughout this file). columnTypes is
-// optional; when omitted each column's type is inferred from its own
-// values, so callers passing already-typed data (registerExport sites) need
-// no changes at all to benefit.
-function buildFormattedWorksheet(headers, rows, columnTypes){
-  const colCount = headers.length;
-  const types = columnTypes || Array.from({length:colCount}, (_,i) => detectColumnType(rows.map(r=>r[i])));
-  const isIntCol = types.map((type,i) => {
-    if(type !== 'number') return false;
-    return rows.every(r => {
-      const v = r[i];
-      if(v==null || v==='') return true;
-      const n = typeof v==='number' ? v : parseFloat(String(v).replace(/,/g,''));
-      return isNaN(n) || Number.isInteger(n);
-    });
-  });
-  const aoa = [headers, ...rows.map(row => row.map((v,i) => {
-    const type = types[i];
-    if(v==null || v==='') return null;
-    if(type === 'number'){
-      const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/,/g,''));
-      return isNaN(n) ? v : n;
-    }
-    if(type === 'date'){
-      const serial = isoDateToExcelSerial(String(v));
-      return serial==null ? v : serial;
-    }
-    return v;
-  }))];
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  // Auto-fit column widths from actual content length (header vs every cell
-  // in that column), capped so one long description can't blow out the
-  // whole sheet.
-  ws['!cols'] = headers.map((h,i) => ({
-    wch: Math.min(45, Math.max(String(h).length, ...rows.map(r => { const v=r[i]; return v==null?0:String(v).length; }), 6) + 2)
-  }));
-  // Real per-cell number/date formats (not just typed values) so Excel
-  // shows thousand separators / a proper date format immediately, and the
-  // column is usable in SUM()s, date math, sorts, etc. straight away.
-  for(let c=0;c<colCount;c++){
-    const type = types[c];
-    if(type === 'text') continue;
-    const fmtStr = type === 'date' ? 'dd-mm-yyyy' : (isIntCol[c] ? '#,##0' : '#,##0.00');
-    for(let r=1;r<aoa.length;r++){
-      const cell = ws[XLSX.utils.encode_cell({ r, c })];
-      if(cell && cell.v != null) cell.z = fmtStr;
-    }
-  }
-  // Bold white-on-navy header row (best-effort: the free/community SheetJS
-  // writer used here doesn't guarantee full style fidelity in every Excel/
-  // LibreOffice version, but modern Excel honors it).
-  for(let c=0;c<colCount;c++){
-    const cell = ws[XLSX.utils.encode_cell({ r:0, c })];
-    if(cell) cell.s = { font:{ bold:true, color:{rgb:'FFFFFF'} }, fill:{ patternType:'solid', fgColor:{rgb:'1F2E3B'} } };
-  }
-  // Excel's built-in filter-dropdown arrows on the header row — the closest
-  // native equivalent to "a dynamic, filterable table" the free writer can
-  // produce reliably.
-  ws['!autofilter'] = { ref: ws['!ref'] };
-  return ws;
-}
 function exportRowsToExcel(filename, headers, rows){
   try{
-    const ws = buildFormattedWorksheet(headers, rows);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    XLSX.writeFile(wb, filename, { cellStyles:true });
+    XLSX.writeFile(wb, filename);
   }catch(e){ showToast(t('exportFileError') + ': ' + e.message, 4000); }
 }
 // Generic "export what's on screen" for ANY table on ANY page: reads the
-// live DOM <table> exactly as rendered, so it automatically respects
-// whatever filters/period/currency the user currently has applied — no
-// per-page data wiring required — but pulls the underlying value/type back
-// out of each cell (via CSS hints + ISO-date pattern matching) instead of
-// just dumping the display text, so the exported file gets the same real
-// typing/formatting as the structured-data path above.
+// live DOM <table> exactly as rendered (SheetJS's table_to_sheet), so it
+// automatically respects whatever filters/period/currency the user currently
+// has applied — no per-page data wiring required.
 function exportTableToExcel(tableEl, filename){
   try{
-    const headRow = tableEl.querySelector('thead tr');
-    const actionsLabel = t('actionsCol');
-    const allHeaderCells = headRow ? Array.from(headRow.children) : [];
-    const headers = allHeaderCells.map(th => {
-      // filterableTh embeds a whole sort/filter widget (arrows, funnel icon,
-      // checklist) inside the <th> — pull out just the visible column
-      // label text, not that nested UI's text content.
-      const label = th.querySelector('.th-sort-label');
-      const raw = (label ? label.textContent : th.textContent).replace(/[▲▼]/g,'').trim();
-      return raw;
-    });
-    // Drop action-icon columns (edit/delete pencils etc.) — never real data.
-    const keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
-    const filteredHeaders = keepIdx.map(i => headers[i]);
-    const colCount = headers.length;
-    // A row using colspan (opening-balance/total summary rows) has FEWER DOM
-    // cells than header columns — a plain tr.children[i] lookup would shift
-    // every value after the colspan cell into the wrong column. Expand each
-    // colspan cell to occupy all the logical column slots it visually spans
-    // (keeping its content in only the first of those slots) so indexing by
-    // header position is always correct, colspan or not.
-    function expandRowCells(tr){
-      const out = [];
-      Array.from(tr.children).forEach(td => {
-        const span = parseInt(td.getAttribute('colspan') || '1', 10) || 1;
-        out.push(td);
-        for(let i=1;i<span;i++) out.push(null);
-      });
-      while(out.length < colCount) out.push(null);
-      return out;
-    }
-    const bodyRows = Array.from(tableEl.querySelectorAll('tbody tr')).map(tr => {
-      const cells = expandRowCells(tr);
-      return keepIdx.map(i => {
-        const td = cells[i];
-        if(!td) return '';
-        const raw = td.textContent.trim();
-        if(raw === '' || raw === '—') return '';
-        if(ISO_DATE_RE.test(raw)) return raw;
-        if(td.classList.contains('num-cell') || td.classList.contains('num')){
-          const numMatch = raw.match(/^-?[\d,]+(\.\d+)?/);
-          if(numMatch){
-            const n = parseFloat(numMatch[0].replace(/,/g,''));
-            // only treat as numeric if the WHOLE cell is that number (plain
-            // amount) — cells like "100.00 USD" or a multi-line breakdown
-            // stay text so the currency/extra context isn't silently lost.
-            if(!isNaN(n) && numMatch[0].length === raw.length) return n;
-          }
-        }
-        return raw;
-      });
-    });
-    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows);
     const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(tableEl);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    XLSX.writeFile(wb, filename, { cellStyles:true });
+    XLSX.writeFile(wb, filename);
   }catch(e){ showToast(t('exportTableError') + ': ' + e.message, 4000); }
 }
 function attachTableExportButtons(){
   const root = document.getElementById('viewRoot');
   if(!root) return;
   const usedNames = {};
-  root.querySelectorAll('.table-wrap').forEach((wrap, tableIdx) => {
+  root.querySelectorAll('.table-wrap').forEach(wrap => {
     const tableEl = wrap.querySelector('table');
     if(!tableEl || !tableEl.rows.length) return; // nothing to export
     const card = wrap.closest('.card');
@@ -1579,80 +1431,6 @@ function attachTableExportButtons(){
     btn.addEventListener('click', () => exportTableToExcel(tableEl, filename));
     toolbar.appendChild(btn);
     wrap.parentNode.insertBefore(toolbar, wrap);
-    // Table identity for saved column order: keyed by view + position on the
-    // page (NOT by translated header text, so it survives language switches
-    // and doesn't depend on which currency/account happens to be selected).
-    attachColumnReordering(tableEl, (STATE.ui.view||'view') + '_t' + tableIdx);
-  });
-}
-// Lets the user drag a column header left/right to reorder it — desktop
-// only (native HTML5 drag-and-drop isn't a touch gesture, and dragging would
-// fight with tapping the filter/sort controls already packed into each
-// header on mobile). The chosen order is saved per table (STATE.ui.colOrder)
-// and re-applied every render, including immediately here for the very
-// table just rendered.
-function attachColumnReordering(tableEl, tableKey){
-  if(window.innerWidth <= 900) return;
-  const headRow = tableEl.querySelector('thead tr');
-  if(!headRow) return;
-  const ths = Array.from(headRow.children);
-  if(ths.length < 2) return;
-  ths.forEach((th, i) => {
-    if(!th.dataset.colKey) th.dataset.colKey = th.dataset.sortCol || ('idx_' + i);
-    th.classList.add('col-draggable');
-    th.draggable = true;
-    // Drag should only start from the header's own background/padding, not
-    // from clicking the sort label or the filter dropdown button inside it —
-    // otherwise a quick click-drag on those would hijack the click.
-    th.querySelectorAll('.th-sort-label, .multiselect, .ms-toggle').forEach(el => { el.draggable = false; });
-  });
-  const saved = STATE.ui.colOrder && STATE.ui.colOrder[tableKey];
-  if(saved && saved.length) reorderTableColumns(tableEl, saved);
-
-  let dragSrcKey = null;
-  headRow.querySelectorAll('th').forEach(th => {
-    th.addEventListener('dragstart', e => {
-      dragSrcKey = th.dataset.colKey;
-      th.classList.add('col-dragging');
-      if(e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-    });
-    th.addEventListener('dragend', () => th.classList.remove('col-dragging'));
-    th.addEventListener('dragover', e => { e.preventDefault(); th.classList.add('col-drop-target'); });
-    th.addEventListener('dragleave', () => th.classList.remove('col-drop-target'));
-    th.addEventListener('drop', e => {
-      e.preventDefault();
-      th.classList.remove('col-drop-target');
-      const targetKey = th.dataset.colKey;
-      if(!dragSrcKey || dragSrcKey === targetKey) return;
-      const currentOrder = Array.from(headRow.children).map(el => el.dataset.colKey);
-      const from = currentOrder.indexOf(dragSrcKey);
-      const to = currentOrder.indexOf(targetKey);
-      if(from === -1 || to === -1) return;
-      currentOrder.splice(to, 0, currentOrder.splice(from, 1)[0]);
-      reorderTableColumns(tableEl, currentOrder);
-      STATE.ui.colOrder = STATE.ui.colOrder || {};
-      STATE.ui.colOrder[tableKey] = currentOrder;
-    });
-  });
-}
-// Physically reorders every row's cells (header + body) to match `order`
-// (an array of colKey). Rows whose cell count doesn't match the header's
-// column count — colspan-based opening-balance/total rows — are left as-is
-// rather than risk corrupting them.
-function reorderTableColumns(tableEl, order){
-  const headRow = tableEl.querySelector('thead tr');
-  if(!headRow) return;
-  const headerCells = Array.from(headRow.children);
-  const colCount = headerCells.length;
-  const keyToIndex = {};
-  headerCells.forEach((th,i) => { keyToIndex[th.dataset.colKey || ('idx_'+i)] = i; });
-  const rows = [headRow, ...Array.from(tableEl.querySelectorAll('tbody tr'))];
-  rows.forEach(row => {
-    const cells = Array.from(row.children);
-    if(cells.length !== colCount) return; // skip colspan summary rows
-    const newCells = order.map(key => cells[keyToIndex[key]]).filter(Boolean);
-    if(newCells.length !== colCount) return; // stale/unknown key — don't risk it
-    newCells.forEach(cell => row.appendChild(cell));
   });
 }
 window.__exportData = window.__exportData || {};
@@ -6146,26 +5924,15 @@ function renderAccountStatementView(root, alwaysCombined){
             ${filterableTh(viewKey,'cur',t('currency'),glColf.cur,rows.map(r=>r.cur||'EGP'))}
             ${filterableTh(viewKey,'debit',t('debit')+' EGP',glColf.debit,rows.map(r=>r.debit||0),{extraClass:'num-cell',displayLabel:fmt})}
             ${filterableTh(viewKey,'credit',t('credit')+' EGP',glColf.credit,rows.map(r=>r.credit||0),{extraClass:'num-cell',displayLabel:fmt})}
-            ${sortTh(viewKey,'running',t('runningBalance')+(singleForeign?' (EGP)':''),'num-cell')}
             ${filterableTh(viewKey,'product',t('productCol'),glColf.product,rows.map(r=>r.product||''))}
             ${filterableTh(viewKey,'curAmt',t('origCurrencyAmountCol'),glColf.curAmt,rows.map(r=>r.curAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
             ${sortTh(viewKey,'convFactor',t('conversionFactorCol'),'num-cell')}
             ${singleForeign ? `<th class="num-cell">${t('debit')} ${escapeHtml(singleForeign)}</th><th class="num-cell">${t('credit')} ${escapeHtml(singleForeign)}</th>` : ''}
-            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}
+            ${filterableTh(viewKey,'movement',t('movement'),glColf.movement,rows.map(r=>r.movement),{extraClass:'num-cell',displayLabel:fmt})}${sortTh(viewKey,'running',t('runningBalance')+(singleForeign?' (EGP)':''),'num-cell')}
             ${singleForeign ? sortTh(viewKey,'runningNative',t('runningBalance')+' ('+singleForeign+')','num-cell') : ''}
             <th>${t('actionsCol')}</th>
           </tr></thead><tbody>
-            ${(showOpening && glPage===0) ? `<tr class="total-row">
-              <td colspan="7">${t('openingBalanceBeforePeriod')}</td>
-              <td></td>
-              <td></td>
-              <td class="num-cell num">${fmt(opening)}</td>
-              <td></td><td></td><td></td>
-              ${singleForeign?`<td></td><td></td>`:''}
-              <td></td>
-              ${singleForeign?`<td class="num-cell num">${fmt(openingNative)}</td>`:''}
-              <td></td>
-            </tr>` : ''}
+            ${(showOpening && glPage===0) ? `<tr class="total-row"><td colspan="${singleForeign?14:12}">${t('openingBalanceBeforePeriod')}</td><td></td><td class="num-cell num">${fmt(opening)}</td>${singleForeign?`<td class="num-cell num">${fmt(openingNative)}</td>`:''}<td></td></tr>` : ''}
             ${pageRows.length ? pageRows.map(r=>{
               const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
               const convFactor = hasFx ? (r.debit||r.credit)/Math.abs(r.curAmt) : null;
@@ -6179,12 +5946,12 @@ function renderAccountStatementView(root, alwaysCombined){
               <td><span class="pill pill-gold">${escapeHtml(r.cur||'EGP')}</span></td>
               <td class="num-cell num">${r.debit?fmt(r.debit):''}</td>
               <td class="num-cell num">${r.credit?fmt(r.credit):''}</td>
-              <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
               <td>${r.product?escapeHtml(r.product):'—'}</td>
               <td class="num-cell num">${r.curAmt?fmt(r.curAmt)+' '+escapeHtml(r.cur||''):'—'}</td>
               <td class="num-cell num">${convFactor!=null?fmt(convFactor):'—'}</td>
               ${singleForeign ? `<td class="num-cell num">${r.nativeDebit?fmt(r.nativeDebit):''}</td><td class="num-cell num">${r.nativeCredit?fmt(r.nativeCredit):''}</td>` : ''}
               <td class="num-cell num ${r.movement>=0?'pos-text':'neg-text'}">${fmt(r.movement)}</td>
+              <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
               ${singleForeign ? `<td class="num-cell num ${r.runningNative>=0?'pos-text':'neg-text'}">${fmt(r.runningNative)}</td>` : ''}
               <td class="num-cell"><span class="drill" title="${t('editEntry')}" onclick="openEditJournalEntryModal('${jsAttrEscape(r.entry)}','${r.date}')">✎</span></td>
             </tr>`;}).join('') : `<tr><td colspan="${colCount}" class="empty">${t('noMatchingFilterMovement')}</td></tr>`}
@@ -6192,10 +5959,10 @@ function renderAccountStatementView(root, alwaysCombined){
               <td colspan="7">${t('total')}</td>
               <td class="num-cell num">${fmt(totalDebit)}</td>
               <td class="num-cell num">${fmt(totalCredit)}</td>
-              <td></td>
               <td></td><td></td><td></td>
               ${singleForeign ? `<td class="num-cell num">${fmt(totalNativeDebit)}</td><td class="num-cell num">${fmt(totalNativeCredit)}</td>` : ''}
               <td class="num-cell num">${fmt(totalMovement)}</td>
+              <td></td>
               ${singleForeign ? '<td></td>' : ''}
               <td></td>
             </tr>` : ''}
