@@ -1607,7 +1607,7 @@ function attachColumnReordering(tableEl, tableKey){
     // Drag should only start from the header's own background/padding, not
     // from clicking the sort label or the filter dropdown button inside it —
     // otherwise a quick click-drag on those would hijack the click.
-    th.querySelectorAll('.th-sort-label, .multiselect, .ms-toggle').forEach(el => { el.draggable = false; });
+    th.querySelectorAll('.multiselect, .ms-toggle').forEach(el => { el.draggable = false; });
   });
   const saved = STATE.ui.colOrder && STATE.ui.colOrder[tableKey];
   if(saved && saved.length) reorderTableColumns(tableEl, saved);
