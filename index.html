@@ -484,6 +484,17 @@ th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn'
 }
 .theme-toggle:hover{ background:rgba(217,180,92,.1); border-color:rgba(217,180,92,.6); }
 .nav-arrows{ display:flex; gap:4px; flex:0 0 auto; }
+.drive-status-lamp{
+  width:11px; height:11px; border-radius:50%; flex:0 0 auto; cursor:pointer;
+  border:1px solid rgba(255,255,255,.25); box-shadow:0 0 0 rgba(0,0,0,0);
+  transition: background-color .25s ease, box-shadow .25s ease;
+}
+.drive-status-lamp.lamp-connected{ background:#5FBF8F; box-shadow:0 0 6px #5FBF8F; }
+.drive-status-lamp.lamp-syncing{ background:var(--gold-light); box-shadow:0 0 6px var(--gold-light); animation:lampPulse 1s ease-in-out infinite; }
+.drive-status-lamp.lamp-expiring{ background:#E0A93A; box-shadow:0 0 6px #E0A93A; }
+.drive-status-lamp.lamp-error{ background:var(--brick-light); box-shadow:0 0 6px var(--brick-light); }
+.drive-status-lamp.lamp-disconnected{ background:#5B6A72; box-shadow:none; }
+@keyframes lampPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
 .nav-arrows button{
   width:30px; height:30px; border-radius:8px; border:1px solid rgba(217,180,92,.3);
   background:var(--ink-2); color:var(--gold-light); font-size:15px; cursor:pointer;
@@ -4589,6 +4600,13 @@ function fmtDateTime(iso){
   const d = new Date(iso);
   return `${d.getFullYear()}/${pad2(d.getMonth()+1)}/${pad2(d.getDate())} - ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
+function driveStatusInfo(){
+  if(DRIVE.syncing) return { cls:'lamp-syncing', label:t('driveSyncingLabel') };
+  if(DRIVE.lastError) return { cls:'lamp-error', label:DRIVE.lastError };
+  if(DRIVE.sessionExpiringSoon) return { cls:'lamp-expiring', label:t('driveExpiringSoonLabel') };
+  if(DRIVE.signedIn) return { cls:'lamp-connected', label:t('driveConnectedLabel') + (DRIVE.lastSyncAt ? ' — ' + t('driveLastSyncLabel') + ': ' + fmtDateTime(DRIVE.lastSyncAt.toISOString()) : '') };
+  return { cls:'lamp-disconnected', label:t('driveNotConnectedLabel') };
+}
 
 function renderApp(){
   const app = document.getElementById('app');
@@ -4671,6 +4689,7 @@ function renderApp(){
       <div class="topbar-title-row">
         <div style="display:flex;align-items:center;gap:10px;">
           <button id="hamburgerBtn" title="${t('toggleSidebarLabel')}" aria-label="${t('toggleSidebarLabel')}">☰</button>
+          <span class="drive-status-lamp ${driveStatusInfo().cls}" id="driveStatusLamp" title="${escapeHtml(t('driveStatusTitle') + ': ' + driveStatusInfo().label)}" role="button" aria-label="${escapeHtml(t('driveStatusTitle'))}"></span>
           <div class="nav-arrows">
             <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">→</button>
             <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">←</button>
@@ -4735,6 +4754,14 @@ function renderApp(){
   });
   const backdrop = document.getElementById('sidebarBackdrop');
   if(backdrop) backdrop.addEventListener('click', () => { STATE.ui.sidebarOpen = false; renderApp(); });
+  const driveLamp = document.getElementById('driveStatusLamp');
+  if(driveLamp) driveLamp.addEventListener('click', async () => {
+    STATE.ui.sidebarOpen = true; // mobile off-canvas drawer
+    STATE.ui.sidebarCollapsed = false; // desktop collapse
+    STATE.settings.sidebarCollapsed = false;
+    await storeSet('settings', STATE.settings);
+    renderApp();
+  });
   attachFilterEvents();
   attachCurrencyEvents();
   const backBtn = document.getElementById('navBackBtn');
