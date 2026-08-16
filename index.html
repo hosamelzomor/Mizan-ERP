@@ -1199,7 +1199,7 @@ const I18N = {
     noMovementInPeriod:'No movement during the selected period', combinedSelectedBalance:'Total Balance of Selected (EGP)', partnerCount:'partners',
     noMatchingFilterMovement:'No movement matches the selected filters', openingBalanceBeforePeriod:'Balance before start of period', showOpeningBalanceLabel:'Show balance before start of period',
     selectedCostCentersTotal:'Total of Selected Cost Centers', totalNetProfitLossLabel:'Total Net Profit/Loss',
-    exportFileError:'Could not export the file', exportTableError:'Could not export the table', templateCreateError:'Could not create the template', entryNotFoundError:'Entry not found', entryNeedsOneLine:'An entry needs at least one line',
+    exportFileError:'Could not export the file', exportTableError:'Could not export the table', exportNothingToExport:'There is no data in the table to export', templateCreateError:'Could not create the template', entryNotFoundError:'Entry not found', entryNeedsOneLine:'An entry needs at least one line',
     currentBalance:'Current Balance', debtorTo:'Debit balance', creditorFrom:'Credit balance', foreignCurrencyNote:'This partner has activity in a currency other than EGP within the statement above. Detail in its native currency:',
     currencyOf:'Currency', openingShort:'Opening', closingShort:'Closing', currencyAll:'All', currencyEGPLabel:'EGP', currencyUSDLabel:'USD',
     customerStatementTitle:'Customer / Vendor Statement', otherBalancesTitle:'Other Debit / Credit Balances',
@@ -1417,6 +1417,20 @@ function isoDateToExcelSerial(iso){
   if(!m) return null;
   const ms = Date.UTC(+m[1], +m[2]-1, +m[3]) - Date.UTC(1899, 11, 30);
   return Math.round(ms / 86400000);
+}
+// Human-readable label for the currently active period filter — reused by
+// every export so the title row's period text always matches whatever the
+// user actually has filtered to right now, regardless of which page/table.
+function currentPeriodLabel(){
+  const f = STATE.ui.filters;
+  if(periodFilterActive(f)){
+    const parts = [];
+    if(f.years && f.years.length) parts.push(f.years.join('، '));
+    if(f.months && f.months.length) parts.push(f.months.join('، '));
+    return t('periodLabel') + ': ' + parts.join(' — ');
+  }
+  if(f.start || f.end) return t('fromLabel') + ' ' + (f.start || t('startOfActivityLabel')) + ' ' + t('toLabel') + ' ' + (f.end || todayISO());
+  return t('allPeriods');
 }
 function detectColumnType(values){
   const present = values.filter(v => v !== '' && v != null);
