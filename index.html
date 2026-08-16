@@ -880,7 +880,7 @@ const I18N = {
     appName:'ميزان', appTagline:'لوحة التحكم المالية', lightMode:'الوضع الفاتح', darkMode:'الوضع الداكن',
     allRightsReserved:'جميع الحقوق محفوظة', designedBy:'تصميم وتطوير',
     menu:'القائمة', back:'رجوع للخلف', forward:'تقدم للأمام',
-    from:'من', to:'إلى', currentMonth:'الشهر الحالي', yearToDate:'من بداية السنة', allPeriods:'كل الفترات',
+    from:'من', to:'إلى', currentMonth:'الشهر الحالي', yearToDate:'من بداية السنة', allPeriods:'كل الفترات', periodLabel:'الفترة',
     year:'السنة (أكثر من سنة)', month:'الشهر (أكثر من شهر)', clearYearMonth:'✕ مسح فلتر السنة/الشهر',
     all:'الكل', none:'لا شيء', done:'تم', searchPlaceholder:'بحث بالاسم أو الرقم...', selectedCountSuffix:'محدد',
     sortAscBtn:'▲ ترتيب تصاعدي', sortDescBtn:'▼ ترتيب تنازلي',
@@ -1225,7 +1225,7 @@ const I18N = {
     appName:'Mizan', appTagline:'Financial Dashboard', lightMode:'Light Mode', darkMode:'Dark Mode',
     allRightsReserved:'All rights reserved', designedBy:'Designed & developed by',
     menu:'Menu', back:'Back', forward:'Forward',
-    from:'From', to:'To', currentMonth:'This Month', yearToDate:'Year to Date', allPeriods:'All Periods',
+    from:'From', to:'To', currentMonth:'This Month', yearToDate:'Year to Date', allPeriods:'All Periods', periodLabel:'Period',
     year:'Year (multi-select)', month:'Month (multi-select)', clearYearMonth:'✕ Clear year/month filter',
     all:'All', none:'None', done:'Done', searchPlaceholder:'Search by name or number...', selectedCountSuffix:'selected',
     sortAscBtn:'▲ Sort Ascending', sortDescBtn:'▼ Sort Descending',
@@ -1446,7 +1446,7 @@ function detectColumnType(values){
 // optional; when omitted each column's type is inferred from its own
 // values, so callers passing already-typed data (registerExport sites) need
 // no changes at all to benefit.
-function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
+function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, titleInfo){
   const colCount = headers.length;
   const detectionRows = summaryRowFlags ? rows.filter((_,i) => !summaryRowFlags[i]) : rows;
   const types = columnTypes || Array.from({length:colCount}, (_,i) => detectColumnType(detectionRows.map(r=>r[i])));
@@ -1459,7 +1459,11 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
       return isNaN(n) || Number.isInteger(n);
     });
   });
-  const aoa = [headers, ...rows.map(row => row.map((v,i) => {
+  // Title/period rows (row 0 = report title, row 1 = period) sit above the
+  // header row when requested — every row index below is offset by this.
+  const titleRows = titleInfo ? 2 : 0;
+  const headerRowIdx = titleRows;
+  const dataRows = rows.map(row => row.map((v,i) => {
     const type = types[i];
     if(v==null || v==='') return null;
     if(type === 'number'){
@@ -1471,7 +1475,13 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
       return serial==null ? v : serial;
     }
     return v;
-  }))];
+  }));
+  const aoa = [];
+  if(titleInfo){
+    aoa.push([titleInfo.title]);
+    aoa.push([titleInfo.period]);
+  }
+  aoa.push(headers, ...dataRows);
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   // Auto-fit column widths from actual content length (header vs every cell
   // in that column), capped so one long description can't blow out the
@@ -1486,7 +1496,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
     const type = types[c];
     if(type === 'text') continue;
     const fmtStr = type === 'date' ? 'dd-mm-yyyy' : (isIntCol[c] ? '#,##0' : '#,##0.00');
-    for(let r=1;r<aoa.length;r++){
+    for(let r=headerRowIdx+1;r<aoa.length;r++){
       const cell = ws[XLSX.utils.encode_cell({ r, c })];
       if(cell && cell.v != null) cell.z = fmtStr;
     }
@@ -1495,20 +1505,37 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
   // writer used here doesn't guarantee full style fidelity in every Excel/
   // LibreOffice version, but modern Excel honors it).
   for(let c=0;c<colCount;c++){
-    const cell = ws[XLSX.utils.encode_cell({ r:0, c })];
+    const cell = ws[XLSX.utils.encode_cell({ r:headerRowIdx, c })];
     if(cell) cell.s = { font:{ bold:true, color:{rgb:'FFFFFF'} }, fill:{ patternType:'solid', fgColor:{rgb:'1F2E3B'} } };
+  }
+  if(titleInfo && colCount > 0){
+    const lastCol = colCount - 1;
+    ws['!merges'] = ws['!merges'] || [];
+    ws['!merges'].push({ s:{r:0,c:0}, e:{r:0,c:lastCol} }, { s:{r:1,c:0}, e:{r:1,c:lastCol} });
+    const titleCell = ws['A1'];
+    if(titleCell) titleCell.s = { font:{ bold:true, sz:14, color:{rgb:'1F2E3B'} }, alignment:{ horizontal:'center' } };
+    const periodCell = ws['A2'];
+    if(periodCell) periodCell.s = { font:{ italic:true, sz:10, color:{rgb:'5B6A72'} }, alignment:{ horizontal:'center' } };
   }
   // Excel's built-in filter-dropdown arrows on the header row — the closest
   // native equivalent to "a dynamic, filterable table" the free writer can
-  // produce reliably.
-  ws['!autofilter'] = { ref: ws['!ref'] };
+  // produce reliably. Scoped to just the header+data range, not the title
+  // rows above it.
+  if(colCount > 0){
+    const range = { s:{r:headerRowIdx,c:0}, e:{r:aoa.length-1,c:colCount-1} };
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
+  }
   return ws;
 }
-function exportRowsToExcel(filename, headers, rows){
+function exportRowsToExcel(filename, headers, rows, titleInfo){
   try{
     if(!headers || !headers.length){ showToast(t('exportNothingToExport'), 3000); return; }
-    const ws = buildFormattedWorksheet(headers, rows);
+    const ws = buildFormattedWorksheet(headers, rows, null, null, titleInfo);
     const wb = XLSX.utils.book_new();
+    // Sheet reading direction matches the current UI language — RTL for
+    // Arabic (column A on the right, matching how the report reads on
+    // screen), LTR for English.
+    wb.Workbook = { Views: [{ RTL: STATE.settings.lang !== 'en' }] };
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportFileError') + ': ' + e.message, 4000); }
@@ -1520,7 +1547,7 @@ function exportRowsToExcel(filename, headers, rows){
 // out of each cell (via CSS hints + ISO-date pattern matching) instead of
 // just dumping the display text, so the exported file gets the same real
 // typing/formatting as the structured-data path above.
-function exportTableToExcel(tableEl, filename){
+function exportTableToExcel(tableEl, filename, title){
   try{
     const headRow = tableEl.querySelector('thead tr');
     const actionsLabel = t('actionsCol');
@@ -1588,8 +1615,10 @@ function exportTableToExcel(tableEl, filename){
         return raw;
       });
     });
-    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags);
+    const titleInfo = title ? { title, period: currentPeriodLabel() } : null;
+    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags, titleInfo);
     const wb = XLSX.utils.book_new();
+    wb.Workbook = { Views: [{ RTL: STATE.settings.lang !== 'en' }] };
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportTableError') + ': ' + e.message, 4000); }
@@ -1607,8 +1636,8 @@ function attachTableExportButtons(){
     // than the card's own h2 when both exist on the same card.
     const sectionEl = wrap.previousElementSibling && wrap.previousElementSibling.classList && wrap.previousElementSibling.classList.contains('section-title')
       ? wrap.previousElementSibling : (card ? card.querySelector('.section-title') : null);
-    let base = (sectionEl ? sectionEl.textContent : (headingEl ? headingEl.textContent : 'جدول')).trim();
-    base = base.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'_').slice(0,60) || 'جدول';
+    const rawTitle = (sectionEl ? sectionEl.textContent : (headingEl ? headingEl.textContent : 'جدول')).trim();
+    let base = rawTitle.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'_').slice(0,60) || 'جدول';
     usedNames[base] = (usedNames[base]||0) + 1;
     const filename = (usedNames[base] > 1 ? `${base}_${usedNames[base]}` : base) + '.xlsx';
     const toolbar = document.createElement('div');
@@ -1617,7 +1646,7 @@ function attachTableExportButtons(){
     btn.type = 'button';
     btn.className = 'btn btn-outline tbl-export-btn';
     btn.textContent = '⬇ ' + t('exportExcel');
-    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename));
+    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename, rawTitle));
     toolbar.appendChild(btn);
     wrap.parentNode.insertBefore(toolbar, wrap);
     // Table identity for saved column order: keyed by view + position on the
@@ -1697,7 +1726,7 @@ function reorderTableColumns(tableEl, order){
   });
 }
 window.__exportData = window.__exportData || {};
-function registerExport(id, filename, headers, rows){ window.__exportData[id] = { filename, headers, rows }; }
+function registerExport(id, filename, headers, rows, title){ window.__exportData[id] = { filename, headers, rows, title }; }
 
 // Requirement: let a user download a template file matching each importer's
 // exact expected format (same headers detectMapping()/importAccountsFile()/
@@ -1764,7 +1793,12 @@ function downloadImportTemplate(kind){
     XLSX.writeFile(wb, filename);
   }catch(e){ showToast(t('templateCreateError') + ': ' + e.message, 4000); }
 }
-function runExport(id){ const d = window.__exportData[id]; if(d) exportRowsToExcel(d.filename, d.headers, d.rows); else showToast('لا توجد بيانات للتصدير'); }
+function runExport(id){
+  const d = window.__exportData[id];
+  if(!d){ showToast(t('exportNothingToExport')); return; }
+  const title = d.title || d.filename.replace(/\.xlsx$/i,'').replace(/_/g,' ');
+  exportRowsToExcel(d.filename, d.headers, d.rows, { title, period: currentPeriodLabel() });
+}
 function exportBtnHtml(id){ return `<button class="btn btn-outline" style="padding:4px 10px;font-size:11px" onclick="runExport('${id}')">${ICONS.download||''} ${t('exportExcel')}</button>`; }
 function printCurrentView(){ window.print(); }
 
@@ -5633,7 +5667,8 @@ function renderTrialBalanceView(root){
     const sorted = applySort(viewKey, filteredRows, (r,col) => r[col]);
     registerExport(viewKey, `trial_balance_${g.currency}.xlsx`,
       [t('code'),t('accountName'),t('classification'),t('openingBalance'),t('debit'),t('credit'),t('closingBalance')],
-      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]));
+      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]),
+      t('trialBalanceTitle') + ' — ' + g.currency);
 
     const byCat = TB_CATEGORIES.map(cat => ({ ...cat, rows: sorted.filter(r=>cat.types.includes(r.type)) })).filter(c=>c.rows.length);
     const otherRows = sorted.filter(r => !TB_CATEGORIES.some(c=>c.types.includes(r.type)));
