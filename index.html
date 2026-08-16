@@ -352,6 +352,13 @@ tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); backgr
 .num-cell{ text-align:left; }
 .drill{ cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-decoration-color:var(--gold-dim); text-underline-offset:2px; }
 .drill:hover{ color:var(--gold-dim); font-weight:700; }
+/* Accessibility: visible focus ring for keyboard users tabbing through
+   drill-down cells / edit-delete icons (see enhanceInteractiveAccessibility
+   in the script, which makes these focusable). Only shows for keyboard
+   focus, not mouse clicks, so it doesn't clutter the normal mouse UX. */
+.drill:focus-visible, [data-edit-tx]:focus-visible, [data-del-tx]:focus-visible{
+  outline:2px solid var(--gold-light); outline-offset:2px; border-radius:3px;
+}
 .pos-text{ color:var(--emerald); font-weight:700; }
 .neg-text{ color:var(--brick); font-weight:700; }
 
@@ -810,6 +817,49 @@ function periodLabelForFilters(filters){
   return parts.join(' — ') || t('allPeriods');
 }
 
+// Requirement: exported Excel filenames should always carry the real date
+// range covered, not just the table's name — and when the "all periods"
+// filter is active (no start/end, no year/month selection), that range must
+// be the ACTUAL first/last transaction date in the loaded journal rather
+// than a vague "all" — so a file opened weeks later still tells you exactly
+// what it covers.
+function journalDateBounds(){
+  if(!STATE.journal.length) return null;
+  let min = STATE.journal[0].date, max = STATE.journal[0].date;
+  for(const l of STATE.journal){
+    if(l.date < min) min = l.date;
+    if(l.date > max) max = l.date;
+  }
+  return { min, max };
+}
+// Resolves the real {start,end} a given filter state covers, always
+// preferring actual journal data over blank/"all" filter values.
+function exportPeriodRange(filters){
+  filters = filters || STATE.ui.filters;
+  const bounds = journalDateBounds();
+  if(periodFilterActive(filters)){
+    // Year/month multi-select: use the real min/max date among the lines it
+    // actually matches (not the raw year list — a selected year with only
+    // Q1 activity should show Q1's real bounds, not "Jan–Dec").
+    const lines = filterLinesByPeriod(STATE.journal, filters);
+    if(!lines.length) return bounds ? { start: bounds.min, end: bounds.max } : null;
+    let min = lines[0].date, max = lines[0].date;
+    for(const l of lines){ if(l.date < min) min = l.date; if(l.date > max) max = l.date; }
+    return { start: min, end: max };
+  }
+  if(!bounds && !filters.start && !filters.end) return null;
+  return {
+    start: filters.start || (bounds ? bounds.min : ''),
+    end: filters.end || (bounds ? bounds.max : todayISO()),
+  };
+}
+// Builds the "_<start>_<to>_<end>" suffix appended to exported filenames.
+function exportFilenamePeriodSuffix(filters){
+  const r = exportPeriodRange(filters);
+  if(!r || (!r.start && !r.end)) return '';
+  return `_${r.start || '?'}_${t('to')}_${r.end || '?'}`.replace(/[\\/:*?"<>|\s]/g,'_');
+}
+
 function toISODate(v, date1904){
   // ROOT-CAUSE FIX for the "imported date is one day earlier than Excel" bug:
   //
@@ -880,7 +930,7 @@ const I18N = {
     appName:'ميزان', appTagline:'لوحة التحكم المالية', lightMode:'الوضع الفاتح', darkMode:'الوضع الداكن',
     allRightsReserved:'جميع الحقوق محفوظة', designedBy:'تصميم وتطوير',
     menu:'القائمة', back:'رجوع للخلف', forward:'تقدم للأمام',
-    from:'من', to:'إلى', currentMonth:'الشهر الحالي', yearToDate:'من بداية السنة', allPeriods:'كل الفترات', periodLabel:'الفترة',
+    from:'من', to:'إلى', currentMonth:'الشهر الحالي', yearToDate:'من بداية السنة', allPeriods:'كل الفترات',
     year:'السنة (أكثر من سنة)', month:'الشهر (أكثر من شهر)', clearYearMonth:'✕ مسح فلتر السنة/الشهر',
     all:'الكل', none:'لا شيء', done:'تم', searchPlaceholder:'بحث بالاسم أو الرقم...', selectedCountSuffix:'محدد',
     sortAscBtn:'▲ ترتيب تصاعدي', sortDescBtn:'▼ ترتيب تنازلي',
@@ -946,7 +996,7 @@ const I18N = {
     noMovementInPeriod:'لا توجد حركة خلال الفترة المحددة', combinedSelectedBalance:'إجمالي أرصدة المختارين (بالجنيه)', partnerCount:'شريك',
     noMatchingFilterMovement:'لا توجد حركة مطابقة للفلاتر المحددة', openingBalanceBeforePeriod:'رصيد قبل بداية الفترة', showOpeningBalanceLabel:'إظهار الرصيد قبل بداية الفترة',
     selectedCostCentersTotal:'إجمالي المراكز المختارة', totalNetProfitLossLabel:'إجمالي صافي الربح/الخسارة',
-    exportFileError:'تعذّر تصدير الملف', exportTableError:'تعذّر تصدير الجدول', exportNothingToExport:'لا توجد بيانات في الجدول للتصدير', templateCreateError:'تعذّر إنشاء التمبلت', entryNotFoundError:'تعذر العثور على القيد', entryNeedsOneLine:'يجب أن يحتوي القيد على سطر واحد على الأقل',
+    exportFileError:'تعذّر تصدير الملف', exportTableError:'تعذّر تصدير الجدول', templateCreateError:'تعذّر إنشاء التمبلت', entryNotFoundError:'تعذر العثور على القيد', entryNeedsOneLine:'يجب أن يحتوي القيد على سطر واحد على الأقل',
     currentBalance:'رصيد حالي', debtorTo:'مدين له', creditorFrom:'دائن عليه', foreignCurrencyNote:'هذا الشريك له حركة بعملة أخرى غير الجنيه ضمن الكشف أعلاه. التفصيل بعملتها الأصلية:',
     currencyOf:'عملة', openingShort:'افتتاحي', closingShort:'ختامي', currencyAll:'الكل', currencyEGPLabel:'جنيه', currencyUSDLabel:'دولار',
     customerStatementTitle:'كشف حساب عميل / مورد', otherBalancesTitle:'أرصدة مدينة / دائنة أخرى',
@@ -1199,7 +1249,7 @@ const I18N = {
     noMovementInPeriod:'No movement during the selected period', combinedSelectedBalance:'Total Balance of Selected (EGP)', partnerCount:'partners',
     noMatchingFilterMovement:'No movement matches the selected filters', openingBalanceBeforePeriod:'Balance before start of period', showOpeningBalanceLabel:'Show balance before start of period',
     selectedCostCentersTotal:'Total of Selected Cost Centers', totalNetProfitLossLabel:'Total Net Profit/Loss',
-    exportFileError:'Could not export the file', exportTableError:'Could not export the table', exportNothingToExport:'There is no data in the table to export', templateCreateError:'Could not create the template', entryNotFoundError:'Entry not found', entryNeedsOneLine:'An entry needs at least one line',
+    exportFileError:'Could not export the file', exportTableError:'Could not export the table', templateCreateError:'Could not create the template', entryNotFoundError:'Entry not found', entryNeedsOneLine:'An entry needs at least one line',
     currentBalance:'Current Balance', debtorTo:'Debit balance', creditorFrom:'Credit balance', foreignCurrencyNote:'This partner has activity in a currency other than EGP within the statement above. Detail in its native currency:',
     currencyOf:'Currency', openingShort:'Opening', closingShort:'Closing', currencyAll:'All', currencyEGPLabel:'EGP', currencyUSDLabel:'USD',
     customerStatementTitle:'Customer / Vendor Statement', otherBalancesTitle:'Other Debit / Credit Balances',
@@ -1225,7 +1275,7 @@ const I18N = {
     appName:'Mizan', appTagline:'Financial Dashboard', lightMode:'Light Mode', darkMode:'Dark Mode',
     allRightsReserved:'All rights reserved', designedBy:'Designed & developed by',
     menu:'Menu', back:'Back', forward:'Forward',
-    from:'From', to:'To', currentMonth:'This Month', yearToDate:'Year to Date', allPeriods:'All Periods', periodLabel:'Period',
+    from:'From', to:'To', currentMonth:'This Month', yearToDate:'Year to Date', allPeriods:'All Periods',
     year:'Year (multi-select)', month:'Month (multi-select)', clearYearMonth:'✕ Clear year/month filter',
     all:'All', none:'None', done:'Done', searchPlaceholder:'Search by name or number...', selectedCountSuffix:'selected',
     sortAscBtn:'▲ Sort Ascending', sortDescBtn:'▼ Sort Descending',
@@ -1370,7 +1420,21 @@ function applyPaletteToDocument(){
 }
 
 function escapeHtml(s){ return (s==null?'':s.toString()).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function jsAttrEscape(s){ return (s==null?'':s.toString()).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+// SECURITY FIX: this used to only escape backslash and single-quote, which is
+// correct for breaking out of the single-quoted JS string literal (e.g.
+// onclick="fn('${jsAttrEscape(x)}')") but every call site wraps that in a
+// DOUBLE-quoted HTML attribute — so a value containing a literal `"` (e.g. an
+// imported partner/cost-center name like `Test" onmouseover="alert(1)`)
+// closed the attribute early and injected arbitrary HTML/JS (stored XSS via
+// Excel import or a synced file). Also escaping newlines, since a raw
+// newline inside the JS string literal is a syntax error too.
+function jsAttrEscape(s){
+  return (s==null?'':s.toString())
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'&quot;')
+    .replace(/\r?\n/g,'\\n');
+}
 function uniq(arr){ return [...new Set(arr)]; }
 function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
 
@@ -1418,20 +1482,6 @@ function isoDateToExcelSerial(iso){
   const ms = Date.UTC(+m[1], +m[2]-1, +m[3]) - Date.UTC(1899, 11, 30);
   return Math.round(ms / 86400000);
 }
-// Human-readable label for the currently active period filter — reused by
-// every export so the title row's period text always matches whatever the
-// user actually has filtered to right now, regardless of which page/table.
-function currentPeriodLabel(){
-  const f = STATE.ui.filters;
-  if(periodFilterActive(f)){
-    const parts = [];
-    if(f.years && f.years.length) parts.push(f.years.join('، '));
-    if(f.months && f.months.length) parts.push(f.months.join('، '));
-    return t('periodLabel') + ': ' + parts.join(' — ');
-  }
-  if(f.start || f.end) return t('fromLabel') + ' ' + (f.start || t('startOfActivityLabel')) + ' ' + t('toLabel') + ' ' + (f.end || todayISO());
-  return t('allPeriods');
-}
 function detectColumnType(values){
   const present = values.filter(v => v !== '' && v != null);
   if(!present.length) return 'text';
@@ -1446,7 +1496,7 @@ function detectColumnType(values){
 // optional; when omitted each column's type is inferred from its own
 // values, so callers passing already-typed data (registerExport sites) need
 // no changes at all to benefit.
-function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, titleInfo){
+function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
   const colCount = headers.length;
   const detectionRows = summaryRowFlags ? rows.filter((_,i) => !summaryRowFlags[i]) : rows;
   const types = columnTypes || Array.from({length:colCount}, (_,i) => detectColumnType(detectionRows.map(r=>r[i])));
@@ -1459,11 +1509,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, ti
       return isNaN(n) || Number.isInteger(n);
     });
   });
-  // Title/period rows (row 0 = report title, row 1 = period) sit above the
-  // header row when requested — every row index below is offset by this.
-  const titleRows = titleInfo ? 2 : 0;
-  const headerRowIdx = titleRows;
-  const dataRows = rows.map(row => row.map((v,i) => {
+  const aoa = [headers, ...rows.map(row => row.map((v,i) => {
     const type = types[i];
     if(v==null || v==='') return null;
     if(type === 'number'){
@@ -1475,13 +1521,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, ti
       return serial==null ? v : serial;
     }
     return v;
-  }));
-  const aoa = [];
-  if(titleInfo){
-    aoa.push([titleInfo.title]);
-    aoa.push([titleInfo.period]);
-  }
-  aoa.push(headers, ...dataRows);
+  }))];
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   // Auto-fit column widths from actual content length (header vs every cell
   // in that column), capped so one long description can't blow out the
@@ -1496,7 +1536,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, ti
     const type = types[c];
     if(type === 'text') continue;
     const fmtStr = type === 'date' ? 'dd-mm-yyyy' : (isIntCol[c] ? '#,##0' : '#,##0.00');
-    for(let r=headerRowIdx+1;r<aoa.length;r++){
+    for(let r=1;r<aoa.length;r++){
       const cell = ws[XLSX.utils.encode_cell({ r, c })];
       if(cell && cell.v != null) cell.z = fmtStr;
     }
@@ -1505,37 +1545,19 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, ti
   // writer used here doesn't guarantee full style fidelity in every Excel/
   // LibreOffice version, but modern Excel honors it).
   for(let c=0;c<colCount;c++){
-    const cell = ws[XLSX.utils.encode_cell({ r:headerRowIdx, c })];
+    const cell = ws[XLSX.utils.encode_cell({ r:0, c })];
     if(cell) cell.s = { font:{ bold:true, color:{rgb:'FFFFFF'} }, fill:{ patternType:'solid', fgColor:{rgb:'1F2E3B'} } };
-  }
-  if(titleInfo && colCount > 0){
-    const lastCol = colCount - 1;
-    ws['!merges'] = ws['!merges'] || [];
-    ws['!merges'].push({ s:{r:0,c:0}, e:{r:0,c:lastCol} }, { s:{r:1,c:0}, e:{r:1,c:lastCol} });
-    const titleCell = ws['A1'];
-    if(titleCell) titleCell.s = { font:{ bold:true, sz:14, color:{rgb:'1F2E3B'} }, alignment:{ horizontal:'center' } };
-    const periodCell = ws['A2'];
-    if(periodCell) periodCell.s = { font:{ italic:true, sz:10, color:{rgb:'5B6A72'} }, alignment:{ horizontal:'center' } };
   }
   // Excel's built-in filter-dropdown arrows on the header row — the closest
   // native equivalent to "a dynamic, filterable table" the free writer can
-  // produce reliably. Scoped to just the header+data range, not the title
-  // rows above it.
-  if(colCount > 0){
-    const range = { s:{r:headerRowIdx,c:0}, e:{r:aoa.length-1,c:colCount-1} };
-    ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
-  }
+  // produce reliably.
+  ws['!autofilter'] = { ref: ws['!ref'] };
   return ws;
 }
-function exportRowsToExcel(filename, headers, rows, titleInfo){
+function exportRowsToExcel(filename, headers, rows){
   try{
-    if(!headers || !headers.length){ showToast(t('exportNothingToExport'), 3000); return; }
-    const ws = buildFormattedWorksheet(headers, rows, null, null, titleInfo);
+    const ws = buildFormattedWorksheet(headers, rows);
     const wb = XLSX.utils.book_new();
-    // Sheet reading direction matches the current UI language — RTL for
-    // Arabic (column A on the right, matching how the report reads on
-    // screen), LTR for English.
-    wb.Workbook = { Views: [{ RTL: STATE.settings.lang !== 'en' }] };
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportFileError') + ': ' + e.message, 4000); }
@@ -1547,42 +1569,29 @@ function exportRowsToExcel(filename, headers, rows, titleInfo){
 // out of each cell (via CSS hints + ISO-date pattern matching) instead of
 // just dumping the display text, so the exported file gets the same real
 // typing/formatting as the structured-data path above.
-function exportTableToExcel(tableEl, filename, title){
+function exportTableToExcel(tableEl, filename){
   try{
     const headRow = tableEl.querySelector('thead tr');
     const actionsLabel = t('actionsCol');
-    const bodyTrs = Array.from(tableEl.querySelectorAll('tbody tr'));
-    let keepIdx, filteredHeaders, colCount;
-    if(headRow){
-      const allHeaderCells = Array.from(headRow.children);
-      const headers = allHeaderCells.map(th => {
-        // filterableTh embeds a whole sort/filter widget (arrows, funnel
-        // icon, checklist) inside the <th> — pull out just the visible
-        // column label text, not that nested UI's text content.
-        const label = th.querySelector('.th-sort-label');
-        return (label ? label.textContent : th.textContent).replace(/[▲▼]/g,'').trim();
-      });
-      // Drop action-icon columns (edit/delete pencils etc.) — never real data.
-      keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
-      filteredHeaders = keepIdx.map(i => headers[i]);
-      colCount = headers.length;
-    } else {
-      // Some tables (short "label: value" report layouts — Financial
-      // Statements, Cash Flow summary, etc.) have no <thead> at all. Size
-      // the sheet from the widest body row instead of guessing column
-      // names, and export with no header row.
-      colCount = Math.max(0, ...bodyTrs.map(tr => tr.children.length));
-      keepIdx = Array.from({length: colCount}, (_,i) => i);
-      filteredHeaders = keepIdx.map(() => '');
-    }
-    if(colCount === 0 || !bodyTrs.length){ showToast(t('exportNothingToExport'), 3000); return; }
-    // A row using colspan (opening-balance/total summary rows, or a section
-    // label inside a label:value table) has FEWER DOM cells than the sheet's
-    // column count — a plain tr.children[i] lookup would shift every value
-    // after the colspan cell into the wrong column. Expand each colspan
-    // cell to occupy all the logical column slots it visually spans
+    const allHeaderCells = headRow ? Array.from(headRow.children) : [];
+    const headers = allHeaderCells.map(th => {
+      // filterableTh embeds a whole sort/filter widget (arrows, funnel icon,
+      // checklist) inside the <th> — pull out just the visible column
+      // label text, not that nested UI's text content.
+      const label = th.querySelector('.th-sort-label');
+      const raw = (label ? label.textContent : th.textContent).replace(/[▲▼]/g,'').trim();
+      return raw;
+    });
+    // Drop action-icon columns (edit/delete pencils etc.) — never real data.
+    const keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
+    const filteredHeaders = keepIdx.map(i => headers[i]);
+    const colCount = headers.length;
+    // A row using colspan (opening-balance/total summary rows) has FEWER DOM
+    // cells than header columns — a plain tr.children[i] lookup would shift
+    // every value after the colspan cell into the wrong column. Expand each
+    // colspan cell to occupy all the logical column slots it visually spans
     // (keeping its content in only the first of those slots) so indexing by
-    // position is always correct, colspan or not.
+    // header position is always correct, colspan or not.
     function expandRowCells(tr){
       const out = [];
       Array.from(tr.children).forEach(td => {
@@ -1593,6 +1602,7 @@ function exportTableToExcel(tableEl, filename, title){
       while(out.length < colCount) out.push(null);
       return out;
     }
+    const bodyTrs = Array.from(tableEl.querySelectorAll('tbody tr'));
     const summaryRowFlags = bodyTrs.map(tr => tr.classList.contains('total-row'));
     const bodyRows = bodyTrs.map(tr => {
       const cells = expandRowCells(tr);
@@ -1615,14 +1625,46 @@ function exportTableToExcel(tableEl, filename, title){
         return raw;
       });
     });
-    const titleInfo = title ? { title, period: currentPeriodLabel() } : null;
-    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags, titleInfo);
+    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags);
     const wb = XLSX.utils.book_new();
-    wb.Workbook = { Views: [{ RTL: STATE.settings.lang !== 'en' }] };
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportTableError') + ': ' + e.message, 4000); }
 }
+// ---------- Accessibility: keyboard + screen-reader support for icon-only
+// and "clickable cell" interactive elements (see call site in renderApp) ----------
+// Runs once per render: finds every not-yet-enhanced .drill / [data-edit-tx] /
+// [data-del-tx] element and gives it real button semantics.
+function enhanceInteractiveAccessibility(root){
+  if(!root) return;
+  root.querySelectorAll('.drill, [data-edit-tx], [data-del-tx]').forEach(el => {
+    if(el.dataset.a11yDone) return;
+    el.dataset.a11yDone = '1';
+    if(!el.hasAttribute('tabindex')) el.tabIndex = 0;
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('aria-label')){
+      // Prefer the existing tooltip text; otherwise fall back to the cell's
+      // own visible text (e.g. an account code/name a drill-down cell wraps)
+      // so a screen reader still announces something meaningful.
+      const label = el.getAttribute('title') || el.textContent.trim();
+      if(label) el.setAttribute('aria-label', label);
+    }
+  });
+}
+// Bound once, globally, at load — NOT per render — since renderApp() replaces
+// the DOM wholesale each time, so per-element listeners would just leak.
+// Space normally scrolls the page, so it's prevented only when the focused
+// element is one of ours.
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target;
+  if(!el || !el.classList) return;
+  if(el.classList.contains('drill') || el.hasAttribute('data-edit-tx') || el.hasAttribute('data-del-tx')){
+    e.preventDefault();
+    el.click();
+  }
+});
+
 function attachTableExportButtons(){
   const root = document.getElementById('viewRoot');
   if(!root) return;
@@ -1636,17 +1678,18 @@ function attachTableExportButtons(){
     // than the card's own h2 when both exist on the same card.
     const sectionEl = wrap.previousElementSibling && wrap.previousElementSibling.classList && wrap.previousElementSibling.classList.contains('section-title')
       ? wrap.previousElementSibling : (card ? card.querySelector('.section-title') : null);
-    const rawTitle = (sectionEl ? sectionEl.textContent : (headingEl ? headingEl.textContent : 'جدول')).trim();
-    let base = rawTitle.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'_').slice(0,60) || 'جدول';
+    let base = (sectionEl ? sectionEl.textContent : (headingEl ? headingEl.textContent : 'جدول')).trim();
+    base = base.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'_').slice(0,60) || 'جدول';
     usedNames[base] = (usedNames[base]||0) + 1;
-    const filename = (usedNames[base] > 1 ? `${base}_${usedNames[base]}` : base) + '.xlsx';
+    const periodSuffix = exportFilenamePeriodSuffix();
+    const filename = (usedNames[base] > 1 ? `${base}_${usedNames[base]}` : base) + periodSuffix + '.xlsx';
     const toolbar = document.createElement('div');
     toolbar.className = 'tbl-export-toolbar';
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-outline tbl-export-btn';
     btn.textContent = '⬇ ' + t('exportExcel');
-    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename, rawTitle));
+    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename));
     toolbar.appendChild(btn);
     wrap.parentNode.insertBefore(toolbar, wrap);
     // Table identity for saved column order: keyed by view + position on the
@@ -1726,7 +1769,7 @@ function reorderTableColumns(tableEl, order){
   });
 }
 window.__exportData = window.__exportData || {};
-function registerExport(id, filename, headers, rows, title){ window.__exportData[id] = { filename, headers, rows, title }; }
+function registerExport(id, filename, headers, rows){ window.__exportData[id] = { filename, headers, rows }; }
 
 // Requirement: let a user download a template file matching each importer's
 // exact expected format (same headers detectMapping()/importAccountsFile()/
@@ -1793,12 +1836,7 @@ function downloadImportTemplate(kind){
     XLSX.writeFile(wb, filename);
   }catch(e){ showToast(t('templateCreateError') + ': ' + e.message, 4000); }
 }
-function runExport(id){
-  const d = window.__exportData[id];
-  if(!d){ showToast(t('exportNothingToExport')); return; }
-  const title = d.title || d.filename.replace(/\.xlsx$/i,'').replace(/_/g,' ');
-  exportRowsToExcel(d.filename, d.headers, d.rows, { title, period: currentPeriodLabel() });
-}
+function runExport(id){ const d = window.__exportData[id]; if(d) exportRowsToExcel(d.filename, d.headers, d.rows); else showToast('لا توجد بيانات للتصدير'); }
 function exportBtnHtml(id){ return `<button class="btn btn-outline" style="padding:4px 10px;font-size:11px" onclick="runExport('${id}')">${ICONS.download||''} ${t('exportExcel')}</button>`; }
 function printCurrentView(){ window.print(); }
 
@@ -2022,7 +2060,7 @@ function multiSelectHtml(id, label, options, selected, opts){
   const useTree = isAccountList && opts.tree;
   const isActive = selected.length > 0 && !untouchedEmpty; // for the compact "Excel-style" header icon: is a real (non-default) filter applied?
   const toggleBtn = opts.iconOnly
-    ? `<button type="button" class="ms-toggle th-filter-icon${isActive?' active':''}" data-ms="${id}" title="${escapeHtml(label)}">${ICONS.filterFunnel}</button>`
+    ? `<button type="button" class="ms-toggle th-filter-icon${isActive?' active':''}" data-ms="${id}" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">${ICONS.filterFunnel}</button>`
     : `<button type="button" class="input ms-toggle" data-ms="${id}" style="text-align:right;min-width:170px">${escapeHtml(summary)} ▾</button>`;
   const sortRow = opts.sortConfig ? (() => {
     const s = getSortState(opts.sortConfig.viewKey, null);
@@ -4401,6 +4439,63 @@ async function resetSystem(){
   });
 }
 
+// ---------- Accessibility: modal dialogs ----------
+// All modal overlays in the app (#confirmModalOverlay, #editEntryModalOverlay,
+// #auditLogModalOverlay, #projectFormModalOverlay, #projectTxModalOverlay) are
+// shown/hidden by their many open*/show*Modal functions directly toggling
+// `overlay.style.display` and rebuilding `innerHTML` — none of them set
+// role="dialog", trapped focus, or closed on Escape, so a keyboard or
+// screen-reader user had no reliable way to know a dialog had opened or to
+// get out of one without a mouse. Rather than editing every one of those
+// open/close functions individually (real risk of missing one), a single
+// MutationObserver per overlay — wired up ONCE here at startup — adds all of
+// that generically by watching for the same style-display toggle they
+// already do.
+const MODAL_OVERLAY_IDS = ['confirmModalOverlay','editEntryModalOverlay','auditLogModalOverlay','projectFormModalOverlay','projectTxModalOverlay'];
+function setupModalAccessibility(){
+  MODAL_OVERLAY_IDS.forEach(id => {
+    const overlay = document.getElementById(id);
+    if(!overlay || overlay.dataset.a11yWired) return;
+    overlay.dataset.a11yWired = '1';
+    let lastFocused = null;
+    const isVisible = () => overlay.style.display === 'flex';
+    const onOpen = () => {
+      const box = overlay.querySelector('.modal-box');
+      if(box){
+        box.setAttribute('role','dialog');
+        box.setAttribute('aria-modal','true');
+        if(!box.hasAttribute('tabindex')) box.tabIndex = -1;
+      }
+      lastFocused = document.activeElement;
+      // Only move focus in if nothing inside the dialog already has it —
+      // several open*Modal functions already call .focus() on a specific
+      // field themselves (e.g. the RESET confirmation input); don't fight that.
+      if(box && !box.contains(document.activeElement)){
+        const focusable = box.querySelector('input, select, textarea, button, [tabindex]');
+        (focusable || box).focus();
+      }
+    };
+    const observer = new MutationObserver(() => {
+      if(isVisible()) onOpen();
+      else if(lastFocused && document.body.contains(lastFocused)) lastFocused.focus();
+    });
+    observer.observe(overlay, { attributes:true, attributeFilter:['style'] });
+    overlay.addEventListener('keydown', e => {
+      if(!isVisible()) return;
+      if(e.key === 'Escape'){ overlay.style.display = 'none'; overlay.innerHTML = ''; return; }
+      if(e.key !== 'Tab') return;
+      const box = overlay.querySelector('.modal-box');
+      if(!box) return;
+      const focusables = Array.from(box.querySelectorAll('input, select, textarea, button, a[href], [tabindex]:not([tabindex="-1"])'))
+        .filter(el => !el.disabled && el.offsetParent !== null);
+      if(!focusables.length) return;
+      const first = focusables[0], last = focusables[focusables.length-1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    });
+  });
+}
+
 async function initApp(){
   // ROOT-CAUSE FIX for "Reset System doesn't delete the Chart of Accounts":
   // window.__ACCOUNTS__/__GROUPS__ are this company's REAL chart of accounts,
@@ -4496,7 +4591,7 @@ function setupScrollTopButton(){
   }, { passive: true });
   btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
-document.addEventListener('DOMContentLoaded', () => { initApp(); setupScrollTopButton(); initGoogleAuth(); });
+document.addEventListener('DOMContentLoaded', () => { initApp(); setupScrollTopButton(); initGoogleAuth(); setupModalAccessibility(); });
 
 /* =========================================================================
    Icons (minimal line-icon set)
@@ -4969,6 +5064,15 @@ function renderApp(){
   // small export toolbar above every rendered `.table-wrap` generically,
   // reading the table exactly as displayed via SheetJS's table_to_sheet.
   attachTableExportButtons();
+  // Accessibility fix: dozens of interactive elements across the app (drill-
+  // down cells, expand/collapse +/- toggles, edit/delete icons) are plain
+  // <span>/<td> with onclick and, at best, a `title` tooltip — invisible to
+  // screen readers and completely unreachable by keyboard (no native click
+  // semantics, no focus stop). Rather than hand-edit every one of the many
+  // template call sites, enhance them all generically after each render:
+  // make them focusable, give them button semantics, and let Enter/Space
+  // activate them like a real button would.
+  enhanceInteractiveAccessibility(root);
   // Restore panel scroll positions captured at the top of this render (see
   // BUG FIX comment above) — must run after attachMultiSelectEvents so the
   // panels/items exist in the DOM.
@@ -5271,7 +5375,7 @@ function renderDashboard(root){
           <th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('balanceEGP')}</th><th class="num-cell">${t('nativeCurrency')}</th>
         </tr></thead><tbody>
           ${liq.rows.map(r=>`<tr>
-            <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
+            <td class="drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(r.name)}</td>
             <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
             <td class="num-cell num ${r.closing>=0?'pos-text':'neg-text'}">${fmt(r.closing)}</td>
             <td class="num-cell num">${r.nativeBalance!=null?fmt(r.nativeBalance):'—'}</td>
@@ -5287,7 +5391,7 @@ function renderDashboard(root){
           <th>${t('account')}</th><th>${t('currency')}</th><th class="num-cell">${t('balanceEGP')}</th><th class="num-cell">${t('nativeCurrency')}</th>
         </tr></thead><tbody>
           ${currentAccounts.map(r=>`<tr>
-            <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
+            <td class="drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(r.name)}</td>
             <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
             <td class="num-cell num ${r.egp>=0?'pos-text':'neg-text'}">${fmt(r.egp)}</td>
             <td class="num-cell num">${r.native!=null?fmt(r.native):'—'}</td>
@@ -5665,10 +5769,9 @@ function renderTrialBalanceView(root){
       passesColFilter(colf.code, r.code) && passesColFilter(colf.name, r.name) && passesColFilter(colf.type, r.type) &&
       passesColFilter(colf.opening, r.opening) && passesColFilter(colf.debit, r.debit) && passesColFilter(colf.credit, r.credit) && passesColFilter(colf.closing, r.closing));
     const sorted = applySort(viewKey, filteredRows, (r,col) => r[col]);
-    registerExport(viewKey, `trial_balance_${g.currency}.xlsx`,
+    registerExport(viewKey, `trial_balance_${g.currency}${exportFilenamePeriodSuffix()}.xlsx`,
       [t('code'),t('accountName'),t('classification'),t('openingBalance'),t('debit'),t('credit'),t('closingBalance')],
-      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]),
-      t('trialBalanceTitle') + ' — ' + g.currency);
+      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]));
 
     const byCat = TB_CATEGORIES.map(cat => ({ ...cat, rows: sorted.filter(r=>cat.types.includes(r.type)) })).filter(c=>c.rows.length);
     const otherRows = sorted.filter(r => !TB_CATEGORIES.some(c=>c.types.includes(r.type)));
@@ -5680,7 +5783,7 @@ function renderTrialBalanceView(root){
       let html = `<tr class="total-row"><td colspan="7"><span class="drill" onclick="toggleTBSection('${key}')" style="font-weight:800;margin-left:6px">${expanded?'−':'+'}</span>${t(cat.titleKey)} <span class="hint">(${cat.rows.length} ${t('tbCategorySummary')} ${fmt(sub)})</span></td></tr>`;
       if(expanded){
         html += cat.rows.map(r=>`<tr>
-          <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
+          <td class="num drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code}</td>
           <td>${escapeHtml(r.name)}</td>
           <td><span class="pill pill-gold">${escapeHtml(accountTypeDisplay(r.type)||'—')}</span></td>
           <td class="num-cell num">${fmt(r.opening)}</td>
@@ -5709,7 +5812,7 @@ function renderTrialBalanceView(root){
         </tr></thead><tbody>
           ${byCat.map(catBlock).join('')}
           ${otherRows.length ? `<tr class="total-row"><td colspan="7">${t('otherCategoryLabel')}</td></tr>` + otherRows.map(r=>`<tr>
-            <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td><td>${escapeHtml(r.name)}</td>
+            <td class="num drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code}</td><td>${escapeHtml(r.name)}</td>
             <td><span class="pill pill-gold">${escapeHtml(accountTypeDisplay(r.type)||'—')}</span></td>
             <td class="num-cell num">${fmt(r.opening)}</td><td class="num-cell num">${fmt(r.debit)}</td>
             <td class="num-cell num">${fmt(r.credit)}</td><td class="num-cell num ${r.closing>=0?'pos-text':'neg-text'}">${fmt(r.closing)}</td>
@@ -5787,7 +5890,7 @@ function renderLiquidityView(root){
         ${filterableTh(viewKey,'nativeBalance',t('nativeCurrencyBalanceCol'),colf.native,liq.rows.map(r=>r.nativeBalance).filter(v=>v!=null),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
         ${liqSorted.map(r=>`<tr>
-          <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
+          <td class="num drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code}</td>
           <td>${escapeHtml(r.name)}</td>
           <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
           <td class="num-cell num">${fmt(r.opening)}</td>
@@ -5874,7 +5977,7 @@ function renderFxRevaluationView(root){
         ${filterableTh('fxreval','diff',t('diffGainLoss'),revColf.diff,rev.rows.map(r=>r.diff),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
         ${revSorted.map(r=>`<tr>
-          <td class="num drill" onclick="drillToAccount('${r.code}')">${r.code}</td>
+          <td class="num drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code}</td>
           <td>${escapeHtml(r.name)}</td>
           <td><span class="pill pill-gold">${escapeHtml(r.currency)}</span></td>
           <td class="num-cell num">${fmt(r.nativeBalance)}</td>
@@ -5999,7 +6102,7 @@ async function fetchLiveFxRates(currencies){
 function renderAccountStatementView(root, alwaysCombined){
   if(!STATE.journal.length){ root.innerHTML = emptyState(t('noDataYet'),t('startImporting'),'import'); return; }
   const pageTitle = alwaysCombined ? t('journalEntriesTitle') : t('generalLedgerTitle');
-  const exportName = alwaysCombined ? 'journal_entries.xlsx' : 'general_ledger.xlsx';
+  const exportName = (alwaysCombined ? 'journal_entries' : 'general_ledger') + exportFilenamePeriodSuffix() + '.xlsx';
   const f = STATE.ui.filters;
   const allAccounts = accountsWithActivity().sort((a,b)=>a.code.localeCompare(b.code));
   const accountLabels = allAccounts.map(a=>`${a.code} — ${accName(a.code)}`);
@@ -6266,7 +6369,7 @@ function renderAccountStatementView(root, alwaysCombined){
               <td class="num">${r.date}</td>
               <td class="num">${escapeHtml(r.entry)}</td>
               <td>${escapeHtml(r.ref||'')}</td>
-              <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(accName(r.code))}</td>
+              <td class="drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(accName(r.code))}</td>
               <td class="${r.partner?'drill':''}" ${r.partner?`onclick="drillToPartner('${jsAttrEscape(r.partner)}')"`:''}>${escapeHtml(r.partner||'')}</td>
               <td><span class="pill pill-gold">${escapeHtml(r.cur||'EGP')}</span></td>
               <td class="num-cell num">${r.debit?fmt(r.debit):''}</td>
@@ -6406,7 +6509,7 @@ function renderCustomerLedgerPage(root, cfg){
           return `<tr>
           <td class="num">${r.date}</td>
           <td class="num">${escapeHtml(r.entry)}</td>
-          <td class="drill" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(accName(r.code)||r.name||'')}</td>
+          <td class="drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(accName(r.code)||r.name||'')}</td>
           <td>${escapeHtml(r.ref||'')}</td>
           <td class="num-cell num">${r.dispDebit?fmt(r.dispDebit):''}</td>
           <td class="num-cell num">${r.dispCredit?fmt(r.dispCredit):''}</td>
@@ -6420,9 +6523,26 @@ function renderCustomerLedgerPage(root, cfg){
     </div>`;
   }
 
+  // Performance fix: partnerStatement() does 2–4 full filter() passes over
+  // whatever `lines` array it's given. This used to be called once per
+  // displayed partner with the FULL journal every time — O(partners ×
+  // journal length). With years of data and "all partners" selected (the
+  // default), that's potentially millions of redundant comparisons on every
+  // single render (each filter change, each keystroke in some filters).
+  // Group the journal by partner ONCE up front instead, so each
+  // partnerStatement() call only ever scans that partner's own — much
+  // smaller — set of lines. Passing the already-partner-filtered lines in
+  // (plus the same accountCodes scope) keeps the result identical; the
+  // filters inside partnerStatement just become redundant-but-harmless.
+  const linesByPartner = {};
+  STATE.journal.forEach(l => {
+    if(!l.partner || !scopedAccountCodes.includes(l.code)) return;
+    (linesByPartner[l.partner] = linesByPartner[l.partner] || []).push(l);
+  });
   const perPartner = displayPartners.map(p => {
-    const stmt = partnerStatement(STATE.journal, p, f.start, f.end, {mode:'EGP', accountCodes: scopedAccountCodes});
-    const stmtNative = partnerStatement(STATE.journal, p, f.start, f.end, {mode:'NATIVE', accountCodes: scopedAccountCodes});
+    const partnerLines = linesByPartner[p] || [];
+    const stmt = partnerStatement(partnerLines, p, f.start, f.end, {mode:'EGP', accountCodes: scopedAccountCodes});
+    const stmtNative = partnerStatement(partnerLines, p, f.start, f.end, {mode:'NATIVE', accountCodes: scopedAccountCodes});
     const foreignGroups = (stmtNative.byCurrency||[]).filter(g => g.currency !== 'EGP' && (g.rows.length || g.opening));
     return { name: p, stmt, foreignGroups };
   });
@@ -6436,7 +6556,7 @@ function renderCustomerLedgerPage(root, cfg){
     const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : '';
     exportRows.push([p.name, r.date, r.entry, `${r.code} ${accName(r.code)||r.name||''}`, r.ref||'', r.dispDebit, r.dispCredit, r.product||'', r.curAmt?`${r.curAmt} ${r.cur||''}`:'', convFactor, r.running]);
   }));
-  registerExport(cfg.exportKey, cfg.exportFilename, [t('partnerColLabel'),t('date'),t('entry'),t('account'),t('description'),t('debit')+' EGP',t('credit')+' EGP',t('productCol'),t('origCurrencyAmountCol'),t('conversionFactorCol'),t('balance')], exportRows);
+  registerExport(cfg.exportKey, cfg.exportFilename.replace(/\.xlsx$/, exportFilenamePeriodSuffix() + '.xlsx'), [t('partnerColLabel'),t('date'),t('entry'),t('account'),t('description'),t('debit')+' EGP',t('credit')+' EGP',t('productCol'),t('origCurrencyAmountCol'),t('conversionFactorCol'),t('balance')], exportRows);
 
   root.innerHTML = `
     <div class="card">
@@ -6723,7 +6843,7 @@ function renderCostCentersView(root){
     passesColFilter(colf.name, r.name) && passesColFilter(colf.revenue, r.revenue) &&
     passesColFilter(colf.cost, r.cost) && passesColFilter(colf.profit, r.profit) && passesColFilter(colf.margin, r.margin));
   const sorted = applySort(viewKey, ccFiltered, (r,col)=>r[col]);
-  registerExport(viewKey, 'cost_centers.xlsx', [t('costCentersFilterLabel'),t('costCenterRevenueCol'),t('costCenterCostsCol'),t('costCenterNetCol'),t('costCenterMarginCol')],
+  registerExport(viewKey, `cost_centers${exportFilenamePeriodSuffix()}.xlsx`, [t('costCentersFilterLabel'),t('costCenterRevenueCol'),t('costCenterCostsCol'),t('costCenterNetCol'),t('costCenterMarginCol')],
     cc.map(r=>[r.name, r.revenue, r.cost, r.profit, r.margin]));
 
   root.innerHTML = `
@@ -6826,7 +6946,7 @@ function renderStatementsView(root){
     const toggle = types ? `<span class="drill" onclick="toggleISSection('${key}')" style="margin-left:6px;font-weight:800">${expanded?'−':'+'}</span>` : '';
     let html = `<tr class="${bold?'total-row':''}"><td>${toggle}${label}</td><td class="num-cell num ${val>=0?'':'neg-text'}">${fmt(val)}</td></tr>`;
     if(types && expanded){
-      html += accounts.map(a=>`<tr><td style="padding-right:26px;font-size:12px" class="drill" onclick="drillToAccount('${a.code}')">${a.code} ${escapeHtml(a.name)}</td><td class="num-cell num" style="font-size:12px">${fmt(a.movement)}</td></tr>`).join('');
+      html += accounts.map(a=>`<tr><td style="padding-right:26px;font-size:12px" class="drill" onclick="drillToAccount('${jsAttrEscape(a.code)}')">${a.code} ${escapeHtml(a.name)}</td><td class="num-cell num" style="font-size:12px">${fmt(a.movement)}</td></tr>`).join('');
     }
     return html;
   }
@@ -6900,7 +7020,7 @@ function renderStatementsView(root){
     if(expanded){
       html += node.children.map(c => bsTreeNodeRows(c, depth+1, flipSign)).join('');
       html += node.items.map(r=>`<tr>
-        <td class="drill" style="padding-right:${(depth+1)*16}px;font-size:11.5px" onclick="drillToAccount('${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
+        <td class="drill" style="padding-right:${(depth+1)*16}px;font-size:11.5px" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(r.name)}</td>
         <td class="num-cell num" style="font-size:11.5px">${fmt(sign*r.opening)}</td>
         <td class="num-cell num" style="font-size:11.5px">${fmt(sign*(r.debit-r.credit))}</td>
         <td class="num-cell num" style="font-size:11.5px">${fmt(sign*r.closing)}</td>
@@ -7114,8 +7234,8 @@ function renderCashFlowView(root){
     </tr>`;
     if(expanded && accounts.length){
       html += accounts.map(a=>`<tr>
-        <td class="drill" style="padding-right:26px;font-size:12px" onclick="cfDrill(null,'${a.code}')">${a.code} ${escapeHtml(a.name)}</td>
-        <td class="num-cell num drill ${a.delta>=0?'':'neg-text'}" style="font-size:12px" onclick="cfDrill(null,'${a.code}')">${fmt(a.delta)}</td>
+        <td class="drill" style="padding-right:26px;font-size:12px" onclick="cfDrill(null,'${jsAttrEscape(a.code)}')">${a.code} ${escapeHtml(a.name)}</td>
+        <td class="num-cell num drill ${a.delta>=0?'':'neg-text'}" style="font-size:12px" onclick="cfDrill(null,'${jsAttrEscape(a.code)}')">${fmt(a.delta)}</td>
       </tr>`).join('');
     }
     return html;
@@ -7132,8 +7252,8 @@ function renderCashFlowView(root){
     let html = '';
     if(expanded && accounts.length){
       html += accounts.map(a=>`<tr>
-        <td class="drill" style="padding-right:26px;font-size:12px" onclick="cfDrill(null,'${a.code}')">${a.code} ${escapeHtml(a.name)}</td>
-        <td class="num-cell num drill ${a.balance>=0?'':'neg-text'}" style="font-size:12px" onclick="cfDrill(null,'${a.code}')">${fmt(a.balance)}</td>
+        <td class="drill" style="padding-right:26px;font-size:12px" onclick="cfDrill(null,'${jsAttrEscape(a.code)}')">${a.code} ${escapeHtml(a.name)}</td>
+        <td class="num-cell num drill ${a.balance>=0?'':'neg-text'}" style="font-size:12px" onclick="cfDrill(null,'${jsAttrEscape(a.code)}')">${fmt(a.balance)}</td>
       </tr>`).join('');
     }
     html += `<tr class="total-row">
@@ -7201,11 +7321,11 @@ function renderCashFlowView(root){
         ${filterableTh('cashflow','closing',t('closingBalanceShort2'),cfColf.closing,cashRowsAll.map(r=>r.closing),{extraClass:'num-cell',displayLabel:fmt})}
       </tr></thead><tbody>
         ${cashRows.length ? cashRowsSorted.map(r=>`<tr>
-          <td class="drill" onclick="cfDrill(null,'${r.code}')">${r.code} ${escapeHtml(r.name)}</td>
+          <td class="drill" onclick="cfDrill(null,'${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(r.name)}</td>
           <td class="num-cell num">${fmt(r.opening)}</td>
           <td class="num-cell num">${fmt(r.debit)}</td>
           <td class="num-cell num">${fmt(r.credit)}</td>
-          <td class="num-cell num drill ${(r.debit-r.credit)>=0?'':'neg-text'}" onclick="cfDrill(null,'${r.code}')">${fmt(r.debit-r.credit)}</td>
+          <td class="num-cell num drill ${(r.debit-r.credit)>=0?'':'neg-text'}" onclick="cfDrill(null,'${jsAttrEscape(r.code)}')">${fmt(r.debit-r.credit)}</td>
           <td class="num-cell num">${fmt(r.closing)}</td>
         </tr>`).join('') : `<tr><td colspan="6" class="empty">${t('noCashAccountsMovement')}</td></tr>`}
         <tr class="total-row">
