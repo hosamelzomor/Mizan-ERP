@@ -946,7 +946,7 @@ const I18N = {
     noMovementInPeriod:'لا توجد حركة خلال الفترة المحددة', combinedSelectedBalance:'إجمالي أرصدة المختارين (بالجنيه)', partnerCount:'شريك',
     noMatchingFilterMovement:'لا توجد حركة مطابقة للفلاتر المحددة', openingBalanceBeforePeriod:'رصيد قبل بداية الفترة', showOpeningBalanceLabel:'إظهار الرصيد قبل بداية الفترة',
     selectedCostCentersTotal:'إجمالي المراكز المختارة', totalNetProfitLossLabel:'إجمالي صافي الربح/الخسارة',
-    exportFileError:'تعذّر تصدير الملف', exportTableError:'تعذّر تصدير الجدول', templateCreateError:'تعذّر إنشاء التمبلت', entryNotFoundError:'تعذر العثور على القيد', entryNeedsOneLine:'يجب أن يحتوي القيد على سطر واحد على الأقل',
+    exportFileError:'تعذّر تصدير الملف', exportTableError:'تعذّر تصدير الجدول', exportNothingToExport:'لا توجد بيانات في الجدول للتصدير', templateCreateError:'تعذّر إنشاء التمبلت', entryNotFoundError:'تعذر العثور على القيد', entryNeedsOneLine:'يجب أن يحتوي القيد على سطر واحد على الأقل',
     currentBalance:'رصيد حالي', debtorTo:'مدين له', creditorFrom:'دائن عليه', foreignCurrencyNote:'هذا الشريك له حركة بعملة أخرى غير الجنيه ضمن الكشف أعلاه. التفصيل بعملتها الأصلية:',
     currencyOf:'عملة', openingShort:'افتتاحي', closingShort:'ختامي', currencyAll:'الكل', currencyEGPLabel:'جنيه', currencyUSDLabel:'دولار',
     customerStatementTitle:'كشف حساب عميل / مورد', otherBalancesTitle:'أرصدة مدينة / دائنة أخرى',
@@ -1492,6 +1492,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
 }
 function exportRowsToExcel(filename, headers, rows){
   try{
+    if(!headers || !headers.length){ showToast(t('exportNothingToExport'), 3000); return; }
     const ws = buildFormattedWorksheet(headers, rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
@@ -1509,25 +1510,38 @@ function exportTableToExcel(tableEl, filename){
   try{
     const headRow = tableEl.querySelector('thead tr');
     const actionsLabel = t('actionsCol');
-    const allHeaderCells = headRow ? Array.from(headRow.children) : [];
-    const headers = allHeaderCells.map(th => {
-      // filterableTh embeds a whole sort/filter widget (arrows, funnel icon,
-      // checklist) inside the <th> — pull out just the visible column
-      // label text, not that nested UI's text content.
-      const label = th.querySelector('.th-sort-label');
-      const raw = (label ? label.textContent : th.textContent).replace(/[▲▼]/g,'').trim();
-      return raw;
-    });
-    // Drop action-icon columns (edit/delete pencils etc.) — never real data.
-    const keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
-    const filteredHeaders = keepIdx.map(i => headers[i]);
-    const colCount = headers.length;
-    // A row using colspan (opening-balance/total summary rows) has FEWER DOM
-    // cells than header columns — a plain tr.children[i] lookup would shift
-    // every value after the colspan cell into the wrong column. Expand each
-    // colspan cell to occupy all the logical column slots it visually spans
+    const bodyTrs = Array.from(tableEl.querySelectorAll('tbody tr'));
+    let keepIdx, filteredHeaders, colCount;
+    if(headRow){
+      const allHeaderCells = Array.from(headRow.children);
+      const headers = allHeaderCells.map(th => {
+        // filterableTh embeds a whole sort/filter widget (arrows, funnel
+        // icon, checklist) inside the <th> — pull out just the visible
+        // column label text, not that nested UI's text content.
+        const label = th.querySelector('.th-sort-label');
+        return (label ? label.textContent : th.textContent).replace(/[▲▼]/g,'').trim();
+      });
+      // Drop action-icon columns (edit/delete pencils etc.) — never real data.
+      keepIdx = headers.map((h,i) => (h === '' || h === actionsLabel) ? -1 : i).filter(i => i !== -1);
+      filteredHeaders = keepIdx.map(i => headers[i]);
+      colCount = headers.length;
+    } else {
+      // Some tables (short "label: value" report layouts — Financial
+      // Statements, Cash Flow summary, etc.) have no <thead> at all. Size
+      // the sheet from the widest body row instead of guessing column
+      // names, and export with no header row.
+      colCount = Math.max(0, ...bodyTrs.map(tr => tr.children.length));
+      keepIdx = Array.from({length: colCount}, (_,i) => i);
+      filteredHeaders = keepIdx.map(() => '');
+    }
+    if(colCount === 0 || !bodyTrs.length){ showToast(t('exportNothingToExport'), 3000); return; }
+    // A row using colspan (opening-balance/total summary rows, or a section
+    // label inside a label:value table) has FEWER DOM cells than the sheet's
+    // column count — a plain tr.children[i] lookup would shift every value
+    // after the colspan cell into the wrong column. Expand each colspan
+    // cell to occupy all the logical column slots it visually spans
     // (keeping its content in only the first of those slots) so indexing by
-    // header position is always correct, colspan or not.
+    // position is always correct, colspan or not.
     function expandRowCells(tr){
       const out = [];
       Array.from(tr.children).forEach(td => {
@@ -1538,7 +1552,6 @@ function exportTableToExcel(tableEl, filename){
       while(out.length < colCount) out.push(null);
       return out;
     }
-    const bodyTrs = Array.from(tableEl.querySelectorAll('tbody tr'));
     const summaryRowFlags = bodyTrs.map(tr => tr.classList.contains('total-row'));
     const bodyRows = bodyTrs.map(tr => {
       const cells = expandRowCells(tr);
