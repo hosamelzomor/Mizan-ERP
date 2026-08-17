@@ -359,6 +359,16 @@ tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); backgr
 .drill:focus-visible, [data-edit-tx]:focus-visible, [data-del-tx]:focus-visible{
   outline:2px solid var(--gold-light); outline-offset:2px; border-radius:3px;
 }
+/* Accessibility: skip-to-content link. Hidden off-screen until it receives
+   keyboard focus (Tab, as the very first stop on the page), so a keyboard
+   user isn't forced to tab through the entire sidebar nav on every single
+   page load / re-render just to reach the actual content. */
+.skip-to-content{
+  position:absolute; right:8px; top:-100px; z-index:9999;
+  background:var(--gold); color:var(--ink); padding:10px 16px; border-radius:8px;
+  font-weight:700; font-size:13px; text-decoration:none; transition:top .15s ease;
+}
+.skip-to-content:focus{ top:8px; }
 .pos-text{ color:var(--emerald); font-weight:700; }
 .neg-text{ color:var(--brick); font-weight:700; }
 
@@ -1123,6 +1133,7 @@ const I18N = {
     driveNeverSynced:'لسه ما تمتش أي مزامنة',
     driveSessionExpiringSoon:'جلسة تسجيل الدخول بـ Google Drive هتنتهي قريبًا. اضغط "تسجيل الدخول بجوجل والمزامنة" تاني عشان تجدّدها من غير ما تفقد أي بيانات.',
     driveExpiringSoonLabel:'الجلسة هتنتهي قريبًا ⚠', toggleSidebarLabel:'القائمة', navBackLabel:'رجوع للخلف', navFwdLabel:'تقدم للأمام',
+    skipToContent:'تخطي إلى المحتوى الرئيسي', mainNavigationLabel:'التنقل الرئيسي',
     filtersToggleLabel:'🔍 فلاتر الفترة',
     chatCapabilitiesTitle:'أقدر أساعدك في:', chatCapCat1:'كشوف الحسابات والعملاء والموردين', chatCapCat2:'مراكز التكلفة والمشاريع', chatCapCat3:'تحليل الإيرادات والمصروفات والربحية',
     chatCapCat4:'التدفقات النقدية والنسب المالية', chatCapCat5:'فحص جودة البيانات (تكرار، قيود غير متوازنة، حركات غريبة)', chatCapCat6:'مقارنة الفترات وتفسير التغيرات',
@@ -1188,6 +1199,7 @@ const I18N = {
     driveNeverSynced:'No sync yet',
     driveSessionExpiringSoon:'Your Google Drive sign-in session is about to expire. Click "Sign in with Google & sync" again to renew it without losing any data.',
     driveExpiringSoonLabel:'Session expiring soon ⚠', toggleSidebarLabel:'Menu', navBackLabel:'Go back', navFwdLabel:'Go forward',
+    skipToContent:'Skip to main content', mainNavigationLabel:'Main navigation',
     filtersToggleLabel:'🔍 Period Filters',
     chatCapabilitiesTitle:'I can help you with:', chatCapCat1:'Account, customer & vendor statements', chatCapCat2:'Cost centers and projects', chatCapCat3:'Revenue, expense & profitability analysis',
     chatCapCat4:'Cash flow and financial ratios', chatCapCat5:'Data quality checks (duplicates, unbalanced entries, unusual activity)', chatCapCat6:'Period comparisons and explaining changes',
@@ -4793,6 +4805,7 @@ function renderApp(){
   if(__msPortalRoot) __msPortalRoot.innerHTML = '';
   document.body.classList.toggle('light-mode', STATE.settings.theme === 'light');
   app.innerHTML = `
+    <a href="#mainContent" class="skip-to-content">${t('skipToContent')}</a>
     <div class="sidebar-backdrop ${STATE.ui.sidebarOpen?'show':''}" id="sidebarBackdrop"></div>
     <div class="sidebar ${STATE.ui.sidebarOpen?'open':''} ${STATE.ui.sidebarCollapsed?'sidebar-collapsed':''}">
       <div class="brand">
@@ -4805,8 +4818,7 @@ function renderApp(){
       <div class="company-field">
         <input id="companyNameInput" type="text" placeholder="${t('companyNamePlaceholder')}" value="${escapeHtml(STATE.settings.companyName||'')}">
       </div>
-      <div class="nav">
-        ${NAV.map(n => n.section
+      <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">        ${NAV.map(n => n.section
           ? `<div class="nav-section">${navSectionLabel(n)}</div>`
           : `<div class="nav-item ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}">
             ${ICONS[n.icon]} <span>${navLabel(n)}</span>
@@ -4841,7 +4853,7 @@ function renderApp(){
         <button id="resetSystemBtn" style="width:100%;background:transparent;border:1px solid rgba(162,59,49,.4);color:var(--brick-light);border-radius:8px;padding:8px;font-size:11.5px;font-weight:700;">${t('resetSystem')}</button>
       </div>
     </div>
-    <div class="main">
+    <div class="main" id="mainContent" role="main" tabindex="-1">
       <div class="topbar-title-row">
         <div style="display:flex;align-items:center;gap:10px;">
           <button id="hamburgerBtn" title="${t('toggleSidebarLabel')}" aria-label="${t('toggleSidebarLabel')}">☰</button>
@@ -6241,9 +6253,19 @@ function renderAccountStatementView(root, alwaysCombined){
       (!descSearch || (l.ref||'').toLowerCase().includes(descSearch)) &&
       (currencyFilter==='ALL' || (l.cur||'EGP')===currencyFilter)
     );
+    // Performance fix: same issue as the Customer/Vendor Statement page had —
+    // accountStatement() does multiple full filter() passes over whatever
+    // `lines` it's given, and this used to call it once per selected account
+    // with the same (potentially still-large) preFilteredForAccounts array
+    // every time — O(accounts × lines). Selecting "all" accounts via the
+    // multi-select's "الكل" chip hits exactly this. Group once by account
+    // code up front instead.
+    const preFilteredByCode = {};
+    preFilteredForAccounts.forEach(l => { (preFilteredByCode[l.code] = preFilteredByCode[l.code] || []).push(l); });
     const perAccount = selectedCodes.map(code => {
       const acc = STATE.accountsByCode[code];
-      const stmt = accountStatement(preFilteredForAccounts, code, rangeStart, rangeEnd, {mode:'EGP'});
+      const codeLines = preFilteredByCode[code] || [];
+      const stmt = accountStatement(codeLines, code, rangeStart, rangeEnd, {mode:'EGP'});
       const totD = stmt.rows.reduce((s,r)=>s+r.dispDebit,0);
       const totC = stmt.rows.reduce((s,r)=>s+r.dispCredit,0);
       // requirement: for accounts denominated in a foreign currency, show a
@@ -6251,7 +6273,7 @@ function renderAccountStatementView(root, alwaysCombined){
       // Customer Statement page already does for foreign-currency partners).
       let nativeStmt = null;
       if(acc && acc.currency && acc.currency !== 'EGP'){
-        nativeStmt = accountStatement(preFilteredForAccounts, code, rangeStart, rangeEnd, {mode:'NATIVE'});
+        nativeStmt = accountStatement(codeLines, code, rangeStart, rangeEnd, {mode:'NATIVE'});
       }
       return { code, name: acc?acc.name:'', currency: acc?acc.currency:'EGP', opening: stmt.opening, rows: stmt.rows, closing: stmt.closing, totD, totC, nativeStmt };
     });
