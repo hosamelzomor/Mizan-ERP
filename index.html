@@ -1059,7 +1059,7 @@ const I18N = {
     productCol:'المنتج', origCurrencyAmountCol:'المبلغ بالعملة الأصلية', conversionFactorCol:'معامل التحويل',
     downloadTemplate:'⬇ تنزيل تمبلت فارغ (Excel)',
     userGuideTitle:'دليل استخدام النظام', userGuideDesc:'شرح تفصيلي بالعربية لكل صفحة في النظام وكيفية الوصول للنتيجة الصحيحة — ملف PDF منسّق وجاهز للطباعة أو المشاركة.', userGuideBtn:'⬇ تحميل الدليل (PDF)',
-    manageColumns:'الأعمدة', cannotHideAllColumns:'لا يمكن إخفاء كل الأعمدة — اترك عموداً واحداً على الأقل ظاهراً', columnGeneric:'عمود', amountCol:'القيمة',
+    manageColumns:'الأعمدة', cannotHideAllColumns:'لا يمكن إخفاء كل الأعمدة — اترك عموداً واحداً على الأقل ظاهراً', columnGeneric:'عمود', amountCol:'القيمة', explanationCol:'التوضيح',
     editEntryDesc:'عدّل بيانات هذا القيد مباشرة. يجب أن يتساوى إجمالي المدين مع إجمالي الدائن قبل الحفظ.',
     entryLineDate:'التاريخ', entryLineAccount:'الحساب', entryLinePartner:'العميل/المورد', entryLineDesc:'البيان',
     entryLineDebit:'مدين', entryLineCredit:'دائن', entryLineCostCenter:'مركز التكلفة', entryLineProduct:'المنتج',
@@ -1242,7 +1242,7 @@ const I18N = {
     productCol:'Product', origCurrencyAmountCol:'Amount in Original Currency', conversionFactorCol:'Conversion Factor',
     downloadTemplate:'⬇ Download blank template (Excel)',
     userGuideTitle:'User Guide', userGuideDesc:'A detailed walkthrough of every page in the system and how to get the correct result — a formatted, ready-to-print/share PDF.', userGuideBtn:'⬇ Download Guide (PDF)',
-    manageColumns:'Columns', cannotHideAllColumns:'You cannot hide every column — leave at least one visible', columnGeneric:'Column', amountCol:'Amount',
+    manageColumns:'Columns', cannotHideAllColumns:'You cannot hide every column — leave at least one visible', columnGeneric:'Column', amountCol:'Amount', explanationCol:'Explanation',
     editEntryDesc:'Edit this entry directly. Total debit must equal total credit before saving.',
     entryLineDate:'Date', entryLineAccount:'Account', entryLinePartner:'Customer/Vendor', entryLineDesc:'Description',
     entryLineDebit:'Debit', entryLineCredit:'Credit', entryLineCostCenter:'Cost Center', entryLineProduct:'Product',
@@ -1513,7 +1513,12 @@ function detectColumnType(values){
 // optional; when omitted each column's type is inferred from its own
 // values, so callers passing already-typed data (registerExport sites) need
 // no changes at all to benefit.
-function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
+// Requirement: every exported Excel file should carry the table's title as
+// its own first row (merged across all columns, bold), and the sheet's
+// reading direction should follow the system language (RTL for Arabic, LTR
+// for English) — set once here so every export path (registerExport-based
+// AND the generic per-table exportTableToExcel) gets both automatically.
+function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags, title){
   const colCount = headers.length;
   const detectionRows = summaryRowFlags ? rows.filter((_,i) => !summaryRowFlags[i]) : rows;
   const types = columnTypes || Array.from({length:colCount}, (_,i) => detectColumnType(detectionRows.map(r=>r[i])));
@@ -1526,7 +1531,10 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
       return isNaN(n) || Number.isInteger(n);
     });
   });
-  const aoa = [headers, ...rows.map(row => row.map((v,i) => {
+  // headerRowIdx: which 0-based row of the sheet the REAL column headers end
+  // up on — row 0 normally, or row 1 once a title row is inserted above it.
+  const headerRowIdx = title ? 1 : 0;
+  const dataAoA = [headers, ...rows.map(row => row.map((v,i) => {
     const type = types[i];
     if(v==null || v==='') return null;
     if(type === 'number'){
@@ -1539,7 +1547,13 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
     }
     return v;
   }))];
+  const aoa = title ? [[title], ...dataAoA] : dataAoA;
   const ws = XLSX.utils.aoa_to_sheet(aoa);
+  if(title && colCount > 1){
+    ws['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:colCount-1} }];
+    const titleCell = ws[XLSX.utils.encode_cell({r:0,c:0})];
+    if(titleCell) titleCell.s = { font:{ bold:true, sz:14, color:{rgb:'1F2E3B'} } };
+  }
   // Auto-fit column widths from actual content length (header vs every cell
   // in that column), capped so one long description can't blow out the
   // whole sheet.
@@ -1553,7 +1567,7 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
     const type = types[c];
     if(type === 'text') continue;
     const fmtStr = type === 'date' ? 'dd-mm-yyyy' : (isIntCol[c] ? '#,##0' : '#,##0.00');
-    for(let r=1;r<aoa.length;r++){
+    for(let r=headerRowIdx+1;r<aoa.length;r++){
       const cell = ws[XLSX.utils.encode_cell({ r, c })];
       if(cell && cell.v != null) cell.z = fmtStr;
     }
@@ -1562,19 +1576,28 @@ function buildFormattedWorksheet(headers, rows, columnTypes, summaryRowFlags){
   // writer used here doesn't guarantee full style fidelity in every Excel/
   // LibreOffice version, but modern Excel honors it).
   for(let c=0;c<colCount;c++){
-    const cell = ws[XLSX.utils.encode_cell({ r:0, c })];
+    const cell = ws[XLSX.utils.encode_cell({ r:headerRowIdx, c })];
     if(cell) cell.s = { font:{ bold:true, color:{rgb:'FFFFFF'} }, fill:{ patternType:'solid', fgColor:{rgb:'1F2E3B'} } };
   }
   // Excel's built-in filter-dropdown arrows on the header row — the closest
   // native equivalent to "a dynamic, filterable table" the free writer can
-  // produce reliably.
-  ws['!autofilter'] = { ref: ws['!ref'] };
+  // produce reliably. Anchored to the header row specifically (not row 0)
+  // so a title row above it is never mistaken for filterable headers.
+  ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{r:headerRowIdx,c:0}, e:{r:aoa.length-1,c:colCount-1} }) };
   return ws;
 }
-function exportRowsToExcel(filename, headers, rows){
+// Sets the workbook's reading direction to match the system's current
+// language — RTL for Arabic, LTR for English — so column A opens on the
+// right (or left) exactly like the rest of the app already does.
+function applyWorkbookDirection(wb){
+  wb.Workbook = wb.Workbook || {};
+  wb.Workbook.Views = [{ RTL: STATE.settings.lang !== 'en' }];
+}
+function exportRowsToExcel(filename, headers, rows, title){
   try{
-    const ws = buildFormattedWorksheet(headers, rows);
+    const ws = buildFormattedWorksheet(headers, rows, null, null, title);
     const wb = XLSX.utils.book_new();
+    applyWorkbookDirection(wb);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportFileError') + ': ' + e.message, 4000); }
@@ -1586,7 +1609,7 @@ function exportRowsToExcel(filename, headers, rows){
 // out of each cell (via CSS hints + ISO-date pattern matching) instead of
 // just dumping the display text, so the exported file gets the same real
 // typing/formatting as the structured-data path above.
-function exportTableToExcel(tableEl, filename){
+function exportTableToExcel(tableEl, filename, title){
   try{
     const headRow = tableEl.querySelector('thead tr');
     const actionsLabel = t('actionsCol');
@@ -1616,6 +1639,7 @@ function exportTableToExcel(tableEl, filename){
       });
       if(colCountGuess < 1) colCountGuess = 1;
       headers = colCountGuess === 2 ? [t('itemCol'), t('amountCol')]
+        : colCountGuess === 3 ? [t('itemCol'), t('amountCol'), t('explanationCol')] // e.g. Notes & Analysis' "Key Figures Explained"
         : colCountGuess === 4 ? [t('itemCol'), t('openingBalance'), t('movement'), t('closingBalance')] // Balance Sheet's shape
         : Array.from({length: colCountGuess}, (_,i) => t('columnGeneric') + ' ' + (i+1));
       allHeaderCells = headers.map(() => ({ style:{ display:'' } })); // no real <th> to hide, so nothing is ever excluded below
@@ -1666,8 +1690,9 @@ function exportTableToExcel(tableEl, filename){
         return raw;
       });
     });
-    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags);
+    const ws = buildFormattedWorksheet(filteredHeaders, bodyRows, null, summaryRowFlags, title);
     const wb = XLSX.utils.book_new();
+    applyWorkbookDirection(wb);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, filename, { cellStyles:true });
   }catch(e){ showToast(t('exportTableError') + ': ' + e.message, 4000); }
@@ -1720,6 +1745,7 @@ function attachTableExportButtons(){
     const sectionEl = wrap.previousElementSibling && wrap.previousElementSibling.classList && wrap.previousElementSibling.classList.contains('section-title')
       ? wrap.previousElementSibling : (card ? card.querySelector('.section-title') : null);
     let base = (sectionEl ? sectionEl.textContent : (headingEl ? headingEl.textContent : 'جدول')).trim();
+    const tableTitle = base; // human-readable heading, kept as-is for the in-sheet title row (unlike `base`, which gets filename-sanitized below)
     base = base.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'_').slice(0,60) || 'جدول';
     usedNames[base] = (usedNames[base]||0) + 1;
     const periodSuffix = exportFilenamePeriodSuffix();
@@ -1730,7 +1756,7 @@ function attachTableExportButtons(){
     btn.type = 'button';
     btn.className = 'btn btn-outline tbl-export-btn';
     btn.textContent = '⬇ ' + t('exportExcel');
-    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename));
+    btn.addEventListener('click', () => exportTableToExcel(tableEl, filename, tableTitle));
     toolbar.appendChild(btn);
     wrap.parentNode.insertBefore(toolbar, wrap);
     // Table identity for saved column order/visibility: keyed by view + position on the
@@ -1939,7 +1965,15 @@ function reorderTableColumns(tableEl, order){
   });
 }
 window.__exportData = window.__exportData || {};
-function registerExport(id, filename, headers, rows){ window.__exportData[id] = { filename, headers, rows }; }
+function registerExport(id, filename, headers, rows, title){ window.__exportData[id] = { filename, headers, rows, title }; }
+// Falls back to the current page's own NAV label when a call site doesn't
+// pass an explicit title — always a sensible, correctly-translated title
+// for the in-sheet title row rather than leaving it blank.
+function currentViewTitle(){
+  const item = NAV.find(n => n.id === STATE.ui.view);
+  if(!item) return '';
+  return STATE.settings.lang === 'en' ? (item.labelEn || item.label) : item.label;
+}
 
 // Requirement: let a user download a template file matching each importer's
 // exact expected format (same headers detectMapping()/importAccountsFile()/
@@ -2006,7 +2040,7 @@ function downloadImportTemplate(kind){
     XLSX.writeFile(wb, filename);
   }catch(e){ showToast(t('templateCreateError') + ': ' + e.message, 4000); }
 }
-function runExport(id){ const d = window.__exportData[id]; if(d) exportRowsToExcel(d.filename, d.headers, d.rows); else showToast('لا توجد بيانات للتصدير'); }
+function runExport(id){ const d = window.__exportData[id]; if(d) exportRowsToExcel(d.filename, d.headers, d.rows, d.title || currentViewTitle()); else showToast('لا توجد بيانات للتصدير'); }
 function exportBtnHtml(id){ return `<button class="btn btn-outline" style="padding:4px 10px;font-size:11px" onclick="runExport('${id}')">${ICONS.download||''} ${t('exportExcel')}</button>`; }
 function printCurrentView(){ window.print(); }
 
@@ -5956,7 +5990,7 @@ function renderTrialBalanceView(root){
     const sorted = applySort(viewKey, filteredRows, (r,col) => r[col]);
     registerExport(viewKey, `trial_balance_${g.currency}${exportFilenamePeriodSuffix()}.xlsx`,
       [t('code'),t('accountName'),t('classification'),t('openingBalance'),t('debit'),t('credit'),t('closingBalance')],
-      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]));
+      sorted.map(r=>[r.code,r.name,r.type,r.opening,r.debit,r.credit,r.closing]), currentViewTitle() + ' - ' + g.currency);
 
     const byCat = TB_CATEGORIES.map(cat => ({ ...cat, rows: sorted.filter(r=>cat.types.includes(r.type)) })).filter(c=>c.rows.length);
     const otherRows = sorted.filter(r => !TB_CATEGORIES.some(c=>c.types.includes(r.type)));
@@ -6751,7 +6785,7 @@ function renderCustomerLedgerPage(root, cfg){
     const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : '';
     exportRows.push([p.name, r.date, r.entry, `${r.code} ${accName(r.code)||r.name||''}`, r.ref||'', r.dispDebit, r.dispCredit, r.product||'', r.curAmt?`${r.curAmt} ${r.cur||''}`:'', convFactor, r.running]);
   }));
-  registerExport(cfg.exportKey, cfg.exportFilename.replace(/\.xlsx$/, exportFilenamePeriodSuffix() + '.xlsx'), [t('partnerColLabel'),t('date'),t('entry'),t('account'),t('description'),t('debit')+' EGP',t('credit')+' EGP',t('productCol'),t('origCurrencyAmountCol'),t('conversionFactorCol'),t('balance')], exportRows);
+  registerExport(cfg.exportKey, cfg.exportFilename.replace(/\.xlsx$/, exportFilenamePeriodSuffix() + '.xlsx'), [t('partnerColLabel'),t('date'),t('entry'),t('account'),t('description'),t('debit')+' EGP',t('credit')+' EGP',t('productCol'),t('origCurrencyAmountCol'),t('conversionFactorCol'),t('balance')], exportRows, t('customerStatementTitle'));
 
   root.innerHTML = `
     <div class="card">
