@@ -1883,7 +1883,15 @@ function attachColumnVisibilityToggle(tableEl, toolbar, tableKey){
       STATE.ui.colHidden[tableKey] = Array.from(hidden);
       applyVisibility();
     });
-    const text = th.textContent.trim() || (t('columnGeneric') + ' ' + (i+1));
+    // BUG FIX: th.textContent grabs everything nested inside the header
+    // cell — including the sort-arrow control's own "ترتيب تصاعدي/تنازلي"
+    // text and the filter dropdown's "الكل/لا شيء" chip labels — producing
+    // a garbled multi-line checkbox label instead of just the column name.
+    // The export code already solves this by reading the dedicated
+    // .th-sort-label element (which holds just the clean name + arrow
+    // glyph); reuse the exact same approach here.
+    const labelEl = th.querySelector('.th-sort-label');
+    const text = (labelEl ? labelEl.textContent : th.textContent).replace(/[▲▼]/g,'').trim() || (t('columnGeneric') + ' ' + (i+1));
     label.append(cb, document.createTextNode(' ' + text));
     list.appendChild(label);
   });
