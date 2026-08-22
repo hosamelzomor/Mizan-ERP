@@ -4950,15 +4950,23 @@ function openNewJournalEntryModal(){
                 ${currencies.map(c=>`<option value="${c}" ${(l.cur||'EGP')===c?'selected':''}>${c}</option>`).join('')}
               </select></td>
               <td><input type="text" class="input" data-ne-field="ref" data-ne-i="${i}" value="${escapeHtml(l.ref||'')}" style="width:100%"></td>
-              <td><input type="text" class="input" list="nePartnerList" data-ne-field="partner" data-ne-i="${i}" value="${escapeHtml(l.partner||'')}" style="width:100%"></td>
-              <td><input type="text" class="input" list="neCcList" data-ne-field="cc" data-ne-i="${i}" value="${escapeHtml(l.cc||'')}" style="width:100%"></td>
+              <td>
+                <div class="ne-ac-wrap" data-ac-wrap="partner-${i}">
+                  <input type="text" class="input ne-ac-input" data-ne-field="partner" data-ne-i="${i}"
+                    value="${escapeHtml(l.partner||'')}" placeholder="اكتب للبحث..." autocomplete="off" style="width:100%">
+                </div>
+              </td>
+              <td>
+                <div class="ne-ac-wrap" data-ac-wrap="cc-${i}">
+                  <input type="text" class="input ne-ac-input" data-ne-field="cc" data-ne-i="${i}"
+                    value="${escapeHtml(l.cc||'')}" placeholder="اكتب للبحث..." autocomplete="off" style="width:100%">
+                </div>
+              </td>
               <td><input type="text" class="input" list="neProductList" data-ne-field="product" data-ne-i="${i}" value="${escapeHtml(l.product||'')}" style="width:100%"></td>
               <td><input type="number" step="0.0001" class="input" data-ne-field="convFactor" data-ne-i="${i}" value="${factor}" ${isEgp?'disabled':''} style="width:100%;opacity:${isEgp?'.4':'1'}"></td>
             </tr>`;}).join('')}
           </tbody></table>
         </div>
-        <datalist id="nePartnerList">${partnerNames.map(p=>`<option value="${escapeHtml(p)}">`).join('')}</datalist>
-        <datalist id="neCcList">${ccNames.map(c=>`<option value="${escapeHtml(c)}">`).join('')}</datalist>
         <datalist id="neProductList">${productNames.map(p=>`<option value="${escapeHtml(p)}">`).join('')}</datalist>
         <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;flex-wrap:wrap;gap:8px">
           <button type="button" class="btn btn-outline" id="neAddLine">+ ${t('addLine')}</button>
@@ -5102,6 +5110,60 @@ function openNewJournalEntryModal(){
       inp.addEventListener('blur', () => { setTimeout(closeDropdown, 150); });
     }
     draft.forEach((_,i) => mountAcForRow(i));
+
+    // ── Generic single-field autocomplete (partner, cost center, product) ──
+    // Same dropdown pattern as the account AC above but simpler: options are
+    // free-text strings from previous entries, plus anything the user types
+    // is accepted directly (no code lookup required).
+    function mountSimpleAc(wrap, options, field, i){
+      if(!wrap) return;
+      const inp = wrap.querySelector('.ne-ac-input');
+      let dropEl = null;
+      let hoverIdx = -1;
+      function closeDropdown(){ if(dropEl){ dropEl.remove(); dropEl=null; } hoverIdx=-1; }
+      function openDropdown(q){
+        closeDropdown();
+        const lower = q.toLowerCase();
+        const matches = q
+          ? options.filter(o => o.toLowerCase().includes(lower))
+          : options.slice(0,30);
+        if(!matches.length){ closeDropdown(); return; }
+        dropEl = document.createElement('div');
+        dropEl.className = 'ne-ac-list';
+        matches.slice(0,30).forEach((o,mi) => {
+          const item = document.createElement('div');
+          item.className = 'ne-ac-item';
+          item.innerHTML = `<span class="ne-ac-name">${escapeHtml(o)}</span>`;
+          item.addEventListener('mousedown', e => {
+            e.preventDefault();
+            inp.value = o;
+            draft[i][field] = o;
+            closeDropdown();
+          });
+          item.addEventListener('mouseover', () => {
+            hoverIdx = mi;
+            dropEl.querySelectorAll('.ne-ac-item').forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx));
+          });
+          dropEl.appendChild(item);
+        });
+        wrap.appendChild(dropEl);
+      }
+      inp.addEventListener('input', () => { draft[i][field] = inp.value; openDropdown(inp.value.trim()); });
+      inp.addEventListener('focus', () => openDropdown(inp.value.trim()));
+      inp.addEventListener('keydown', e => {
+        if(!dropEl) return;
+        const items = dropEl.querySelectorAll('.ne-ac-item');
+        if(e.key==='ArrowDown'){ e.preventDefault(); hoverIdx=Math.min(hoverIdx+1,items.length-1); items.forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx)); if(items[hoverIdx]) items[hoverIdx].scrollIntoView({block:'nearest'}); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); hoverIdx=Math.max(hoverIdx-1,0); items.forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx)); if(items[hoverIdx]) items[hoverIdx].scrollIntoView({block:'nearest'}); }
+        else if(e.key==='Enter'||e.key==='Tab'){ if(hoverIdx>=0&&items[hoverIdx]){ e.preventDefault(); const val=items[hoverIdx].querySelector('.ne-ac-name').textContent; inp.value=val; draft[i][field]=val; closeDropdown(); } else closeDropdown(); }
+        else if(e.key==='Escape') closeDropdown();
+      });
+      inp.addEventListener('blur', () => setTimeout(closeDropdown, 150));
+    }
+    draft.forEach((_,i) => {
+      mountSimpleAc(overlay.querySelector(`[data-ac-wrap="partner-${i}"]`), partnerNames, 'partner', i);
+      mountSimpleAc(overlay.querySelector(`[data-ac-wrap="cc-${i}"]`), ccNames, 'cc', i);
+    });
     overlay.querySelectorAll('[data-ne-remove]').forEach(btn => btn.addEventListener('click', () => {
       const i = Number(btn.dataset.neRemove);
       if(draft.length <= 2){ showToast(t('entryNeedsOneLine')); return; }
@@ -5663,6 +5725,11 @@ function loadDemoData(){
     {code:'611106',name:'مصروفات نقل وشحن',nameEn:'Freight & Shipping',type:'النفقات',currency:'EGP'},
     // Depreciation
     {code:'711101',name:'إهلاك سيارات',nameEn:'Depreciation - Vehicles',type:'إهلاك',currency:'EGP'},
+    // Manufacturing accounts (for demo of manufacturing report)
+    {code:'113102',name:'مخزون خامات',nameEn:'Raw Materials Inventory',type:'مخزون خامات',currency:'EGP'},
+    {code:'113103',name:'مخزون تحت التشغيل',nameEn:'Work-in-Process',type:'مخزون تحت التشغيل',currency:'EGP'},
+    {code:'113104',name:'مخزون تام الصنع',nameEn:'Finished Goods',type:'مخزون تام الصنع',currency:'EGP'},
+    {code:'521101',name:'أجور مباشرة وتكاليف مصنع',nameEn:'Direct Labor & Factory Overhead',type:'تكاليف التصنيع',currency:'EGP'},
   ];
   STATE.groups = [
     {start:'1',end:'1',name:'الأصول',nameEn:'Assets'},
@@ -5682,6 +5749,8 @@ function loadDemoData(){
     {start:'121',end:'121',name:'الأصول الثابتة (تفصيلي)',nameEn:'Fixed Assets (detail)'},
     {start:'211',end:'211',name:'الموردون والدائنون',nameEn:'Payables'},
     {start:'212',end:'212',name:'الالتزامات المتداولة الأخرى',nameEn:'Other Current Liabilities'},
+    {start:'113',end:'113',name:'المخزون',nameEn:'Inventory'},
+    {start:'521',end:'521',name:'تكاليف التصنيع',nameEn:'Manufacturing Costs'},
   ];
   rebuildAccountIndex();
 
@@ -5870,6 +5939,84 @@ function loadDemoData(){
   je('MISC-2026-06-0003','2026-06-30','عمليات متنوعة',[
     ['111102',700000,0,'','','EGP',1,'','تحصيل مستحقات عملاء'],
     ['112101',0,700000,'','','EGP',1,'','تحصيل مستحقات عملاء'],
+  ]);
+  // ── Manufacturing entries (Q1) — for the manufacturing report ────────────
+  // Opening raw materials inventory
+  je('OBJ-2026-01-0002','2026-01-01','القيد الافتتاحي',[
+    ['113102',40000,0,'','','EGP',1,'','رصيد خامات أول المدة'],
+    ['113103',18000,0,'','','EGP',1,'','رصيد تحت التشغيل أول المدة'],
+    ['113104',25000,0,'','','EGP',1,'','رصيد تام الصنع أول المدة'],
+    ['311101',0,83000,'','','EGP',1,'','مقابل أرصدة المخزون الافتتاحي'],
+  ]);
+  // Raw material purchases
+  je('PUR-2026-01-0002','2026-01-10','فواتير المورد',[
+    ['113102',95000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات يناير'],
+    ['211101',0,95000,'مورد الخامات الأول','','EGP',1,'','شراء خامات يناير'],
+  ]);
+  // Direct labor + overhead
+  je('MISC-2026-01-0004','2026-01-31','عمليات متنوعة',[
+    ['521101',68000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يناير'],
+    ['111102',0,68000,'','','EGP',1,'','دفع تكاليف إنتاج يناير'],
+  ]);
+  // Feb raw materials purchase
+  je('PUR-2026-02-0002','2026-02-08','فواتير المورد',[
+    ['113102',110000,0,'مورد الخامات الثاني','خط إنتاج أ','EGP',1,'خامة ب','شراء خامات فبراير'],
+    ['211101',0,110000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات فبراير'],
+  ]);
+  // Feb manufacturing costs
+  je('MISC-2026-02-0005','2026-02-28','عمليات متنوعة',[
+    ['521101',72000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع فبراير'],
+    ['111102',0,72000,'','','EGP',1,'','دفع تكاليف إنتاج فبراير'],
+  ]);
+  // Mar raw materials + manufacturing
+  je('PUR-2026-03-0001','2026-03-06','فواتير المورد',[
+    ['113102',80000,0,'مورد الخامات الأول','خط إنتاج ب','EGP',1,'خامة أ','شراء خامات مارس'],
+    ['211101',0,80000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مارس'],
+  ]);
+  je('MISC-2026-03-0004','2026-03-31','عمليات متنوعة',[
+    ['521101',65000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع مارس'],
+    ['111102',0,65000,'','','EGP',1,'','دفع تكاليف إنتاج مارس'],
+  ]);
+  // Closing raw materials inventory (end Q1) — raw materials consumed = opening + purchases - closing
+  // Closing RM = 40k + 95k + 110k + 80k - 230k used = 95k
+  je('MISC-2026-03-0005','2026-03-31','عمليات متنوعة',[
+    ['113103',230000,0,'','','EGP',1,'','تحويل خامات لتحت التشغيل'],
+    ['113102',0,230000,'','','EGP',1,'','خامات مستخدمة Q1'],
+  ]);
+  // Transfer WIP to finished goods
+  je('MISC-2026-03-0006','2026-03-31','عمليات متنوعة',[
+    ['113104',280000,0,'','','EGP',1,'','تام الصنع من الإنتاج'],
+    ['113103',0,280000,'','','EGP',1,'','تحويل من تحت التشغيل'],
+  ]);
+  // Q2 manufacturing
+  je('PUR-2026-04-0001','2026-04-12','فواتير المورد',[
+    ['113102',130000,0,'مورد الخامات الثاني','خط إنتاج ب','EGP',1,'خامة ب','شراء خامات أبريل'],
+    ['211101',0,130000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات أبريل'],
+  ]);
+  je('MISC-2026-04-0003','2026-04-30','عمليات متنوعة',[
+    ['521101',78000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع أبريل'],
+    ['111102',0,78000,'','','EGP',1,'','دفع تكاليف إنتاج أبريل'],
+  ]);
+  je('PUR-2026-05-0002','2026-05-10','فواتير المورد',[
+    ['113102',115000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات مايو'],
+    ['211101',0,115000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مايو'],
+  ]);
+  je('MISC-2026-05-0003','2026-05-31','عمليات متنوعة',[
+    ['521101',82000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع مايو'],
+    ['111102',0,82000,'','','EGP',1,'','دفع تكاليف إنتاج مايو'],
+  ]);
+  je('MISC-2026-06-0004','2026-06-30','عمليات متنوعة',[
+    ['521101',76000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يونيو'],
+    ['111102',0,76000,'','','EGP',1,'','دفع تكاليف إنتاج يونيو'],
+  ]);
+  // Q2 raw materials consumed → WIP → FG
+  je('MISC-2026-06-0005','2026-06-30','عمليات متنوعة',[
+    ['113103',290000,0,'','','EGP',1,'','تحويل خامات Q2 لتحت التشغيل'],
+    ['113102',0,290000,'','','EGP',1,'','خامات مستخدمة Q2'],
+  ]);
+  je('MISC-2026-06-0006','2026-06-30','عمليات متنوعة',[
+    ['113104',340000,0,'','','EGP',1,'','تام الصنع Q2 من الإنتاج'],
+    ['113103',0,340000,'','','EGP',1,'','تحويل من تحت التشغيل Q2'],
   ]);
 
   STATE.journal = lines;
@@ -6148,6 +6295,12 @@ function renderApp(){
         `}
       </div>
       <div style="padding:4px 10px 14px">
+        ${STATE.settings.isDemoMode ? `
+        <div style="margin-bottom:6px;padding:6px 8px;background:rgba(196,154,42,.1);border:1px solid rgba(196,154,42,.3);border-radius:8px;font-size:10.5px;color:var(--gold-light);font-weight:700;text-align:center">
+          ${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('isDemoModeLabel')}
+        </div>
+        <button id="resetDemoBtn" style="width:100%;background:transparent;border:1px solid rgba(196,154,42,.35);color:var(--gold-dim);border-radius:8px;padding:7px;font-size:11px;font-weight:700;margin-bottom:6px">${t('resetDemoBtn')}</button>
+        ` : ''}
         <button id="resetSystemBtn" style="width:100%;background:transparent;border:1px solid rgba(162,59,49,.4);color:var(--brick-light);border-radius:8px;padding:8px;font-size:11.5px;font-weight:700;">${t('resetSystem')}</button>
       </div>
     </div>
@@ -6326,6 +6479,8 @@ function renderApp(){
   }
   const resetBtn = document.getElementById('resetSystemBtn');
   if(resetBtn) resetBtn.addEventListener('click', resetSystem);
+  const resetDemoBtnEl = document.getElementById('resetDemoBtn');
+  if(resetDemoBtnEl) resetDemoBtnEl.addEventListener('click', resetDemoData);
   const driveConnectBtn = document.getElementById('driveConnectBtn');
   if(driveConnectBtn) driveConnectBtn.addEventListener('click', signInWithGoogle);
   const driveDisconnectBtn = document.getElementById('driveDisconnectBtn');
