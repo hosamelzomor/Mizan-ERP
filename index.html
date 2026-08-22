@@ -150,15 +150,34 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .nav{ padding:12px 9px; display:flex; flex-direction:column; gap:3px; }
 .nav-item{
   display:flex; align-items:center; gap:10px;
-  padding:9px 12px; border-radius:9px; color:var(--ink-faint);
+  padding:11px 12px; border-radius:9px; color:var(--ink-faint);
   font-size:13px; font-weight:700; border:1px solid transparent; position:relative;
-  transition:.15s;
+  transition:.15s; min-height:44px;
 }
 .nav-item svg{ width:16px; height:16px; flex:0 0 16px; opacity:.85; }
 .nav-item:hover{ background:rgba(217,180,92,.08); color:var(--paper-2); }
 .nav-item.active{ background:rgba(217,180,92,.14); color:var(--gold-light); border-color:rgba(217,180,92,.3); }
 .nav-item.active::before{ content:''; position:absolute; inset-inline-start:-9px; top:20%; bottom:20%; width:3px; border-radius:3px; background:linear-gradient(180deg, var(--gold-light), var(--gold-dim)); }
 .nav-section{ font-size:10px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.8px; font-weight:800; padding:14px 12px 5px; }
+/* Accordion nav groups */
+.nav-group-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 12px 5px; cursor:pointer; user-select:none;
+  font-size:10px; color:var(--ink-faint); text-transform:uppercase;
+  letter-spacing:.8px; font-weight:800; border-radius:6px;
+  transition:.12s;
+}
+.nav-group-header:hover{ color:var(--paper-2); background:rgba(217,180,92,.06); }
+.nav-group-header .ng-chevron{
+  font-size:10px; opacity:.6; transition:transform .2s; display:inline-block;
+}
+.nav-group-header.open .ng-chevron{ transform:rotate(90deg); }
+.nav-group-items{
+  overflow:hidden; max-height:0; transition:max-height .22s cubic-bezier(.4,0,.2,1);
+}
+.nav-group-items.open{ max-height:600px; }
+/* Active group header glows faintly to hint that its section is selected */
+.nav-group-header.has-active{ color:var(--gold-dim); }
 
 .sidebar-status{
   margin:10px; padding:12px 12px; border-radius:10px;
@@ -662,6 +681,7 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
 <button id="scrollTopBtn" title="العودة لأعلى الصفحة" aria-label="العودة لأعلى الصفحة">↑</button>
 <div id="confirmModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="editEntryModalOverlay" class="modal-overlay" style="display:none"></div>
+<div id="newEntryModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="auditLogModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="projectFormModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="projectTxModalOverlay" class="modal-overlay" style="display:none"></div>
@@ -700,6 +720,26 @@ const CLASS_MAP = {
   'تكاليف الإيرادات':       {stmt:'IS', section:'COGS',normal:'debit'},
   'النفقات':                {stmt:'IS', section:'EXP', normal:'debit'},
   'إهلاك':                  {stmt:'IS', section:'DEP', normal:'debit'},
+  // Added: optional inventory sub-types for manufacturing/industrial
+  // companies. These map into the same Current-Assets section as the
+  // generic 'الأصول المتداولة' type, so a company that never uses them is
+  // completely unaffected — Balance Sheet totals are identical either way.
+  // A manufacturer instead codes its raw-materials/WIP/finished-goods
+  // accounts under these 3 types to unlock the separate breakdown in the
+  // Trial Balance and the "تكلفة البضاعة المصنعة" (Cost of Goods
+  // Manufactured) report — see costOfGoodsManufactured().
+  'مخزون خامات':            {stmt:'BS', section:'CA',  normal:'debit'},
+  'مخزون تحت التشغيل':      {stmt:'BS', section:'CA',  normal:'debit'},
+  'مخزون تام الصنع':        {stmt:'BS', section:'CA',  normal:'debit'},
+  // Added: manufacturing/production costs (direct labor + factory overhead
+  // absorbed into production). Maps into the same Income-Statement COGS
+  // section as 'تكاليف الإيرادات', so it flows into Cost of Sales /
+  // Gross Profit exactly as before with zero changes to incomeStatement().
+  // Kept as a separate type purely so costOfGoodsManufactured() can isolate
+  // "costs added to WIP during the period" from raw-material consumption
+  // (which is derived from the inventory roll-forward instead, to avoid
+  // double-counting material cost).
+  'تكاليف التصنيع':         {stmt:'IS', section:'COGS',normal:'debit'},
 };
 // Account "type" values are fixed internal classification keys (also used
 // throughout CLASS_MAP/BS_SECTIONS/etc.), always stored in Arabic regardless
@@ -721,15 +761,22 @@ const ACCOUNT_TYPE_TRANSLATIONS = {
   'تكاليف الإيرادات': 'Cost of Sales',
   'النفقات': 'Expenses',
   'إهلاك': 'Depreciation',
+  'مخزون خامات': 'Raw Materials Inventory',
+  'مخزون تحت التشغيل': 'Work-in-Process Inventory',
+  'مخزون تام الصنع': 'Finished Goods Inventory',
+  'تكاليف التصنيع': 'Manufacturing / Production Costs',
 };
 function accountTypeDisplay(type){
   if(STATE.settings.lang === 'en' && ACCOUNT_TYPE_TRANSLATIONS[type]) return ACCOUNT_TYPE_TRANSLATIONS[type];
   return type;
 }
 const BS_SECTIONS = [
-  {key:'CA',  title:'الأصول المتداولة',        types:['البنك والنقد','المدين','الأصول المتداولة']},
+  {key:'CA',  title:'الأصول المتداولة',        types:['البنك والنقد','المدين','الأصول المتداولة','مخزون خامات','مخزون تحت التشغيل','مخزون تام الصنع']},
   {key:'FA',  title:'الأصول الثابتة (صافي)',   types:['أصول ثابتة','الأصول غير المتداولة']},
 ];
+// Convenience group for anything the app treats as "inventory" — used by the
+// Manufacturing report and by the dynamic Inventory Turnover ratio below.
+const INVENTORY_TYPES = ['مخزون خامات','مخزون تحت التشغيل','مخزون تام الصنع'];
 const LIAB_SECTIONS = [
   {key:'CL',  title:'الالتزامات المتداولة',      types:['الدائن','الالتزامات الجارية']},
   {key:'NCL', title:'الالتزامات غير المتداولة',  types:['الالتزامات غير الجارية']},
@@ -1038,7 +1085,7 @@ const I18N = {
     viewSourceEntries:'عرض القيود المصدر', activityStart:'بداية النشاط',
     actionsCol:'إجراءات', editEntry:'تعديل القيد', editEntryTitle:'تعديل القيد',
     editAuditLogBtn:'سجل التعديلات والحذف', editAuditLogTitle:'سجل تعديل وحذف القيود', editAuditLogEmpty:'لا يوجد أي تعديل أو حذف مسجّل حتى الآن.',
-    auditActionEdit:'تعديل', auditActionDelete:'حذف', auditBeforeLabel:'قبل', auditAfterLabel:'بعد', auditDeletedLabel:'(محذوف بالكامل)',
+    auditActionEdit:'تعديل', auditActionDelete:'حذف', auditActionCreate:'إنشاء', auditBeforeLabel:'قبل', auditAfterLabel:'بعد', auditDeletedLabel:'(محذوف بالكامل)',
     auditDateTimeCol:'وقت الإجراء', auditEntryCol:'رقم القيد وتاريخه', auditActionCol:'الإجراء', auditDetailsCol:'التفاصيل',
     downloadFullBackupBtn:'⬇ تنزيل نسخة احتياطية كاملة', restoreFromBackupBtn:'⬆ استعادة من نسخة احتياطية',
     backupDownloaded:'تم تنزيل النسخة الاحتياطية', backupDownloadError:'تعذّر إنشاء النسخة الاحتياطية', backupRestored:'تمت الاستعادة بنجاح — تم تحديث النظام',
@@ -1152,6 +1199,26 @@ const I18N = {
     chatCapCat4:'التدفقات النقدية والنسب المالية', chatCapCat5:'فحص جودة البيانات (تكرار، قيود غير متوازنة، حركات غريبة)', chatCapCat6:'مقارنة الفترات وتفسير التغيرات',
     chatSuggestionsTitle:'أسئلة سريعة:', clearConversation:'مسح المحادثة',
     asOfRatiosNote:'هذه النسب أرصدة لحظية من قائمة المركز المالي، محسوبة "كما في" تاريخ معيّن — لذلك تتغيّر مع تعديل تاريخ "إلى" في الفلتر، وليس بالضرورة مع تغيير نوع الفترة (الشهر الحالي / من بداية السنة / كل الفترات) إن كانت جميعها تنتهي في نفس التاريخ. التاريخ المستخدم حالياً:',
+    manufacturingNavLabel:'تكلفة الإنتاج (تصنيع)',
+    manufacturingTitle:'قائمة تكلفة البضاعة المصنعة', manufacturingDesc:'تحسب هذه القائمة تكلفة الإنتاج تلقائيًا اعتمادًا على أرصدة حسابات المخزون الثلاثة (خامات، تحت التشغيل، تام الصنع) وحسابات تكاليف التصنيع — وهي مخصصة للشركات الصناعية فقط.',
+    manufacturingEmptyTitle:'لا توجد حسابات تصنيع في شجرة الحسابات', manufacturingEmptyDesc:'هذه القائمة مخصصة للشركات الصناعية. لتفعيلها، أضف في شجرة الحسابات حسابات من الأنواع: "مخزون خامات"، "مخزون تحت التشغيل"، "مخزون تام الصنع"، و"تكاليف التصنيع" (من صفحة الإعداد والاستيراد).',
+    rmSectionTitle:'الخامات', rmOpen:'رصيد أول المدة (خامات)', rmPurchases:'مشتريات الخامات خلال الفترة', rmClose:'رصيد آخر المدة (خامات)', materialsUsed:'الخامات المستخدمة في الإنتاج',
+    wipSectionTitle:'تحت التشغيل', wipOpen:'رصيد أول المدة (تحت التشغيل)', laborOverhead:'أجور مباشرة وتكاليف صناعية غير مباشرة', wipClose:'رصيد آخر المدة (تحت التشغيل)', cogmLabel:'تكلفة البضاعة المصنعة',
+    fgSectionTitle:'تام الصنع', fgOpen:'رصيد أول المدة (تام الصنع)', fgClose:'رصيد آخر المدة (تام الصنع)', cogsManufacturedLabel:'تكلفة البضاعة المباعة (من الإنتاج)',
+    inventoryTurnoverLabel:'معدل دوران المخزون', inventoryTurnoverNote:'تكلفة الإيرادات ÷ رصيد المخزون', inventoryDaysLabel:'متوسط أيام بقاء المخزون',
+    amount:'المبلغ',
+    newEntryBtn:'قيد جديد', newEntryTitle:'إنشاء قيد يومية جديد',
+    newEntryDesc:'رقم القيد يُنشأ تلقائياً عند الحفظ حسب دفتر اليومية والسنة والشهر. القيد لازم يكون متوازناً (إجمالي المدين = إجمالي الدائن) قبل الحفظ.',
+    entryLineCurrency:'العملة', entryLineConvFactor:'معامل التحويل', entryLineCurAmt:'المبلغ بالعملة', entryLineJournalBook:'دفتر اليومية',
+    newEntryDescLabel:'وصف القيد', newEntryDescPlaceholder:'مثال: سداد فاتورة كهرباء شهر أغسطس',
+    newEntryAutoNumberLabel:'رقم القيد', newEntryAutoNumberNote:'تلقائي عند الحفظ',
+    newEntryAddBook:'إضافة دفتر جديد', newEntryBookNamePlaceholder:'اسم الدفتر', newEntryBookCodePlaceholder:'كود مختصر (مثال JV)',
+    newEntryBookNeedsBoth:'اكتب اسم الدفتر والكود المختصر معاً',
+    newEntryMissingBook:'اختر دفتر اليومية', newEntryMissingDesc:'اكتب وصف القيد',
+    newEntryMissingDate:'التاريخ مطلوب', newEntryLineNeedsAmount:'يجب إدخال مبلغ مدين أو دائن', newEntryLineBothSides:'لا يمكن إدخال مدين ودائن في نفس السطر',
+    newEntryLineError:'السطر ${n}: ${msg}',
+    newEntrySaveBtn:'حفظ القيد', newEntrySavedToast:'تم حفظ القيد رقم ${no} بنجاح',
+    selectAccountPlaceholder:'اختر حساباً...',
   },
   en: {
     noForeignAccounts:'There are no non-EGP currency accounts in the chart of accounts, so no FX revaluation entry is needed.',
@@ -1221,7 +1288,7 @@ const I18N = {
     viewSourceEntries:'View source entries', activityStart:'Start of activity',
     actionsCol:'Actions', editEntry:'Edit entry', editEntryTitle:'Edit Journal Entry',
     editAuditLogBtn:'Edit & Delete Log', editAuditLogTitle:'Journal Entry Edit/Delete Log', editAuditLogEmpty:'No edits or deletions have been recorded yet.',
-    auditActionEdit:'Edit', auditActionDelete:'Delete', auditBeforeLabel:'Before', auditAfterLabel:'After', auditDeletedLabel:'(fully deleted)',
+    auditActionEdit:'Edit', auditActionDelete:'Delete', auditActionCreate:'Create', auditBeforeLabel:'Before', auditAfterLabel:'After', auditDeletedLabel:'(fully deleted)',
     auditDateTimeCol:'When', auditEntryCol:'Entry # & Date', auditActionCol:'Action', auditDetailsCol:'Details',
     downloadFullBackupBtn:'⬇ Download Full Backup', restoreFromBackupBtn:'⬆ Restore From Backup',
     backupDownloaded:'Backup downloaded', backupDownloadError:'Could not create the backup', backupRestored:'Restore successful — the system has been updated',
@@ -1359,6 +1426,26 @@ const I18N = {
     outOfLabel:'out of', duringSelectedPeriod:'during the selected period', profitableCentersLabel:'Profitable centers',
     costCentersPerformanceTitle:'Cost Center / Project Performance', costCentersPerformanceDesc:'For each cost center: its associated revenue, its associated costs (cost of sales + expenses + depreciation), and the resulting net profit or loss. Click any column header to sort.',
     noCostCenterEntries:'No entries carry a cost center during this period',
+    manufacturingNavLabel:'Manufacturing Cost',
+    manufacturingTitle:'Cost of Goods Manufactured Statement', manufacturingDesc:'This statement automatically computes manufacturing cost from the 3 inventory account types (raw materials, work-in-process, finished goods) and manufacturing-cost accounts — intended for industrial/manufacturing companies only.',
+    manufacturingEmptyTitle:'No manufacturing accounts in the chart of accounts', manufacturingEmptyDesc:'This statement is for manufacturing companies. To enable it, add accounts of type "Raw Materials Inventory", "Work-in-Process Inventory", "Finished Goods Inventory", and "Manufacturing / Production Costs" via Setup & Import.',
+    rmSectionTitle:'Raw Materials', rmOpen:'Opening Balance (Raw Materials)', rmPurchases:'Raw Material Purchases (period)', rmClose:'Closing Balance (Raw Materials)', materialsUsed:'Materials Used in Production',
+    wipSectionTitle:'Work-in-Process', wipOpen:'Opening Balance (WIP)', laborOverhead:'Direct Labor & Manufacturing Overhead', wipClose:'Closing Balance (WIP)', cogmLabel:'Cost of Goods Manufactured',
+    fgSectionTitle:'Finished Goods', fgOpen:'Opening Balance (Finished Goods)', fgClose:'Closing Balance (Finished Goods)', cogsManufacturedLabel:'Cost of Goods Sold (from Production)',
+    inventoryTurnoverLabel:'Inventory Turnover', inventoryTurnoverNote:'Cost of sales ÷ inventory balance', inventoryDaysLabel:'Average Inventory Days',
+    amount:'Amount',
+    newEntryBtn:'New Entry', newEntryTitle:'Create New Journal Entry',
+    newEntryDesc:'The entry number is generated automatically on save, based on the journal book, year and month. The entry must be balanced (total debit = total credit) before saving.',
+    entryLineCurrency:'Currency', entryLineConvFactor:'Conv. Factor', entryLineCurAmt:'Amount (Currency)', entryLineJournalBook:'Journal Book',
+    newEntryDescLabel:'Entry Description', newEntryDescPlaceholder:'e.g. Paid August electricity bill',
+    newEntryAutoNumberLabel:'Entry No.', newEntryAutoNumberNote:'auto on save',
+    newEntryAddBook:'Add New Book', newEntryBookNamePlaceholder:'Book name', newEntryBookCodePlaceholder:'Short code (e.g. JV)',
+    newEntryBookNeedsBoth:'Enter both the book name and short code',
+    newEntryMissingBook:'Select a journal book', newEntryMissingDesc:'Enter the entry description',
+    newEntryMissingDate:'Date is required', newEntryLineNeedsAmount:'A debit or credit amount is required', newEntryLineBothSides:'A line cannot have both debit and credit',
+    newEntryLineError:'Line ${n}: ${msg}',
+    newEntrySaveBtn:'Save Entry', newEntrySavedToast:'Entry ${no} saved successfully',
+    selectAccountPlaceholder:'Select an account...',
   },
 };
 function t(key){
@@ -2011,39 +2098,181 @@ function currentViewTitle(){
 // importGroupsFile() look for), pre-filled with one example row and an
 // instructions sheet, so they can fill it in and re-upload with confidence.
 const ACCOUNT_TYPES_LIST = Object.keys(CLASS_MAP);
+
+// ---------------------------------------------------------------------
+// Model (ready-made) chart of accounts + account groups, shipped inside the
+// downloadable Excel templates in Setup & Import instead of a single blank
+// example row. This is a generic, numbered, 3-level structure (1-digit →
+// 2-digit → 3-digit group prefixes, 6-digit leaf accounts) that covers
+// trading, services, manufacturing and contracting activity in one file.
+// Rows whose Arabic name ends with "(اختياري - <نشاط>)" are specific to one
+// activity type — the accountant deletes whichever don't apply to their
+// company and keeps/extends the rest. Every "النوع" value used here is a
+// real key in CLASS_MAP, so nothing here needs any code change to work.
+// ---------------------------------------------------------------------
+const MODEL_ACCOUNT_GROUPS = [
+  // level 1 — 1-digit
+  ['1','1','الأصول','Assets'],
+  ['2','2','الالتزامات','Liabilities'],
+  ['3','3','حقوق الملكية','Equity'],
+  ['4','4','الإيرادات','Revenue'],
+  ['5','5','تكلفة المبيعات والتصنيع','Cost of Sales & Manufacturing'],
+  ['6','6','المصروفات','Expenses'],
+  ['7','7','الإهلاك','Depreciation'],
+  // level 2 — 2-digit
+  ['11','11','الأصول المتداولة','Current Assets'],
+  ['12','12','الأصول الثابتة','Fixed Assets'],
+  ['13','13','أصول غير متداولة أخرى','Other Non-Current Assets'],
+  ['21','21','الالتزامات المتداولة','Current Liabilities'],
+  ['22','22','الالتزامات غير المتداولة','Non-Current Liabilities'],
+  ['31','31','رأس المال وحقوق الملكية','Capital & Equity'],
+  ['41','41','الإيرادات التشغيلية','Operating Revenue'],
+  ['42','42','إيرادات أخرى','Other Income'],
+  ['51','51','تكلفة المبيعات والخدمات','Cost of Sales & Services'],
+  ['52','52','تكاليف التصنيع (شركات صناعية فقط)','Manufacturing Costs (industrial only)'],
+  ['61','61','مصروفات إدارية وعمومية','General & Administrative Expenses'],
+  ['62','62','مصروفات بيعية وتسويقية','Selling & Marketing Expenses'],
+  ['63','63','مصروفات تمويلية','Finance Expenses'],
+  ['71','71','مصروف الإهلاك','Depreciation Expense'],
+  // level 3 — 3-digit (only where a sub-breakdown is genuinely useful)
+  ['111','111','النقدية وما في حكمها','Cash & Cash Equivalents'],
+  ['112','112','العملاء وأوراق القبض','Trade Receivables'],
+  ['113','113','المخزون','Inventory'],
+  ['114','114','أصول متداولة أخرى','Other Current Assets'],
+  ['211','211','الموردون وأوراق الدفع','Trade Payables'],
+  ['212','212','التزامات متداولة أخرى','Other Current Liabilities'],
+];
+const MODEL_CHART_OF_ACCOUNTS = [
+  // -- الأصول المتداولة --
+  ['111101','خزينة رئيسية - جنيه','Main Treasury - EGP','البنك والنقد','EGP'],
+  ['111102','بنك أهلي مصر - حساب جاري','NBE Bank - Current Account','البنك والنقد','EGP'],
+  ['111103','بنك مصر - حساب توفير','Banque Misr - Savings Account','البنك والنقد','EGP'],
+  ['112101','عملاء - تجزئة','Customers - Retail','المدين','EGP'],
+  ['112102','عملاء - جملة','Customers - Wholesale','المدين','EGP'],
+  ['112103','أوراق قبض','Notes Receivable','المدين','EGP'],
+  ['112104','مخصص ديون مشكوك في تحصيلها','Allowance for Doubtful Debts','المدين','EGP'],
+  ['113101','مخزون بضاعة جاهزة للبيع (اختياري - تجاري/خدمي)','Merchandise Inventory (trading/services)','الأصول المتداولة','EGP'],
+  ['113102','مخزون خامات (اختياري - تصنيع)','Raw Materials Inventory (manufacturing)','مخزون خامات','EGP'],
+  ['113103','مخزون تحت التشغيل (اختياري - تصنيع)','Work-in-Process Inventory (manufacturing)','مخزون تحت التشغيل','EGP'],
+  ['113104','مخزون تام الصنع (اختياري - تصنيع)','Finished Goods Inventory (manufacturing)','مخزون تام الصنع','EGP'],
+  ['114101','مصروفات مقدمة','Prepaid Expenses','الأصول المتداولة','EGP'],
+  ['114102','عهد نقدية للموظفين','Employee Cash Advances (Custody)','الأصول المتداولة','EGP'],
+  ['114103','ضريبة القيمة المضافة - مدينة','VAT Recoverable','الأصول المتداولة','EGP'],
+  ['114104','دفعات مقدمة لموردين','Advances to Suppliers','الأصول المتداولة','EGP'],
+  ['114105','دفعات مقدمة لمقاولي الباطن (اختياري - مقاولات)','Advances to Subcontractors (contracting)','الأصول المتداولة','EGP'],
+  // -- الأصول الثابتة --
+  ['121101','أراضي','Land','أصول ثابتة','EGP'],
+  ['121102','مباني','Buildings','أصول ثابتة','EGP'],
+  ['121103','آلات ومعدات (اختياري - تصنيع)','Machinery & Equipment (manufacturing)','أصول ثابتة','EGP'],
+  ['121104','سيارات ووسائل نقل','Vehicles','أصول ثابتة','EGP'],
+  ['121105','أثاث وتجهيزات مكتبية','Furniture & Fixtures','أصول ثابتة','EGP'],
+  ['121106','أجهزة حاسب آلي','Computer Equipment','أصول ثابتة','EGP'],
+  ['121107','مجمع إهلاك - مباني','Accumulated Depreciation - Buildings','أصول ثابتة','EGP'],
+  ['121108','مجمع إهلاك - آلات ومعدات','Accumulated Depreciation - Machinery','أصول ثابتة','EGP'],
+  ['121109','مجمع إهلاك - سيارات ووسائل نقل','Accumulated Depreciation - Vehicles','أصول ثابتة','EGP'],
+  ['121110','مجمع إهلاك - أثاث وتجهيزات','Accumulated Depreciation - Furniture','أصول ثابتة','EGP'],
+  // -- أصول غير متداولة أخرى --
+  ['131101','استثمارات طويلة الأجل','Long-term Investments','الأصول غير المتداولة','EGP'],
+  ['131102','أصول غير ملموسة (شهرة، برمجيات)','Intangible Assets (Goodwill, Software)','الأصول غير المتداولة','EGP'],
+  // -- الالتزامات المتداولة --
+  ['211101','موردون - محليون','Suppliers - Local','الدائن','EGP'],
+  ['211102','موردون - مقاولو الباطن (اختياري - مقاولات)','Subcontractors Payable (contracting)','الدائن','EGP'],
+  ['211103','أوراق دفع','Notes Payable','الدائن','EGP'],
+  ['212101','مصروفات مستحقة','Accrued Expenses','الالتزامات الجارية','EGP'],
+  ['212102','ضريبة القيمة المضافة - دائنة','VAT Payable','الالتزامات الجارية','EGP'],
+  ['212103','ضريبة الدخل المستحقة','Income Tax Payable','الالتزامات الجارية','EGP'],
+  ['212104','تأمينات اجتماعية مستحقة','Social Insurance Payable','الالتزامات الجارية','EGP'],
+  ['212105','رواتب مستحقة','Accrued Salaries','الالتزامات الجارية','EGP'],
+  ['212106','دفعات مقدمة من عملاء','Advances from Customers','الالتزامات الجارية','EGP'],
+  ['212107','ضمانات محتجزة لصالح العميل (اختياري - مقاولات)','Retention Withheld by Client (contracting)','الالتزامات الجارية','EGP'],
+  // -- الالتزامات غير المتداولة --
+  ['221101','قروض طويلة الأجل','Long-term Loans','الالتزامات غير الجارية','EGP'],
+  ['221102','مخصص مكافأة نهاية الخدمة','Employee End-of-Service Provision','الالتزامات غير الجارية','EGP'],
+  // -- حقوق الملكية --
+  ['311101','رأس المال المدفوع','Paid-in Capital','رأس المال','EGP'],
+  ['311102','حساب الشريك الجاري (اختياري - شركات الأشخاص)','Partner Current Account (partnerships)','رأس المال','EGP'],
+  ['312101','أرباح مرحلة','Retained Earnings','رأس المال','EGP'],
+  ['312102','احتياطي قانوني','Legal Reserve','رأس المال','EGP'],
+  ['312103','أرباح السنة الجارية','Current Year Profit','أرباح السنة الجارية','EGP'],
+  // -- الإيرادات --
+  ['411101','إيرادات مبيعات - تجزئة (اختياري - تجاري)','Sales Revenue - Retail (trading)','الدخل','EGP'],
+  ['411102','إيرادات مبيعات - جملة (اختياري - تجاري)','Sales Revenue - Wholesale (trading)','الدخل','EGP'],
+  ['411103','إيرادات تقديم خدمات (اختياري - خدمي)','Service Revenue (services)','الدخل','EGP'],
+  ['411104','إيرادات تنفيذ عقود ومشاريع (اختياري - مقاولات)','Contract & Project Revenue (contracting)','الدخل','EGP'],
+  ['411105','إيرادات بيع منتجات مصنعة (اختياري - تصنيع)','Manufactured Goods Sales Revenue (manufacturing)','الدخل','EGP'],
+  ['421101','إيرادات فروق عملة','Foreign Exchange Gains','دخل آخر','EGP'],
+  ['421102','إيرادات بيع أصول ثابتة','Gain on Disposal of Fixed Assets','دخل آخر','EGP'],
+  ['421103','إيرادات متنوعة أخرى','Miscellaneous Other Income','دخل آخر','EGP'],
+  // -- تكلفة المبيعات والتصنيع --
+  ['511101','تكلفة البضاعة المباعة (اختياري - تجاري)','Cost of Goods Sold (trading)','تكاليف الإيرادات','EGP'],
+  ['511102','تكلفة الخدمات المقدمة (اختياري - خدمي)','Cost of Services Rendered (services)','تكاليف الإيرادات','EGP'],
+  ['511103','تكلفة تنفيذ المشاريع - خامات ومستلزمات (اختياري - مقاولات)','Project Cost - Materials & Supplies (contracting)','تكاليف الإيرادات','EGP'],
+  ['511104','تكلفة تنفيذ المشاريع - مقاولون من الباطن (اختياري - مقاولات)','Project Cost - Subcontractors (contracting)','تكاليف الإيرادات','EGP'],
+  ['511105','تكلفة تنفيذ المشاريع - عمالة موقع (اختياري - مقاولات)','Project Cost - Site Labor (contracting)','تكاليف الإيرادات','EGP'],
+  ['521101','أجور مباشرة - عمال الإنتاج (اختياري - تصنيع)','Direct Labor - Production Workers (manufacturing)','تكاليف التصنيع','EGP'],
+  ['521102','تكاليف صناعية غير مباشرة - كهرباء ومرافق المصنع (اختياري - تصنيع)','Factory Overhead - Utilities (manufacturing)','تكاليف التصنيع','EGP'],
+  ['521103','تكاليف صناعية غير مباشرة - صيانة الآلات (اختياري - تصنيع)','Factory Overhead - Machine Maintenance (manufacturing)','تكاليف التصنيع','EGP'],
+  ['521104','تكاليف صناعية غير مباشرة - إهلاك آلات الإنتاج (اختياري - تصنيع)','Factory Overhead - Production Equipment Depreciation (manufacturing)','تكاليف التصنيع','EGP'],
+  // -- المصروفات --
+  ['611101','رواتب وأجور إدارية','Administrative Salaries','النفقات','EGP'],
+  ['611102','إيجارات','Rent Expense','النفقات','EGP'],
+  ['611103','مصروفات كهرباء ومياه','Utilities Expense','النفقات','EGP'],
+  ['611104','مصروفات اتصالات وإنترنت','Telecom & Internet Expense','النفقات','EGP'],
+  ['611105','مصروفات قرطاسية ومطبوعات','Office Supplies & Printing','النفقات','EGP'],
+  ['611106','مصروفات ضيافة','Hospitality Expense','النفقات','EGP'],
+  ['611107','مصروفات صيانة عامة','General Maintenance Expense','النفقات','EGP'],
+  ['611108','أتعاب مهنية (محاسبة/قانونية)','Professional Fees (Accounting/Legal)','النفقات','EGP'],
+  ['611109','تأمينات اجتماعية - حصة الشركة','Social Insurance - Employer Share','النفقات','EGP'],
+  ['621101','مصروفات دعاية وإعلان','Advertising & Marketing Expense','النفقات','EGP'],
+  ['621102','عمولات مبيعات','Sales Commissions','النفقات','EGP'],
+  ['621103','مصروفات نقل وشحن','Freight & Shipping Expense','النفقات','EGP'],
+  ['631101','فوائد قروض بنكية','Bank Loan Interest','النفقات','EGP'],
+  ['631102','مصروفات ورسوم بنكية','Bank Charges & Fees','النفقات','EGP'],
+  // -- الإهلاك --
+  ['711101','إهلاك مباني','Depreciation - Buildings','إهلاك','EGP'],
+  ['711102','إهلاك آلات ومعدات (اختياري - تصنيع)','Depreciation - Machinery & Equipment (manufacturing)','إهلاك','EGP'],
+  ['711103','إهلاك سيارات ووسائل نقل','Depreciation - Vehicles','إهلاك','EGP'],
+  ['711104','إهلاك أثاث وتجهيزات','Depreciation - Furniture & Fixtures','إهلاك','EGP'],
+];
+
 function downloadImportTemplate(kind){
   try{
     const wb = XLSX.utils.book_new();
     let headers, exampleRows, sheetName, legendRows, filename;
     if(kind === 'accounts'){
       headers = ['رمز','اسم الحساب','الاسم بالإنجليزية','النوع','عملة الحساب'];
-      exampleRows = [['111101','خزينة رئيسية - جنيه','Main Treasury - EGP','البنك والنقد','EGP']];
+      exampleRows = MODEL_CHART_OF_ACCOUNTS;
       sheetName = 'شجرة الحسابات';
-      filename = 'تمبلت_شجرة_الحسابات.xlsx';
+      filename = 'نموذج_شجرة_الحسابات.xlsx';
       legendRows = [
         ['تعليمات التعبئة'],
-        ['رمز: رمز الحساب المحاسبي (رقمي، فريد لكل حساب)'],
+        ['هذا نموذج جاهز لشجرة حسابات متكاملة (وليس صفاً فارغاً) — مبني بترقيم متسلسل من 3 مستويات يتوافق مباشرة مع نموذج "مجموعات الحسابات" المرفق، ويغطي الأنشطة التجارية والخدمية والصناعية ونشاط المقاولات معاً في نفس الملف.'],
+        ['كيفية التعديل: احذف أي حساب لا يخص نشاطك (الحسابات المُعلَّم عليها بعبارة "اختياري - ..." في نهاية الاسم مخصصة لنشاط بعينه)، وأضف الحسابات الفرعية الخاصة بشركتك بنفس منطق الترقيم، وغيّر الأسماء بحرية — المهم فقط ألا تُغيّر عمود "النوع" إلا لقيمة من القائمة الثابتة أدناه، لأن التقارير والقوائم المالية مبنية عليه مباشرة.'],
+        ['رمز: رمز الحساب المحاسبي (رقمي، فريد لكل حساب). في هذا النموذج أول رقم إلى ثلاثة أرقام يحدد التصنيف (المجموعة) والباقي رقم تسلسلي للحساب نفسه — حافظ على نفس نطاقات المجموعات إن أمكن، أو عدّل ملف المجموعات ليطابق أي أكواد جديدة تضيفها.'],
         ['اسم الحساب: اسم الحساب بالكامل'],
         ['الاسم بالإنجليزية: اختياري — لو موجود، هيظهر تلقائياً بدل الاسم العربي عند تحويل لغة الداشبورد للإنجليزية'],
         ['النوع: يجب أن يكون واحداً من الأنواع التالية بالضبط (بنفس الإملاء تماماً):'],
         ...ACCOUNT_TYPES_LIST.map(tp => ['   • ' + tp]),
         ['عملة الحساب: EGP أو USD أو أي عملة أخرى (اختياري — الافتراضي EGP)'],
         [''],
-        ['احذف صف المثال قبل الرفع، أو استبدله ببياناتك الحقيقية.'],
+        ['ملاحظة عن حسابات "مجمع الإهلاك" ومخصص الديون المشكوك فيها: هذه حسابات عكسية (Contra) — رصيدها الطبيعي دائن رغم أن نوعها "أصول ثابتة"/"المدين"، فيتم إدخالها في ميزان المراجعة برصيد سالب أو دائن كما هي الحال في حساباتك الفعلية.'],
+        ['هذا نموذج للاسترشاد به فقط، وليس بديلاً عن مراجعة محاسب أو مراجع خارجي لشجرة حسابات شركتك النهائية.'],
       ];
     } else if(kind === 'groups'){
       headers = ['بداية بادئة الكود','نهاية بادئة الكود','الاسم','الاسم بالإنجليزية'];
-      exampleRows = [['111','111','النقدية و ما في حكمها','Cash and Cash Equivalents']];
+      exampleRows = MODEL_ACCOUNT_GROUPS;
       sheetName = 'مجموعات الحسابات';
-      filename = 'تمبلت_مجموعات_الحسابات.xlsx';
+      filename = 'نموذج_مجموعات_الحسابات.xlsx';
       legendRows = [
         ['تعليمات التعبئة'],
+        ['هذا نموذج جاهز لمجموعات حسابات من 3 مستويات (رئيسي ← فرعي ← تفصيلي) متوافق مع نموذج "شجرة الحسابات" المرفق — وليس صفاً فارغاً.'],
         ['بداية بادئة الكود: أول رمز حساب يقع ضمن هذه المجموعة (مثال: 111)'],
         ['نهاية بادئة الكود: آخر رمز حساب يقع ضمن هذه المجموعة (مثال: 111، أو 119 لتغطية مدى من الحسابات)'],
         ['الاسم: اسم المجموعة كما سيظهر في شجرة الحسابات والتقارير'],
         ['الاسم بالإنجليزية: اختياري — لو موجود، هيظهر تلقائياً بدل الاسم العربي عند تحويل لغة الداشبورد للإنجليزية'],
         [''],
-        ['يمكن أن تكون المجموعات متداخلة (مجموعة رئيسية تحتوي مجموعات فرعية) — النظام يبني الشجرة الهرمية تلقائياً حسب طول البادئة.'],
+        ['يمكن أن تكون المجموعات متداخلة (مجموعة رئيسية تحتوي مجموعات فرعية) — النظام يبني الشجرة الهرمية تلقائياً حسب طول البادئة، فكل مجموعة تنتمي تلقائياً لأقرب مجموعة أطول-بادئة تحتويها.'],
+        ['لو عدّلت أو أضفت أكواد حسابات جديدة في نموذج شجرة الحسابات خارج النطاقات الموجودة هنا، أضف لها سطراً مطابقاً هنا حتى تظهر في مكانها الصحيح من الشجرة بدل أن تصنَّف "غير مصنفة".'],
       ];
     } else {
       headers = ['رقم القيد','التاريخ','الحساب','العملة','العميل/المورد','مدين','دائن','الوصف/المرجع','مركز التكلفة','مبلغ مركز التكلفة','المنتج','دفتر اليومية','المبلغ بالعملة'];
@@ -2831,6 +3060,12 @@ const STATE = {
     comparisonMonths: [],
     sidebarOpen: false,
     sidebarCollapsed: false,
+    // navGroupsOpen: which sidebar section headers are expanded.
+    // Keyed by the Arabic section label (stable across languages).
+    // Default: the group containing the current view is open,
+    // plus 'الإعداد' (always open — single item). The object is
+    // populated lazily on first render if empty.
+    navGroupsOpen: {},
     pending: null, // pending import preview
   }
 };
@@ -3131,7 +3366,7 @@ function incomeStatement(lines, start, end){
   const bal = computeBalances(activityLines, end, start);
   const revenue = -sectionMovement(bal, ['الدخل']);       // credit-normal -> flip sign for display
   const otherIncome = -sectionMovement(bal, ['دخل آخر']);
-  const cogs = sectionMovement(bal, ['تكاليف الإيرادات']);
+  const cogs = sectionMovement(bal, ['تكاليف الإيرادات','تكاليف التصنيع']);
   const expenses = sectionMovement(bal, ['النفقات']);
   const depreciation = sectionMovement(bal, ['إهلاك']);
   const grossProfit = revenue - cogs;
@@ -3145,7 +3380,7 @@ function balanceSheet(lines, asOf){
   const assets = sectionSum(bal, [...BS_SECTIONS[0].types, ...BS_SECTIONS[1].types]);
   const liabRaw = sectionSum(bal, [...LIAB_SECTIONS[0].types, ...LIAB_SECTIONS[1].types]);
   const eqRaw = sectionSum(bal, EQ_SECTIONS[0].types);
-  const isRaw = sectionSum(bal, ['الدخل','دخل آخر','تكاليف الإيرادات','النفقات','إهلاك']);
+  const isRaw = sectionSum(bal, ['الدخل','دخل آخر','تكاليف الإيرادات','تكاليف التصنيع','النفقات','إهلاك']);
   const liabilities = -liabRaw;
   const equityRecorded = -eqRaw;
   const netIncomeToDate = -isRaw;
@@ -3159,6 +3394,11 @@ function balanceSheet(lines, asOf){
     cash: sectionSum(bal, ['البنك والنقد']),
     receivables: sectionSum(bal, ['المدين']),
     payables: -sectionSum(bal, ['الدائن']),
+    // Zero for any company that never codes accounts under the 3 inventory
+    // types (e.g. a pure services business) — ratios() below detects that
+    // and simply omits the inventory-based figures rather than showing a
+    // meaningless 0.
+    inventory: sectionSum(bal, INVENTORY_TYPES),
   };
 }
 
@@ -3175,17 +3415,21 @@ function ratios(is, bs){
   r.roa = bs.assets !== 0 ? (is.netIncome / bs.assets) * 100 : null;
   r.roe = bs.equityTotal !== 0 ? (is.netIncome / bs.equityTotal) * 100 : null;
   r.workingCapital = bs.currentAssets - bs.currentLiab;
-  // Receivable / Payable turnover & days-outstanding. This chart of accounts
-  // has no inventory accounts (a services/tech business), so Inventory
-  // Turnover is intentionally omitted — showing it would just be a
-  // meaningless zero. Cash Conversion Cycle is approximated as
-  // Receivable Days − Payable Days (no Inventory Days term) for the same
-  // reason; this is noted in the UI wherever the figure appears.
   r.receivableTurnover = bs.receivables > 0 ? (is.revenue + is.otherIncome) / bs.receivables : null;
   r.receivableDays = r.receivableTurnover ? 365 / r.receivableTurnover : null;
   r.payableTurnover = bs.payables > 0 ? (is.cogs + is.expenses) / bs.payables : null;
   r.payableDays = r.payableTurnover ? 365 / r.payableTurnover : null;
-  r.cashConversionCycle = (r.receivableDays!=null && r.payableDays!=null) ? (r.receivableDays - r.payableDays) : null;
+  // Inventory Turnover / Days: only meaningful (and only shown in the UI)
+  // when the chart of accounts actually has inventory booked under the 3
+  // manufacturing inventory types — a services business with bs.inventory
+  // === 0 gets `null` here, exactly as it did before this feature existed.
+  r.inventoryTurnover = bs.inventory > 0 ? is.cogs / bs.inventory : null;
+  r.inventoryDays = r.inventoryTurnover ? 365 / r.inventoryTurnover : null;
+  // Cash Conversion Cycle = Receivable Days + Inventory Days − Payable Days
+  // (standard formula). Falls back to the old Receivable−Payable form when
+  // there's no inventory, so a services business sees no change at all.
+  r.cashConversionCycle = (r.receivableDays!=null && r.payableDays!=null)
+    ? (r.receivableDays + (r.inventoryDays||0) - r.payableDays) : null;
   return r;
 }
 
@@ -3234,10 +3478,16 @@ function cashFlowStatement(lines, start, end){
     return rows;
   }
   const recvChange = -rawDelta(['المدين']);
-  const otherCAChange = -rawDelta(['الأصول المتداولة']);
+  // Inventory sub-types (raw materials / WIP / finished goods) are current
+  // assets like 'الأصول المتداولة', so their period change belongs in the
+  // same "other current assets" working-capital bucket — otherwise a
+  // manufacturer's inventory movement would be silently missing from
+  // operating cash flow and the IAS 7 ending-balance check below would no
+  // longer reconcile.
+  const otherCAChange = -rawDelta(['الأصول المتداولة', ...INVENTORY_TYPES]);
   const payablesChange = -rawDelta(['الدائن','الالتزامات الجارية']);
   const recvAccounts = deltaAccountsList(['المدين']);
-  const otherCAAccounts = deltaAccountsList(['الأصول المتداولة']);
+  const otherCAAccounts = deltaAccountsList(['الأصول المتداولة', ...INVENTORY_TYPES]);
   const payablesAccounts = deltaAccountsList(['الدائن','الالتزامات الجارية']);
   const wcCashImpact = recvChange + otherCAChange + payablesChange;
   const operating = is.netIncome + is.depreciation + wcCashImpact;
@@ -3528,7 +3778,7 @@ function answerQuery(question){
     const byAccount = {};
     STATE.journal.forEach(l => {
       const ty = accType(l.code);
-      if(!['النفقات','تكاليف الإيرادات','إهلاك'].includes(ty)) return;
+      if(!['النفقات','تكاليف الإيرادات','تكاليف التصنيع','إهلاك'].includes(ty)) return;
       const amt = l.debit - l.credit;
       if(amt <= 0) return;
       (byAccount[l.code] = byAccount[l.code] || []).push({ date:l.date, code:l.code, amt });
@@ -3842,6 +4092,65 @@ function costCenterPL(lines, start, end){
     margin: r.revenue !== 0 ? ((r.revenue-r.cost)/r.revenue*100) : null,
     partners:[...r.partners]
   })).sort((a,b)=> b.profit - a.profit);
+}
+
+// Cost of Goods Manufactured (COGM) statement — for manufacturing/industrial
+// companies that code their raw materials, work-in-process and finished
+// goods under the 3 dedicated inventory types, and their direct labour +
+// factory overhead under 'تكاليف التصنيع'. A services or trading company
+// that never uses these types gets hasData:false and every figure is 0 —
+// this function changes nothing for the rest of the app when unused.
+//
+// Standard textbook formulas:
+//   Raw materials used   = Beginning RM + Purchases (period debit) − Ending RM
+//   COGM                 = Beginning WIP + Materials used + Direct labour &
+//                           overhead (period debit on 'تكاليف التصنيع') − Ending WIP
+//   COGS (manufactured)  = Beginning FG + COGM − Ending FG
+// Direct labour & overhead is read from 'تكاليف التصنيع' only (NOT from
+// 'تكاليف الإيرادات', which stays available for trading/purchased-goods
+// cost so the two never double-count each other).
+function costOfGoodsManufactured(lines, start, end){
+  const activityLines = lines.filter(l => !isClosingLine(l));
+  const openDate = start ? addDaysISO(start, -1) : '1900-01-01';
+  const balOpen = computeBalances(activityLines, openDate, null);
+  const balClose = computeBalances(activityLines, end, null);
+  function typeSum(bal, type){
+    let s = 0;
+    for(const c in bal){ if(bal[c].type === type) s += bal[c].closing; }
+    return s;
+  }
+  const rmOpen = typeSum(balOpen, 'مخزون خامات'), rmClose = typeSum(balClose, 'مخزون خامات');
+  const wipOpen = typeSum(balOpen, 'مخزون تحت التشغيل'), wipClose = typeSum(balClose, 'مخزون تحت التشغيل');
+  const fgOpen = typeSum(balOpen, 'مخزون تام الصنع'), fgClose = typeSum(balClose, 'مخزون تام الصنع');
+  const hasData = (rmOpen||rmClose||wipOpen||wipClose||fgOpen||fgClose) !== 0
+    || STATE.accounts.some(a => ['مخزون خامات','مخزون تحت التشغيل','مخزون تام الصنع','تكاليف التصنيع'].includes(a.type));
+  const periodBal = computeBalances(activityLines, end, start);
+  // IMPORTANT: rmPurchases must be the GROSS debit total for the period
+  // (i.e. "what was bought"), never the net debit-credit movement — the net
+  // movement is mathematically identical to (rmClose − rmOpen) by
+  // definition, which would make materialsUsed = rmOpen + movement − rmClose
+  // collapse to zero every time. Gross debits assume the standard perpetual-
+  // inventory convention: RM is debited on purchase and credited when
+  // issued to production, so the credit side represents materials used.
+  function typeDebit(bal, type){
+    let s = 0;
+    for(const c in bal){ if(bal[c].type === type) s += bal[c].debit; }
+    return s;
+  }
+  const rmPurchases = typeDebit(periodBal, 'مخزون خامات');
+  // Direct labour & overhead is a nominal expense-type account (not a
+  // roll-forward balance), so net period movement (debit-credit) is the
+  // right figure here — same convention as sectionMovement() elsewhere.
+  const laborOverhead = sectionMovement(periodBal, ['تكاليف التصنيع']);
+  const materialsUsed = rmOpen + rmPurchases - rmClose;
+  const cogm = wipOpen + materialsUsed + laborOverhead - wipClose;
+  const cogsManufactured = fgOpen + cogm - fgClose;
+  return {
+    start, end, hasData,
+    rmOpen, rmPurchases, rmClose, materialsUsed,
+    wipOpen, laborOverhead, wipClose, cogm,
+    fgOpen, fgClose, cogsManufactured,
+  };
 }
 
 function partnerBalances(lines, start, end){
@@ -4443,7 +4752,7 @@ async function openEditAuditLogModal(){
           ${log.map(a => `<tr>
             <td class="num" style="font-size:11px;white-space:nowrap">${fmtDateTime(a.at)}</td>
             <td class="num" style="font-size:11px">${escapeHtml(a.entry)}<br>${a.date}</td>
-            <td><span class="pill ${a.action==='delete'?'pill-brick':'pill-gold'}">${a.action==='delete'?t('auditActionDelete'):t('auditActionEdit')}</span></td>
+            <td><span class="pill ${a.action==='delete'?'pill-brick':'pill-gold'}">${a.action==='delete'?t('auditActionDelete'):(a.action==='create'?t('auditActionCreate'):t('auditActionEdit'))}</span></td>
             <td style="font-size:11px">${rowSnapshot(a.before)}</td>
             <td style="font-size:11px">${rowSnapshot(a.after)}</td>
           </tr>`).join('')}
@@ -4457,6 +4766,276 @@ async function openEditAuditLogModal(){
   overlay.addEventListener('click', (e) => { if(e.target === overlay){ overlay.style.display = 'none'; overlay.innerHTML = ''; } });
 }
 
+
+// ---------------------------------------------------------------------
+// Manual journal-entry creation helpers
+// ---------------------------------------------------------------------
+function distinctPartnerNames(){ return uniq(STATE.journal.map(l=>l.partner).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar')); }
+function distinctProductNames(){ return uniq(STATE.journal.map(l=>l.product).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar')); }
+function distinctCostCenterNames(){ return uniq(STATE.journal.map(l=>l.cc).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar')); }
+// Merges the named/coded books in Settings with any journal-book name that
+// only exists historically in imported data (no defined code yet) — so
+// older imports still show up as a pickable option, just without a code
+// (falls back to 'JE' when generating a number for one of those).
+function journalBookOptions(){
+  const named = STATE.settings.journalBooks || [];
+  const namedNames = named.map(b=>b.name);
+  const historic = uniq(STATE.journal.map(l=>l.journal).filter(Boolean)).filter(n=>!namedNames.includes(n));
+  return named.concat(historic.map(name=>({name, code:'JE'})));
+}
+function journalBookCode(name){
+  const b = (STATE.settings.journalBooks||[]).find(x=>x.name===name);
+  return b ? b.code : 'JE';
+}
+// Peek at what the next entry number for this book+month WOULD be, without
+// reserving it — used to show a live preview while the form is open.
+function peekNextEntryNumber(bookName, dateISO){
+  const code = journalBookCode(bookName);
+  const [y,m] = (dateISO||'').split('-');
+  if(!y || !m) return `${code}-${'?'}-${'?'}-${'????'}`;
+  const key = `${code}-${y}-${m}`;
+  const next = ((STATE.settings.journalSerialCounters||{})[key] || 0) + 1;
+  return `${code}-${y}-${m}-${String(next).padStart(4,'0')}`;
+}
+// Actually reserves the next number (increments + persists the counter) —
+// only called once, at the moment an entry is genuinely saved.
+async function reserveNextEntryNumber(bookName, dateISO){
+  const code = journalBookCode(bookName);
+  const [y,m] = dateISO.split('-');
+  const key = `${code}-${y}-${m}`;
+  STATE.settings.journalSerialCounters = STATE.settings.journalSerialCounters || {};
+  const next = (STATE.settings.journalSerialCounters[key] || 0) + 1;
+  STATE.settings.journalSerialCounters[key] = next;
+  await storeSet('settings', STATE.settings);
+  return `${code}-${y}-${m}-${String(next).padStart(4,'0')}`;
+}
+
+function blankNewEntryLine(date, journalBook, ref){
+  return { entry:'', date, code:'', name:'', cur:'EGP', convFactor:1, partner:'', debit:0, credit:0, cc:'', ccAmt:0, product:'', journal:journalBook, curAmt:0, ref: ref||'', source:'manual-entry' };
+}
+
+// Create-new-entry modal. Mirrors openEditJournalEntryModal's proven table/
+// balance-check/save pattern, but adds: journal-book picker driving an
+// auto-generated entry number, per-line currency + conversion factor (with
+// the amount-in-currency auto-derived — never typed directly), and partner/
+// cost-center/product autocomplete via <datalist> so re-typing an existing
+// name always matches the existing spelling instead of silently forking it.
+function openNewJournalEntryModal(){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const today = new Date().toISOString().slice(0,10);
+  let entryDate = today;
+  let books = journalBookOptions();
+  let entryBook = (books[0]||{}).name || '';
+  let entryDesc = '';
+  let draft = [blankNewEntryLine(today, entryBook, ''), blankNewEntryLine(today, entryBook, '')];
+  const accountOptions = STATE.accounts.slice().sort((a,b)=>a.code.localeCompare(b.code));
+  const partnerNames = distinctPartnerNames();
+  const productNames = distinctProductNames();
+  const ccNames = distinctCostCenterNames();
+  const currencies = uniq(['EGP', ...STATE.accounts.map(a=>a.currency||'EGP')]);
+  let addingBook = false;
+
+  function computeTotals(){
+    const totalDebit = draft.reduce((s,l)=>s+(Number(l.debit)||0),0);
+    const totalCredit = draft.reduce((s,l)=>s+(Number(l.credit)||0),0);
+    return { totalDebit, totalCredit, diff: totalDebit - totalCredit };
+  }
+  function closeModal(){ overlay.style.display = 'none'; overlay.innerHTML = ''; }
+  function validate(){
+    const errs = [];
+    if(!entryBook) errs.push(t('newEntryMissingBook'));
+    if(!entryDesc.trim()) errs.push(t('newEntryMissingDesc'));
+    if(draft.length < 2) errs.push(t('entryNeedsOneLine'));
+    draft.forEach((l,i)=>{
+      if(!l.date) errs.push(tf('newEntryLineError', {n:i+1, msg:t('newEntryMissingDate')}));
+      if(!l.code || !STATE.accountsByCode[l.code]) errs.push(tf('newEntryLineError', {n:i+1, msg:t('entryMissingAccount')}));
+      const d = Number(l.debit)||0, c = Number(l.credit)||0;
+      if(d===0 && c===0) errs.push(tf('newEntryLineError', {n:i+1, msg:t('newEntryLineNeedsAmount')}));
+      if(d>0 && c>0) errs.push(tf('newEntryLineError', {n:i+1, msg:t('newEntryLineBothSides')}));
+    });
+    const { diff } = computeTotals();
+    if(Math.abs(diff) >= 0.01) errs.push(t('entryUnbalanced'));
+    return errs;
+  }
+
+  function renderModal(){
+    const { totalDebit, totalCredit, diff } = computeTotals();
+    const balanced = Math.abs(diff) < 0.01;
+    const previewNo = peekNextEntryNumber(entryBook, entryDate);
+    overlay.innerHTML = `
+      <div class="modal-box" style="max-width:1040px;width:97%">
+        <h3>${t('newEntryTitle')}</h3>
+        <p>${t('newEntryDesc')}</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:end">
+          <div>
+            <label class="lbl">${t('entryLineJournalBook')}</label>
+            ${addingBook ? `
+              <div style="display:flex;gap:6px">
+                <input type="text" class="input" id="neNewBookName" placeholder="${t('newEntryBookNamePlaceholder')}" style="width:140px">
+                <input type="text" class="input" id="neNewBookCode" placeholder="${t('newEntryBookCodePlaceholder')}" style="width:80px">
+                <button type="button" class="chip" id="neSaveNewBook">✓</button>
+                <button type="button" class="chip" id="neCancelNewBook">✕</button>
+              </div>
+            ` : `
+              <select class="input" id="neBook" style="min-width:180px">
+                ${books.map(b=>`<option value="${escapeHtml(b.name)}" ${b.name===entryBook?'selected':''}>${escapeHtml(b.name)} (${escapeHtml(b.code)})</option>`).join('')}
+                <option value="__add__">+ ${t('newEntryAddBook')}</option>
+              </select>
+            `}
+          </div>
+          <div>
+            <label class="lbl">${t('entryLineDate')}</label>
+            <input type="date" class="input" id="neDate" value="${entryDate}">
+          </div>
+          <div style="flex:1;min-width:220px">
+            <label class="lbl">${t('newEntryDescLabel')}</label>
+            <input type="text" class="input" id="neDesc" value="${escapeHtml(entryDesc)}" placeholder="${t('newEntryDescPlaceholder')}" style="width:100%">
+          </div>
+          <div style="font-size:12px;opacity:.8;white-space:nowrap">
+            ${t('newEntryAutoNumberLabel')}: <b>${previewNo}</b> <span style="opacity:.7">(${t('newEntryAutoNumberNote')})</span>
+          </div>
+        </div>
+        <div class="table-wrap" style="max-height:360px;overflow:auto">
+          <table style="table-layout:fixed;min-width:860px"><thead><tr>
+            <th style="width:42px"></th>
+            <th style="width:120px">${t('entryLineDate')}</th>
+            <th style="width:240px">${t('entryLineAccount')}</th>
+            <th style="width:110px">${t('entryLineDebit')}</th>
+            <th style="width:110px">${t('entryLineCredit')}</th>
+            <th style="width:75px">${t('entryLineCurrency')}</th>
+            <th style="width:150px">${t('entryLineDesc')}</th>
+            <th style="width:120px">${t('entryLinePartner')}</th>
+            <th style="width:95px">${t('entryLineCostCenter')}</th>
+            <th style="width:90px">${t('entryLineProduct')}</th>
+            <th style="width:85px;opacity:.7;font-size:11px">${t('entryLineConvFactor')}</th>
+          </tr></thead><tbody>
+            ${draft.map((l,i)=>{
+              const factor = Number(l.convFactor)||1;
+              const isEgp = (l.cur||'EGP') === 'EGP';
+              return `<tr>
+              <td><button type="button" class="chip" title="${t('removeLine')}" data-ne-remove="${i}" style="color:var(--brick);border-color:var(--brick);width:28px;padding:0">✕</button></td>
+              <td><input type="date" class="input" data-ne-field="date" data-ne-i="${i}" value="${l.date}" style="width:100%"></td>
+              <td><select class="input" data-ne-field="code" data-ne-i="${i}" style="width:100%">
+                <option value="">${t('selectAccountPlaceholder')}</option>
+                ${accountOptions.map(a=>`<option value="${a.code}" ${a.code===l.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
+              </select></td>
+              <td><input type="number" step="0.01" class="input" data-ne-field="debit" data-ne-i="${i}" value="${l.debit||''}" placeholder="0.00" style="width:100%"></td>
+              <td><input type="number" step="0.01" class="input" data-ne-field="credit" data-ne-i="${i}" value="${l.credit||''}" placeholder="0.00" style="width:100%"></td>
+              <td><select class="input" data-ne-field="cur" data-ne-i="${i}" style="width:100%">
+                ${currencies.map(c=>`<option value="${c}" ${(l.cur||'EGP')===c?'selected':''}>${c}</option>`).join('')}
+              </select></td>
+              <td><input type="text" class="input" data-ne-field="ref" data-ne-i="${i}" value="${escapeHtml(l.ref||'')}" style="width:100%"></td>
+              <td><input type="text" class="input" list="nePartnerList" data-ne-field="partner" data-ne-i="${i}" value="${escapeHtml(l.partner||'')}" style="width:100%"></td>
+              <td><input type="text" class="input" list="neCcList" data-ne-field="cc" data-ne-i="${i}" value="${escapeHtml(l.cc||'')}" style="width:100%"></td>
+              <td><input type="text" class="input" list="neProductList" data-ne-field="product" data-ne-i="${i}" value="${escapeHtml(l.product||'')}" style="width:100%"></td>
+              <td><input type="number" step="0.0001" class="input" data-ne-field="convFactor" data-ne-i="${i}" value="${factor}" ${isEgp?'disabled':''} style="width:100%;opacity:${isEgp?'.4':'1'}"></td>
+            </tr>`;}).join('')}
+          </tbody></table>
+        </div>
+        <datalist id="nePartnerList">${partnerNames.map(p=>`<option value="${escapeHtml(p)}">`).join('')}</datalist>
+        <datalist id="neCcList">${ccNames.map(c=>`<option value="${escapeHtml(c)}">`).join('')}</datalist>
+        <datalist id="neProductList">${productNames.map(p=>`<option value="${escapeHtml(p)}">`).join('')}</datalist>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;flex-wrap:wrap;gap:8px">
+          <button type="button" class="btn btn-outline" id="neAddLine">+ ${t('addLine')}</button>
+          <div style="font-size:13px">
+            ${t('entryTotalsLabel')}: <b class="num">${fmt(totalDebit)}</b> / <b class="num">${fmt(totalCredit)}</b>
+            — ${t('entryDiffLabel')}: <b class="num ${balanced?'':'neg-text'}">${fmt(diff)}</b>
+          </div>
+        </div>
+        ${!balanced ? `<div class="progress-note" style="color:var(--brick)">${t('entryUnbalanced')}</div>` : ''}
+        <div class="modal-actions" style="justify-content:flex-end">
+          <button type="button" class="btn btn-outline" id="neCancel">${t('cancelEdit')}</button>
+          <button type="button" class="btn" id="neSave">${t('newEntrySaveBtn')}</button>
+        </div>
+      </div>
+    `;
+    overlay.style.display = 'flex';
+
+    const bookSel = document.getElementById('neBook');
+    if(bookSel) bookSel.addEventListener('change', () => {
+      if(bookSel.value === '__add__'){ addingBook = true; renderModal(); return; }
+      entryBook = bookSel.value;
+      draft.forEach(l => l.journal = entryBook);
+      renderModal();
+    });
+    const saveBookBtn = document.getElementById('neSaveNewBook');
+    if(saveBookBtn) saveBookBtn.addEventListener('click', () => {
+      const name = (document.getElementById('neNewBookName').value||'').trim();
+      const code = (document.getElementById('neNewBookCode').value||'').trim().toUpperCase();
+      if(!name || !code){ showToast(t('newEntryBookNeedsBoth')); return; }
+      STATE.settings.journalBooks = STATE.settings.journalBooks || [];
+      STATE.settings.journalBooks.push({name, code});
+      storeSet('settings', STATE.settings);
+      books = journalBookOptions();
+      entryBook = name;
+      draft.forEach(l => l.journal = entryBook);
+      addingBook = false;
+      renderModal();
+    });
+    const cancelBookBtn = document.getElementById('neCancelNewBook');
+    if(cancelBookBtn) cancelBookBtn.addEventListener('click', () => { addingBook = false; renderModal(); });
+
+    const dateInp = document.getElementById('neDate');
+    if(dateInp) dateInp.addEventListener('change', () => { entryDate = dateInp.value; renderModal(); });
+    const descInp = document.getElementById('neDesc');
+    if(descInp) descInp.addEventListener('input', () => { entryDesc = descInp.value; });
+
+    overlay.querySelectorAll('[data-ne-field]').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const i = Number(inp.dataset.neI);
+        const field = inp.dataset.neField;
+        if(field === 'debit' || field === 'credit' || field === 'convFactor'){
+          draft[i][field] = Number(inp.value) || 0;
+        } else if(field === 'code'){
+          draft[i].code = inp.value;
+          const acc = STATE.accountsByCode[inp.value];
+          draft[i].name = acc ? acc.name : '';
+          if(acc && acc.currency) draft[i].cur = acc.currency;
+          if(acc && acc.currency && acc.currency !== 'EGP' && !draft[i].convFactor){
+            draft[i].convFactor = (STATE.settings.fxRates||{})[acc.currency] || 1;
+          }
+        } else if(field === 'cur'){
+          draft[i].cur = inp.value;
+          if(inp.value !== 'EGP' && !draft[i].convFactor){
+            draft[i].convFactor = (STATE.settings.fxRates||{})[inp.value] || 1;
+          }
+        } else {
+          draft[i][field] = inp.value;
+        }
+        renderModal();
+      });
+    });
+    overlay.querySelectorAll('[data-ne-remove]').forEach(btn => btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.neRemove);
+      if(draft.length <= 2){ showToast(t('entryNeedsOneLine')); return; }
+      draft.splice(i,1);
+      renderModal();
+    }));
+    document.getElementById('neAddLine').addEventListener('click', () => {
+      draft.push(blankNewEntryLine(entryDate, entryBook, ''));
+      renderModal();
+    });
+    document.getElementById('neCancel').addEventListener('click', closeModal);
+    document.getElementById('neSave').addEventListener('click', async () => {
+      const errs = validate();
+      if(errs.length){ showToast(errs[0]); return; }
+      const entryNo = await reserveNextEntryNumber(entryBook, entryDate);
+      const finalLines = draft.map(l => {
+        const factor = Number(l.convFactor)||1;
+        const isEgp = (l.cur||'EGP') === 'EGP';
+        const d = Number(l.debit)||0, c = Number(l.credit)||0;
+        const curAmt = isEgp ? (d||-c) : ((d||-c) / factor);
+        return { ...l, entry: entryNo, journal: entryBook, ref: l.ref || entryDesc, curAmt, ccAmt: (d||-c) };
+      });
+      await commitEntryEdit([], finalLines);
+      closeModal();
+      showToast(tf('newEntrySavedToast', {no: entryNo}));
+    });
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+  }
+  renderModal();
+}
 
 function openEditJournalEntryModal(entry, date){
   const overlay = document.getElementById('editEntryModalOverlay');
@@ -4585,7 +5164,7 @@ async function commitEntryEdit(originalLines, newLines){
     at: new Date().toISOString(),
     entry: (originalLines[0]||newLines[0]||{}).entry || '',
     date: (originalLines[0]||newLines[0]||{}).date || '',
-    action: newLines.length ? 'edit' : 'delete',
+    action: !originalLines.length ? 'create' : (newLines.length ? 'edit' : 'delete'),
     before: originalLines.map(snapshot),
     after: newLines.map(snapshot),
   };
@@ -4686,7 +5265,7 @@ async function resetSystem(){
 // MutationObserver per overlay — wired up ONCE here at startup — adds all of
 // that generically by watching for the same style-display toggle they
 // already do.
-const MODAL_OVERLAY_IDS = ['confirmModalOverlay','editEntryModalOverlay','auditLogModalOverlay','projectFormModalOverlay','projectTxModalOverlay'];
+const MODAL_OVERLAY_IDS = ['confirmModalOverlay','editEntryModalOverlay','newEntryModalOverlay','auditLogModalOverlay','projectFormModalOverlay','projectTxModalOverlay'];
 function setupModalAccessibility(){
   MODAL_OVERLAY_IDS.forEach(id => {
     const overlay = document.getElementById(id);
@@ -4762,6 +5341,21 @@ async function initApp(){
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
   if(!STATE.settings.lang) STATE.settings.lang = 'ar';
   if(!STATE.settings.palette) STATE.settings.palette = 'gold';
+  // Manual journal-entry feature: named journal books (each with a short
+  // code used to build auto-generated entry numbers) and the per-book
+  // per-year-per-month running sequence counter. Seeded with common books
+  // the first time; existing installs keep whatever the user has saved.
+  if(!STATE.settings.journalBooks || !STATE.settings.journalBooks.length){
+    STATE.settings.journalBooks = [
+      {name:'الفرق في سعر الصرف', code:'EXCH'},
+      {name:'القيد الافتتاحي',     code:'OBJ'},
+      {name:'اهلاك الاصول',        code:'FIX-A'},
+      {name:'عمليات متنوعة',       code:'MISC'},
+      {name:'فواتير العملاء',      code:'INV'},
+      {name:'فواتير المورد',       code:'BILL'},
+    ];
+  }
+  if(!STATE.settings.journalSerialCounters) STATE.settings.journalSerialCounters = {};
   applyLangToDocument();
   applyPaletteToDocument();
   if(!STATE.settings.fxRates) STATE.settings.fxRates = {};
@@ -4862,6 +5456,7 @@ const ICONS = {
   download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>',
   filterFunnel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>',
   palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2c2 0 4-2 4-4a10 10 0 0 0-9-9z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/><circle cx="17" cy="11" r="1"/></svg>',
+  factory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V10l6 4v-4l6 4V8l6 4v9H3z"/><path d="M7 21v-4M12 21v-4M17 21v-4"/></svg>',
 };
 
 /* =========================================================================
@@ -4877,6 +5472,7 @@ const NAV = [
   {id:'otherbalances', label:'أرصدة مدينة / دائنة أخرى', labelEn:'Other Debit / Credit Balances', icon:'users'},
   {id:'trialbalance', label:'ميزان المراجعة', labelEn:'Trial Balance', icon:'scale'},
   {id:'statements', label:'القوائم المالية', labelEn:'Financial Statements', icon:'statement'},
+  {id:'manufacturing', label:'تكلفة الإنتاج (تصنيع)', labelEn:'Manufacturing Cost', icon:'factory'},
   {id:'cashflow', label:'التدفقات النقدية', labelEn:'Cash Flow Statement', icon:'cashflow'},
   {section:'التحليل والمتابعة', sectionEn:'Analysis & Follow-up'},
   {id:'costcenters', label:'مراكز التكلفة', labelEn:'Cost Centers', icon:'target'},
@@ -5041,11 +5637,70 @@ function renderApp(){
       <div class="company-field">
         <input id="companyNameInput" type="text" placeholder="${t('companyNamePlaceholder')}" value="${escapeHtml(STATE.settings.companyName||'')}">
       </div>
-      <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">        ${NAV.map(n => n.section
-          ? `<div class="nav-section">${navSectionLabel(n)}</div>`
-          : `<div class="nav-item ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}">
-            ${ICONS[n.icon]} <span>${navLabel(n)}</span>
-          </div>`).join('')}
+      <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">
+        ${(()=>{
+          // Build accordion groups from the flat NAV array.
+          // Items before the first section header (dashboard) get rendered
+          // flat — they're standalone top-level entries.
+          // Everything after a section header goes inside that group's
+          // collapsible panel.
+
+          // Lazy-init: open the group that contains the active view,
+          // plus always keep 'الإعداد' (single-item) open.
+          const groups = {}; // sectionKey → [navItems]
+          let currentSectionKey = null;
+          const standaloneItems = [];
+          NAV.forEach(n => {
+            if(n.section){
+              currentSectionKey = n.section;
+              if(!groups[currentSectionKey]) groups[currentSectionKey] = { label:n.section, labelEn:n.sectionEn, items:[] };
+            } else if(currentSectionKey){
+              groups[currentSectionKey].items.push(n);
+            } else {
+              standaloneItems.push(n);
+            }
+          });
+
+          // If navGroupsOpen is empty (first load), open the active group + setup
+          if(!Object.keys(STATE.ui.navGroupsOpen).length){
+            Object.keys(groups).forEach(key => {
+              const isActive = groups[key].items.some(n => n.id === STATE.ui.view);
+              const isSetup = key === 'الإعداد';
+              STATE.ui.navGroupsOpen[key] = isActive || isSetup;
+            });
+          }
+          // Always ensure the currently active item's group is open
+          Object.keys(groups).forEach(key => {
+            if(groups[key].items.some(n => n.id === STATE.ui.view)){
+              STATE.ui.navGroupsOpen[key] = true;
+            }
+          });
+
+          const navItemHtml = n => `
+            <div class="nav-item ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}" style="padding:8px 12px 8px 20px">
+              ${ICONS[n.icon]} <span>${navLabel(n)}</span>
+            </div>`;
+
+          const standaloneHtml = standaloneItems.map(navItemHtml).join('');
+          const groupsHtml = Object.keys(groups).map(key => {
+            const g = groups[key];
+            const isOpen = !!STATE.ui.navGroupsOpen[key];
+            const hasActive = g.items.some(n => n.id === STATE.ui.view);
+            const groupLabel = (STATE.settings.lang==='en' && g.labelEn) ? g.labelEn : g.label;
+            return `
+              <div class="nav-group-header ${isOpen?'open':''} ${hasActive&&!isOpen?'has-active':''}"
+                   data-nav-group="${escapeHtml(key)}" role="button" aria-expanded="${isOpen}" aria-label="${escapeHtml(groupLabel)}">
+                <span>${groupLabel}</span>
+                <span class="ng-chevron">›</span>
+              </div>
+              <div class="nav-group-items ${isOpen?'open':''}">
+                ${g.items.map(navItemHtml).join('')}
+              </div>
+            `;
+          }).join('');
+
+          return standaloneHtml + groupsHtml;
+        })()}
       </div>
       <div class="sidebar-status">
         <div class="row"><span>${t('lastUpdate')}</span><b>${fmtDateTime(STATE.meta.lastImportAt)}</b></div>
@@ -5135,6 +5790,22 @@ function renderApp(){
     STATE.ui.sidebarOpen = false;
     switchView(el.dataset.nav);
   }));
+  // Accordion group headers — toggle open/closed without re-rendering the
+  // whole app (just flip CSS classes and update STATE so the next full
+  // renderApp() preserves the state).
+  document.querySelectorAll('[data-nav-group]').forEach(header => {
+    header.addEventListener('click', () => {
+      const key = header.dataset.navGroup;
+      const isNowOpen = !STATE.ui.navGroupsOpen[key];
+      STATE.ui.navGroupsOpen[key] = isNowOpen;
+      header.classList.toggle('open', isNowOpen);
+      header.setAttribute('aria-expanded', isNowOpen);
+      const itemsPanel = header.nextElementSibling;
+      if(itemsPanel && itemsPanel.classList.contains('nav-group-items')){
+        itemsPanel.classList.toggle('open', isNowOpen);
+      }
+    });
+  });
   const hamburger = document.getElementById('hamburgerBtn');
   if(hamburger) hamburger.addEventListener('click', async () => {
     STATE.ui.sidebarOpen = !STATE.ui.sidebarOpen; // mobile off-canvas drawer
@@ -5278,6 +5949,7 @@ function renderApp(){
     costcenters: renderCostCentersView,
     projects: renderProjectsView,
     statements: renderStatementsView,
+    manufacturing: renderManufacturingView,
     ratios: renderRatiosView,
   };
   (renderers[STATE.ui.view] || renderDashboard)(root);
@@ -5410,7 +6082,7 @@ function renderApp(){
 }
 
 function needsFilters(view){
-  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','ratios','notes'].includes(view);
+  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes'].includes(view);
 }
 
 function renderCurrencyBar(){
@@ -5987,7 +6659,7 @@ const TB_CATEGORIES = [
   { key:'liab', titleKey:'tbCatLiab', types:[...LIAB_SECTIONS[0].types, ...LIAB_SECTIONS[1].types] },
   { key:'equity', titleKey:'tbCatEquity', types:EQ_SECTIONS[0].types },
   { key:'revenue', titleKey:'tbCatRevenue', types:['الدخل','دخل آخر'] },
-  { key:'expenses', titleKey:'tbCatExpenses', types:['تكاليف الإيرادات','النفقات','إهلاك'] },
+  { key:'expenses', titleKey:'tbCatExpenses', types:['تكاليف الإيرادات','تكاليف التصنيع','النفقات','إهلاك'] },
 ];
 function toggleTBSection(key){ STATE.ui.expandedTB = STATE.ui.expandedTB || {}; STATE.ui.expandedTB[key] = !(STATE.ui.expandedTB[key] === true); renderApp(); }
 
@@ -6437,7 +7109,10 @@ function renderAccountStatementView(root, alwaysCombined){
     <div class="card">
       <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
         <span>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${pageTitle}</span>
-        <button type="button" class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openEditAuditLogModal()">${t('editAuditLogBtn')}</button>
+        <span style="display:flex;gap:8px">
+          ${alwaysCombined ? `<button type="button" class="btn" style="padding:5px 12px;font-size:11px" onclick="openNewJournalEntryModal()">+ ${t('newEntryBtn')}</button>` : ''}
+          <button type="button" class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openEditAuditLogModal()">${t('editAuditLogBtn')}</button>
+        </span>
       </h2>
       <div style="display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:14px;">
         ${multiSelectHtml('gl_accounts', t('accountsFilterLabel'), accountLabels, selectedAccLabels, {isAccounts:true, tree: !(STATE.ui.accountTreeMode && STATE.ui.accountTreeMode['gl_accounts']===false)})}
@@ -7335,7 +8010,7 @@ function renderStatementsView(root){
         <div class="desc">${t('from')} ${f.start||t('activityStart')} ${t('to')} ${f.end}. ${t('incomeStatementDesc')}</div>
         <div class="table-wrap"><table><tbody>
           ${isLine('rev',t('revenueLine'), is.revenue, ['الدخل'], true)}
-          ${isLine('cogs',t('cogsLine'), -is.cogs, ['تكاليف الإيرادات'], false)}
+          ${isLine('cogs',t('cogsLine'), -is.cogs, ['تكاليف الإيرادات','تكاليف التصنيع'], false)}
           ${isLine('gp',t('grossProfit'), is.grossProfit, null, null, true)}
           ${isLine('exp',t('expensesLine'), -is.expenses, ['النفقات'], false)}
           ${isLine('dep',t('depreciationLine'), -is.depreciation, ['إهلاك'], false)}
@@ -7432,12 +8107,12 @@ function renderComparisonTables(){
 // the Cash Flow page maps to a concrete set of source journal lines here, so
 // clicking any number opens the exact transactions behind it in a new tab.
 const CF_TYPE_GROUPS = {
-  netIncome: ['الدخل','دخل آخر','تكاليف الإيرادات','النفقات','إهلاك'],
+  netIncome: ['الدخل','دخل آخر','تكاليف الإيرادات','تكاليف التصنيع','النفقات','إهلاك'],
   depreciation: ['إهلاك'],
   recv: ['المدين'],
-  otherCA: ['الأصول المتداولة'],
+  otherCA: ['الأصول المتداولة', ...INVENTORY_TYPES],
   payables: ['الدائن','الالتزامات الجارية'],
-  operating: ['الدخل','دخل آخر','تكاليف الإيرادات','النفقات','إهلاك','المدين','الأصول المتداولة','الدائن','الالتزامات الجارية'],
+  operating: ['الدخل','دخل آخر','تكاليف الإيرادات','تكاليف التصنيع','النفقات','إهلاك','المدين','الأصول المتداولة', ...INVENTORY_TYPES,'الدائن','الالتزامات الجارية'],
   investing: ['أصول ثابتة'],
   financing: ['رأس المال','الالتزامات غير الجارية'],
   cash: ['البنك والنقد'],
@@ -7466,6 +8141,69 @@ function cfDrill(kind, code){
   STATE.ui.glJournals = [];
   STATE.ui.glCostCenters = [];
   switchView('accountstatement');
+}
+
+/* =========================================================================
+   Manufacturing (Cost of Goods Manufactured) view — only meaningful for
+   companies that code accounts under the 3 inventory sub-types + the
+   manufacturing-cost type (see costOfGoodsManufactured()). Any other
+   company simply sees the guided empty state below.
+   ========================================================================= */
+function renderManufacturingView(root){
+  if(!STATE.journal.length){ root.innerHTML = emptyState(t('noDataYet'),t('startImporting'),'import'); return; }
+  const f = STATE.ui.filters;
+  const pLines = filterLinesByPeriod(STATE.journal, f);
+  const pStart = periodFilterActive(f) ? '' : f.start;
+  const endDate = asOfDateForFilters(f);
+  const cogm = costOfGoodsManufactured(pLines, pStart, endDate);
+
+  if(!cogm.hasData){
+    root.innerHTML = `<div class="card"><div class="empty">${t('manufacturingEmptyTitle')}<br><span style="font-size:12px;opacity:.8">${t('manufacturingEmptyDesc')}</span></div></div>`;
+    return;
+  }
+
+  const row = (label, value, opts) => `
+    <tr class="${opts&&opts.total?'total-row':''}">
+      <td>${label}</td>
+      <td class="num-cell num ${opts&&opts.neg?'neg-text':''}">${fmt(value)}</td>
+    </tr>`;
+
+  registerExport('manufacturing', `manufacturing_cost${exportFilenamePeriodSuffix()}.xlsx`,
+    [t('itemCol'), t('amount')],
+    [
+      [t('rmOpen'), cogm.rmOpen], [t('rmPurchases'), cogm.rmPurchases], [t('rmClose'), -cogm.rmClose], [t('materialsUsed'), cogm.materialsUsed],
+      [t('wipOpen'), cogm.wipOpen], [t('laborOverhead'), cogm.laborOverhead], [t('wipClose'), -cogm.wipClose], [t('cogmLabel'), cogm.cogm],
+      [t('fgOpen'), cogm.fgOpen], [t('fgClose'), -cogm.fgClose], [t('cogsManufacturedLabel'), cogm.cogsManufactured],
+    ]);
+
+  root.innerHTML = `
+    ${currencyNote()}
+    <div class="grid-3">
+      ${kpi(t('materialsUsed'), fmt(cogm.materialsUsed), '', '')}
+      ${kpi(t('cogmLabel'), fmt(cogm.cogm), '', '')}
+      ${kpi(t('cogsManufacturedLabel'), fmt(cogm.cogsManufactured), '', '')}
+    </div>
+    <div class="card">
+      <h2>${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('manufacturingTitle')}</h2>
+      <div class="desc">${t('from')} ${f.start||t('activityStart')} ${t('to')} ${f.end}. ${t('manufacturingDesc')}</div>
+      <div class="table-wrap"><table><tbody>
+        <tr class="total-row"><td colspan="2">${t('rmSectionTitle')}</td></tr>
+        ${row(t('rmOpen'), cogm.rmOpen)}
+        ${row(t('rmPurchases'), cogm.rmPurchases)}
+        ${row(t('rmClose'), -cogm.rmClose, {neg:true})}
+        ${row(t('materialsUsed'), cogm.materialsUsed, {total:true})}
+        <tr class="total-row"><td colspan="2">${t('wipSectionTitle')}</td></tr>
+        ${row(t('wipOpen'), cogm.wipOpen)}
+        ${row(t('laborOverhead'), cogm.laborOverhead)}
+        ${row(t('wipClose'), -cogm.wipClose, {neg:true})}
+        ${row(t('cogmLabel'), cogm.cogm, {total:true})}
+        <tr class="total-row"><td colspan="2">${t('fgSectionTitle')}</td></tr>
+        ${row(t('fgOpen'), cogm.fgOpen)}
+        ${row(t('fgClose'), -cogm.fgClose, {neg:true})}
+        ${row(t('cogsManufacturedLabel'), cogm.cogsManufactured, {total:true})}
+      </tbody></table></div>
+    </div>
+  `;
 }
 
 function renderCashFlowView(root){
@@ -7662,6 +8400,8 @@ function renderRatiosView(root){
         ${rcardSpark(t('cashConversionCycleLabel'), r.cashConversionCycle, '', t('cashConversionCycleNote'), s('cashConversionCycle'))}
         ${rcardSpark(t('payableTurnoverLabel'), r.payableTurnover, '', t('payableTurnoverNote'), s('payableTurnover'))}
         ${rcardSpark(t('payableDaysLabel'), r.payableDays, '', t('payableDaysNote'), s('payableDays'))}
+        ${r.inventoryTurnover!=null ? rcardSpark(t('inventoryTurnoverLabel'), r.inventoryTurnover, '', t('inventoryTurnoverNote'), s('inventoryTurnover')) : ''}
+        ${r.inventoryDays!=null ? rcardSpark(t('inventoryDaysLabel'), r.inventoryDays, '', '', s('inventoryDays')) : ''}
       </div>
     </div>
     <div class="card">
