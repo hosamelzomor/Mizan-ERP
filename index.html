@@ -265,7 +265,7 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .date-input-wrap{ position:relative; display:inline-flex; align-items:center; }
 .date-text-input{
   background:var(--ink); color:var(--paper-2); border:1px solid rgba(217,180,92,.25);
-  border-radius:6px; padding:5px 26px 5px 7px; font-size:12px; width:108px; direction:ltr; text-align:center;
+  border-radius:6px; padding:5px 28px 5px 6px; font-size:11px; width:102px; direction:ltr; text-align:center; letter-spacing:-.2px;
 }
 .date-text-input.date-input-invalid{ border-color:var(--brick); box-shadow:0 0 0 1px var(--brick); }
 .date-hidden-picker{ position:absolute; inset:0; opacity:0; pointer-events:none; width:1px; height:1px; }
@@ -656,6 +656,24 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
 .modal-box h3{ margin:0 0 10px; font-family:'Cairo'; font-size:16px; }
 .modal-box p{ margin:0 0 18px; font-size:13.5px; line-height:1.8; color:var(--ink-soft); }
 .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
+/* Searchable account autocomplete inside the new-entry modal */
+.ne-ac-wrap{ position:relative; width:100%; }
+.ne-ac-list{
+  position:absolute; top:calc(100% + 2px); right:0; left:0;
+  background:var(--ink-2); border:1px solid var(--gold-dim); border-radius:8px;
+  max-height:210px; overflow-y:auto; z-index:9000;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.ne-ac-item{
+  padding:7px 10px; font-size:12px; cursor:pointer; color:var(--ink-soft);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex; gap:8px; align-items:baseline;
+}
+.ne-ac-item:last-child{ border-bottom:none; }
+.ne-ac-item:hover, .ne-ac-item.selected{ background:var(--gold-faint); color:var(--gold-light); }
+.ne-ac-code{ font-weight:700; color:var(--gold-dim); font-size:11px; white-space:nowrap; }
+.ne-ac-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ne-ac-input{ width:100%; }
 
 #scrollTopBtn{
   position:fixed; bottom:24px; left:24px; z-index:500;
@@ -1012,7 +1030,7 @@ const I18N = {
     openingBalance:'رصيد افتتاحي', closingBalance:'رصيد ختامي', code:'الكود', accountName:'اسم الحساب',
     classification:'التصنيف', movement:'رصيد الحركة', revenue:'الإيرادات', cost:'التكاليف',
     profitLoss:'الربح/الخسارة', margin:'الهامش %', costCenterProject:'المشروع / مركز التكلفة',
-    noDataYet:'لا توجد بيانات بعد', startImporting:'ابدأ باستيراد القيود أولاً.', goToImport:'الذهاب إلى الإعداد والاستيراد',
+    noDataYet:'لا توجد بيانات بعد', startImporting:'ابدأ باستيراد القيود أولاً.', goToImport:'الذهاب إلى الإعداد والاستيراد', loadDemoDataBtn:'🎯 تجربة بيانات تجريبية', loadDemoDataDesc:'استكشف النظام ببيانات تجريبية كاملة قبل رفع بياناتك الحقيقية', resetDemoBtn:'🗑 إعادة تعيين النظام (حذف البيانات التجريبية)', resetDemoConfirm:'هل تريد حذف البيانات التجريبية والعودة للشاشة الرئيسية الفارغة؟ لا يمكن التراجع.', isDemoModeLabel:'وضع البيانات التجريبية',
     dashboardEmptyDesc:'ابدأ برفع القيود القديمة وشجرة الحسابات من صفحة "الإعداد والاستيراد" لتظهر لك لوحة التحكم.',
     currentAccountsDesc:'حسابات الجاري لكل شريك (كود يبدأ بـ 32000)، بالجنيه، وبالعملة الأصلية لو كان الحساب بالدولار.',
     noCurrentAccountsBalances:'لا توجد أرصدة على حسابات الجاري (32000) خلال هذه الفترة',
@@ -1383,7 +1401,7 @@ const I18N = {
     openingBalance:'Opening Balance', closingBalance:'Closing Balance', code:'Code', accountName:'Account Name',
     classification:'Classification', movement:'Movement', revenue:'Revenue', cost:'Cost',
     profitLoss:'Profit/Loss', margin:'Margin %', costCenterProject:'Project / Cost Center',
-    noDataYet:'No data yet', startImporting:'Start by importing your journal entries first.', goToImport:'Go to Setup & Import',
+    noDataYet:'No data yet', startImporting:'Start by importing your journal entries first.', goToImport:'Go to Setup & Import', loadDemoDataBtn:'🎯 Try Demo Data', loadDemoDataDesc:'Explore the system with a complete realistic dataset before importing your real data', resetDemoBtn:'🗑 Reset System (Delete Demo Data)', resetDemoConfirm:'Delete demo data and return to the empty state? This cannot be undone.', isDemoModeLabel:'Demo Mode',
     dashboardEmptyDesc:'Upload your historical journal entries and chart of accounts from the "Setup & Import" page to see your dashboard.',
     currentAccountsDesc:'Current (running) accounts per partner (code starting with 32000), in EGP, and in the original currency if the account is in USD.',
     noCurrentAccountsBalances:'No balances on current accounts (32000) during this period',
@@ -4826,9 +4844,11 @@ function openNewJournalEntryModal(){
   const today = new Date().toISOString().slice(0,10);
   let entryDate = today;
   let books = journalBookOptions();
-  let entryBook = (books[0]||{}).name || '';
+  // Prefill hook: used by openDuplicateEntryModal to pre-load existing lines
+  const prefill = window.__ne_prefill;
+  let entryBook = prefill ? (prefill.book || (books[0]||{}).name||'') : ((books[0]||{}).name||'');
   let entryDesc = '';
-  let draft = [blankNewEntryLine(today, entryBook, ''), blankNewEntryLine(today, entryBook, '')];
+  let draft = prefill ? prefill.draft.map(l=>({...l, date:today, journal:entryBook})) : [blankNewEntryLine(today, entryBook, ''), blankNewEntryLine(today, entryBook, '')];
   const accountOptions = STATE.accounts.slice().sort((a,b)=>a.code.localeCompare(b.code));
   const partnerNames = distinctPartnerNames();
   const productNames = distinctProductNames();
@@ -4913,13 +4933,17 @@ function openNewJournalEntryModal(){
             ${draft.map((l,i)=>{
               const factor = Number(l.convFactor)||1;
               const isEgp = (l.cur||'EGP') === 'EGP';
+              const accDisplay = l.code ? `${l.code} — ${escapeHtml(accName(l.code)||l.name||'')}` : '';
               return `<tr>
               <td><button type="button" class="chip" title="${t('removeLine')}" data-ne-remove="${i}" style="color:var(--brick);border-color:var(--brick);width:28px;padding:0">✕</button></td>
               <td><input type="date" class="input" data-ne-field="date" data-ne-i="${i}" value="${l.date}" style="width:100%"></td>
-              <td><select class="input" data-ne-field="code" data-ne-i="${i}" style="width:100%">
-                <option value="">${t('selectAccountPlaceholder')}</option>
-                ${accountOptions.map(a=>`<option value="${a.code}" ${a.code===l.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
-              </select></td>
+              <td>
+                <div class="ne-ac-wrap" data-ac-wrap="${i}">
+                  <input type="text" class="input ne-ac-input" data-ne-field="code" data-ne-i="${i}"
+                    value="${escapeHtml(accDisplay)}" placeholder="${t('selectAccountPlaceholder')}"
+                    data-ac-code="${escapeHtml(l.code||'')}" autocomplete="off" style="width:100%">
+                </div>
+              </td>
               <td><input type="number" step="0.01" class="input" data-ne-field="debit" data-ne-i="${i}" value="${l.debit||''}" placeholder="0.00" style="width:100%"></td>
               <td><input type="number" step="0.01" class="input" data-ne-field="credit" data-ne-i="${i}" value="${l.credit||''}" placeholder="0.00" style="width:100%"></td>
               <td><select class="input" data-ne-field="cur" data-ne-i="${i}" style="width:100%">
@@ -4939,8 +4963,7 @@ function openNewJournalEntryModal(){
         <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;flex-wrap:wrap;gap:8px">
           <button type="button" class="btn btn-outline" id="neAddLine">+ ${t('addLine')}</button>
           <div style="font-size:13px">
-            ${t('entryTotalsLabel')}: <b class="num">${fmt(totalDebit)}</b> / <b class="num">${fmt(totalCredit)}</b>
-            — ${t('entryDiffLabel')}: <b class="num ${balanced?'':'neg-text'}">${fmt(diff)}</b>
+            <span id="neTotalsLine">${t('entryTotalsLabel')}: <b class="num">${fmt(totalDebit)}</b> / <b class="num">${fmt(totalCredit)}</b> — ${t('entryDiffLabel')}: <b class="num ${balanced?'':'neg-text'}">${fmt(diff)}</b></span>
           </div>
         </div>
         ${!balanced ? `<div class="progress-note" style="color:var(--brick)">${t('entryUnbalanced')}</div>` : ''}
@@ -4987,25 +5010,98 @@ function openNewJournalEntryModal(){
         const field = inp.dataset.neField;
         if(field === 'debit' || field === 'credit' || field === 'convFactor'){
           draft[i][field] = Number(inp.value) || 0;
-        } else if(field === 'code'){
-          draft[i].code = inp.value;
-          const acc = STATE.accountsByCode[inp.value];
-          draft[i].name = acc ? acc.name : '';
-          if(acc && acc.currency) draft[i].cur = acc.currency;
-          if(acc && acc.currency && acc.currency !== 'EGP' && !draft[i].convFactor){
-            draft[i].convFactor = (STATE.settings.fxRates||{})[acc.currency] || 1;
-          }
+          // Rerender only totals row without rebuilding the whole modal
+          const tot = computeTotals();
+          const balNow = Math.abs(tot.diff) < 0.01;
+          const totEl = overlay.querySelector('#neTotalsLine');
+          if(totEl) totEl.innerHTML = `${t('entryTotalsLabel')}: <b class="num">${fmt(tot.totalDebit)}</b> / <b class="num">${fmt(tot.totalCredit)}</b> — ${t('entryDiffLabel')}: <b class="num ${balNow?'':'neg-text'}">${fmt(tot.diff)}</b>`;
         } else if(field === 'cur'){
           draft[i].cur = inp.value;
           if(inp.value !== 'EGP' && !draft[i].convFactor){
             draft[i].convFactor = (STATE.settings.fxRates||{})[inp.value] || 1;
           }
+          renderModal();
         } else {
           draft[i][field] = inp.value;
         }
-        renderModal();
       });
     });
+
+    // ── Searchable account autocomplete ──────────────────────────────────
+    // Each account input gets a floating dropdown that filters by code OR name
+    // as the user types. Selecting an option commits the code and re-renders.
+    function mountAcForRow(i){
+      const wrap = overlay.querySelector(`[data-ac-wrap="${i}"]`);
+      if(!wrap) return;
+      const inp = wrap.querySelector('.ne-ac-input');
+      let dropEl = null;
+      let hoverIdx = -1;
+
+      function closeDropdown(){
+        if(dropEl){ dropEl.remove(); dropEl=null; } hoverIdx=-1;
+      }
+      function openDropdown(q){
+        closeDropdown();
+        const lower = q.toLowerCase();
+        const matches = accountOptions.filter(a =>
+          a.code.startsWith(q) ||
+          a.code.toLowerCase().includes(lower) ||
+          (a.name||'').includes(q) ||
+          (a.nameEn||'').toLowerCase().includes(lower)
+        ).slice(0,40);
+        if(!matches.length){ closeDropdown(); return; }
+        dropEl = document.createElement('div');
+        dropEl.className = 'ne-ac-list';
+        matches.forEach((a,mi) => {
+          const item = document.createElement('div');
+          item.className = 'ne-ac-item';
+          item.innerHTML = `<span class="ne-ac-code">${escapeHtml(a.code)}</span><span class="ne-ac-name">${escapeHtml(a.name||'')}</span>`;
+          item.addEventListener('mousedown', e => {
+            e.preventDefault();
+            selectAccount(a);
+          });
+          item.addEventListener('mouseover', () => {
+            hoverIdx = mi;
+            dropEl.querySelectorAll('.ne-ac-item').forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx));
+          });
+          dropEl.appendChild(item);
+        });
+        wrap.appendChild(dropEl);
+      }
+      function selectAccount(a){
+        draft[i].code = a.code;
+        draft[i].name = a.name || '';
+        if(a.currency){ draft[i].cur = a.currency; }
+        if(a.currency && a.currency !== 'EGP' && !draft[i].convFactor){
+          draft[i].convFactor = (STATE.settings.fxRates||{})[a.currency] || 1;
+        }
+        closeDropdown();
+        renderModal();
+      }
+      inp.addEventListener('input', () => {
+        const q = inp.value.trim();
+        if(!q){ draft[i].code=''; draft[i].name=''; closeDropdown(); return; }
+        // If exact code match, commit silently; otherwise filter
+        const exact = accountOptions.find(a => a.code === q);
+        if(exact){ selectAccount(exact); return; }
+        openDropdown(q);
+      });
+      inp.addEventListener('focus', () => {
+        const q = inp.value.trim();
+        if(q) openDropdown(q);
+        else openDropdown('');
+      });
+      inp.addEventListener('keydown', e => {
+        if(!dropEl) return;
+        const items = dropEl.querySelectorAll('.ne-ac-item');
+        if(e.key === 'ArrowDown'){ e.preventDefault(); hoverIdx=Math.min(hoverIdx+1,items.length-1); items.forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx)); if(items[hoverIdx]) items[hoverIdx].scrollIntoView({block:'nearest'}); }
+        else if(e.key === 'ArrowUp'){ e.preventDefault(); hoverIdx=Math.max(hoverIdx-1,0); items.forEach((el,j)=>el.classList.toggle('selected',j===hoverIdx)); if(items[hoverIdx]) items[hoverIdx].scrollIntoView({block:'nearest'}); }
+        else if(e.key === 'Enter' || e.key === 'Tab'){ if(hoverIdx>=0 && items[hoverIdx]){ e.preventDefault(); const idx2 = hoverIdx; const code = items[idx2].querySelector('.ne-ac-code').textContent; const a = accountOptions.find(x=>x.code===code); if(a) selectAccount(a); } else closeDropdown(); }
+        else if(e.key === 'Escape'){ closeDropdown(); }
+      });
+      inp.addEventListener('blur', () => { setTimeout(closeDropdown, 150); });
+    }
+    draft.forEach((_,i) => mountAcForRow(i));
     overlay.querySelectorAll('[data-ne-remove]').forEach(btn => btn.addEventListener('click', () => {
       const i = Number(btn.dataset.neRemove);
       if(draft.length <= 2){ showToast(t('entryNeedsOneLine')); return; }
@@ -5035,6 +5131,32 @@ function openNewJournalEntryModal(){
     overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
   }
   renderModal();
+}
+
+// Duplicate a journal entry: load all its lines into the new-entry modal
+// with a fresh auto-generated number and today's date, so the user edits
+// only what needs to change and saves it as a completely new entry.
+function openDuplicateEntryModal(entryNo){
+  const lines = STATE.journal.filter(l => l.entry === entryNo);
+  if(!lines.length){ showToast(t('duplicateEntryNotFound')); return; }
+  const today = new Date().toISOString().slice(0,10);
+  // Build a draft that mirrors the source lines but clears the serial number
+  // and resets the date to today — user can change either field before saving.
+  const sourceDraft = lines.map(l => ({
+    entry:'', date:today,
+    code: l.code||'', name: l.name||'',
+    cur: l.cur||'EGP', convFactor: l.convFactor||1,
+    partner: l.partner||'', debit: l.debit||0, credit: l.credit||0,
+    cc: l.cc||'', ccAmt: l.ccAmt||0, product: l.product||'',
+    journal: l.journal||'', curAmt: l.curAmt||0,
+    ref: l.ref||'', source:'manual-entry',
+  }));
+  const sourceBook = lines[0].journal||'';
+  // Re-use openNewJournalEntryModal but inject the pre-filled draft.
+  // We do this by temporarily patching a small hook the modal reads.
+  window.__ne_prefill = { draft: sourceDraft, book: sourceBook };
+  openNewJournalEntryModal();
+  window.__ne_prefill = null;
 }
 
 function openEditJournalEntryModal(entry, date){
@@ -5489,6 +5611,300 @@ function navLabel(n){ return (STATE.settings.lang==='en' && n.labelEn) ? n.label
 function navSectionLabel(n){ return (STATE.settings.lang==='en' && n.sectionEn) ? n.sectionEn : n.section; }
 
 let __suppressHistoryPush = false;
+// ── Demo Data ────────────────────────────────────────────────────────────────
+// A realistic, self-consistent sample dataset for a fictional Egyptian trading
+// & contracting company — enough data to make every page, report, chart, and
+// calculation visibly functional when the system is otherwise empty.
+// Called ONLY when the user explicitly clicks "Try Demo Data".
+// Real user data is NEVER touched — this only runs when STATE.journal is empty.
+function loadDemoData(){
+  if(STATE.journal.length){
+    showToast('يوجد بيانات فعلية — لا يمكن تحميل البيانات التجريبية.');
+    return;
+  }
+  // ── Accounts ──────────────────────────────────────────────────────────────
+  STATE.accounts = [
+    // Cash & Bank
+    {code:'111101',name:'خزينة رئيسية',nameEn:'Main Cash',type:'البنك والنقد',currency:'EGP'},
+    {code:'111102',name:'بنك أهلي مصر - جاري',nameEn:'NBE Current Account',type:'البنك والنقد',currency:'EGP'},
+    {code:'111103',name:'بنك مصر - دولار',nameEn:'Banque Misr USD',type:'البنك والنقد',currency:'USD'},
+    // Receivables
+    {code:'112101',name:'عملاء محليون',nameEn:'Local Customers',type:'المدين',currency:'EGP'},
+    {code:'112102',name:'عملاء خارجيون',nameEn:'Foreign Customers',type:'المدين',currency:'USD'},
+    {code:'112103',name:'دفعات مقدمة لموردين',nameEn:'Supplier Advances',type:'المدين',currency:'EGP'},
+    // Inventory
+    {code:'113101',name:'مخزون بضاعة',nameEn:'Merchandise Inventory',type:'الأصول المتداولة',currency:'EGP'},
+    // Fixed Assets
+    {code:'121101',name:'سيارات',nameEn:'Vehicles',type:'أصول ثابتة',currency:'EGP'},
+    {code:'121102',name:'أثاث ومعدات مكتبية',nameEn:'Furniture & Equipment',type:'أصول ثابتة',currency:'EGP'},
+    {code:'121103',name:'مجمع إهلاك - سيارات',nameEn:'Acc. Dep. - Vehicles',type:'أصول ثابتة',currency:'EGP'},
+    // Payables
+    {code:'211101',name:'موردون محليون',nameEn:'Local Suppliers',type:'الدائن',currency:'EGP'},
+    {code:'211102',name:'موردون أجانب',nameEn:'Foreign Suppliers',type:'الدائن',currency:'USD'},
+    {code:'212101',name:'مصروفات مستحقة',nameEn:'Accrued Expenses',type:'الالتزامات الجارية',currency:'EGP'},
+    {code:'212102',name:'ضريبة القيمة المضافة',nameEn:'VAT Payable',type:'الالتزامات الجارية',currency:'EGP'},
+    // Equity
+    {code:'311101',name:'رأس المال',nameEn:'Paid-in Capital',type:'رأس المال',currency:'EGP'},
+    {code:'312101',name:'أرباح مرحّلة',nameEn:'Retained Earnings',type:'رأس المال',currency:'EGP'},
+    // Revenue
+    {code:'411101',name:'إيرادات مبيعات - محلية',nameEn:'Local Sales Revenue',type:'الدخل',currency:'EGP'},
+    {code:'411102',name:'إيرادات مبيعات - تصدير',nameEn:'Export Sales Revenue',type:'الدخل',currency:'USD'},
+    {code:'411103',name:'إيرادات تنفيذ مشاريع',nameEn:'Project Revenue',type:'الدخل',currency:'EGP'},
+    {code:'421101',name:'إيرادات فروق عملة',nameEn:'FX Gains',type:'دخل آخر',currency:'EGP'},
+    // COGS
+    {code:'511101',name:'تكلفة البضاعة المباعة',nameEn:'Cost of Goods Sold',type:'تكاليف الإيرادات',currency:'EGP'},
+    {code:'511102',name:'تكلفة تنفيذ المشاريع',nameEn:'Project Direct Costs',type:'تكاليف الإيرادات',currency:'EGP'},
+    // Expenses
+    {code:'611101',name:'رواتب وأجور',nameEn:'Salaries & Wages',type:'النفقات',currency:'EGP'},
+    {code:'611102',name:'إيجارات',nameEn:'Rent',type:'النفقات',currency:'EGP'},
+    {code:'611103',name:'كهرباء ومياه',nameEn:'Utilities',type:'النفقات',currency:'EGP'},
+    {code:'611104',name:'مصروفات بنكية',nameEn:'Bank Charges',type:'النفقات',currency:'EGP'},
+    {code:'611105',name:'دعاية وإعلان',nameEn:'Advertising',type:'النفقات',currency:'EGP'},
+    {code:'611106',name:'مصروفات نقل وشحن',nameEn:'Freight & Shipping',type:'النفقات',currency:'EGP'},
+    // Depreciation
+    {code:'711101',name:'إهلاك سيارات',nameEn:'Depreciation - Vehicles',type:'إهلاك',currency:'EGP'},
+  ];
+  STATE.groups = [
+    {start:'1',end:'1',name:'الأصول',nameEn:'Assets'},
+    {start:'2',end:'2',name:'الالتزامات',nameEn:'Liabilities'},
+    {start:'3',end:'3',name:'حقوق الملكية',nameEn:'Equity'},
+    {start:'4',end:'4',name:'الإيرادات',nameEn:'Revenue'},
+    {start:'5',end:'5',name:'تكلفة المبيعات',nameEn:'Cost of Sales'},
+    {start:'6',end:'6',name:'المصروفات',nameEn:'Expenses'},
+    {start:'7',end:'7',name:'الإهلاك',nameEn:'Depreciation'},
+    {start:'11',end:'11',name:'الأصول المتداولة',nameEn:'Current Assets'},
+    {start:'12',end:'12',name:'الأصول الثابتة',nameEn:'Fixed Assets'},
+    {start:'21',end:'21',name:'الالتزامات المتداولة',nameEn:'Current Liabilities'},
+    {start:'31',end:'31',name:'رأس المال وحقوق الملكية',nameEn:'Capital & Equity'},
+    {start:'111',end:'111',name:'النقدية والبنوك',nameEn:'Cash & Banks'},
+    {start:'112',end:'112',name:'العملاء والمدينون',nameEn:'Receivables'},
+    {start:'113',end:'113',name:'المخزون',nameEn:'Inventory'},
+    {start:'121',end:'121',name:'الأصول الثابتة (تفصيلي)',nameEn:'Fixed Assets (detail)'},
+    {start:'211',end:'211',name:'الموردون والدائنون',nameEn:'Payables'},
+    {start:'212',end:'212',name:'الالتزامات المتداولة الأخرى',nameEn:'Other Current Liabilities'},
+  ];
+  rebuildAccountIndex();
+
+  // ── Journal Lines ─────────────────────────────────────────────────────────
+  const lines = [];
+  let seq = 1;
+  function je(entry, date, journal, rows){
+    rows.forEach(r => {
+      const acc = STATE.accountsByCode[r[0]] || {};
+      lines.push({ entry, date, code:r[0], name:acc.name||'', cur:r[5]||'EGP',
+        convFactor:r[6]||1, partner:r[3]||'', debit:r[1]||0, credit:r[2]||0,
+        cc:r[4]||'', ccAmt:(r[1]||-r[2]||0), product:r[7]||'',
+        journal, curAmt:(r[1]||-r[2]||0), ref:r[8]||entry, source:'demo', seq:seq++ });
+    });
+  }
+
+  // Jan 2026 — Opening balances
+  je('OBJ-2026-01-0001','2026-01-01','القيد الافتتاحي',[
+    ['111102',450000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['111101',35000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['112101',120000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['113101',85000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['121101',200000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['211101',0,95000,'','','EGP',1,'','أرصدة أول المدة'],
+    ['311101',0,750000,'','','EGP',1,'','أرصدة أول المدة'],
+    ['312101',0,45000,'','','EGP',1,'','أرصدة أول المدة'],
+  ]);
+  // Jan — purchase inventory
+  je('PUR-2026-01-0001','2026-01-08','فواتير المورد',[
+    ['113101',180000,0,'مورد الدلتا','مشروع أ','EGP',1,'بضاعة أ','شراء بضاعة'],
+    ['211101',0,180000,'مورد الدلتا','','EGP',1,'','شراء بضاعة'],
+  ]);
+  // Jan — sales
+  je('INV-2026-01-0001','2026-01-12','فواتير العملاء',[
+    ['112101',250000,0,'شركة الأمل','مشروع أ','EGP',1,'منتج 1','فاتورة مبيعات'],
+    ['411101',0,250000,'شركة الأمل','مشروع أ','EGP',1,'منتج 1','فاتورة مبيعات'],
+  ]);
+  je('INV-2026-01-0002','2026-01-15','فواتير العملاء',[
+    ['112101',85000,0,'مؤسسة النور','','EGP',1,'منتج 2','فاتورة مبيعات'],
+    ['411101',0,85000,'مؤسسة النور','','EGP',1,'منتج 2','فاتورة مبيعات'],
+  ]);
+  // Jan — COGS
+  je('MISC-2026-01-0001','2026-01-15','عمليات متنوعة',[
+    ['511101',175000,0,'','مشروع أ','EGP',1,'','تكلفة المبيعات يناير'],
+    ['113101',0,175000,'','','EGP',1,'','تكلفة المبيعات يناير'],
+  ]);
+  // Jan — salaries
+  je('MISC-2026-01-0002','2026-01-31','عمليات متنوعة',[
+    ['611101',55000,0,'','إدارة','EGP',1,'','رواتب يناير'],
+    ['111102',0,55000,'','','EGP',1,'','رواتب يناير'],
+  ]);
+  // Jan — rent + utilities
+  je('MISC-2026-01-0003','2026-01-31','عمليات متنوعة',[
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار يناير'],
+    ['611103',3500,0,'','إدارة','EGP',1,'','كهرباء يناير'],
+    ['111101',0,15500,'','','EGP',1,'','مصروفات ثابتة يناير'],
+  ]);
+  // Feb — collection from Amal
+  je('MISC-2026-02-0001','2026-02-05','عمليات متنوعة',[
+    ['111102',250000,0,'شركة الأمل','','EGP',1,'','تحصيل فاتورة'],
+    ['112101',0,250000,'شركة الأمل','','EGP',1,'','تحصيل فاتورة'],
+  ]);
+  // Feb — new purchase + sales
+  je('PUR-2026-02-0001','2026-02-10','فواتير المورد',[
+    ['113101',220000,0,'مورد الشرق','مشروع ب','EGP',1,'بضاعة ب','شراء بضاعة'],
+    ['211101',0,220000,'مورد الشرق','','EGP',1,'','شراء بضاعة'],
+  ]);
+  je('INV-2026-02-0001','2026-02-14','فواتير العملاء',[
+    ['112101',310000,0,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 1','فاتورة مبيعات'],
+    ['411101',0,310000,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 1','فاتورة مبيعات'],
+  ]);
+  je('INV-2026-02-0002','2026-02-20','فواتير العملاء',[
+    ['112101',140000,0,'شركة الأمل','','EGP',1,'منتج 2','فاتورة مبيعات'],
+    ['411101',0,140000,'شركة الأمل','','EGP',1,'منتج 2','فاتورة مبيعات'],
+  ]);
+  je('MISC-2026-02-0002','2026-02-20','عمليات متنوعة',[
+    ['511101',195000,0,'','مشروع ب','EGP',1,'','تكلفة المبيعات فبراير'],
+    ['113101',0,195000,'','','EGP',1,'','تكلفة المبيعات فبراير'],
+  ]);
+  // Feb — project revenue (contracting)
+  je('INV-2026-02-0003','2026-02-25','فواتير العملاء',[
+    ['112101',180000,0,'مؤسسة النور','مشروع ج','EGP',1,'','فاتورة مشروع'],
+    ['411103',0,180000,'مؤسسة النور','مشروع ج','EGP',1,'','إيراد مشروع'],
+  ]);
+  je('MISC-2026-02-0003','2026-02-25','عمليات متنوعة',[
+    ['511102',110000,0,'','مشروع ج','EGP',1,'','تكلفة المشروع'],
+    ['211101',0,110000,'','','EGP',1,'','مستحقات مورد المشروع'],
+  ]);
+  je('MISC-2026-02-0004','2026-02-28','عمليات متنوعة',[
+    ['611101',55000,0,'','إدارة','EGP',1,'','رواتب فبراير'],
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار فبراير'],
+    ['611103',3800,0,'','إدارة','EGP',1,'','كهرباء فبراير'],
+    ['111102',0,70800,'','','EGP',1,'','مصروفات فبراير'],
+  ]);
+  // Mar — USD export sale
+  je('INV-2026-03-0001','2026-03-05','فواتير العملاء',[
+    ['112102',25000,0,'Global Trading LLC','تصدير','USD',49.5,'منتج 1','صادرات'],
+    ['411102',0,25000,'Global Trading LLC','تصدير','USD',49.5,'منتج 1','صادرات'],
+  ]);
+  // Mar — payment to suppliers
+  je('MISC-2026-03-0001','2026-03-08','عمليات متنوعة',[
+    ['211101',305000,0,'','','EGP',1,'','سداد مستحقات الموردين'],
+    ['111102',0,305000,'','','EGP',1,'','سداد مستحقات الموردين'],
+  ]);
+  // Mar — more sales
+  je('INV-2026-03-0001','2026-03-12','فواتير العملاء',[
+    ['112101',290000,0,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 2','فاتورة مبيعات'],
+    ['411101',0,290000,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 2','فاتورة مبيعات'],
+  ]);
+  je('MISC-2026-03-0002','2026-03-12','عمليات متنوعة',[
+    ['511101',220000,0,'','مشروع ب','EGP',1,'','تكلفة المبيعات مارس'],
+    ['113101',0,220000,'','','EGP',1,'','تكلفة المبيعات مارس'],
+  ]);
+  je('MISC-2026-03-0003','2026-03-31','عمليات متنوعة',[
+    ['611101',58000,0,'','إدارة','EGP',1,'','رواتب مارس'],
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار مارس'],
+    ['611103',4200,0,'','إدارة','EGP',1,'','كهرباء مارس'],
+    ['611105',8000,0,'','','EGP',1,'','دعاية وإعلان'],
+    ['111102',0,82200,'','','EGP',1,'','مصروفات مارس'],
+  ]);
+  // Mar — depreciation Q1
+  je('FIX-A-2026-03-0001','2026-03-31','اهلاك الاصول',[
+    ['711101',5000,0,'','','EGP',1,'','إهلاك ربع سنوي - سيارات'],
+    ['121103',0,5000,'','','EGP',1,'','مجمع إهلاك سيارات'],
+  ]);
+  // Apr — Q2 starts
+  je('INV-2026-04-0001','2026-04-08','فواتير العملاء',[
+    ['112101',380000,0,'شركة الأمل','مشروع د','EGP',1,'منتج 1','فاتورة مبيعات'],
+    ['411101',0,380000,'شركة الأمل','مشروع د','EGP',1,'منتج 1','فاتورة مبيعات'],
+  ]);
+  je('MISC-2026-04-0001','2026-04-08','عمليات متنوعة',[
+    ['511101',260000,0,'','مشروع د','EGP',1,'','تكلفة أبريل'],
+    ['113101',0,260000,'','','EGP',1,'','تكلفة أبريل'],
+  ]);
+  je('MISC-2026-04-0002','2026-04-30','عمليات متنوعة',[
+    ['611101',60000,0,'','إدارة','EGP',1,'','رواتب أبريل'],
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار أبريل'],
+    ['611103',4000,0,'','إدارة','EGP',1,'','كهرباء أبريل'],
+    ['111102',0,76000,'','','EGP',1,'','مصروفات أبريل'],
+  ]);
+  // May
+  je('PUR-2026-05-0001','2026-05-05','فواتير المورد',[
+    ['113101',300000,0,'مورد الدلتا','','EGP',1,'بضاعة ج','شراء بضاعة مايو'],
+    ['211101',0,300000,'مورد الدلتا','','EGP',1,'','شراء بضاعة مايو'],
+  ]);
+  je('INV-2026-05-0001','2026-05-12','فواتير العملاء',[
+    ['112101',420000,0,'مجموعة دلتا','مشروع د','EGP',1,'منتج 2','فاتورة مبيعات'],
+    ['411101',0,420000,'مجموعة دلتا','مشروع د','EGP',1,'منتج 2','فاتورة مبيعات'],
+  ]);
+  je('MISC-2026-05-0001','2026-05-12','عمليات متنوعة',[
+    ['511101',290000,0,'','مشروع د','EGP',1,'','تكلفة مايو'],
+    ['113101',0,290000,'','','EGP',1,'','تكلفة مايو'],
+  ]);
+  je('MISC-2026-05-0002','2026-05-31','عمليات متنوعة',[
+    ['611101',62000,0,'','إدارة','EGP',1,'','رواتب مايو'],
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار مايو'],
+    ['611103',4500,0,'','إدارة','EGP',1,'','كهرباء مايو'],
+    ['111102',0,78500,'','','EGP',1,'','مصروفات مايو'],
+  ]);
+  // June — FX gain
+  je('EXCH-2026-06-0001','2026-06-01','الفرق في سعر الصرف',[
+    ['111103',12250,0,'','','USD',50.5,'','تسوية فرق سعر الصرف'],
+    ['421101',0,12250,'','','EGP',1,'','إيرادات فروق عملة'],
+  ]);
+  je('INV-2026-06-0001','2026-06-15','فواتير العملاء',[
+    ['112101',350000,0,'شركة الأمل','مشروع ه','EGP',1,'منتج 1','فاتورة مبيعات'],
+    ['411101',0,350000,'شركة الأمل','مشروع ه','EGP',1,'منتج 1','فاتورة مبيعات'],
+  ]);
+  je('MISC-2026-06-0001','2026-06-15','عمليات متنوعة',[
+    ['511101',240000,0,'','مشروع ه','EGP',1,'','تكلفة يونيو'],
+    ['113101',0,240000,'','','EGP',1,'','تكلفة يونيو'],
+  ]);
+  je('MISC-2026-06-0002','2026-06-30','عمليات متنوعة',[
+    ['611101',62000,0,'','إدارة','EGP',1,'','رواتب يونيو'],
+    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار يونيو'],
+    ['611103',4800,0,'','إدارة','EGP',1,'','كهرباء يونيو'],
+    ['611104',2200,0,'','','EGP',1,'','رسوم بنكية'],
+    ['611106',6500,0,'','','EGP',1,'','نقل وشحن'],
+    ['111102',0,87500,'','','EGP',1,'','مصروفات يونيو'],
+  ]);
+  je('FIX-A-2026-06-0001','2026-06-30','اهلاك الاصول',[
+    ['711101',5000,0,'','','EGP',1,'','إهلاك ربع سنوي Q2 - سيارات'],
+    ['121103',0,5000,'','','EGP',1,'','مجمع إهلاك سيارات'],
+  ]);
+  // Collections — Q1+Q2
+  je('MISC-2026-06-0003','2026-06-30','عمليات متنوعة',[
+    ['111102',700000,0,'','','EGP',1,'','تحصيل مستحقات عملاء'],
+    ['112101',0,700000,'','','EGP',1,'','تحصيل مستحقات عملاء'],
+  ]);
+
+  STATE.journal = lines;
+  STATE.settings.companyName = 'شركة النموذج للتجارة والمقاولات (بيانات تجريبية)';
+  STATE.settings.isDemoMode = true;
+  STATE.meta.lastImportAt = new Date().toISOString();
+  STATE.meta.lastEntry = lines[lines.length-1].entry;
+  STATE.meta.lastEntryDate = '2026-06-30';
+  STATE.meta.totalLines = lines.length;
+  STATE.meta.journalSeqCounter = seq;
+  STATE.ui.view = 'dashboard';
+  STATE.ui.filters = { start:'2026-01-01', end:'2026-06-30', years:[], months:[] };
+  renderApp();
+  showToast('تم تحميل البيانات التجريبية — ' + lines.length + ' قيد جاهز للاستكشاف');
+}
+
+function resetDemoData(){
+  showConfirmModal(
+    t('resetDemoBtn'),
+    t('resetDemoConfirm'),
+    () => {
+      STATE.journal = []; STATE.accounts = []; STATE.groups = [];
+      STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
+      STATE.settings.companyName = '';
+      STATE.settings.isDemoMode = false;
+      rebuildAccountIndex();
+      STATE.ui.view = 'dashboard';
+      STATE.ui.filters = { start:'', end:'', years:[], months:[] };
+      STATE.ui.glAccounts = []; STATE.ui.glPartners = []; STATE.ui.glJournals = []; STATE.ui.glCostCenters = [];
+      renderApp();
+      showToast('تم حذف البيانات التجريبية بنجاح.');
+    }
+  );
+}
+
 function switchView(id){
   STATE.ui.view = id;
   renderApp();
@@ -5614,6 +6030,10 @@ function renderApp(){
   document.querySelectorAll('.ms-panel').forEach(el => {
     __msScrollSave[el.id] = el.scrollTop;
   });
+  // Preserve sidebar scroll position across re-renders so clicking a nav item
+  // never jumps the sidebar back to the top.
+  const __sidebarScrollSave = (document.querySelector('.sidebar'))
+    ? document.querySelector('.sidebar').scrollTop : 0;
   // Discard the previous render's portaled panel (see BUG FIX below) BEFORE
   // rebuilding #app — otherwise, once the fresh HTML below re-creates a panel
   // with the same id, the page would briefly contain two elements sharing
@@ -5986,6 +6406,9 @@ function renderApp(){
   document.querySelectorAll('.ms-panel').forEach(el => {
     if(Object.prototype.hasOwnProperty.call(__msScrollSave, el.id)) el.scrollTop = __msScrollSave[el.id];
   });
+  // Restore sidebar scroll position (saved before the re-render above).
+  const __sidebarEl = document.querySelector('.sidebar');
+  if(__sidebarEl && __sidebarScrollSave) __sidebarEl.scrollTop = __sidebarScrollSave;
   // BUG FIX (filter panel appearing behind the table/content below it, or
   // clipped by it):
   //
@@ -6481,11 +6904,16 @@ function rcard(title, val, suffix, note){
 }
 function emptyMini(msg){ return `<div class="empty" style="padding:18px">${msg}</div>`; }
 function emptyState(title,msg,goto){
+  const isDash = goto === 'import';  // only show demo button on the main dashboard empty state
   return `<div class="card"><div class="empty">
     ${ICONS.ledger.replace('currentColor','var(--ink-faint)')}
     <div style="font-family:'Cairo';font-weight:800;font-size:16px;color:var(--ink);margin-bottom:6px">${title}</div>
     <div>${msg}</div>
-    <div style="margin-top:16px"><button class="btn btn-gold" onclick="switchView('${goto}')">${t('goToImport')}</button></div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-gold" onclick="switchView('${goto}')">${t('goToImport')}</button>
+      ${isDash ? `<button class="btn btn-outline" onclick="loadDemoData()" style="border-color:var(--gold-dim);color:var(--gold-light)">${t('loadDemoDataBtn')}</button>` : ''}
+    </div>
+    ${isDash ? `<div style="margin-top:8px;font-size:11px;color:var(--ink-faint)">${t('loadDemoDataDesc')}</div>` : ''}
   </div></div>`;
 }
 
@@ -7137,16 +7565,24 @@ function renderAccountStatementView(root, alwaysCombined){
           <input type="checkbox" id="glShowOpeningChk" ${showOpening?'checked':''}> ${t('showOpeningBalanceLabel')}
         </label>
         ${exportBtnHtml(viewKey)}
-        <button class="btn btn-outline" style="padding:8px 14px;font-size:12px" onclick="printCurrentView()">${t('printPdf')}</button>
       </div>
-      <div class="grid-3" style="margin-bottom:14px">
-        ${kpi(t('movementsCountLabel'), fmtInt(rowsF.length), '', '')}
-        ${showOpening ? kpi(t('openingBalanceBeforePeriod'), fmt(opening), opening>=0?'pos':'neg', '') : ''}
-        ${kpi(t('finalRunningBalanceLabel'), fmt(displayRows.length?displayRows[displayRows.length-1].running:opening), '', '')}
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;background:var(--paper);border-radius:10px;border:1px solid var(--line)">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:10.5px;color:var(--ink-faint);font-weight:700">${t('movementsCountLabel')}:</span>
+          <b style="font-size:13px;font-variant-numeric:tabular-nums">${fmtInt(rowsF.length)}</b>
+        </div>
+        ${showOpening ? `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:10.5px;color:var(--ink-faint);font-weight:700">${t('openingBalanceBeforePeriod')}:</span>
+          <b style="font-size:13px;color:${opening>=0?'var(--green)':'var(--brick-light)'};font-variant-numeric:tabular-nums">${fmt(opening)}</b>
+        </div>` : ''}
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:10.5px;color:var(--ink-faint);font-weight:700">${t('finalRunningBalanceLabel')}:</span>
+          <b style="font-size:13px;font-variant-numeric:tabular-nums">${fmt(displayRows.length?displayRows[displayRows.length-1].running:opening)}</b>
+        </div>
       </div>
-      ${singleForeign ? `<div class="grid-3" style="margin-bottom:14px">
-        ${showOpening ? kpi(t('openingBalanceBeforePeriod')+' ('+singleForeign+')', fmt(openingNative), openingNative>=0?'pos':'neg', '') : ''}
-        ${kpi(t('finalRunningBalanceLabel')+' ('+singleForeign+')', fmt(displayRows.length?displayRows[displayRows.length-1].runningNative:openingNative), '', '')}
+      ${singleForeign ? `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px;padding:6px 12px;background:var(--paper);border-radius:8px;border:1px solid var(--line);font-size:12px">
+        ${showOpening ? `<span style="color:var(--ink-faint);font-weight:700">${t('openingBalanceBeforePeriod')} (${singleForeign}): <b style="color:${openingNative>=0?'var(--green)':'var(--brick-light)'}">${fmt(openingNative)}</b></span>` : ''}
+        <span style="color:var(--ink-faint);font-weight:700">${t('finalRunningBalanceLabel')} (${singleForeign}): <b>${fmt(displayRows.length?displayRows[displayRows.length-1].runningNative:openingNative)}</b></span>
       </div>` : ''}
     </div>
   `;
@@ -7316,7 +7752,10 @@ function renderAccountStatementView(root, alwaysCombined){
               ${singleForeign ? `<td class="num-cell num">${r.nativeDebit?fmt(r.nativeDebit):''}</td><td class="num-cell num">${r.nativeCredit?fmt(r.nativeCredit):''}</td>` : ''}
               <td class="num-cell num ${r.movement>=0?'pos-text':'neg-text'}">${fmt(r.movement)}</td>
               ${singleForeign ? `<td class="num-cell num ${r.runningNative>=0?'pos-text':'neg-text'}">${fmt(r.runningNative)}</td>` : ''}
-              <td class="num-cell"><span class="drill" title="${t('editEntry')}" onclick="openEditJournalEntryModal('${jsAttrEscape(r.entry)}','${r.date}')">✎</span></td>
+              <td class="num-cell" style="white-space:nowrap">
+                <span class="drill" title="${t('editEntry')}" onclick="openEditJournalEntryModal('${jsAttrEscape(r.entry)}','${r.date}')">✎</span>
+                <span class="drill" title="${t('duplicateEntry')}" onclick="openDuplicateEntryModal('${jsAttrEscape(r.entry)}')" style="margin-right:6px;opacity:.7">⧉</span>
+              </td>
             </tr>`;}).join('') : `<tr><td colspan="${colCount}" class="empty">${t('noMatchingFilterMovement')}</td></tr>`}
             ${displayRows.length ? `<tr class="total-row">
               <td colspan="7">${t('total')}</td>
