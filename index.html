@@ -1239,6 +1239,27 @@ const I18N = {
     wipSectionTitle:'تحت التشغيل', wipOpen:'رصيد أول المدة (تحت التشغيل)', laborOverhead:'أجور مباشرة وتكاليف صناعية غير مباشرة', wipClose:'رصيد آخر المدة (تحت التشغيل)', cogmLabel:'تكلفة البضاعة المصنعة',
     fgSectionTitle:'تام الصنع', fgOpen:'رصيد أول المدة (تام الصنع)', fgClose:'رصيد آخر المدة (تام الصنع)', cogsManufacturedLabel:'تكلفة البضاعة المباعة (من الإنتاج)',
     inventoryTurnoverLabel:'معدل دوران المخزون', inventoryTurnoverNote:'تكلفة الإيرادات ÷ رصيد المخزون', inventoryDaysLabel:'متوسط أيام بقاء المخزون',
+    // Asset module keys (AR)
+    assetModelsTitle:'نماذج الأصول', assetsTitle:'الأصول الثابتة', depEntriesTitle:'قيود الإهلاك', assetReportTitle:'سجل الأصول', prepaidExpensesTitle:'المصروفات المدفوعة مقدماً',
+    assetModelNameCol:'اسم النموذج', assetModelMethodCol:'طريقة الإهلاك', assetModelLifeCol:'المدة', assetModelAssetAccCol:'حساب الأصل', assetModelAccumAccCol:'حساب مجمع الإهلاك', assetModelExpAccCol:'حساب مصروف الإهلاك',
+    assetNameCol:'اسم الأصل', assetCodeCol:'الرمز', assetModelCol:'نموذج الأصل', assetCostCol:'التكلفة الأصلية', assetAccumDepCol:'مجمع الإهلاك', assetNBVCol:'القيمة الدفترية', assetStatusCol:'الحالة',
+    straightLine:'خط مستقيم', months:'شهر', years:'سنة', residualPctLabel:'نسبة القيمة المتبقية %',
+    assetAccountLabel:'حساب الأصل الثابت', accumDepAccountLabel:'حساب مجمع الإهلاك', depExpenseAccountLabel:'حساب مصروف الإهلاك', depJournalLabel:'دفتر الإهلاك',
+    usefulLifeLabel:'المدة الإنتاجية', depMethodLabel:'طريقة الإهلاك', lifeUnitLabel:'وحدة المدة',
+    assetAcquireDateLabel:'تاريخ الاستحواذ', assetDepStartLabel:'تاريخ بداية الإهلاك', supplierLabel:'المورد', invoiceNoLabel:'رقم الفاتورة', locationLabel:'الموقع', custodianLabel:'المسؤول',
+    originalCostLabel:'التكلفة الأصلية', residualValueLabel:'القيمة المتبقية', depAmountLabel:'المبلغ القابل للإهلاك', accumDepLabel:'مجمع الإهلاك', nbvLabel:'القيمة الدفترية الصافية', nextDepDateLabel:'تاريخ الإهلاك القادم',
+    depScheduleTitle:'جدول الإهلاك', periodCol:'الفترة', openingNBVCol:'ق. دفترية أول المدة', depAmtCol:'مبلغ الإهلاك', accumDepCol:'مجمع الإهلاك', closingNBVCol:'ق. دفترية آخر المدة', entryStatusCol:'حالة القيد',
+    draftStatus:'مسودة', postedStatus:'مرحّل', statusDraft:'مسودة', statusActive:'نشط', statusFullyDep:'مستهلك بالكامل', statusDisposed:'مُتصرَّف فيه', statusCancelled:'ملغي',
+    newAssetModelBtn:'نموذج أصل جديد', newAssetBtn:'أصل جديد', newPrepaidBtn:'مصروف مدفوع مقدماً جديد',
+    generateDepBtn:'توليد قيود الإهلاك', approveDepBtn:'اعتماد وترحيل', viewScheduleBtn:'عرض الجدول',
+    depPeriodCol:'الفترة', depDateCol:'التاريخ', depAssetsCol:'عدد الأصول', depTotalCol:'إجمالي الإهلاك', depEntryNoCol:'رقم القيد',
+    prepaidNameCol:'الاسم', prepaidTotalCol:'المبلغ الإجمالي', prepaidAllocatedCol:'المُوزَّع', prepaidRemainingCol:'المتبقي', prepaidStartCol:'تاريخ البدء', prepaidEndCol:'تاريخ الانتهاء',
+    assetSavedToast:'تم حفظ الأصل بنجاح', assetModelSavedToast:'تم حفظ نموذج الأصل بنجاح', depGeneratedToast:'تم توليد قيود الإهلاك بنجاح', depPostedToast:'تم ترحيل قيود الإهلاك بنجاح', prepaidSavedToast:'تم حفظ المصروف المدفوع مقدماً',
+    assetModelRequiredName:'اسم النموذج مطلوب', assetRequiredName:'اسم الأصل مطلوب', assetRequiredCost:'التكلفة الأصلية مطلوبة', assetRequiredModel:'نموذج الأصل مطلوب', assetRequiredStartDate:'تاريخ بداية الإهلاك مطلوب',
+    fullyDepreciated:'مستهلك بالكامل', alreadyGeneratedToast:'قيود هذه الفترة موجودة بالفعل',
+    deleteAssetConfirm:'هل تريد حذف هذا الأصل؟', deleteModelConfirm:'هل تريد حذف هذا النموذج؟',
+    prepaidPeriodUnitMonths:'شهري', prepaidPeriodUnitYears:'سنوي', prepaidExpenseAccLabel:'حساب المصروف', prepaidPrepaidAccLabel:'حساب المصروف المدفوع مقدماً',
+    noAssetModels:'لا توجد نماذج أصول — أنشئ نموذجاً جديداً للبدء', noAssets:'لا توجد أصول — أنشئ أصلاً جديداً أو استورد من Excel', noDepEntries:'لا توجد قيود إهلاك — اضغط "توليد قيود الإهلاك"', noPrepaidExpenses:'لا توجد مصروفات مدفوعة مقدماً',
     amount:'المبلغ',
     newEntryBtn:'قيد جديد', newEntryTitle:'إنشاء قيد يومية جديد',
     newEntryDesc:'رقم القيد يُنشأ تلقائياً عند الحفظ حسب دفتر اليومية والسنة والشهر. القيد لازم يكون متوازناً (إجمالي المدين = إجمالي الدائن) قبل الحفظ.',
@@ -1466,6 +1487,27 @@ const I18N = {
     wipSectionTitle:'Work-in-Process', wipOpen:'Opening Balance (WIP)', laborOverhead:'Direct Labor & Manufacturing Overhead', wipClose:'Closing Balance (WIP)', cogmLabel:'Cost of Goods Manufactured',
     fgSectionTitle:'Finished Goods', fgOpen:'Opening Balance (Finished Goods)', fgClose:'Closing Balance (Finished Goods)', cogsManufacturedLabel:'Cost of Goods Sold (from Production)',
     inventoryTurnoverLabel:'Inventory Turnover', inventoryTurnoverNote:'Cost of sales ÷ inventory balance', inventoryDaysLabel:'Average Inventory Days',
+    // Asset module keys (EN)
+    assetModelsTitle:'Asset Models', assetsTitle:'Fixed Assets', depEntriesTitle:'Depreciation Entries', assetReportTitle:'Asset Register', prepaidExpensesTitle:'Prepaid Expenses',
+    assetModelNameCol:'Model Name', assetModelMethodCol:'Method', assetModelLifeCol:'Life', assetModelAssetAccCol:'Asset Account', assetModelAccumAccCol:'Accum. Dep. Account', assetModelExpAccCol:'Dep. Expense Account',
+    assetNameCol:'Asset Name', assetCodeCol:'Code', assetModelCol:'Asset Model', assetCostCol:'Original Cost', assetAccumDepCol:'Accum. Depreciation', assetNBVCol:'Net Book Value', assetStatusCol:'Status',
+    straightLine:'Straight Line', months:'Months', years:'Years', residualPctLabel:'Residual Value %',
+    assetAccountLabel:'Asset Account', accumDepAccountLabel:'Accumulated Depreciation Account', depExpenseAccountLabel:'Depreciation Expense Account', depJournalLabel:'Depreciation Journal',
+    usefulLifeLabel:'Useful Life', depMethodLabel:'Depreciation Method', lifeUnitLabel:'Life Unit',
+    assetAcquireDateLabel:'Acquisition Date', assetDepStartLabel:'Depreciation Start Date', supplierLabel:'Supplier', invoiceNoLabel:'Invoice No.', locationLabel:'Location', custodianLabel:'Custodian',
+    originalCostLabel:'Original Cost', residualValueLabel:'Residual Value', depAmountLabel:'Depreciable Amount', accumDepLabel:'Accumulated Depreciation', nbvLabel:'Net Book Value', nextDepDateLabel:'Next Depreciation Date',
+    depScheduleTitle:'Depreciation Schedule', periodCol:'Period', openingNBVCol:'Opening NBV', depAmtCol:'Depreciation', accumDepCol:'Accum. Dep.', closingNBVCol:'Closing NBV', entryStatusCol:'Entry Status',
+    draftStatus:'Draft', postedStatus:'Posted', statusDraft:'Draft', statusActive:'Active', statusFullyDep:'Fully Depreciated', statusDisposed:'Disposed', statusCancelled:'Cancelled',
+    newAssetModelBtn:'New Asset Model', newAssetBtn:'New Asset', newPrepaidBtn:'New Prepaid Expense',
+    generateDepBtn:'Generate Depreciation Entries', approveDepBtn:'Approve & Post', viewScheduleBtn:'View Schedule',
+    depPeriodCol:'Period', depDateCol:'Date', depAssetsCol:'Assets', depTotalCol:'Total Depreciation', depEntryNoCol:'Entry No.',
+    prepaidNameCol:'Name', prepaidTotalCol:'Total Amount', prepaidAllocatedCol:'Allocated', prepaidRemainingCol:'Remaining', prepaidStartCol:'Start Date', prepaidEndCol:'End Date',
+    assetSavedToast:'Asset saved successfully', assetModelSavedToast:'Asset model saved successfully', depGeneratedToast:'Depreciation entries generated successfully', depPostedToast:'Depreciation entries posted successfully', prepaidSavedToast:'Prepaid expense saved',
+    assetModelRequiredName:'Asset model name is required', assetRequiredName:'Asset name is required', assetRequiredCost:'Original cost is required', assetRequiredModel:'Asset model is required', assetRequiredStartDate:'Depreciation start date is required',
+    fullyDepreciated:'Fully Depreciated', alreadyGeneratedToast:'Depreciation for this period already exists',
+    deleteAssetConfirm:'Delete this asset?', deleteModelConfirm:'Delete this model?',
+    prepaidPeriodUnitMonths:'Monthly', prepaidPeriodUnitYears:'Yearly', prepaidExpenseAccLabel:'Expense Account', prepaidPrepaidAccLabel:'Prepaid Account',
+    noAssetModels:'No asset models yet — create one to get started', noAssets:'No assets yet — create one or import from Excel', noDepEntries:'No depreciation entries — click Generate to create them', noPrepaidExpenses:'No prepaid expenses yet',
     amount:'Amount',
     newEntryBtn:'New Entry', newEntryTitle:'Create New Journal Entry',
     newEntryDesc:'The entry number is generated automatically on save, based on the journal book, year and month. The entry must be balanced (total debit = total credit) before saving.',
@@ -1613,6 +1655,48 @@ function attachDebouncedSearchInput(id, onCommit, ms){
 /* ---------- export helpers ---------- */
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const NUMERIC_TEXT_RE = /^-?[\d,]+(\.\d+)?$/;
+// Currency suffix pattern — matches "100.00 USD", "50,000.00 EGP", "-33.80 USD" etc.
+// Also matches Arabic/Unicode currency words. Used to strip the currency part
+// so the number exports as a real Excel number rather than text.
+const CURRENCY_SUFFIX_RE = /^(-?[\d,]+(?:\.\d+)?)\s+([A-Z]{2,5}|ج\.م|جنيه|يورو|دولار)$/;
+
+// Extract the numeric value from a table cell's textContent, handling:
+//   • Plain numbers: "1,234.56" → 1234.56
+//   • Number + currency suffix: "1,234.56 USD" → 1234.56
+//   • Number inside a cell that also contains a <span class="pill"> currency badge
+//     (the pill text gets appended by textContent; strip it before parsing)
+// Returns the JS number if extractable, or null if the cell is genuinely text.
+function extractNumericFromCell(td){
+  // 1. Prefer an explicit data attribute set by the template author (most precise)
+  const exportAttr = td.getAttribute('data-export-num');
+  if(exportAttr !== null && exportAttr !== '') {
+    const n = parseFloat(exportAttr);
+    if(!isNaN(n)) return n;
+  }
+  // 2. Strip any child <span> / <button> elements that are UI-only (pills, chips,
+  //    sort arrows…) and keep only the top-level text content to get the raw number.
+  let raw = '';
+  td.childNodes.forEach(node => {
+    if(node.nodeType === Node.TEXT_NODE) raw += node.textContent;
+    // keep text from <b> / <span> that are NOT UI widgets
+    else if(node.nodeType === Node.ELEMENT_NODE){
+      const tag = node.tagName;
+      const cls = node.className || '';
+      // Skip pill/chip/btn elements — they add currency labels, sort icons, etc.
+      if(/\bpill\b|\bchip\b|\bdrill\b|\bbtn\b/i.test(cls) || tag === 'BUTTON' || tag === 'svg') return;
+      raw += node.textContent;
+    }
+  });
+  raw = raw.replace(/[▲▼]/g,'').trim();
+  if(raw === '' || raw === '—' || raw === '-') return null;
+  // 3. Try plain number (no currency suffix)
+  const plain = raw.replace(/,/g,'');
+  if(NUMERIC_TEXT_RE.test(plain)){ const n=parseFloat(plain); if(!isNaN(n)) return n; }
+  // 4. Try number + currency suffix ("100.00 USD", "-50,000.00 EGP", "33.80 يورو")
+  const m = raw.match(CURRENCY_SUFFIX_RE);
+  if(m){ const n=parseFloat(m[1].replace(/,/g,'')); if(!isNaN(n)) return n; }
+  return null;
+}
 
 // Converts an ISO 'YYYY-MM-DD' string to an Excel date serial number using
 // pure UTC day-count arithmetic — Date.UTC() is used only as a calendar day
@@ -3068,6 +3152,10 @@ const STATE = {
   accountsByCode: {}, // code -> account
   groups: [],         // [{start,end,name}]
   journal: [],         // all line objects (all years, loaded in memory)
+  assetModels: [],   // Asset depreciation models [{id,name,method,life,lifeUnit,residualPct,assetAcc,accumAcc,expenseAcc,journal,status,notes}]
+  assets: [],        // Individual assets [{id,modelId,name,code,cost,residual,accumDep,startDate,acquireDate,...}]
+  depEntries: [],    // Depreciation batch entries [{id,period,date,assetIds,totalAmt,status,entryNo}]
+  prepaidExpenses:[],// Prepaid expense items [{id,name,total,startDate,periods,periodUnit,prepaidAcc,expenseAcc,allocAmt,status,...}]
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
@@ -5591,6 +5679,10 @@ async function initApp(){
   STATE.meta.totalLines = journal.length;
   STATE.projects = (await storeGet('projects')) || [];
   STATE.projectTx = (await storeGet('projectTx')) || [];
+  STATE.assetModels = (await storeGet('assetModels')) || [];
+  STATE.assets = (await storeGet('assets')) || [];
+  STATE.depEntries = (await storeGet('depEntries')) || [];
+  STATE.prepaidExpenses = (await storeGet('prepaidExpenses')) || [];
 
   // Backward compatibility: data imported before the Sequential Journal
   // Number feature existed has no `seq` field. Backfill it once, using the
@@ -5695,6 +5787,12 @@ const NAV = [
   {id:'ratios', label:'التحليل المالي والنسب', labelEn:'Financial Analysis & Ratios', icon:'ratio'},
   {id:'notes', label:'الإيضاحات والتحليل', labelEn:'Notes & Analysis', icon:'notes'},
   {id:'aichat', label:'المساعد الذكي', labelEn:'AI Assistant', icon:'chat'},
+  {section:'الأصول والإهلاك', sectionEn:'Assets & Depreciation'},
+  {id:'assetmodels', label:'نماذج الأصول', labelEn:'Asset Models', icon:'factory'},
+  {id:'assets', label:'الأصول الثابتة', labelEn:'Fixed Assets', icon:'statement'},
+  {id:'depentries', label:'قيود الإهلاك', labelEn:'Depreciation Entries', icon:'cashflow'},
+  {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
+  {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
   {section:'الإعداد', sectionEn:'Setup'},
   {id:'import', label:'الإعداد والاستيراد', labelEn:'Setup & Import', icon:'upload'},
 ];
@@ -6561,6 +6659,11 @@ function renderApp(){
     statements: renderStatementsView,
     manufacturing: renderManufacturingView,
     ratios: renderRatiosView,
+    assetmodels: renderAssetModelsView,
+    assets: renderAssetsView,
+    depentries: renderDepEntriesView,
+    assetreport: renderAssetReportView,
+    prepaidexpenses: renderPrepaidExpensesView,
   };
   (renderers[STATE.ui.view] || renderDashboard)(root);
 
@@ -6695,7 +6798,7 @@ function renderApp(){
 }
 
 function needsFilters(view){
-  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes'].includes(view);
+  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport'].includes(view);
 }
 
 function renderCurrencyBar(){
@@ -8772,12 +8875,821 @@ function cfDrill(kind, code){
   switchView('accountstatement');
 }
 
-/* =========================================================================
-   Manufacturing (Cost of Goods Manufactured) view — only meaningful for
-   companies that code accounts under the 3 inventory sub-types + the
-   manufacturing-cost type (see costOfGoodsManufactured()). Any other
-   company simply sees the guided empty state below.
-   ========================================================================= */
+/* ==========================================================================
+   ASSETS & DEPRECIATION MODULE
+   Full implementation: Asset Models, Assets, Depreciation Engine,
+   Schedules, Draft Journal Entries, Approval, Prepaid Expenses, Reports.
+   ========================================================================== */
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function assetNextId(arr){ return arr.length ? Math.max(...arr.map(x=>x.id||0)) + 1 : 1; }
+function addMonthsISO(dateISO, n){
+  const d = new Date(dateISO + 'T00:00:00');
+  d.setMonth(d.getMonth() + n);
+  return d.toISOString().slice(0,10);
+}
+function isoYM(dateISO){ return (dateISO||'').slice(0,7); } // "YYYY-MM"
+function isoYMLabel(ym){ const [y,m]=ym.split('-'); const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']; return `${months[parseInt(m)-1]} ${y}`; }
+function assetNBV(ast){ return (ast.cost||0) - (ast.accumDep||0); }
+function assetEffectiveLife(ast){
+  const model = STATE.assetModels.find(m=>m.id===ast.modelId);
+  return {
+    life:        (ast.life      != null && ast.life      !== '') ? ast.life      : (model ? model.life      : 0),
+    lifeUnit:    (ast.lifeUnit  != null && ast.lifeUnit  !== '') ? ast.lifeUnit  : (model ? model.lifeUnit  : 'months'),
+    residualPct: (ast.residualPct != null && ast.residualPct !== '') ? ast.residualPct : (model ? model.residualPct : 0),
+  };
+}
+function assetResidualVal(ast){
+  if(ast.residualAbs != null && ast.residualAbs !== '') return parseFloat(ast.residualAbs)||0;
+  const e = assetEffectiveLife(ast);
+  return (ast.cost||0) * ((parseFloat(e.residualPct)||0)/100);
+}
+function assetDepreciable(ast){ return Math.max(0, (ast.cost||0) - assetResidualVal(ast)); }
+function assetLifeMonths(ast){
+  const e = assetEffectiveLife(ast);
+  const life = parseFloat(e.life)||0;
+  return e.lifeUnit==='years' ? life*12 : life;
+}
+function assetStatus(ast){
+  const dep = assetDepreciable(ast);
+  if(ast.status==='cancelled') return 'cancelled';
+  if(ast.status==='disposed') return 'disposed';
+  if(dep > 0 && (ast.accumDep||0) >= dep - 0.005) return 'fullydep';
+  if(!ast.startDate) return 'draft';
+  return 'active';
+}
+function assetStatusLabel(s){ const m={draft:t('statusDraft'),active:t('statusActive'),fullydep:t('statusFullyDep'),disposed:t('statusDisposed'),cancelled:t('statusCancelled')}; return m[s]||s; }
+function assetStatusColor(s){ const m={draft:'var(--text-dim)',active:'var(--green)',fullydep:'var(--gold-dim)',disposed:'var(--brick-light)',cancelled:'var(--text-muted)'}; return m[s]||'var(--text-dim)'; }
+function assetNextDepDate(ast){
+  if(!ast.startDate) return '';
+  const lifeM = assetLifeMonths(ast);
+  if(!lifeM) return '';
+  const dep = assetDepreciable(ast);
+  if(dep<=0 || (ast.accumDep||0) >= dep-0.005) return '';
+  // Next = last depreciated period + 1 month, or startDate if none yet
+  if(!ast.lastDepYM) return ast.startDate.slice(0,7)+'-01';
+  return addMonthsISO(ast.lastDepYM+'-01', 1);
+}
+
+// ── Depreciation Engine ──────────────────────────────────────────────────────
+function computeDepSchedule(ast){
+  // Straight-line only. Returns array of period objects.
+  const lifeM = assetLifeMonths(ast);
+  if(!lifeM || !ast.startDate || !ast.cost) return [];
+  const dep = assetDepreciable(ast);
+  if(dep < 0.01) return [];
+  const periodicRaw = dep / lifeM;
+  const periodic = Math.floor(periodicRaw * 100) / 100; // truncate to 2dp
+  const periods = [];
+  let openNBV = ast.cost||0;
+  let accumDep = 0;
+  const existingPosted = (ast.postedPeriods||[]);
+  for(let i=0; i<lifeM; i++){
+    const periodDate = addMonthsISO(ast.startDate, i);
+    const ym = isoYM(periodDate);
+    // Last period: adjust for rounding so total = dep exactly
+    const isLast = (i === lifeM-1);
+    let amount = isLast ? Math.max(0, Math.round((dep - accumDep)*100)/100) : periodic;
+    amount = Math.min(amount, Math.max(0, openNBV - assetResidualVal(ast)));
+    accumDep = Math.round((accumDep + amount)*100)/100;
+    const closeNBV = Math.round((openNBV - amount)*100)/100;
+    const posted = existingPosted.find(p=>p.ym===ym);
+    periods.push({ period:i+1, ym, date:periodDate, openNBV, amount, accumDep, closeNBV,
+      status: posted ? 'posted' : 'pending', entryNo: posted ? posted.entryNo : '' });
+    openNBV = closeNBV;
+    if(amount <= 0) break;
+  }
+  return periods;
+}
+
+// Generate depreciation for a given year-month across all active assets
+async function generateDepreciation(ym){
+  const eligible = STATE.assets.filter(a => {
+    if(assetStatus(a) !== 'active') return false;
+    if(!a.startDate) return false;
+    if(isoYM(a.startDate) > ym) return false; // not started yet
+    if((a.postedPeriods||[]).some(p=>p.ym===ym)) return false; // already done
+    return true;
+  });
+  if(!eligible.length){ showToast(t('alreadyGeneratedToast')); return; }
+  // Check for existing draft for this period
+  const existingDraft = STATE.depEntries.find(e=>e.ym===ym && e.status==='draft');
+  if(existingDraft){ showToast(t('alreadyGeneratedToast')); return; }
+
+  const entryId = assetNextId(STATE.depEntries);
+  const rows = [];
+  let totalAmt = 0;
+  for(const ast of eligible){
+    const sched = computeDepSchedule(ast);
+    const period = sched.find(p=>p.ym===ym);
+    if(!period || period.amount<=0) continue;
+    rows.push({ assetId:ast.id, assetName:ast.name, amount:period.amount });
+    totalAmt = Math.round((totalAmt + period.amount)*100)/100;
+  }
+  if(!rows.length){ showToast(t('noDepEntries')); return; }
+
+  const entry = { id:entryId, ym, date:ym+'-28', assetRows:rows, totalAmt, status:'draft', entryNo:'', createdAt:new Date().toISOString() };
+  STATE.depEntries.push(entry);
+  await storeSet('depEntries', STATE.depEntries);
+  showToast(t('depGeneratedToast'));
+  renderApp();
+}
+
+// Post a draft depreciation entry → writes to STATE.journal
+async function postDepEntry(entryId){
+  const entry = STATE.depEntries.find(e=>e.id===entryId);
+  if(!entry || entry.status !== 'draft') return;
+
+  // Group rows by (assetAcc, accumAcc, expAcc) from their model
+  const bookKey = 'FIX-A';
+  const entryNo = await reserveNextEntryNumber('اهلاك الاصول', entry.date);
+  const lines = [];
+  let seq = (STATE.meta.journalSeqCounter||0);
+
+  for(const row of entry.assetRows){
+    const ast = STATE.assets.find(a=>a.id===row.assetId);
+    if(!ast) continue;
+    const model = STATE.assetModels.find(m=>m.id===ast.modelId);
+    if(!model) continue;
+    const expAcc = model.expenseAcc||'';
+    const accumAcc = model.accumAcc||'';
+    if(!expAcc || !accumAcc) continue;
+    const expName = (STATE.accountsByCode[expAcc]||{}).name||expAcc;
+    const accumName = (STATE.accountsByCode[accumAcc]||{}).name||accumAcc;
+    lines.push({ entry:entryNo, date:entry.date, code:expAcc, name:expName, debit:row.amount, credit:0, cur:'EGP', convFactor:1, partner:ast.name, cc:'', ccAmt:row.amount, product:'', journal:'اهلاك الاصول', curAmt:row.amount, ref:`إهلاك ${ast.name} - ${entry.ym}`, source:'dep-auto', seq:++seq });
+    lines.push({ entry:entryNo, date:entry.date, code:accumAcc, name:accumName, debit:0, credit:row.amount, cur:'EGP', convFactor:1, partner:ast.name, cc:'', ccAmt:-row.amount, product:'', journal:'اهلاك الاصول', curAmt:-row.amount, ref:`إهلاك ${ast.name} - ${entry.ym}`, source:'dep-auto', seq:++seq });
+    // Mark asset as having this period posted
+    if(!ast.postedPeriods) ast.postedPeriods = [];
+    ast.postedPeriods.push({ ym:entry.ym, entryNo, amount:row.amount });
+    ast.accumDep = Math.round(((ast.accumDep||0)+row.amount)*100)/100;
+    ast.lastDepYM = entry.ym;
+  }
+
+  // Commit to journal
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  entry.status = 'posted';
+  entry.entryNo = entryNo;
+  await storeSet('depEntries', STATE.depEntries);
+  await storeSet('assets', STATE.assets);
+  showToast(t('depPostedToast'));
+  renderApp();
+}
+
+// ── Prepaid Engine ────────────────────────────────────────────────────────────
+function computePrepaidSchedule(pe){
+  const n = pe.periods||1;
+  const total = pe.total||0;
+  const perPeriodRaw = total / n;
+  const perPeriod = Math.floor(perPeriodRaw*100)/100;
+  const rows = [];
+  let openBal = total;
+  let accum = 0;
+  for(let i=0;i<n;i++){
+    const dateISO = addMonthsISO(pe.startDate||'2026-01-01', i);
+    const ym = isoYM(dateISO);
+    const isLast = (i===n-1);
+    let amt = isLast ? Math.round((total-accum)*100)/100 : perPeriod;
+    amt = Math.min(amt, openBal);
+    accum = Math.round((accum+amt)*100)/100;
+    const closeBal = Math.round((openBal-amt)*100)/100;
+    const posted = (pe.postedPeriods||[]).find(p=>p.ym===ym);
+    rows.push({ period:i+1, ym, date:dateISO, openBal, amount:amt, accum, closeBal, status:posted?'posted':'pending', entryNo:posted?posted.entryNo:'' });
+    openBal = closeBal;
+  }
+  return rows;
+}
+
+async function postPrepaidPeriod(peId, ym){
+  const pe = STATE.prepaidExpenses.find(x=>x.id===peId);
+  if(!pe) return;
+  if((pe.postedPeriods||[]).some(p=>p.ym===ym)){ showToast(t('alreadyGeneratedToast')); return; }
+  const sched = computePrepaidSchedule(pe);
+  const period = sched.find(p=>p.ym===ym);
+  if(!period || period.amount<=0) return;
+  const entryNo = await reserveNextEntryNumber('عمليات متنوعة', period.date);
+  const expName = (STATE.accountsByCode[pe.expenseAcc||'']||{}).name||pe.expenseAcc||'';
+  const prepName = (STATE.accountsByCode[pe.prepaidAcc||'']||{}).name||pe.prepaidAcc||'';
+  let seq = STATE.meta.journalSeqCounter||0;
+  const lines = [
+    { entry:entryNo, date:period.date, code:pe.expenseAcc||'', name:expName, debit:period.amount, credit:0, cur:'EGP', convFactor:1, partner:pe.name||'', cc:'', ccAmt:period.amount, product:'', journal:'عمليات متنوعة', curAmt:period.amount, ref:`${pe.name} - ${ym}`, source:'prepaid-auto', seq:++seq },
+    { entry:entryNo, date:period.date, code:pe.prepaidAcc||'', name:prepName, debit:0, credit:period.amount, cur:'EGP', convFactor:1, partner:pe.name||'', cc:'', ccAmt:-period.amount, product:'', journal:'عمليات متنوعة', curAmt:-period.amount, ref:`${pe.name} - ${ym}`, source:'prepaid-auto', seq:++seq },
+  ];
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  if(!pe.postedPeriods) pe.postedPeriods=[];
+  pe.postedPeriods.push({ ym, entryNo, amount:period.amount });
+  pe.allocatedAmt = Math.round(((pe.allocatedAmt||0)+period.amount)*100)/100;
+  await storeSet('prepaidExpenses', STATE.prepaidExpenses);
+  showToast(t('depPostedToast'));
+  renderApp();
+}
+
+// ── Account picker helper ─────────────────────────────────────────────────────
+function accPickerHtml(id, value, placeholder){
+  const opts = STATE.accounts.map(a=>`<option value="${a.code}" ${a.code===value?'selected':''}>${a.code} — ${escapeHtml(a.name||'')}</option>`).join('');
+  return `<select id="${id}" class="input" style="width:100%"><option value="">${placeholder||t('selectAccountPlaceholder')}</option>${opts}</select>`;
+}
+
+// ── MODAL: Asset Model Form ───────────────────────────────────────────────────
+function openAssetModelModal(modelId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = modelId ? STATE.assetModels.find(m=>m.id===modelId) : null;
+  const d = existing || { name:'', method:'straight', life:60, lifeUnit:'months', residualPct:0, assetAcc:'', accumAcc:'', expenseAcc:'', journal:'اهلاك الاصول', status:'active', notes:'' };
+
+  function renderModal(){
+    overlay.innerHTML = `
+    <div class="modal-box" style="max-width:680px;width:97%">
+      <h3>${existing ? escapeHtml(d.name) : t('newAssetModelBtn')}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div><label class="lbl">${t('assetModelNameCol')} *</label><input id="amName" class="input" value="${escapeHtml(d.name)}" style="width:100%"></div>
+        <div><label class="lbl">${t('depMethodLabel')}</label>
+          <select id="amMethod" class="input" style="width:100%">
+            <option value="straight" ${d.method==='straight'?'selected':''}>${t('straightLine')}</option>
+          </select>
+        </div>
+        <div><label class="lbl">${t('usefulLifeLabel')} *</label>
+          <div style="display:flex;gap:6px">
+            <input id="amLife" type="number" min="1" class="input" value="${d.life}" style="flex:1">
+            <select id="amLifeUnit" class="input" style="width:90px">
+              <option value="months" ${d.lifeUnit==='months'?'selected':''}>${t('months')}</option>
+              <option value="years" ${d.lifeUnit==='years'?'selected':''}>${t('years')}</option>
+            </select>
+          </div>
+        </div>
+        <div><label class="lbl">${t('residualPctLabel')}</label><input id="amResidual" type="number" min="0" max="100" step="0.01" class="input" value="${d.residualPct||0}" style="width:100%"></div>
+        <div><label class="lbl">${t('assetAccountLabel')} *</label>${accPickerHtml('amAssetAcc',d.assetAcc)}</div>
+        <div><label class="lbl">${t('accumDepAccountLabel')} *</label>${accPickerHtml('amAccumAcc',d.accumAcc)}</div>
+        <div><label class="lbl">${t('depExpenseAccountLabel')} *</label>${accPickerHtml('amExpAcc',d.expenseAcc)}</div>
+        <div><label class="lbl">${t('depJournalLabel')}</label>
+          <select id="amJournal" class="input" style="width:100%">
+            ${journalBookOptions().map(b=>`<option value="${b.name}" ${b.name===d.journal?'selected':''}>${b.name} (${b.code})</option>`).join('')}
+          </select>
+        </div>
+        <div style="grid-column:1/-1"><label class="lbl">ملاحظات</label><input id="amNotes" class="input" value="${escapeHtml(d.notes||'')}" style="width:100%"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="amCancel">${t('cancelEdit')}</button>
+        <button class="btn" id="amSave">${t('assetModelSavedToast').replace('تم حفظ ','حفظ ').replace(' بنجاح','')}</button>
+      </div>
+    </div>`;
+    overlay.style.display='flex';
+    overlay.querySelector('#amCancel').onclick=()=>{ overlay.style.display='none'; overlay.innerHTML=''; };
+    overlay.querySelector('#amSave').onclick=async()=>{
+      const name=(overlay.querySelector('#amName').value||'').trim();
+      if(!name){ showToast(t('assetModelRequiredName')); return; }
+      const model = {
+        id: existing ? existing.id : assetNextId(STATE.assetModels),
+        name, method:overlay.querySelector('#amMethod').value,
+        life:parseInt(overlay.querySelector('#amLife').value)||60,
+        lifeUnit:overlay.querySelector('#amLifeUnit').value,
+        residualPct:parseFloat(overlay.querySelector('#amResidual').value)||0,
+        assetAcc:overlay.querySelector('#amAssetAcc').value,
+        accumAcc:overlay.querySelector('#amAccumAcc').value,
+        expenseAcc:overlay.querySelector('#amExpAcc').value,
+        journal:overlay.querySelector('#amJournal').value,
+        notes:overlay.querySelector('#amNotes').value,
+        status:'active'
+      };
+      if(existing){ const idx=STATE.assetModels.findIndex(m=>m.id===existing.id); STATE.assetModels[idx]=model; }
+      else STATE.assetModels.push(model);
+      await storeSet('assetModels', STATE.assetModels);
+      overlay.style.display='none'; overlay.innerHTML='';
+      showToast(t('assetModelSavedToast')); renderApp();
+    };
+    overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+  }
+  renderModal();
+}
+
+// ── MODAL: Asset Form ─────────────────────────────────────────────────────────
+function openAssetModal(assetId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = assetId ? STATE.assets.find(a=>a.id===assetId) : null;
+  const d = existing || { name:'', code:'', modelId:'', cost:0, residualAbs:null, residualPct:null, accumDep:0, startDate:'', acquireDate:'', life:null, lifeUnit:null, method:null, supplier:'', invoiceNo:'', location:'', custodian:'', notes:'', postedPeriods:[], status:'active' };
+  const hasPosted = (d.postedPeriods||[]).length > 0;
+
+  function getModel(){ return STATE.assetModels.find(m=>String(m.id)===String(overlay.querySelector('#asModelId')?.value||d.modelId)); }
+
+  function renderModal(){
+    const model = STATE.assetModels.find(m=>m.id==d.modelId);
+    overlay.innerHTML = `
+    <div class="modal-box" style="max-width:780px;width:97%;max-height:92vh;overflow-y:auto">
+      <h3>${existing ? escapeHtml(d.name) : t('newAssetBtn')}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label class="lbl">${t('assetNameCol')} *</label><input id="asName" class="input" value="${escapeHtml(d.name)}" style="width:100%" ${hasPosted?'':''}></div>
+        <div><label class="lbl">${t('assetCodeCol')}</label><input id="asCode" class="input" value="${escapeHtml(d.code||'')}" style="width:100%"></div>
+        <div><label class="lbl">${t('assetModelCol')} *</label>
+          <select id="asModelId" class="input" style="width:100%" ${hasPosted?'disabled':''}>
+            <option value="">${t('selectAccountPlaceholder')}</option>
+            ${STATE.assetModels.map(m=>`<option value="${m.id}" ${m.id==d.modelId?'selected':''}>${escapeHtml(m.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="lbl">${t('assetAcquireDateLabel')}</label><input id="asAcquire" type="date" class="input" value="${d.acquireDate||''}" style="width:100%"></div>
+        <div><label class="lbl">${t('assetDepStartLabel')} *</label><input id="asStart" type="date" class="input" value="${d.startDate||''}" style="width:100%" ${hasPosted?'disabled':''}></div>
+        <div><label class="lbl">${t('originalCostLabel')} *</label><input id="asCost" type="number" step="0.01" class="input" value="${d.cost||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
+        <div><label class="lbl">${t('residualValueLabel')}</label><input id="asResidualAbs" type="number" step="0.01" class="input" value="${d.residualAbs!=null?d.residualAbs:''}" placeholder="${model?'من النموذج ('+(parseFloat(d.cost||0)*(model.residualPct||0)/100).toFixed(2)+')':''}" style="width:100%"></div>
+        <div><label class="lbl">${t('accumDepLabel')} (${t('currentPeriod') || 'مُتراكم حتى الآن'})</label><input id="asAccumDep" type="number" step="0.01" class="input" value="${d.accumDep||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
+        <div><label class="lbl">${t('supplierLabel')}</label><input id="asSupplier" class="input" value="${escapeHtml(d.supplier||'')}" style="width:100%"></div>
+        <div><label class="lbl">${t('invoiceNoLabel')}</label><input id="asInvoice" class="input" value="${escapeHtml(d.invoiceNo||'')}" style="width:100%"></div>
+        <div><label class="lbl">${t('locationLabel')}</label><input id="asLocation" class="input" value="${escapeHtml(d.location||'')}" style="width:100%"></div>
+        <div><label class="lbl">${t('custodianLabel')}</label><input id="asCustodian" class="input" value="${escapeHtml(d.custodian||'')}" style="width:100%"></div>
+        <div style="grid-column:1/-1"><label class="lbl">ملاحظات</label><input id="asNotes" class="input" value="${escapeHtml(d.notes||'')}" style="width:100%"></div>
+      </div>
+      ${hasPosted?`<div class="progress-note" style="color:var(--gold-dim);font-size:11px">⚠️ بعض الحقول محمية لأن قيود إهلاك تم ترحيلها مسبقاً.</div>`:''}
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="asCancelBtn">${t('cancelEdit')}</button>
+        <button class="btn" id="asSaveBtn">حفظ الأصل</button>
+      </div>
+    </div>`;
+    overlay.style.display='flex';
+    overlay.querySelector('#asCancelBtn').onclick=()=>{ overlay.style.display='none'; overlay.innerHTML=''; };
+    overlay.querySelector('#asSaveBtn').onclick=async()=>{
+      const name=(overlay.querySelector('#asName').value||'').trim();
+      const modelId=parseInt(overlay.querySelector('#asModelId').value)||0;
+      const cost=parseFloat(overlay.querySelector('#asCost').value)||0;
+      const startDate=overlay.querySelector('#asStart').value||'';
+      if(!name){ showToast(t('assetRequiredName')); return; }
+      if(!cost){ showToast(t('assetRequiredCost')); return; }
+      if(!modelId){ showToast(t('assetRequiredModel')); return; }
+      if(!startDate){ showToast(t('assetRequiredStartDate')); return; }
+      const residualAbsVal=overlay.querySelector('#asResidualAbs').value;
+      const asset = {
+        id: existing ? existing.id : assetNextId(STATE.assets),
+        name, code:overlay.querySelector('#asCode').value, modelId,
+        cost, residualAbs:residualAbsVal!==''?parseFloat(residualAbsVal):null,
+        residualPct:null,
+        accumDep:hasPosted?(d.accumDep||0):parseFloat(overlay.querySelector('#asAccumDep').value)||0,
+        startDate, acquireDate:overlay.querySelector('#asAcquire').value||'',
+        supplier:overlay.querySelector('#asSupplier').value,
+        invoiceNo:overlay.querySelector('#asInvoice').value,
+        location:overlay.querySelector('#asLocation').value,
+        custodian:overlay.querySelector('#asCustodian').value,
+        notes:overlay.querySelector('#asNotes').value,
+        postedPeriods:d.postedPeriods||[], lastDepYM:d.lastDepYM||'', status:'active',
+      };
+      if(existing){ const idx=STATE.assets.findIndex(a=>a.id===existing.id); STATE.assets[idx]=asset; }
+      else STATE.assets.push(asset);
+      await storeSet('assets', STATE.assets);
+      overlay.style.display='none'; overlay.innerHTML='';
+      showToast(t('assetSavedToast'));
+      STATE.ui.view='assets'; renderApp();
+    };
+    overlay.querySelector('#asModelId')?.addEventListener('change', ()=>{
+      // Update residual placeholder when model changes
+      const mid=parseInt(overlay.querySelector('#asModelId').value)||0;
+      const m=STATE.assetModels.find(x=>x.id===mid);
+      const cost=parseFloat(overlay.querySelector('#asCost')?.value)||0;
+      const rInp=overlay.querySelector('#asResidualAbs');
+      if(rInp && m) rInp.placeholder=`من النموذج (${(cost*(m.residualPct||0)/100).toFixed(2)})`;
+    });
+    overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+  }
+  renderModal();
+}
+
+// ── MODAL: Depreciation Schedule ──────────────────────────────────────────────
+function openDepScheduleModal(assetId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const ast = STATE.assets.find(a=>a.id===assetId);
+  if(!ast) return;
+  const model = STATE.assetModels.find(m=>m.id===ast.modelId);
+  const sched = computeDepSchedule(ast);
+  const dep = assetDepreciable(ast);
+  const residual = assetResidualVal(ast);
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:900px;width:98%;max-height:92vh;overflow-y:auto">
+    <h3>${t('depScheduleTitle')} — ${escapeHtml(ast.name)}</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:12px">
+      <span>${t('originalCostLabel')}: <b>${fmt(ast.cost||0)}</b></span>
+      <span>${t('residualValueLabel')}: <b>${fmt(residual)}</b></span>
+      <span>${t('depAmountLabel')}: <b>${fmt(dep)}</b></span>
+      <span>${t('accumDepLabel')}: <b>${fmt(ast.accumDep||0)}</b></span>
+      <span>${t('nbvLabel')}: <b>${fmt(assetNBV(ast))}</b></span>
+      <span>${t('usefulLifeLabel')}: <b>${assetLifeMonths(ast)} ${t('months')}</b></span>
+    </div>
+    <div class="table-wrap" style="max-height:420px;overflow:auto">
+      <table><thead><tr>
+        <th>${t('periodCol')}</th><th>YM</th>
+        <th class="num">${t('openingNBVCol')}</th>
+        <th class="num">${t('depAmtCol')}</th>
+        <th class="num">${t('accumDepCol')}</th>
+        <th class="num">${t('closingNBVCol')}</th>
+        <th>${t('entryStatusCol')}</th>
+        <th>القيد</th>
+      </tr></thead><tbody>
+        ${sched.map(p=>`<tr class="${p.status==='posted'?'total-row':''}">
+          <td>${p.period}</td><td>${isoYMLabel(p.ym)}</td>
+          <td class="num">${fmt(p.openNBV)}</td>
+          <td class="num">${fmt(p.amount)}</td>
+          <td class="num">${fmt(p.accumDep)}</td>
+          <td class="num">${fmt(p.closeNBV)}</td>
+          <td><span style="color:${p.status==='posted'?'var(--green)':'var(--text-dim)'}">${p.status==='posted'?t('postedStatus'):t('draftStatus')}</span></td>
+          <td>${escapeHtml(p.entryNo||'')}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div class="modal-actions" style="justify-content:flex-end;margin-top:12px">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── MODAL: Prepaid Expense Form ───────────────────────────────────────────────
+function openPrepaidModal(peId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = peId ? STATE.prepaidExpenses.find(x=>x.id===peId) : null;
+  const d = existing || { name:'', total:0, startDate:'', periods:12, periodUnit:'months', prepaidAcc:'', expenseAcc:'', notes:'' };
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:640px;width:97%">
+    <h3>${existing?escapeHtml(d.name):t('newPrepaidBtn')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="grid-column:1/-1"><label class="lbl">الاسم *</label><input id="ppName" class="input" value="${escapeHtml(d.name)}" style="width:100%"></div>
+      <div><label class="lbl">المبلغ الإجمالي *</label><input id="ppTotal" type="number" step="0.01" class="input" value="${d.total||0}" style="width:100%"></div>
+      <div><label class="lbl">تاريخ البدء *</label><input id="ppStart" type="date" class="input" value="${d.startDate||''}" style="width:100%"></div>
+      <div><label class="lbl">عدد الفترات *</label>
+        <div style="display:flex;gap:6px">
+          <input id="ppPeriods" type="number" min="1" class="input" value="${d.periods||12}" style="flex:1">
+          <select id="ppUnit" class="input" style="width:95px">
+            <option value="months" ${d.periodUnit==='months'?'selected':''}>${t('prepaidPeriodUnitMonths')}</option>
+          </select>
+        </div>
+      </div>
+      <div><label class="lbl">${t('prepaidPrepaidAccLabel')} *</label>${accPickerHtml('ppPrepaidAcc',d.prepaidAcc)}</div>
+      <div><label class="lbl">${t('prepaidExpenseAccLabel')} *</label>${accPickerHtml('ppExpAcc',d.expenseAcc)}</div>
+      <div style="grid-column:1/-1"><label class="lbl">ملاحظات</label><input id="ppNotes" class="input" value="${escapeHtml(d.notes||'')}" style="width:100%"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="ppCancel">${t('cancelEdit')}</button>
+      <button class="btn" id="ppSave">حفظ</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#ppCancel').onclick=()=>{ overlay.style.display='none'; overlay.innerHTML=''; };
+  overlay.querySelector('#ppSave').onclick=async()=>{
+    const name=(overlay.querySelector('#ppName').value||'').trim();
+    const total=parseFloat(overlay.querySelector('#ppTotal').value)||0;
+    const startDate=overlay.querySelector('#ppStart').value||'';
+    const periods=parseInt(overlay.querySelector('#ppPeriods').value)||12;
+    if(!name||!total||!startDate){ showToast('الاسم والمبلغ وتاريخ البدء مطلوبة'); return; }
+    const pe={
+      id:existing?existing.id:assetNextId(STATE.prepaidExpenses),
+      name, total, startDate, periods,
+      periodUnit:overlay.querySelector('#ppUnit').value,
+      prepaidAcc:overlay.querySelector('#ppPrepaidAcc').value,
+      expenseAcc:overlay.querySelector('#ppExpAcc').value,
+      notes:overlay.querySelector('#ppNotes').value,
+      postedPeriods:existing?existing.postedPeriods||[]:[], allocatedAmt:existing?existing.allocatedAmt||0:0, status:'active'
+    };
+    if(existing){ const idx=STATE.prepaidExpenses.findIndex(x=>x.id===existing.id); STATE.prepaidExpenses[idx]=pe; }
+    else STATE.prepaidExpenses.push(pe);
+    await storeSet('prepaidExpenses',STATE.prepaidExpenses);
+    overlay.style.display='none'; overlay.innerHTML='';
+    showToast(t('prepaidSavedToast')); renderApp();
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── MODAL: Generate Depreciation ─────────────────────────────────────────────
+function openGenerateDepModal(){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const today = new Date().toISOString().slice(0,7);
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:460px;width:97%">
+    <h3>${t('generateDepBtn')}</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">اختر الفترة الزمنية لتوليد قيود الإهلاك التلقائية. سيتم إنشاء قيود كمسودة وتتطلب اعتمادك قبل الترحيل.</p>
+    <div style="margin:16px 0">
+      <label class="lbl">الفترة (YYYY-MM)</label>
+      <input id="genPeriod" type="month" class="input" value="${today}" style="width:100%;direction:ltr">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="genCancel">${t('cancelEdit')}</button>
+      <button class="btn" id="genGo">${t('generateDepBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#genCancel').onclick=()=>{ overlay.style.display='none'; overlay.innerHTML=''; };
+  overlay.querySelector('#genGo').onclick=async()=>{
+    const ym=overlay.querySelector('#genPeriod').value||today;
+    overlay.style.display='none'; overlay.innerHTML='';
+    await generateDepreciation(ym);
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── VIEW: Asset Models List ───────────────────────────────────────────────────
+function renderAssetModelsView(root){
+  const models = STATE.assetModels;
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('assetModelsTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openAssetModelModal(null)">+ ${t('newAssetModelBtn')}</button>
+    </h2>
+    ${!models.length ? `<div class="empty">${t('noAssetModels')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('assetModelNameCol')}</th>
+      <th>${t('assetModelMethodCol')}</th>
+      <th>${t('assetModelLifeCol')}</th>
+      <th>${t('assetModelAssetAccCol')}</th>
+      <th>${t('assetModelAccumAccCol')}</th>
+      <th>${t('assetModelExpAccCol')}</th>
+      <th>الأصول</th>
+      <th></th>
+    </tr></thead><tbody>
+      ${models.map(m=>{
+        const assetCount=STATE.assets.filter(a=>a.modelId===m.id).length;
+        const lifeStr=`${m.life} ${m.lifeUnit==='years'?t('years'):t('months')}`;
+        const accName2=code=>(STATE.accountsByCode[code]||{}).name||code||'—';
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(m.name)}</td>
+          <td>${t('straightLine')}</td>
+          <td>${lifeStr}</td>
+          <td style="font-size:11px">${m.assetAcc?m.assetAcc+' — '+escapeHtml(accName2(m.assetAcc)):'—'}</td>
+          <td style="font-size:11px">${m.accumAcc?m.accumAcc+' — '+escapeHtml(accName2(m.accumAcc)):'—'}</td>
+          <td style="font-size:11px">${m.expenseAcc?m.expenseAcc+' — '+escapeHtml(accName2(m.expenseAcc)):'—'}</td>
+          <td>${assetCount}</td>
+          <td><span class="drill" onclick="openAssetModelModal(${m.id})">✎</span>
+          ${assetCount===0?`<span class="drill" style="margin-right:8px;color:var(--brick)" onclick="deleteAssetModel(${m.id})">✕</span>`:''}
+          </td>
+        </tr>`;}).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+// ── VIEW: Assets List ─────────────────────────────────────────────────────────
+function renderAssetsView(root){
+  const assets = STATE.assets;
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('assetsTitle')}</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openGenerateDepModal()">⚙ ${t('generateDepBtn')}</button>
+        <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openAssetModal(null)">+ ${t('newAssetBtn')}</button>
+      </div>
+    </h2>
+    ${!assets.length ? `<div class="empty">${t('noAssets')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('assetNameCol')}</th>
+      <th>${t('assetCodeCol')}</th>
+      <th>${t('assetModelCol')}</th>
+      <th>${t('assetAcquireDateLabel')}</th>
+      <th class="num">${t('originalCostLabel')}</th>
+      <th class="num">${t('accumDepLabel')}</th>
+      <th class="num">${t('nbvLabel')}</th>
+      <th>${t('assetStatusCol')}</th>
+      <th>${t('nextDepDateLabel')}</th>
+      <th></th>
+    </tr></thead><tbody>
+      ${assets.map(a=>{
+        const model=STATE.assetModels.find(m=>m.id===a.modelId);
+        const st=assetStatus(a);
+        const nextDate=assetNextDepDate(a);
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(a.name)}</td>
+          <td>${escapeHtml(a.code||'')}</td>
+          <td>${escapeHtml(model?model.name:'—')}</td>
+          <td>${a.acquireDate||'—'}</td>
+          <td class="num">${fmt(a.cost||0)}</td>
+          <td class="num">${fmt(a.accumDep||0)}</td>
+          <td class="num">${fmt(assetNBV(a))}</td>
+          <td><span style="color:${assetStatusColor(st)};font-weight:600">${assetStatusLabel(st)}</span></td>
+          <td>${nextDate?nextDate.slice(0,7):'—'}</td>
+          <td style="white-space:nowrap">
+            <span class="drill" title="تعديل" onclick="openAssetModal(${a.id})">✎</span>
+            <span class="drill" style="margin-right:6px;opacity:.7" title="${t('viewScheduleBtn')}" onclick="openDepScheduleModal(${a.id})">📋</span>
+          </td>
+        </tr>`;}).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+// ── VIEW: Depreciation Entries ────────────────────────────────────────────────
+function renderDepEntriesView(root){
+  const entries = STATE.depEntries.slice().reverse();
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('depEntriesTitle')}</span>
+      <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openGenerateDepModal()">⚙ ${t('generateDepBtn')}</button>
+    </h2>
+    ${!entries.length ? `<div class="empty">${t('noDepEntries')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('depPeriodCol')}</th>
+      <th>${t('depDateCol')}</th>
+      <th>${t('depAssetsCol')}</th>
+      <th class="num">${t('depTotalCol')}</th>
+      <th>${t('entryStatusCol')}</th>
+      <th>${t('depEntryNoCol')}</th>
+      <th></th>
+    </tr></thead><tbody>
+      ${entries.map(e=>`<tr>
+        <td style="font-weight:600">${isoYMLabel(e.ym)}</td>
+        <td>${e.date}</td>
+        <td>${e.assetRows.length}</td>
+        <td class="num">${fmt(e.totalAmt)}</td>
+        <td><span style="color:${e.status==='posted'?'var(--green)':'var(--gold-dim)'}">
+          ${e.status==='posted'?t('postedStatus'):t('draftStatus')}</span></td>
+        <td>${escapeHtml(e.entryNo||'—')}</td>
+        <td>
+          ${e.status==='draft'?`<button class="chip" onclick="postDepEntry(${e.id})" style="color:var(--green);border-color:var(--green)">${t('approveDepBtn')}</button>`:''}
+          <span class="drill" style="margin-right:6px;opacity:.7" onclick="showDepEntryDetail(${e.id})">👁</span>
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>`}
+  </div>`;
+  document.querySelectorAll('[onclick^="postDepEntry"]').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{ e.preventDefault(); const id=parseInt(btn.getAttribute('onclick').match(/\d+/)[0]); postDepEntry(id); });
+  });
+}
+
+function showDepEntryDetail(entryId){
+  const entry=STATE.depEntries.find(e=>e.id===entryId);
+  if(!entry) return;
+  const overlay=document.getElementById('newEntryModalOverlay');
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:640px;width:97%">
+    <h3>تفاصيل قيد الإهلاك — ${isoYMLabel(entry.ym)}</h3>
+    <div class="table-wrap" style="max-height:360px;overflow:auto">
+      <table><thead><tr><th>الأصل</th><th class="num">مبلغ الإهلاك</th></tr></thead><tbody>
+        ${entry.assetRows.map(r=>`<tr><td>${escapeHtml(r.assetName)}</td><td class="num">${fmt(r.amount)}</td></tr>`).join('')}
+        <tr class="total-row"><td>الإجمالي</td><td class="num">${fmt(entry.totalAmt)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="modal-actions" style="margin-top:12px">
+      ${entry.status==='draft'?`<button class="btn" onclick="postDepEntry(${entry.id});this.closest('.modal-overlay').style.display='none'">${t('approveDepBtn')}</button>`:''}
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── VIEW: Asset Register Report ───────────────────────────────────────────────
+function renderAssetReportView(root){
+  const assets=STATE.assets;
+  const totalCost=assets.reduce((s,a)=>s+(a.cost||0),0);
+  const totalAccum=assets.reduce((s,a)=>s+(a.accumDep||0),0);
+  const totalNBV=assets.reduce((s,a)=>s+assetNBV(a),0);
+  root.innerHTML=`
+  <div class="card">
+    <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('assetReportTitle')}</h2>
+    <div class="grid-3" style="margin-bottom:16px">
+      ${kpi(t('originalCostLabel'),fmt(totalCost),'','إجمالي تكلفة الأصول')}
+      ${kpi(t('accumDepLabel'),fmt(totalAccum),'','إجمالي مجمع الإهلاك')}
+      ${kpi(t('nbvLabel'),fmt(totalNBV),'','صافي القيمة الدفترية')}
+    </div>
+    ${!assets.length?`<div class="empty">${t('noAssets')}</div>`:`
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('assetNameCol')}</th>
+      <th>${t('assetCodeCol')}</th>
+      <th>${t('assetModelCol')}</th>
+      <th>${t('assetAcquireDateLabel')}</th>
+      <th class="num">${t('originalCostLabel')}</th>
+      <th class="num">${t('accumDepLabel')}</th>
+      <th class="num">${t('nbvLabel')}</th>
+      <th>المدة الإنتاجية</th>
+      <th>المتبقي</th>
+      <th>${t('assetStatusCol')}</th>
+    </tr></thead><tbody>
+      ${assets.map(a=>{
+        const model=STATE.assetModels.find(m=>m.id===a.modelId);
+        const lifeM=model?assetLifeMonths({...a,life:a.life||model.life,lifeUnit:a.lifeUnit||model.lifeUnit}):assetLifeMonths(a);
+        const dep=assetDepreciable(a);
+        const periodicMo=lifeM>0?dep/lifeM:0;
+        const remaining=periodicMo>0?Math.ceil(Math.max(0,dep-(a.accumDep||0))/periodicMo):0;
+        const st=assetStatus(a);
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(a.name)}</td>
+          <td>${escapeHtml(a.code||'')}</td>
+          <td>${escapeHtml(model?model.name:'—')}</td>
+          <td>${a.acquireDate||'—'}</td>
+          <td class="num">${fmt(a.cost||0)}</td>
+          <td class="num">${fmt(a.accumDep||0)}</td>
+          <td class="num">${fmt(assetNBV(a))}</td>
+          <td>${lifeM} ${t('months')}</td>
+          <td>${remaining} ${t('months')}</td>
+          <td><span style="color:${assetStatusColor(st)}">${assetStatusLabel(st)}</span></td>
+        </tr>`;}).join('')}
+      <tr class="total-row">
+        <td colspan="4">الإجمالي</td>
+        <td class="num">${fmt(totalCost)}</td>
+        <td class="num">${fmt(totalAccum)}</td>
+        <td class="num">${fmt(totalNBV)}</td>
+        <td colspan="3"></td>
+      </tr>
+    </tbody></table></div>`}
+  </div>`;
+}
+
+// ── VIEW: Prepaid Expenses ────────────────────────────────────────────────────
+function renderPrepaidExpensesView(root){
+  const list=STATE.prepaidExpenses;
+  root.innerHTML=`
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.notes.replace('currentColor','var(--gold-dim)')} ${t('prepaidExpensesTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openPrepaidModal(null)">+ ${t('newPrepaidBtn')}</button>
+    </h2>
+    ${!list.length?`<div class="empty">${t('noPrepaidExpenses')}</div>`:`
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('prepaidNameCol')}</th>
+      <th class="num">${t('prepaidTotalCol')}</th>
+      <th class="num">${t('prepaidAllocatedCol')}</th>
+      <th class="num">${t('prepaidRemainingCol')}</th>
+      <th>${t('prepaidStartCol')}</th>
+      <th>${t('prepaidEndCol')}</th>
+      <th>الفترات</th>
+      <th>${t('assetStatusCol')}</th>
+      <th></th>
+    </tr></thead><tbody>
+      ${list.map(pe=>{
+        const endDate=addMonthsISO(pe.startDate,pe.periods-1);
+        const remaining=Math.round(((pe.total||0)-(pe.allocatedAmt||0))*100)/100;
+        const pct=pe.total?Math.round((pe.allocatedAmt||0)/pe.total*100):0;
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(pe.name)}</td>
+          <td class="num">${fmt(pe.total||0)}</td>
+          <td class="num">${fmt(pe.allocatedAmt||0)} <span style="font-size:10px;color:var(--text-dim)">(${pct}%)</span></td>
+          <td class="num">${fmt(remaining)}</td>
+          <td>${pe.startDate||'—'}</td>
+          <td>${endDate}</td>
+          <td>${pe.periods} شهر</td>
+          <td><span style="color:${remaining<=0?'var(--gold-dim)':'var(--green)'};">${remaining<=0?t('statusFullyDep'):'نشط'}</span></td>
+          <td style="white-space:nowrap">
+            <span class="drill" onclick="openPrepaidModal(${pe.id})">✎</span>
+            <span class="drill" style="margin-right:6px;opacity:.7" onclick="openPrepaidScheduleModal(${pe.id})">📋</span>
+          </td>
+        </tr>`;}).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function openPrepaidScheduleModal(peId){
+  const pe=STATE.prepaidExpenses.find(x=>x.id===peId);
+  if(!pe) return;
+  const overlay=document.getElementById('newEntryModalOverlay');
+  const sched=computePrepaidSchedule(pe);
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:780px;width:98%;max-height:92vh;overflow-y:auto">
+    <h3>جدول التوزيع — ${escapeHtml(pe.name)}</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:12px">
+      <span>المبلغ الإجمالي: <b>${fmt(pe.total)}</b></span>
+      <span>الفترات: <b>${pe.periods}</b></span>
+      <span>المُوزَّع: <b>${fmt(pe.allocatedAmt||0)}</b></span>
+      <span>المتبقي: <b>${fmt(Math.round(((pe.total||0)-(pe.allocatedAmt||0))*100)/100)}</b></span>
+    </div>
+    <div class="table-wrap" style="max-height:400px;overflow:auto">
+      <table><thead><tr>
+        <th>${t('periodCol')}</th><th>YM</th>
+        <th class="num">رصيد الافتتاح</th>
+        <th class="num">مبلغ التوزيع</th>
+        <th class="num">مجمع التوزيع</th>
+        <th class="num">رصيد الاختتام</th>
+        <th>${t('entryStatusCol')}</th>
+        <th>القيد</th>
+        <th></th>
+      </tr></thead><tbody>
+        ${sched.map(p=>`<tr class="${p.status==='posted'?'total-row':''}">
+          <td>${p.period}</td><td>${isoYMLabel(p.ym)}</td>
+          <td class="num">${fmt(p.openBal)}</td>
+          <td class="num">${fmt(p.amount)}</td>
+          <td class="num">${fmt(p.accum)}</td>
+          <td class="num">${fmt(p.closeBal)}</td>
+          <td><span style="color:${p.status==='posted'?'var(--green)':'var(--text-dim)'}">${p.status==='posted'?t('postedStatus'):t('draftStatus')}</span></td>
+          <td>${escapeHtml(p.entryNo||'')}</td>
+          <td>${p.status==='pending'?`<button class="chip" onclick="postPrepaidPeriod(${pe.id},'${p.ym}');this.closest('.modal-overlay').style.display='none'" style="color:var(--green);border-color:var(--green)">${t('approveDepBtn')}</button>`:''}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div class="modal-actions" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+async function deleteAssetModel(id){
+  showConfirmModal(t('deleteModelConfirm'),'',async()=>{
+    STATE.assetModels=STATE.assetModels.filter(m=>m.id!==id);
+    await storeSet('assetModels',STATE.assetModels);
+    renderApp();
+  });
+}
+
+/* ========================================================================= */
+
 function renderManufacturingView(root){
   if(!STATE.journal.length){ root.innerHTML = emptyState(t('noDataYet'),t('startImporting'),'import'); return; }
   const f = STATE.ui.filters;
