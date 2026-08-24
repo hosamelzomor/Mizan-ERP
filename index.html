@@ -2433,43 +2433,61 @@ function downloadImportTemplate(kind){
         ['استورد هذا الملف أولاً قبل تمبلت "الأصول الثابتة"، لأن كل أصل يحتاج نموذجاً موجوداً مسبقاً ليُربَط به.'],
       ];
     } else if(kind === 'assets'){
-      headers = ['اسم الأصل','الرمز','نموذج الأصل','تاريخ الاستحواذ','تاريخ بداية الإهلاك','التكلفة الأصلية','القيمة المتبقية','مجمع الإهلاك حتى الآن','المورد','رقم الفاتورة','الموقع','المسؤول','ملاحظات'];
+      // Requirement: match the flat, self-contained row shape the company's
+      // existing asset spreadsheets already use (method/life/accounts given
+      // directly on each asset row) instead of requiring a separate
+      // "asset model" link — the importer below groups matching rows into
+      // a model automatically behind the scenes, so the rest of the app
+      // (which still keys assets off a model) needs no changes.
+      headers = ['اسم الأصل','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
       exampleRows = [
-        ['سيارة تويوتا كورولا 2024','FA-0001','سيارات','2024-01-15','2024-02-01',450000,'',0,'معرض النصر للسيارات','INV-5521','فرع القاهرة','أحمد محمد',''],
-        ['لابتوب Dell Latitude','FA-0002','أجهزة كمبيوتر ومعدات','2025-03-01','2025-03-01',35000,'',0,'مكتبة جرير','INV-1187','الإدارة المالية','سارة أحمد',''],
-        ['طقم مكاتب إدارية','FA-0003','أثاث ومفروشات','2025-06-10','2025-07-01',60000,'',15000,'شركة الأثاث الحديث','INV-2044','الإدارة العامة','محمد علي',''],
+        ['طابعة ليزر مكتبية','خط مستقيم','أشهر',36,18000,18000,'2024-03-10','2026-09-01','123302 مجمع إهلاك الأجهزة','523103 مصروف إهلاك الأجهزة'],
+        ['وحدة تكييف مركزي','خط مستقيم','أشهر',96,72000,72000,'2023-07-01','2026-09-01','123402 مجمع إهلاك التكييفات','523104 مصروف إهلاك التكييفات'],
+        ['رف عرض منتجات','خط مستقيم','أشهر',60,9500,8500,'2025-01-20','2026-09-01','123202 مجمع إهلاك الأثاث','523102 مصروف إهلاك الأثاث'],
       ];
       sheetName = 'الأصول الثابتة';
       filename = 'تمبلت_الأصول_الثابتة.xlsx';
       legendRows = [
         ['تعليمات التعبئة'],
-        ['كل سطر يمثل أصلاً ثابتاً واحداً بعينه (سيارة معينة، جهاز معين...).'],
-        ['نموذج الأصل: يجب أن يطابق بالضبط "اسم النموذج" في تمبلت "نماذج الأصول" — استورد ملف النماذج أولاً، وإلا سيتم تجاوز السطر.'],
-        ['الرمز: رمز داخلي اختياري للأصل (لو موجود، وأعدت رفع نفس الرمز مرة أخرى، سيتم تحديث نفس الأصل بدلاً من تكراره).'],
-        ['التواريخ بصيغة YYYY-MM-DD. تاريخ بداية الإهلاك مطلوب.'],
-        ['التكلفة الأصلية مطلوبة ولازم تكون رقماً أكبر من صفر.'],
-        ['القيمة المتبقية: اتركها فارغة لاستخدام نسبة القيمة المتبقية المحددة في نموذج الإهلاك تلقائياً، أو اكتب رقماً ثابتاً بالجنيه ليحل محلها لهذا الأصل بالتحديد.'],
-        ['مجمع الإهلاك حتى الآن: يُستخدم فقط لو كان الأصل مُهلَكاً جزئياً من قبل استخدامك للنظام (رصيد افتتاحي) — اتركه صفراً للأصول الجديدة تماماً.'],
-        ['المورد، رقم الفاتورة، الموقع، المسؤول، ملاحظات: بيانات اختيارية للتوثيق فقط، لا تؤثر على حساب الإهلاك.'],
+        ['كل سطر يمثل أصلاً ثابتاً واحداً بعينه (جهاز معين، قطعة أثاث معينة...) وبياناته كاملة في نفس السطر.'],
+        ['الطريقة: النظام يدعم حالياً "خط مستقيم" فقط.'],
+        ['وحدة المدة / المدة: المدة الإنتاجية للأصل ووحدتها (اكتب "أشهر" أو "سنوات").'],
+        ['القيمة الأصلية: التكلفة الكاملة للأصل عند الشراء.'],
+        ['القيمة القابلة للإهلاك: القيمة الأصلية ناقص أي قيمة متبقية متوقعة — لو ساوت القيمة الأصلية فهذا يعني أن القيمة المتبقية صفر.'],
+        ['تاريخ الاستحواذ: تاريخ شراء الأصل الفعلي.'],
+        ['التاريخ النسبي: التاريخ اللي يبدأ منه حساب الإهلاك فعلياً داخل النظام (مثلاً تاريخ بداية استخدامك للنظام) — قد يكون نفس تاريخ الاستحواذ أو بعده.'],
+        ['حساب مجمع الإهلاك / حساب مصروف الإهلاك: يُكتب رمز الحساب متبوعاً باسمه في نفس الخلية كما بالمثال (123302 مجمع إهلاك الأجهزة)، أو اسم الحساب فقط بدون رمز — لازم يكون الحساب موجوداً بالفعل في شجرة الحسابات قبل الاستيراد.'],
         [''],
+        ['ملاحظة: النظام يجمّع الأصول اللي عندها نفس (الطريقة + المدة + الحسابات) في "نموذج إهلاك" واحد تلقائياً وراء الكواليس — مش محتاج تنشئ نماذج إهلاك يدوياً قبل استيراد هذا الملف.'],
+        ['لو رفعت نفس اسم الأصل تاني، هيتم تحديث نفس الأصل بدلاً من تكراره.'],
         ['احذف صفوف المثال قبل الرفع، أو استبدلها بأصولك الفعلية.'],
       ];
     } else if(kind === 'prepaidExpenses'){
-      headers = ['الاسم','المبلغ الإجمالي','تاريخ البدء','عدد الفترات (أشهر)','حساب المصروف المدفوع مقدماً','حساب المصروف','ملاحظات'];
+      // Same flat column shape as the "assets" template above, reused for
+      // consistency with the existing company spreadsheets: for a prepaid
+      // item, "حساب مجمع الإهلاك" holds the prepaid (current-asset) account
+      // rather than a contra-depreciation account — see legend below.
+      headers = ['اسم الأصل','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
       exampleRows = [
-        ['تأمين شركة سنوي',60000,'2026-01-01',12,'124101 مصروفات مدفوعة مقدماً','611101 مصروف تأمين',''],
-        ['إيجار مقدَّم 6 أشهر',90000,'2026-02-01',6,'124101 مصروفات مدفوعة مقدماً','612101 مصروف إيجار',''],
+        ['تجديد رخصة برنامج محاسبي سنوي','خط مستقيم','أشهر',12,24000,24000,'2026-01-01','2026-01-01','124201 مصروفات مدفوعة مقدماً - برمجيات','614101 مصروف اشتراكات برمجية'],
+        ['تأمين شامل على المخزن','خط مستقيم','أشهر',12,36000,36000,'2026-02-01','2026-02-01','124101 مصروفات مدفوعة مقدماً - تأمين','611101 مصروف تأمين'],
       ];
       sheetName = 'مصروفات مقدماً';
       filename = 'تمبلت_المصروفات_المدفوعة_مقدماً.xlsx';
       legendRows = [
         ['تعليمات التعبئة'],
-        ['كل سطر يمثل مصروفاً واحداً مدفوعاً مقدماً (تأمين، إيجار مقدَّم، اشتراك سنوي...) سيتم توزيعه كمصروف على عدة فترات بدلاً من تحميله دفعة واحدة.'],
-        ['المبلغ الإجمالي: كامل المبلغ المدفوع مقدماً.'],
-        ['تاريخ البدء: بصيغة YYYY-MM-DD — أول شهر يبدأ توزيع المصروف منه.'],
-        ['عدد الفترات (أشهر): على كم شهر يُوزَّع المبلغ (النظام يدعم حالياً التوزيع الشهري فقط).'],
-        ['حساب المصروف المدفوع مقدماً / حساب المصروف: يُكتب رمز الحساب متبوعاً باسمه في نفس الخلية كما بالمثال (124101 مصروفات مدفوعة مقدماً) — يجب أن تكون هذه الحسابات موجودة بالفعل في شجرة الحسابات قبل الاستيراد.'],
+        ['كل سطر يمثل مصروفاً واحداً مدفوعاً مقدماً (تأمين، اشتراك، إيجار مقدَّم...) سيتم توزيعه كمصروف على عدة أشهر بدلاً من تحميله دفعة واحدة.'],
+        ['اسم الأصل: اسم المصروف المدفوع مقدماً.'],
+        ['الطريقة: يُوزَّع المصروف المقدَّم بالتساوي على الأشهر فقط حالياً.'],
+        ['وحدة المدة / المدة: عدد الأشهر اللي هيتوزع عليها المبلغ.'],
+        ['القيمة الأصلية / القيمة القابلة للإهلاك: اكتب نفس المبلغ الإجمالي في الخانتين (المصروف المقدَّم بالكامل قابل للتوزيع، ولا توجد له قيمة متبقية).'],
+        ['تاريخ الاستحواذ: تاريخ الدفع الفعلي.'],
+        ['التاريخ النسبي: أول شهر يبدأ توزيع المصروف منه (غالباً نفس تاريخ الدفع).'],
+        ['حساب مجمع الإهلاك: في سياق المصروفات المقدَّمة تمثل هذه الخانة حساب "المصروف المدفوع مقدماً" نفسه (الأصل المتداول اللي هيتناقص شهرياً).'],
+        ['حساب مصروف الإهلاك: حساب المصروف اللي هيُحمَّل عليه المبلغ كل شهر.'],
+        ['يُكتب رمز الحساب متبوعاً باسمه في نفس الخلية، أو اسم الحساب فقط بدون رمز — لازم يكون الحساب موجوداً بالفعل في شجرة الحسابات قبل الاستيراد.'],
         [''],
+        ['لو رفعت نفس الاسم تاني، هيتم تحديث نفس المصروف بدلاً من تكراره.'],
         ['احذف صفوف المثال قبل الرفع، أو استبدلها ببياناتك الفعلية.'],
       ];
     } else {
@@ -4609,15 +4627,27 @@ async function mergeJournalImport(lines, filename, mode){
 }
 
 // ── Bulk Excel importers: Asset Models / Fixed Assets / Prepaid Expenses ────
-// Shared with the general accounts/groups/journal importers above: same
-// header-normalization + "code name" combined-cell convention for account
-// columns (extractAccCode), so users familiar with those templates find the
-// asset ones consistent.
-function extractAccCode(v){
+// Account cells accept either "code name" combined in one cell (the
+// convention used by the accounts/journal templates) or just a bare account
+// name with no code — real exported spreadsheets from other systems often
+// only carry the name. resolveAccountCell() handles both: a leading numeric
+// code is trusted as-is; otherwise it looks the text up against the chart
+// of accounts by name so the row still resolves to a real account code.
+function resolveAccountCell(v){
   const s = (v||'').toString().trim();
   const m = s.match(/^(\d+)/);
-  return m ? m[1] : s;
+  if(m){
+    const code = m[1];
+    const acc = STATE.accounts.find(a => a.code === code);
+    return { code, name: acc ? acc.name : s.replace(/^\d+\s*/,'').trim() };
+  }
+  if(!s) return { code:'', name:'' };
+  const acc = STATE.accounts.find(a => normalize(a.name||'') === normalize(s) || normalize(a.nameEn||'') === normalize(s));
+  return acc ? { code: acc.code, name: acc.name } : { code: s, name: s };
 }
+// Kept as a thin alias — earlier code and any external references use this
+// name for the "just give me the code" case.
+function extractAccCode(v){ return resolveAccountCell(v).code; }
 function importDateStr(v){
   if(v == null || v === '') return '';
   if(typeof v === 'number'){
@@ -4629,6 +4659,35 @@ function importDateStr(v){
   if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
   return s;
 }
+// The flat "assets" template gives each row its own method/life/accounts
+// instead of naming a shared asset model. To keep the rest of the app (which
+// still keys a fixed asset off a model id for depreciation generation and
+// reporting) unchanged, group imported rows that share the same signature
+// (method + life + lifeUnit + residual% + accounts) into one auto-created
+// model, reusing an existing one if a matching signature already exists —
+// so re-importing the same sheet twice doesn't create duplicate models.
+function findOrCreateAssetModel({ life, lifeUnit, residualPct, assetAcc, accumAcc, expenseAcc, journal, accumName, expenseName }){
+  const sig = m => `${m.life}|${m.lifeUnit}|${m.residualPct}|${m.accumAcc}|${m.expenseAcc}`;
+  const target = `${life}|${lifeUnit}|${residualPct}|${accumAcc}|${expenseAcc}`;
+  const existing = STATE.assetModels.find(m => sig(m) === target);
+  if(existing) return existing;
+  let baseName = (expenseName || accumName || 'نموذج مستورد')
+    .replace(/^\d+\s*/,'')
+    .replace(/^(اهلاك|إهلاك|مصروف\s*اهلاك|مصروف\s*إهلاك|مجمع\s*اهتلاك|مجمع\s*إهلاك)\s*-?\s*/,'')
+    .trim() || 'نموذج مستورد';
+  let name = baseName, n = 2;
+  while(STATE.assetModels.some(m => normalize(m.name) === normalize(name))){ name = `${baseName} ${n}`; n++; }
+  const model = {
+    id: assetNextId(STATE.assetModels), name, method:'straight',
+    life, lifeUnit, residualPct,
+    assetAcc: assetAcc || '', accumAcc, expenseAcc,
+    journal: journal || 'اهلاك الاصول',
+    notes: 'نموذج أُنشئ تلقائياً عند استيراد الأصول الثابتة',
+    status: 'active'
+  };
+  STATE.assetModels.push(model);
+  return model;
+}
 
 async function importAssetModelsFile(file){
   const wb = await readWorkbook(file);
@@ -4637,8 +4696,8 @@ async function importAssetModelsFile(file){
   const headers = Object.keys(rows[0] || {});
   const norm = {}; headers.forEach(h => norm[normalize(h)] = h);
   const nameH = norm[normalize('اسم النموذج')] || norm[normalize('Model Name')] || headers[0];
-  const lifeH = norm[normalize('المدة')] || norm[normalize('Life')];
-  const lifeUnitH = norm[normalize('وحدة المدة')] || norm[normalize('Life Unit')];
+  const lifeH = norm[normalize('المدة')] || norm[normalize('المده')] || norm[normalize('Life')];
+  const lifeUnitH = norm[normalize('وحدة المدة')] || norm[normalize('وحده المده')] || norm[normalize('Life Unit')];
   const residualH = norm[normalize('نسبة القيمة المتبقية %')] || norm[normalize('Residual %')] || norm[normalize('Residual Value %')];
   const assetAccH = norm[normalize('حساب الأصل')] || norm[normalize('Asset Account')];
   const accumAccH = norm[normalize('حساب مجمع الإهلاك')] || norm[normalize('Accum. Dep. Account')];
@@ -4660,9 +4719,9 @@ async function importAssetModelsFile(file){
       life: parseInt(lifeH ? row[lifeH] : 60) || 60,
       lifeUnit,
       residualPct: parseFloat(residualH ? row[residualH] : 0) || 0,
-      assetAcc: extractAccCode(assetAccH ? row[assetAccH] : ''),
-      accumAcc: extractAccCode(accumAccH ? row[accumAccH] : ''),
-      expenseAcc: extractAccCode(expAccH ? row[expAccH] : ''),
+      assetAcc: resolveAccountCell(assetAccH ? row[assetAccH] : '').code,
+      accumAcc: resolveAccountCell(accumAccH ? row[accumAccH] : '').code,
+      expenseAcc: resolveAccountCell(expAccH ? row[expAccH] : '').code,
       journal: (journalH ? (row[journalH]||'') : '').toString().trim() || 'اهلاك الاصول',
       notes: notesH ? (row[notesH]||'').toString().trim() : '',
       status: 'active'
@@ -4682,59 +4741,115 @@ async function importAssetsFile(file){
   const headers = Object.keys(rows[0] || {});
   const norm = {}; headers.forEach(h => norm[normalize(h)] = h);
   const nameH = norm[normalize('اسم الأصل')] || norm[normalize('Asset Name')] || headers[0];
-  const codeH = norm[normalize('الرمز')] || norm[normalize('Code')];
-  const modelH = norm[normalize('نموذج الأصل')] || norm[normalize('Asset Model')];
+  const modelH = norm[normalize('نموذج الأصل')] || norm[normalize('Asset Model')]; // legacy template only
+  const isLegacy = !!modelH;
+
+  if(isLegacy){
+    // Legacy template shape: assets reference a pre-existing model by name.
+    const codeH = norm[normalize('الرمز')] || norm[normalize('Code')];
+    const acquireH = norm[normalize('تاريخ الاستحواذ')] || norm[normalize('Acquire Date')];
+    const startH = norm[normalize('تاريخ بداية الإهلاك')] || norm[normalize('Depreciation Start')];
+    const costH = norm[normalize('التكلفة الأصلية')] || norm[normalize('Original Cost')];
+    const residualH = norm[normalize('القيمة المتبقية')] || norm[normalize('Residual Value')];
+    const accumH = norm[normalize('مجمع الإهلاك حتى الآن')] || norm[normalize('Accumulated Depreciation')];
+    const supplierH = norm[normalize('المورد')] || norm[normalize('Supplier')];
+    const invoiceH = norm[normalize('رقم الفاتورة')] || norm[normalize('Invoice No')];
+    const locationH = norm[normalize('الموقع')] || norm[normalize('Location')];
+    const custodianH = norm[normalize('المسؤول')] || norm[normalize('Custodian')];
+    const notesH = norm[normalize('ملاحظات')] || norm[normalize('Notes')];
+    const byModelName = {}; STATE.assetModels.forEach(m => byModelName[normalize(m.name)] = m);
+    const byCode = {}; STATE.assets.forEach(a => { if(a.code) byCode[a.code] = a; });
+    const byName = {}; STATE.assets.forEach(a => byName[normalize(a.name)] = a);
+    let added=0, updated=0, skipped=0;
+    for(const row of rows){
+      const name = (row[nameH]||'').toString().trim();
+      if(!name) continue;
+      const cost = parseFloat(costH ? row[costH] : 0) || 0;
+      const startDate = importDateStr(startH ? row[startH] : '');
+      const modelName = (modelH ? (row[modelH]||'') : '').toString().trim();
+      const model = byModelName[normalize(modelName)];
+      if(!cost || !startDate || !model){ skipped++; continue; }
+      const code = (codeH ? (row[codeH]||'') : '').toString().trim();
+      const existing = (code && byCode[code]) || byName[normalize(name)];
+      const residualRaw = residualH ? row[residualH] : null;
+      const asset = {
+        id: existing ? existing.id : assetNextId(STATE.assets),
+        name, code, modelId: model.id, cost,
+        residualAbs: (residualRaw!=null && residualRaw!=='') ? parseFloat(residualRaw) : null,
+        residualPct: null,
+        accumDep: parseFloat(accumH ? row[accumH] : 0) || 0,
+        startDate,
+        acquireDate: importDateStr(acquireH ? row[acquireH] : '') || startDate,
+        supplier: supplierH ? (row[supplierH]||'').toString().trim() : '',
+        invoiceNo: invoiceH ? (row[invoiceH]||'').toString().trim() : '',
+        location: locationH ? (row[locationH]||'').toString().trim() : '',
+        custodian: custodianH ? (row[custodianH]||'').toString().trim() : '',
+        notes: notesH ? (row[notesH]||'').toString().trim() : '',
+        postedPeriods: existing ? (existing.postedPeriods||[]) : [],
+        lastDepYM: existing ? (existing.lastDepYM||'') : '',
+        status: 'active'
+      };
+      if(existing){ const idx=STATE.assets.findIndex(a=>a.id===existing.id); STATE.assets[idx]=asset; updated++; }
+      else { STATE.assets.push(asset); added++; }
+      if(code) byCode[code] = asset;
+      byName[normalize(name)] = asset;
+    }
+    await storeSet('assets', STATE.assets);
+    await storeSet('assetModels', STATE.assetModels);
+    return { added, updated, skipped, total: STATE.assets.length };
+  }
+
+  // Current template shape: each row is self-contained (method/life/accounts
+  // given directly) — group into an auto model, see findOrCreateAssetModel.
+  const lifeH = norm[normalize('المدة')] || norm[normalize('المده')] || norm[normalize('Life')];
+  const lifeUnitH = norm[normalize('وحدة المدة')] || norm[normalize('وحده المده')] || norm[normalize('Life Unit')];
+  const costH = norm[normalize('القيمة الأصلية')] || norm[normalize('التكلفة الأصلية')] || norm[normalize('Original Value')] || norm[normalize('Original Cost')];
+  const depreciableH = norm[normalize('القيمة القابلة للإهلاك')] || norm[normalize('Depreciable Value')];
   const acquireH = norm[normalize('تاريخ الاستحواذ')] || norm[normalize('Acquire Date')];
-  const startH = norm[normalize('تاريخ بداية الإهلاك')] || norm[normalize('Depreciation Start')];
-  const costH = norm[normalize('التكلفة الأصلية')] || norm[normalize('Original Cost')];
-  const residualH = norm[normalize('القيمة المتبقية')] || norm[normalize('Residual Value')];
-  const accumH = norm[normalize('مجمع الإهلاك حتى الآن')] || norm[normalize('Accumulated Depreciation')];
-  const supplierH = norm[normalize('المورد')] || norm[normalize('Supplier')];
-  const invoiceH = norm[normalize('رقم الفاتورة')] || norm[normalize('Invoice No')];
-  const locationH = norm[normalize('الموقع')] || norm[normalize('Location')];
-  const custodianH = norm[normalize('المسؤول')] || norm[normalize('Custodian')];
-  const notesH = norm[normalize('ملاحظات')] || norm[normalize('Notes')];
+  const startH = norm[normalize('التاريخ النسبي')] || norm[normalize('تاريخ بداية الإهلاك')] || norm[normalize('Depreciation Start')] || norm[normalize('Pro-rata Date')];
+  const accumAccH = norm[normalize('حساب مجمع الإهلاك')] || norm[normalize('Accum. Dep. Account')];
+  const expAccH = norm[normalize('حساب مصروف الإهلاك')] || norm[normalize('Dep. Expense Account')];
 
-  const byModelName = {}; STATE.assetModels.forEach(m => byModelName[normalize(m.name)] = m);
-  const byCode = {}; STATE.assets.forEach(a => { if(a.code) byCode[a.code] = a; });
   const byName = {}; STATE.assets.forEach(a => byName[normalize(a.name)] = a);
-
   let added=0, updated=0, skipped=0;
   for(const row of rows){
     const name = (row[nameH]||'').toString().trim();
     if(!name) continue;
     const cost = parseFloat(costH ? row[costH] : 0) || 0;
     const startDate = importDateStr(startH ? row[startH] : '');
-    const modelName = (modelH ? (row[modelH]||'') : '').toString().trim();
-    const model = byModelName[normalize(modelName)];
-    if(!cost || !startDate || !model){ skipped++; continue; }
-    const code = (codeH ? (row[codeH]||'') : '').toString().trim();
-    const existing = (code && byCode[code]) || byName[normalize(name)];
-    const residualRaw = residualH ? row[residualH] : null;
+    const life = parseInt(lifeH ? row[lifeH] : 0) || 0;
+    const accum = resolveAccountCell(accumAccH ? row[accumAccH] : '');
+    const expense = resolveAccountCell(expAccH ? row[expAccH] : '');
+    if(!cost || !startDate || !life || !accum.code || !expense.code){ skipped++; continue; }
+    const lifeUnitRaw = (lifeUnitH ? (row[lifeUnitH]||'') : '').toString().trim();
+    const lifeUnit = /سنة|سنو|year/i.test(lifeUnitRaw) ? 'years' : 'months';
+    const depreciable = depreciableH && row[depreciableH]!=null && row[depreciableH]!=='' ? parseFloat(row[depreciableH]) : cost;
+    const residualAbs = Math.max(0, cost - (isNaN(depreciable)?cost:depreciable));
+    const model = findOrCreateAssetModel({
+      life, lifeUnit, residualPct: 0,
+      accumAcc: accum.code, expenseAcc: expense.code,
+      accumName: accum.name, expenseName: expense.name
+    });
+    const existing = byName[normalize(name)];
     const asset = {
       id: existing ? existing.id : assetNextId(STATE.assets),
-      name, code, modelId: model.id,
-      cost,
-      residualAbs: (residualRaw!=null && residualRaw!=='') ? parseFloat(residualRaw) : null,
-      residualPct: null,
-      accumDep: parseFloat(accumH ? row[accumH] : 0) || 0,
+      name, code: existing ? (existing.code||'') : '', modelId: model.id, cost,
+      residualAbs, residualPct: null,
+      accumDep: existing ? (existing.accumDep||0) : 0,
       startDate,
       acquireDate: importDateStr(acquireH ? row[acquireH] : '') || startDate,
-      supplier: supplierH ? (row[supplierH]||'').toString().trim() : '',
-      invoiceNo: invoiceH ? (row[invoiceH]||'').toString().trim() : '',
-      location: locationH ? (row[locationH]||'').toString().trim() : '',
-      custodian: custodianH ? (row[custodianH]||'').toString().trim() : '',
-      notes: notesH ? (row[notesH]||'').toString().trim() : '',
+      supplier:'', invoiceNo:'', location:'', custodian:'',
+      notes: existing ? (existing.notes||'') : '',
       postedPeriods: existing ? (existing.postedPeriods||[]) : [],
       lastDepYM: existing ? (existing.lastDepYM||'') : '',
       status: 'active'
     };
     if(existing){ const idx=STATE.assets.findIndex(a=>a.id===existing.id); STATE.assets[idx]=asset; updated++; }
     else { STATE.assets.push(asset); added++; }
-    if(code) byCode[code] = asset;
     byName[normalize(name)] = asset;
   }
   await storeSet('assets', STATE.assets);
+  await storeSet('assetModels', STATE.assetModels);
   return { added, updated, skipped, total: STATE.assets.length };
 }
 
@@ -4744,37 +4859,72 @@ async function importPrepaidExpensesFile(file){
   const rows = rowsFromSheet(wb, sheetName);
   const headers = Object.keys(rows[0] || {});
   const norm = {}; headers.forEach(h => norm[normalize(h)] = h);
-  const nameH = norm[normalize('الاسم')] || norm[normalize('Name')] || headers[0];
-  const totalH = norm[normalize('المبلغ الإجمالي')] || norm[normalize('Total Amount')];
-  const startH = norm[normalize('تاريخ البدء')] || norm[normalize('Start Date')];
-  const periodsH = norm[normalize('عدد الفترات (أشهر)')] || norm[normalize('عدد الفترات')] || norm[normalize('Periods (Months)')] || norm[normalize('Periods')];
-  const prepaidAccH = norm[normalize('حساب المصروف المدفوع مقدماً')] || norm[normalize('Prepaid Account')];
-  const expAccH = norm[normalize('حساب المصروف')] || norm[normalize('Expense Account')];
-  const notesH = norm[normalize('ملاحظات')] || norm[normalize('Notes')];
+  const isLegacy = !!(norm[normalize('المبلغ الإجمالي')] || norm[normalize('تاريخ البدء')]);
+  const nameH = norm[normalize('اسم الأصل')] || norm[normalize('الاسم')] || norm[normalize('Asset Name')] || norm[normalize('Name')] || headers[0];
 
   const byName = {}; STATE.prepaidExpenses.forEach(p => byName[normalize(p.name)] = p);
   let added=0, updated=0, skipped=0;
-  for(const row of rows){
-    const name = (row[nameH]||'').toString().trim();
-    const total = parseFloat(totalH ? row[totalH] : 0) || 0;
-    const startDate = importDateStr(startH ? row[startH] : '');
-    if(!name || !total || !startDate){ skipped++; continue; }
-    const existing = byName[normalize(name)];
-    const pe = {
-      id: existing ? existing.id : assetNextId(STATE.prepaidExpenses),
-      name, total, startDate,
-      periods: parseInt(periodsH ? row[periodsH] : 12) || 12,
-      periodUnit: 'months',
-      prepaidAcc: extractAccCode(prepaidAccH ? row[prepaidAccH] : ''),
-      expenseAcc: extractAccCode(expAccH ? row[expAccH] : ''),
-      notes: notesH ? (row[notesH]||'').toString().trim() : '',
-      postedPeriods: existing ? (existing.postedPeriods||[]) : [],
-      allocatedAmt: existing ? (existing.allocatedAmt||0) : 0,
-      status: 'active'
-    };
-    if(existing){ const idx=STATE.prepaidExpenses.findIndex(p=>p.id===existing.id); STATE.prepaidExpenses[idx]=pe; updated++; }
-    else { STATE.prepaidExpenses.push(pe); added++; }
-    byName[normalize(name)] = pe;
+
+  if(isLegacy){
+    const totalH = norm[normalize('المبلغ الإجمالي')] || norm[normalize('Total Amount')];
+    const startH = norm[normalize('تاريخ البدء')] || norm[normalize('Start Date')];
+    const periodsH = norm[normalize('عدد الفترات (أشهر)')] || norm[normalize('عدد الفترات')] || norm[normalize('Periods (Months)')] || norm[normalize('Periods')];
+    const prepaidAccH = norm[normalize('حساب المصروف المدفوع مقدماً')] || norm[normalize('Prepaid Account')];
+    const expAccH = norm[normalize('حساب المصروف')] || norm[normalize('Expense Account')];
+    const notesH = norm[normalize('ملاحظات')] || norm[normalize('Notes')];
+    for(const row of rows){
+      const name = (row[nameH]||'').toString().trim();
+      const total = parseFloat(totalH ? row[totalH] : 0) || 0;
+      const startDate = importDateStr(startH ? row[startH] : '');
+      if(!name || !total || !startDate){ skipped++; continue; }
+      const existing = byName[normalize(name)];
+      const pe = {
+        id: existing ? existing.id : assetNextId(STATE.prepaidExpenses),
+        name, total, startDate,
+        periods: parseInt(periodsH ? row[periodsH] : 12) || 12,
+        periodUnit: 'months',
+        prepaidAcc: resolveAccountCell(prepaidAccH ? row[prepaidAccH] : '').code,
+        expenseAcc: resolveAccountCell(expAccH ? row[expAccH] : '').code,
+        notes: notesH ? (row[notesH]||'').toString().trim() : '',
+        postedPeriods: existing ? (existing.postedPeriods||[]) : [],
+        allocatedAmt: existing ? (existing.allocatedAmt||0) : 0,
+        status: 'active'
+      };
+      if(existing){ const idx=STATE.prepaidExpenses.findIndex(p=>p.id===existing.id); STATE.prepaidExpenses[idx]=pe; updated++; }
+      else { STATE.prepaidExpenses.push(pe); added++; }
+      byName[normalize(name)] = pe;
+    }
+  } else {
+    // Current template shape (same columns as the "assets" template): life/
+    // unit give the period count, "حساب مجمع الإهلاك" holds the prepaid
+    // (current-asset) account and "حساب مصروف الإهلاك" the expense account.
+    const lifeH = norm[normalize('المدة')] || norm[normalize('المده')] || norm[normalize('Life')];
+    const costH = norm[normalize('القيمة الأصلية')] || norm[normalize('Original Value')];
+    const startH = norm[normalize('التاريخ النسبي')] || norm[normalize('تاريخ الاستحواذ')] || norm[normalize('Pro-rata Date')];
+    const accumAccH = norm[normalize('حساب مجمع الإهلاك')] || norm[normalize('Accum. Dep. Account')];
+    const expAccH = norm[normalize('حساب مصروف الإهلاك')] || norm[normalize('Dep. Expense Account')];
+    for(const row of rows){
+      const name = (row[nameH]||'').toString().trim();
+      const total = parseFloat(costH ? row[costH] : 0) || 0;
+      const startDate = importDateStr(startH ? row[startH] : '');
+      const periods = parseInt(lifeH ? row[lifeH] : 0) || 0;
+      if(!name || !total || !startDate || !periods){ skipped++; continue; }
+      const existing = byName[normalize(name)];
+      const pe = {
+        id: existing ? existing.id : assetNextId(STATE.prepaidExpenses),
+        name, total, startDate, periods,
+        periodUnit: 'months',
+        prepaidAcc: resolveAccountCell(accumAccH ? row[accumAccH] : '').code,
+        expenseAcc: resolveAccountCell(expAccH ? row[expAccH] : '').code,
+        notes: existing ? (existing.notes||'') : '',
+        postedPeriods: existing ? (existing.postedPeriods||[]) : [],
+        allocatedAmt: existing ? (existing.allocatedAmt||0) : 0,
+        status: 'active'
+      };
+      if(existing){ const idx=STATE.prepaidExpenses.findIndex(p=>p.id===existing.id); STATE.prepaidExpenses[idx]=pe; updated++; }
+      else { STATE.prepaidExpenses.push(pe); added++; }
+      byName[normalize(name)] = pe;
+    }
   }
   await storeSet('prepaidExpenses', STATE.prepaidExpenses);
   return { added, updated, skipped, total: STATE.prepaidExpenses.length };
