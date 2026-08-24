@@ -1261,6 +1261,8 @@ const I18N = {
     prepaidPeriodUnitMonths:'شهري', prepaidPeriodUnitYears:'سنوي', prepaidExpenseAccLabel:'حساب المصروف', prepaidPrepaidAccLabel:'حساب المصروف المدفوع مقدماً',
     noAssetModels:'لا توجد نماذج أصول — أنشئ نموذجاً جديداً للبدء', noAssets:'لا توجد أصول — أنشئ أصلاً جديداً أو استورد من Excel', noDepEntries:'لا توجد قيود إهلاك — اضغط "توليد قيود الإهلاك"', noPrepaidExpenses:'لا توجد مصروفات مدفوعة مقدماً',
     uploadExcelBtn:'⬆ استيراد من Excel', assetModelsImportResult:'تم: ${added} نموذج جديد، ${updated} محدَّث، ${skipped} صف متجاوَز. الإجمالي ${total}.', assetsImportResult:'تم: ${added} أصل جديد، ${updated} محدَّث، ${skipped} صف متجاوَز (اسم نموذج غير موجود أو بيانات ناقصة). الإجمالي ${total}.', prepaidImportResult:'تم: ${added} مصروف جديد، ${updated} محدَّث، ${skipped} صف متجاوَز (بيانات ناقصة). الإجمالي ${total}.',
+    resetDepSystemBtn:'🗑 إعادة تعيين نظام الإهلاك', resetDepSystemConfirmMsg:'سيتم حذف كل بيانات قسم "الأصول والإهلاك" نهائياً: كل نماذج الأصول، الأصول الثابتة، قيود الإهلاك، والمصروفات المدفوعة مقدماً وقيود توزيعها. أي قيود سبق ترحيلها لدفتر اليومية العام لن تُحذف من القيود نفسها ولن يتأثر أي قسم آخر في النظام. هذا الإجراء لا يمكن التراجع عنه.', resetDepSystemToast:'تم مسح بيانات قسم الأصول والإهلاك بالكامل',
+    generatePrepaidDepBtn:'توليد قيود التوزيع', prepaidDepEntriesTitle:'قيود توزيع المصروفات المقدماً', depPrepaidCol:'عدد المصروفات', noPrepaidDepEntries:'لا توجد قيود توزيع — اضغط "توليد قيود التوزيع"',
     amount:'المبلغ',
     newEntryBtn:'قيد جديد', newEntryTitle:'إنشاء قيد يومية جديد',
     newEntryDesc:'رقم القيد يُنشأ تلقائياً عند الحفظ حسب دفتر اليومية والسنة والشهر. القيد لازم يكون متوازناً (إجمالي المدين = إجمالي الدائن) قبل الحفظ.',
@@ -1510,6 +1512,8 @@ const I18N = {
     prepaidPeriodUnitMonths:'Monthly', prepaidPeriodUnitYears:'Yearly', prepaidExpenseAccLabel:'Expense Account', prepaidPrepaidAccLabel:'Prepaid Account',
     noAssetModels:'No asset models yet — create one to get started', noAssets:'No assets yet — create one or import from Excel', noDepEntries:'No depreciation entries — click Generate to create them', noPrepaidExpenses:'No prepaid expenses yet',
     uploadExcelBtn:'⬆ Import from Excel', assetModelsImportResult:'Done: ${added} new model(s), ${updated} updated, ${skipped} row(s) skipped. Total ${total}.', assetsImportResult:'Done: ${added} new asset(s), ${updated} updated, ${skipped} row(s) skipped (model name not found or missing data). Total ${total}.', prepaidImportResult:'Done: ${added} new prepaid item(s), ${updated} updated, ${skipped} row(s) skipped (missing data). Total ${total}.',
+    resetDepSystemBtn:'🗑 Reset Depreciation System', resetDepSystemConfirmMsg:'This permanently deletes all data in the "Assets & Depreciation" section: all asset models, fixed assets, depreciation entries, and prepaid expenses with their allocation entries. Entries already posted to the general journal are not removed from the journal, and no other section of the system is affected. This action cannot be undone.', resetDepSystemToast:'Assets & Depreciation data has been fully cleared',
+    generatePrepaidDepBtn:'Generate Allocation Entries', prepaidDepEntriesTitle:'Prepaid Allocation Entries', depPrepaidCol:'Items', noPrepaidDepEntries:'No allocation entries — click "Generate Allocation Entries"',
     amount:'Amount',
     newEntryBtn:'New Entry', newEntryTitle:'Create New Journal Entry',
     newEntryDesc:'The entry number is generated automatically on save, based on the journal book, year and month. The entry must be balanced (total debit = total credit) before saving.',
@@ -2439,11 +2443,11 @@ function downloadImportTemplate(kind){
       // "asset model" link — the importer below groups matching rows into
       // a model automatically behind the scenes, so the rest of the app
       // (which still keys assets off a model) needs no changes.
-      headers = ['اسم الأصل','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
+      headers = ['اسم الأصل','الرمز','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
       exampleRows = [
-        ['طابعة ليزر مكتبية','خط مستقيم','أشهر',36,18000,18000,'2024-03-10','2026-09-01','123302 مجمع إهلاك الأجهزة','523103 مصروف إهلاك الأجهزة'],
-        ['وحدة تكييف مركزي','خط مستقيم','أشهر',96,72000,72000,'2023-07-01','2026-09-01','123402 مجمع إهلاك التكييفات','523104 مصروف إهلاك التكييفات'],
-        ['رف عرض منتجات','خط مستقيم','أشهر',60,9500,8500,'2025-01-20','2026-09-01','123202 مجمع إهلاك الأثاث','523102 مصروف إهلاك الأثاث'],
+        ['طابعة ليزر مكتبية','','خط مستقيم','أشهر',36,18000,18000,'2024-03-10','2026-09-01','123302 مجمع إهلاك الأجهزة','523103 مصروف إهلاك الأجهزة'],
+        ['وحدة تكييف مركزي','','خط مستقيم','أشهر',96,72000,72000,'2023-07-01','2026-09-01','123402 مجمع إهلاك التكييفات','523104 مصروف إهلاك التكييفات'],
+        ['رف عرض منتجات','','خط مستقيم','أشهر',60,9500,8500,'2025-01-20','2026-09-01','123202 مجمع إهلاك الأثاث','523102 مصروف إهلاك الأثاث'],
       ];
       sheetName = 'الأصول الثابتة';
       filename = 'تمبلت_الأصول_الثابتة.xlsx';
@@ -2459,7 +2463,7 @@ function downloadImportTemplate(kind){
         ['حساب مجمع الإهلاك / حساب مصروف الإهلاك: يُكتب رمز الحساب متبوعاً باسمه في نفس الخلية كما بالمثال (123302 مجمع إهلاك الأجهزة)، أو اسم الحساب فقط بدون رمز — لازم يكون الحساب موجوداً بالفعل في شجرة الحسابات قبل الاستيراد.'],
         [''],
         ['ملاحظة: النظام يجمّع الأصول اللي عندها نفس (الطريقة + المدة + الحسابات) في "نموذج إهلاك" واحد تلقائياً وراء الكواليس — مش محتاج تنشئ نماذج إهلاك يدوياً قبل استيراد هذا الملف.'],
-        ['لو رفعت نفس اسم الأصل تاني، هيتم تحديث نفس الأصل بدلاً من تكراره.'],
+        ['الرمز (اختياري): اتركه فارغاً في الوضع الطبيعي — كل سطر هيتضاف كأصل جديد مستقل حتى لو كان بنفس اسم وبيانات ومبلغ أصل آخر (زي 5 كراسي مكتب متطابقة مثلاً)، ومفيش أي دمج أو استبدال بين الأصول بناءً على تشابه الاسم. لو عايز ترفع نفس الملف تاني بعد كده وتحدّث نفس الأصول بدل ما تتكرر، حط لكل أصل رمزاً فريداً (زي كود جرد داخلي) وهيتم التحديث بناءً عليه فقط.'],
         ['احذف صفوف المثال قبل الرفع، أو استبدلها بأصولك الفعلية.'],
       ];
     } else if(kind === 'prepaidExpenses'){
@@ -2467,10 +2471,10 @@ function downloadImportTemplate(kind){
       // consistency with the existing company spreadsheets: for a prepaid
       // item, "حساب مجمع الإهلاك" holds the prepaid (current-asset) account
       // rather than a contra-depreciation account — see legend below.
-      headers = ['اسم الأصل','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
+      headers = ['اسم الأصل','الرمز','الطريقة','وحدة المدة','المدة','القيمة الأصلية','القيمة القابلة للإهلاك','تاريخ الاستحواذ','التاريخ النسبي','حساب مجمع الإهلاك','حساب مصروف الإهلاك'];
       exampleRows = [
-        ['تجديد رخصة برنامج محاسبي سنوي','خط مستقيم','أشهر',12,24000,24000,'2026-01-01','2026-01-01','124201 مصروفات مدفوعة مقدماً - برمجيات','614101 مصروف اشتراكات برمجية'],
-        ['تأمين شامل على المخزن','خط مستقيم','أشهر',12,36000,36000,'2026-02-01','2026-02-01','124101 مصروفات مدفوعة مقدماً - تأمين','611101 مصروف تأمين'],
+        ['تجديد رخصة برنامج محاسبي سنوي','','خط مستقيم','أشهر',12,24000,24000,'2026-01-01','2026-01-01','124201 مصروفات مدفوعة مقدماً - برمجيات','614101 مصروف اشتراكات برمجية'],
+        ['تأمين شامل على المخزن','','خط مستقيم','أشهر',12,36000,36000,'2026-02-01','2026-02-01','124101 مصروفات مدفوعة مقدماً - تأمين','611101 مصروف تأمين'],
       ];
       sheetName = 'مصروفات مقدماً';
       filename = 'تمبلت_المصروفات_المدفوعة_مقدماً.xlsx';
@@ -2487,7 +2491,7 @@ function downloadImportTemplate(kind){
         ['حساب مصروف الإهلاك: حساب المصروف اللي هيُحمَّل عليه المبلغ كل شهر.'],
         ['يُكتب رمز الحساب متبوعاً باسمه في نفس الخلية، أو اسم الحساب فقط بدون رمز — لازم يكون الحساب موجوداً بالفعل في شجرة الحسابات قبل الاستيراد.'],
         [''],
-        ['لو رفعت نفس الاسم تاني، هيتم تحديث نفس المصروف بدلاً من تكراره.'],
+        ['الرمز (اختياري): اتركه فارغاً في الوضع الطبيعي — كل سطر هيتضاف كمصروف جديد مستقل حتى لو كان بنفس اسم وبيانات ومبلغ مصروف آخر، ومفيش أي دمج بين المصروفات بناءً على تشابه الاسم. لو عايز ترفع نفس الملف تاني بعد كده وتحدّث نفس المصروفات بدل ما تتكرر، حط لكل مصروف رمزاً فريداً وهيتم التحديث بناءً عليه فقط.'],
         ['احذف صفوف المثال قبل الرفع، أو استبدلها ببياناتك الفعلية.'],
       ];
     } else {
@@ -3256,6 +3260,7 @@ const STATE = {
   assets: [],        // Individual assets [{id,modelId,name,code,cost,residual,accumDep,startDate,acquireDate,...}]
   depEntries: [],    // Depreciation batch entries [{id,period,date,assetIds,totalAmt,status,entryNo}]
   prepaidExpenses:[],// Prepaid expense items [{id,name,total,startDate,periods,periodUnit,prepaidAcc,expenseAcc,allocAmt,status,...}]
+  prepaidDepEntries: [], // Prepaid allocation batch entries [{id,ym,date,peRows,totalAmt,status,entryNo}] — same draft/approve flow as depEntries, for prepaidExpenses
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
@@ -4809,8 +4814,17 @@ async function importAssetsFile(file){
   const startH = norm[normalize('التاريخ النسبي')] || norm[normalize('تاريخ بداية الإهلاك')] || norm[normalize('Depreciation Start')] || norm[normalize('Pro-rata Date')];
   const accumAccH = norm[normalize('حساب مجمع الإهلاك')] || norm[normalize('Accum. Dep. Account')];
   const expAccH = norm[normalize('حساب مصروف الإهلاك')] || norm[normalize('Dep. Expense Account')];
+  const codeH = norm[normalize('الرمز')] || norm[normalize('كود الأصل')] || norm[normalize('Code')] || norm[normalize('Asset Code')];
 
-  const byName = {}; STATE.assets.forEach(a => byName[normalize(a.name)] = a);
+  // Match against an existing asset ONLY via an explicit code column, never
+  // by name. Two rows can legitimately share the exact same name/cost/date
+  // (e.g. five identical office chairs bought on the same invoice) — matching
+  // by name alone silently collapses every later row into the first one it
+  // saw, which is exactly the "87 rows in -> 57 assets out" bug this
+  // replaces. With no code given (the common case), every row is always
+  // added as a brand-new asset; a code is only needed if you want re-running
+  // the same file later to update those rows instead of duplicating them.
+  const byCode = {}; STATE.assets.forEach(a => { if(a.code) byCode[a.code.trim()] = a; });
   let added=0, updated=0, skipped=0;
   for(const row of rows){
     const name = (row[nameH]||'').toString().trim();
@@ -4830,10 +4844,11 @@ async function importAssetsFile(file){
       accumAcc: accum.code, expenseAcc: expense.code,
       accumName: accum.name, expenseName: expense.name
     });
-    const existing = byName[normalize(name)];
+    const code = (codeH ? (row[codeH]||'') : '').toString().trim();
+    const existing = code ? byCode[code] : null;
     const asset = {
       id: existing ? existing.id : assetNextId(STATE.assets),
-      name, code: existing ? (existing.code||'') : '', modelId: model.id, cost,
+      name, code, modelId: model.id, cost,
       residualAbs, residualPct: null,
       accumDep: existing ? (existing.accumDep||0) : 0,
       startDate,
@@ -4846,7 +4861,7 @@ async function importAssetsFile(file){
     };
     if(existing){ const idx=STATE.assets.findIndex(a=>a.id===existing.id); STATE.assets[idx]=asset; updated++; }
     else { STATE.assets.push(asset); added++; }
-    byName[normalize(name)] = asset;
+    if(code) byCode[code] = asset;
   }
   await storeSet('assets', STATE.assets);
   await storeSet('assetModels', STATE.assetModels);
@@ -4903,16 +4918,22 @@ async function importPrepaidExpensesFile(file){
     const startH = norm[normalize('التاريخ النسبي')] || norm[normalize('تاريخ الاستحواذ')] || norm[normalize('Pro-rata Date')];
     const accumAccH = norm[normalize('حساب مجمع الإهلاك')] || norm[normalize('Accum. Dep. Account')];
     const expAccH = norm[normalize('حساب مصروف الإهلاك')] || norm[normalize('Dep. Expense Account')];
+    const codeH = norm[normalize('الرمز')] || norm[normalize('Code')];
+    // Same fix as the assets importer: match an existing row only via an
+    // explicit code, never by name, since two genuinely different prepaid
+    // items can share an identical name/amount. No code -> always a new row.
+    const byCode = {}; STATE.prepaidExpenses.forEach(p => { if(p.code) byCode[p.code.trim()] = p; });
     for(const row of rows){
       const name = (row[nameH]||'').toString().trim();
       const total = parseFloat(costH ? row[costH] : 0) || 0;
       const startDate = importDateStr(startH ? row[startH] : '');
       const periods = parseInt(lifeH ? row[lifeH] : 0) || 0;
       if(!name || !total || !startDate || !periods){ skipped++; continue; }
-      const existing = byName[normalize(name)];
+      const code = (codeH ? (row[codeH]||'') : '').toString().trim();
+      const existing = code ? byCode[code] : null;
       const pe = {
         id: existing ? existing.id : assetNextId(STATE.prepaidExpenses),
-        name, total, startDate, periods,
+        name, code, total, startDate, periods,
         periodUnit: 'months',
         prepaidAcc: resolveAccountCell(accumAccH ? row[accumAccH] : '').code,
         expenseAcc: resolveAccountCell(expAccH ? row[expAccH] : '').code,
@@ -4923,7 +4944,7 @@ async function importPrepaidExpensesFile(file){
       };
       if(existing){ const idx=STATE.prepaidExpenses.findIndex(p=>p.id===existing.id); STATE.prepaidExpenses[idx]=pe; updated++; }
       else { STATE.prepaidExpenses.push(pe); added++; }
-      byName[normalize(name)] = pe;
+      if(code) byCode[code] = pe;
     }
   }
   await storeSet('prepaidExpenses', STATE.prepaidExpenses);
@@ -6085,6 +6106,7 @@ async function initApp(){
   STATE.assets = (await storeGet('assets')) || [];
   STATE.depEntries = (await storeGet('depEntries')) || [];
   STATE.prepaidExpenses = (await storeGet('prepaidExpenses')) || [];
+  STATE.prepaidDepEntries = (await storeGet('prepaidDepEntries')) || [];
 
   // Backward compatibility: data imported before the Sequential Journal
   // Number feature existed has no `seq` field. Backfill it once, using the
@@ -9487,6 +9509,77 @@ async function postPrepaidPeriod(peId, ym){
   renderApp();
 }
 
+// Generate a draft allocation entry for a given year-month across all
+// eligible prepaid expenses — mirrors generateDepreciation()/postDepEntry()
+// above for fixed assets, so prepaid expenses get the same
+// generate-as-draft-then-approve-and-post workflow instead of the older
+// one-item-at-a-time posting in postPrepaidPeriod().
+async function generatePrepaidDepreciation(ym){
+  const eligible = STATE.prepaidExpenses.filter(pe => {
+    if(pe.status==='cancelled') return false;
+    if(!pe.startDate) return false;
+    if(isoYM(pe.startDate) > ym) return false;
+    if((pe.postedPeriods||[]).some(p=>p.ym===ym)) return false;
+    return true;
+  });
+  if(!eligible.length){ showToast(t('alreadyGeneratedToast')); return; }
+  const existingDraft = STATE.prepaidDepEntries.find(e=>e.ym===ym && e.status==='draft');
+  if(existingDraft){ showToast(t('alreadyGeneratedToast')); return; }
+
+  const entryId = assetNextId(STATE.prepaidDepEntries);
+  const rows = [];
+  let totalAmt = 0;
+  for(const pe of eligible){
+    const sched = computePrepaidSchedule(pe);
+    const period = sched.find(p=>p.ym===ym);
+    if(!period || period.amount<=0) continue;
+    rows.push({ peId:pe.id, peName:pe.name, amount:period.amount });
+    totalAmt = Math.round((totalAmt + period.amount)*100)/100;
+  }
+  if(!rows.length){ showToast(t('noPrepaidDepEntries')); return; }
+
+  const entry = { id:entryId, ym, date:ym+'-28', peRows:rows, totalAmt, status:'draft', entryNo:'', createdAt:new Date().toISOString() };
+  STATE.prepaidDepEntries.push(entry);
+  await storeSet('prepaidDepEntries', STATE.prepaidDepEntries);
+  showToast(t('depGeneratedToast'));
+  renderApp();
+}
+
+// Post a draft prepaid allocation entry → writes to STATE.journal, one
+// combined journal entry covering every prepaid item in the batch.
+async function postPrepaidDepEntry(entryId){
+  const entry = STATE.prepaidDepEntries.find(e=>e.id===entryId);
+  if(!entry || entry.status !== 'draft') return;
+
+  const entryNo = await reserveNextEntryNumber('عمليات متنوعة', entry.date);
+  const lines = [];
+  let seq = (STATE.meta.journalSeqCounter||0);
+
+  for(const row of entry.peRows){
+    const pe = STATE.prepaidExpenses.find(x=>x.id===row.peId);
+    if(!pe) continue;
+    const expAcc = pe.expenseAcc||'';
+    const prepAcc = pe.prepaidAcc||'';
+    if(!expAcc || !prepAcc) continue;
+    const expName = (STATE.accountsByCode[expAcc]||{}).name||expAcc;
+    const prepName = (STATE.accountsByCode[prepAcc]||{}).name||prepAcc;
+    lines.push({ entry:entryNo, date:entry.date, code:expAcc, name:expName, debit:row.amount, credit:0, cur:'EGP', convFactor:1, partner:pe.name, cc:'', ccAmt:row.amount, product:'', journal:'عمليات متنوعة', curAmt:row.amount, ref:`${pe.name} - ${entry.ym}`, source:'prepaid-auto', seq:++seq });
+    lines.push({ entry:entryNo, date:entry.date, code:prepAcc, name:prepName, debit:0, credit:row.amount, cur:'EGP', convFactor:1, partner:pe.name, cc:'', ccAmt:-row.amount, product:'', journal:'عمليات متنوعة', curAmt:-row.amount, ref:`${pe.name} - ${entry.ym}`, source:'prepaid-auto', seq:++seq });
+    if(!pe.postedPeriods) pe.postedPeriods = [];
+    pe.postedPeriods.push({ ym:entry.ym, entryNo, amount:row.amount });
+    pe.allocatedAmt = Math.round(((pe.allocatedAmt||0)+row.amount)*100)/100;
+  }
+
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  entry.status = 'posted';
+  entry.entryNo = entryNo;
+  await storeSet('prepaidDepEntries', STATE.prepaidDepEntries);
+  await storeSet('prepaidExpenses', STATE.prepaidExpenses);
+  showToast(t('depPostedToast'));
+  renderApp();
+}
+
 // ── Account picker helper ─────────────────────────────────────────────────────
 function accPickerHtml(id, value, placeholder){
   const opts = STATE.accounts.map(a=>`<option value="${a.code}" ${a.code===value?'selected':''}>${a.code} — ${escapeHtml(a.name||'')}</option>`).join('');
@@ -9788,6 +9881,34 @@ function openGenerateDepModal(){
   overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
 }
 
+// ── MODAL: Generate Prepaid Allocation Entries ────────────────────────────────
+function openGeneratePrepaidDepModal(){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const today = new Date().toISOString().slice(0,7);
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:460px;width:97%">
+    <h3>${t('generatePrepaidDepBtn')}</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">اختر الفترة الزمنية لتوليد قيود توزيع المصروفات المدفوعة مقدماً تلقائياً. سيتم إنشاء قيد كمسودة ويتطلب اعتمادك قبل الترحيل.</p>
+    <div style="margin:16px 0">
+      <label class="lbl">الفترة (YYYY-MM)</label>
+      <input id="genPPeriod" type="month" class="input" value="${today}" style="width:100%;direction:ltr">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="genPCancel">${t('cancelEdit')}</button>
+      <button class="btn" id="genPGo">${t('generatePrepaidDepBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#genPCancel').onclick=()=>{ overlay.style.display='none'; overlay.innerHTML=''; };
+  overlay.querySelector('#genPGo').onclick=async()=>{
+    const ym=overlay.querySelector('#genPPeriod').value||today;
+    overlay.style.display='none'; overlay.innerHTML='';
+    await generatePrepaidDepreciation(ym);
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
 // ── VIEW: Asset Models List ───────────────────────────────────────────────────
 // Shared import-strip mounter for the three Assets & Depreciation bulk-Excel
 // controls (models / assets / prepaid expenses): a "download template" link
@@ -9872,6 +9993,7 @@ function renderAssetsView(root){
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('assetsTitle')}</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button type="button" class="btn btn-outline" id="resetDepSystemBtn" title="${t('resetDepSystemBtn')}">${t('resetDepSystemBtn')}</button>
         ${assetImportStripHtml('as')}
         <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openGenerateDepModal()">⚙ ${t('generateDepBtn')}</button>
         <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openAssetModal(null)">+ ${t('newAssetBtn')}</button>
@@ -9912,6 +10034,31 @@ function renderAssetsView(root){
     </tbody></table></div>`}
   </div>`;
   mountAssetImportStrip('as', 'assets', importAssetsFile, 'assetsImportResult');
+  // Full reset of the "Assets & Depreciation" section only: wipes
+  // STATE.assetModels + STATE.assets + STATE.depEntries + STATE.prepaidExpenses
+  // + STATE.prepaidDepEntries (their own stored data, not just UI state) so
+  // the section can be re-imported from scratch. It never touches
+  // STATE.journal, the Chart of Accounts, projects, or any other section —
+  // journal entries already posted from past depreciation runs stay exactly
+  // as they are. Irreversible, so it's gated behind the same in-app confirm
+  // modal used for every other destructive action in this file.
+  const resetDepBtn = document.getElementById('resetDepSystemBtn');
+  if(resetDepBtn) resetDepBtn.addEventListener('click', () => {
+    showConfirmModal(t('resetDepSystemBtn'), t('resetDepSystemConfirmMsg'), async () => {
+      STATE.assetModels = [];
+      STATE.assets = [];
+      STATE.depEntries = [];
+      STATE.prepaidExpenses = [];
+      STATE.prepaidDepEntries = [];
+      await storeSet('assetModels', STATE.assetModels);
+      await storeSet('assets', STATE.assets);
+      await storeSet('depEntries', STATE.depEntries);
+      await storeSet('prepaidExpenses', STATE.prepaidExpenses);
+      await storeSet('prepaidDepEntries', STATE.prepaidDepEntries);
+      renderApp();
+      showToast(t('resetDepSystemToast'));
+    });
+  });
 }
 
 // ── VIEW: Depreciation Entries ────────────────────────────────────────────────
@@ -10035,12 +10182,14 @@ function renderAssetReportView(root){
 // ── VIEW: Prepaid Expenses ────────────────────────────────────────────────────
 function renderPrepaidExpensesView(root){
   const list=STATE.prepaidExpenses;
+  const depEntries=(STATE.prepaidDepEntries||[]).slice().reverse();
   root.innerHTML=`
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span>${ICONS.notes.replace('currentColor','var(--gold-dim)')} ${t('prepaidExpensesTitle')}</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         ${assetImportStripHtml('pp')}
+        <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openGeneratePrepaidDepModal()">⚙ ${t('generatePrepaidDepBtn')}</button>
         <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openPrepaidModal(null)">+ ${t('newPrepaidBtn')}</button>
       </div>
     </h2>
@@ -10075,8 +10224,60 @@ function renderPrepaidExpensesView(root){
           </td>
         </tr>`;}).join('')}
     </tbody></table></div>`}
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('prepaidDepEntriesTitle')}</h2>
+    ${!depEntries.length?`<div class="empty">${t('noPrepaidDepEntries')}</div>`:`
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('depPeriodCol')}</th>
+      <th>${t('depDateCol')}</th>
+      <th>${t('depPrepaidCol')}</th>
+      <th class="num">${t('depTotalCol')}</th>
+      <th>${t('entryStatusCol')}</th>
+      <th>${t('depEntryNoCol')}</th>
+      <th></th>
+    </tr></thead><tbody>
+      ${depEntries.map(e=>`<tr>
+        <td style="font-weight:600">${isoYMLabel(e.ym)}</td>
+        <td>${e.date}</td>
+        <td>${e.peRows.length}</td>
+        <td class="num">${fmt(e.totalAmt)}</td>
+        <td><span style="color:${e.status==='posted'?'var(--green)':'var(--gold-dim)'}">
+          ${e.status==='posted'?t('postedStatus'):t('draftStatus')}</span></td>
+        <td>${escapeHtml(e.entryNo||'—')}</td>
+        <td>
+          ${e.status==='draft'?`<button class="chip" onclick="postPrepaidDepEntry(${e.id})" style="color:var(--green);border-color:var(--green)">${t('approveDepBtn')}</button>`:''}
+          <span class="drill" style="margin-right:6px;opacity:.7" onclick="showPrepaidDepEntryDetail(${e.id})">👁</span>
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>`}
   </div>`;
   mountAssetImportStrip('pp', 'prepaidExpenses', importPrepaidExpensesFile, 'prepaidImportResult');
+  document.querySelectorAll('[onclick^="postPrepaidDepEntry"]').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{ e.preventDefault(); const id=parseInt(btn.getAttribute('onclick').match(/\d+/)[0]); postPrepaidDepEntry(id); });
+  });
+}
+
+function showPrepaidDepEntryDetail(entryId){
+  const entry=STATE.prepaidDepEntries.find(e=>e.id===entryId);
+  if(!entry) return;
+  const overlay=document.getElementById('newEntryModalOverlay');
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:640px;width:97%">
+    <h3>تفاصيل قيد التوزيع — ${isoYMLabel(entry.ym)}</h3>
+    <div class="table-wrap" style="max-height:360px;overflow:auto">
+      <table><thead><tr><th>المصروف</th><th class="num">مبلغ التوزيع</th></tr></thead><tbody>
+        ${entry.peRows.map(r=>`<tr><td>${escapeHtml(r.peName)}</td><td class="num">${fmt(r.amount)}</td></tr>`).join('')}
+        <tr class="total-row"><td>الإجمالي</td><td class="num">${fmt(entry.totalAmt)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="modal-actions" style="margin-top:12px">
+      ${entry.status==='draft'?`<button class="btn" onclick="postPrepaidDepEntry(${entry.id});this.closest('.modal-overlay').style.display='none'">${t('approveDepBtn')}</button>`:''}
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
 }
 
 function openPrepaidScheduleModal(peId){
