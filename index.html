@@ -5241,7 +5241,7 @@ function openNewJournalEntryModal(){
     const balanced = Math.abs(diff) < 0.01;
     const previewNo = peekNextEntryNumber(entryBook, entryDate);
     overlay.innerHTML = `
-      <div class="modal-box" style="max-width:1040px;width:97%;max-height:94vh;overflow-y:auto;display:flex;flex-direction:column">
+      <div class="modal-box" style="max-width:1220px;width:98%;max-height:94vh;overflow-y:auto;display:flex;flex-direction:column">
         <h3>${t('newEntryTitle')}</h3>
         <p>${t('newEntryDesc')}</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:end">
@@ -5274,18 +5274,17 @@ function openNewJournalEntryModal(){
           </div>
         </div>
         <div class="table-wrap" style="max-height:calc(94vh - 330px);min-height:160px;overflow:auto">
-          <table style="table-layout:fixed;min-width:860px"><thead><tr>
+          <table style="table-layout:fixed;min-width:970px"><thead><tr>
             <th style="width:42px"></th>
             <th style="width:120px">${t('entryLineDate')}</th>
-            <th style="width:240px">${t('entryLineAccount')}</th>
-            <th style="width:110px">${t('entryLineDebit')}</th>
-            <th style="width:110px">${t('entryLineCredit')}</th>
-            <th style="width:75px">${t('entryLineCurrency')}</th>
-            <th style="width:150px">${t('entryLineDesc')}</th>
-            <th style="width:120px">${t('entryLinePartner')}</th>
-            <th style="width:95px">${t('entryLineCostCenter')}</th>
-            <th style="width:90px">${t('entryLineProduct')}</th>
-            <th style="width:85px;opacity:.7;font-size:11px">${t('entryLineConvFactor')}</th>
+            <th style="width:260px">${t('entryLineAccount')}</th>
+            <th style="width:120px">${t('entryLineDebit')}</th>
+            <th style="width:120px">${t('entryLineCredit')}</th>
+            <th style="width:80px">${t('entryLineCurrency')}</th>
+            <th style="width:130px">${t('entryLinePartner')}</th>
+            <th style="width:100px">${t('entryLineCostCenter')}</th>
+            <th style="width:95px">${t('entryLineProduct')}</th>
+            <th style="width:90px;opacity:.7;font-size:11px">${t('entryLineConvFactor')}</th>
           </tr></thead><tbody>
             ${draft.map((l,i)=>{
               const factor = Number(l.convFactor)||1;
@@ -5306,7 +5305,6 @@ function openNewJournalEntryModal(){
               <td><select class="input" data-ne-field="cur" data-ne-i="${i}" style="width:100%">
                 ${currencies.map(c=>`<option value="${c}" ${(l.cur||'EGP')===c?'selected':''}>${c}</option>`).join('')}
               </select></td>
-              <td><input type="text" class="input" data-ne-field="ref" data-ne-i="${i}" value="${escapeHtml(l.ref||'')}" style="width:100%"></td>
               <td>
                 <div class="ne-ac-wrap" data-ac-wrap="partner-${i}">
                   <input type="text" class="input ne-ac-input" data-ne-field="partner" data-ne-i="${i}"
