@@ -1263,6 +1263,42 @@ const I18N = {
     uploadExcelBtn:'⬆ استيراد من Excel', assetModelsImportResult:'تم: ${added} نموذج جديد، ${updated} محدَّث، ${skipped} صف متجاوَز. الإجمالي ${total}.', assetsImportResult:'تم: ${added} أصل جديد، ${updated} محدَّث، ${skipped} صف متجاوَز (اسم نموذج غير موجود أو بيانات ناقصة). الإجمالي ${total}.', prepaidImportResult:'تم: ${added} مصروف جديد، ${updated} محدَّث، ${skipped} صف متجاوَز (بيانات ناقصة). الإجمالي ${total}.',
     resetDepSystemBtn:'🗑 إعادة تعيين نظام الإهلاك', resetDepSystemConfirmMsg:'سيتم حذف كل بيانات قسم "الأصول والإهلاك" نهائياً: كل نماذج الأصول، الأصول الثابتة، قيود الإهلاك، والمصروفات المدفوعة مقدماً وقيود توزيعها. أي قيود سبق ترحيلها لدفتر اليومية العام لن تُحذف من القيود نفسها ولن يتأثر أي قسم آخر في النظام. هذا الإجراء لا يمكن التراجع عنه.', resetDepSystemToast:'تم مسح بيانات قسم الأصول والإهلاك بالكامل',
     generatePrepaidDepBtn:'توليد قيود التوزيع', prepaidDepEntriesTitle:'قيود توزيع المصروفات المقدماً', depPrepaidCol:'عدد المصروفات', noPrepaidDepEntries:'لا توجد قيود توزيع — اضغط "توليد قيود التوزيع"',
+    // Sales: customers, products, invoices
+    customersTitle:'العملاء', newCustomerBtn:'عميل جديد', editCustomerTitle:'تعديل عميل', noCustomers:'لا يوجد عملاء — أنشئ عميلاً جديداً',
+    custNameCol:'اسم العميل', custCodeCol:'الرمز', custPhoneCol:'الهاتف', custEmailCol:'البريد الإلكتروني', custAddressCol:'العنوان', custTaxIdCol:'الرقم الضريبي', custArAccCol:'حساب العميل (مدين)',
+    custNameRequired:'اكتب اسم العميل', notesLabel:'ملاحظات', saveBtn:'حفظ', savedToast:'تم الحفظ بنجاح',
+    productsTitle:'المنتجات والخدمات', newProductBtn:'منتج / خدمة جديدة', editProductTitle:'تعديل منتج', noProducts:'لا توجد منتجات — أنشئ منتجاً جديداً',
+    prodNameCol:'اسم المنتج/الخدمة', prodCodeCol:'الرمز', prodUnitCol:'الوحدة', prodPriceCol:'السعر', prodTaxCol:'الضريبة', prodRevAccCol:'حساب الإيراد', prodNameRequired:'اكتب اسم المنتج',
+    invoicesTitle:'فواتير المبيعات', newInvoiceBtn:'فاتورة جديدة', editInvoiceTitle:'تعديل فاتورة', noInvoices:'لا توجد فواتير — أنشئ فاتورة جديدة',
+    invTotalInvoicedKpi:'إجمالي المفوتر', invTotalPaidKpi:'إجمالي المحصّل', invTotalOutstandingKpi:'إجمالي المتبقي',
+    invNoCol:'رقم الفاتورة', invDateCol:'التاريخ', invCustomerCol:'العميل', invTotalCol:'الإجمالي', invPaidCol:'المحصّل', invRemainingCol:'المتبقي',
+    invStatusCancelled:'ملغاة', invStatusPaid:'مسددة بالكامل', invStatusOutstanding:'مستحقة', viewBtn:'عرض', printBtn:'طباعة',
+    invDueDateCol:'تاريخ الاستحقاق', invQtyCol:'الكمية', invUnitPriceCol:'سعر الوحدة', invDiscCol:'الخصم %', invTaxPctCol:'الضريبة %', invLineTotalCol:'الإجمالي',
+    invAddLineBtn:'إضافة صنف', invSubtotalRow:'الإجمالي الفرعي', invDiscountRow:'الخصم', invTaxRow:'الضريبة', invGrandTotalRow:'الإجمالي المستحق',
+    saveDraftBtn:'حفظ كمسودة', postAndPrintBtn:'اعتماد وطباعة', recordPaymentBtn:'تسجيل تحصيل',
+    invCustomerRequired:'اختر عميلاً أولاً', invLinesRequired:'أضف صنفاً واحداً على الأقل بكمية صحيحة', invCustomerNoArAccount:'العميل ليس له حساب مدين محدد — عدّل بيانات العميل أولاً',
+    // Treasury cash vouchers
+    cashVouchersTitle:'سندات القبض والصرف', newReceiptVoucherBtn:'سند قبض جديد', newPaymentVoucherBtn:'سند صرف جديد', noCashVouchers:'لا توجد سندات — أنشئ سنداً جديداً',
+    voucherSerialCol:'رقم السند', voucherTypeCol:'النوع', voucherPartnerCol:'الطرف', voucherAmountCol:'المبلغ', voucherDescCol:'البيان',
+    voucherTypeReceipt:'قبض', voucherTypePayment:'صرف', voucherCashAccCol:'حساب الخزينة/البنك',
+    voucherReceivedFromLabel:'استلمنا من السيد / السادة', voucherPaidToLabel:'صرفنا إلى السيد / السادة',
+    voucherForAccountLabel_receipt:'يُقيد على حساب (العميل/الإيراد)', voucherForAccountLabel_payment:'يُقيد على حساب (المصروف/الالتزام)',
+    voucherDescLabel:'البيان / وذلك عن', voucherFieldsRequired:'من فضلك أكمل كل الحقول المطلوبة بمبلغ أكبر من صفر',
+    companyDocInfoTitle:'بيانات الشركة على المستندات المطبوعة', companyDocInfoDesc:'تظهر هذه البيانات في ترويسة الفواتير وسندات القبض والصرف عند الطباعة.',
+    uploadLogoBtn:'⬆ رفع شعار الشركة', removeLogoBtn:'حذف الشعار', logoTooLargeError:'حجم الصورة كبير جداً — استخدم صورة أصغر من 900 كيلوبايت',
+    customersLinkedDesc:'قائمة العملاء هنا مبنية من أسماء العملاء المستخدمة فعلياً في القيود — أي اسم ظهر في القيود يظهر هنا تلقائياً، وممكن تكمّل بياناته (الهاتف، الرقم الضريبي، حساب مدين) وقتما تحب.',
+    productsLinkedDesc:'قائمة المنتجات هنا مبنية من أسماء الأصناف المستخدمة فعلياً في القيود — أي صنف ظهر في القيود يظهر هنا تلقائياً، وممكن تكمّل بياناته (السعر، الضريبة، حساب الإيراد) وقتما تحب.',
+    invoicesLinkedDesc:'الفواتير المعروضة هنا هي نفسها القيود المرحّلة تحت دفتر "فواتير العملاء" — سواء اتعملت من هنا أو من شاشة القيد العادية أو باستيراد إكسل. تقدر تكمّل بيانات الطباعة الناقصة (الكمية، سعر الوحدة، تاريخ الاستحقاق) وتطبع.',
+    vouchersLinkedDesc:'السندات المعروضة هنا هي نفسها القيود المرحّلة تحت دفتري "سند قبض" و"سند صرف" — سواء اتعملت من هنا أو من شاشة القيد العادية أو باستيراد إكسل. تقدر تضيف رقم سند وبيان واضح وتطبع.',
+    completeDataBtn:'استكمال البيانات', dataCompleteLabel:'مكتملة', dataIncompleteLabel:'بيانات ناقصة', deleteBtn:'حذف',
+    invExtrasHint:'دي بيانات للطباعة فقط (الكمية وسعر الوحدة والخصم) — القيد المحاسبي والمبالغ مش بتتغيّر هنا، وبس بتوضّح إزاي وصلنا للمبلغ الإجمالي المرحّل فعلاً.',
+    invExtrasAmountNote:'الإجمالي المحاسبي الفعلي هو اللي في عمود "الإجمالي" — لو غيّرت الكمية أو السعر هنا مش هيغيّر القيد، بس هيوضح تفاصيل أكتر في المطبوع.',
+    popupBlockedError:'الرجاء السماح بالنوافذ المنبثقة (Pop-ups) لطباعة المستند',
+    multiFileHint:'تقدر تختار أكثر من ملف إكسل مرة واحدة (Ctrl/Cmd أثناء الاختيار) وهيتم استيرادهم بالترتيب.',
+    multiFileImportResultsTitle:'نتيجة استيراد الملفات', fileNameCol:'اسم الملف', journalAddedCol:'أضيف', journalSkippedCol:'متجاوَز',
+    multiFileImportDoneToast:'تم الانتهاء من استيراد كل الملفات',
+    noUnnumberedVouchers:'كل السندات مرقّمة بالفعل', autoNumberVouchersBtn:'ترقيم ${n} سند قديم تلقائياً', vouchersNumberedToast:'تم ترقيم ${n} سند بنجاح',
+    voucherCashLabelHint:'ده اسم الحساب اللي هيظهر في المطبوع بس — تقدر تضيف رقم الحساب أو اسم الفرع أو أي تفاصيل تانية، ومش هيغيّر الحساب المحاسبي الفعلي.',
     amount:'المبلغ',
     newEntryBtn:'قيد جديد', newEntryTitle:'إنشاء قيد يومية جديد',
     newEntryDesc:'رقم القيد يُنشأ تلقائياً عند الحفظ حسب دفتر اليومية والسنة والشهر. القيد لازم يكون متوازناً (إجمالي المدين = إجمالي الدائن) قبل الحفظ.',
@@ -1514,6 +1550,42 @@ const I18N = {
     uploadExcelBtn:'⬆ Import from Excel', assetModelsImportResult:'Done: ${added} new model(s), ${updated} updated, ${skipped} row(s) skipped. Total ${total}.', assetsImportResult:'Done: ${added} new asset(s), ${updated} updated, ${skipped} row(s) skipped (model name not found or missing data). Total ${total}.', prepaidImportResult:'Done: ${added} new prepaid item(s), ${updated} updated, ${skipped} row(s) skipped (missing data). Total ${total}.',
     resetDepSystemBtn:'🗑 Reset Depreciation System', resetDepSystemConfirmMsg:'This permanently deletes all data in the "Assets & Depreciation" section: all asset models, fixed assets, depreciation entries, and prepaid expenses with their allocation entries. Entries already posted to the general journal are not removed from the journal, and no other section of the system is affected. This action cannot be undone.', resetDepSystemToast:'Assets & Depreciation data has been fully cleared',
     generatePrepaidDepBtn:'Generate Allocation Entries', prepaidDepEntriesTitle:'Prepaid Allocation Entries', depPrepaidCol:'Items', noPrepaidDepEntries:'No allocation entries — click "Generate Allocation Entries"',
+    // Sales: customers, products, invoices
+    customersTitle:'Customers', newCustomerBtn:'New Customer', editCustomerTitle:'Edit Customer', noCustomers:'No customers yet — create one',
+    custNameCol:'Customer Name', custCodeCol:'Code', custPhoneCol:'Phone', custEmailCol:'Email', custAddressCol:'Address', custTaxIdCol:'Tax ID', custArAccCol:'Receivable Account',
+    custNameRequired:'Enter the customer name', notesLabel:'Notes', saveBtn:'Save', savedToast:'Saved successfully',
+    productsTitle:'Products & Services', newProductBtn:'New Product/Service', editProductTitle:'Edit Product', noProducts:'No products yet — create one',
+    prodNameCol:'Product/Service Name', prodCodeCol:'Code', prodUnitCol:'Unit', prodPriceCol:'Price', prodTaxCol:'Tax', prodRevAccCol:'Revenue Account', prodNameRequired:'Enter the product name',
+    invoicesTitle:'Sales Invoices', newInvoiceBtn:'New Invoice', editInvoiceTitle:'Edit Invoice', noInvoices:'No invoices yet — create one',
+    invTotalInvoicedKpi:'Total Invoiced', invTotalPaidKpi:'Total Collected', invTotalOutstandingKpi:'Total Outstanding',
+    invNoCol:'Invoice No.', invDateCol:'Date', invCustomerCol:'Customer', invTotalCol:'Total', invPaidCol:'Collected', invRemainingCol:'Remaining',
+    invStatusCancelled:'Cancelled', invStatusPaid:'Fully Paid', invStatusOutstanding:'Outstanding', viewBtn:'View', printBtn:'Print',
+    invDueDateCol:'Due Date', invQtyCol:'Qty', invUnitPriceCol:'Unit Price', invDiscCol:'Discount %', invTaxPctCol:'Tax %', invLineTotalCol:'Total',
+    invAddLineBtn:'Add Item', invSubtotalRow:'Subtotal', invDiscountRow:'Discount', invTaxRow:'Tax', invGrandTotalRow:'Amount Due',
+    saveDraftBtn:'Save as Draft', postAndPrintBtn:'Confirm & Print', recordPaymentBtn:'Record Payment',
+    invCustomerRequired:'Select a customer first', invLinesRequired:'Add at least one item with a valid quantity', invCustomerNoArAccount:'This customer has no receivable account set — edit the customer first',
+    // Treasury cash vouchers
+    cashVouchersTitle:'Receipt & Payment Vouchers', newReceiptVoucherBtn:'New Receipt Voucher', newPaymentVoucherBtn:'New Payment Voucher', noCashVouchers:'No vouchers yet — create one',
+    voucherSerialCol:'Voucher No.', voucherTypeCol:'Type', voucherPartnerCol:'Party', voucherAmountCol:'Amount', voucherDescCol:'Description',
+    voucherTypeReceipt:'Receipt', voucherTypePayment:'Payment', voucherCashAccCol:'Cash/Bank Account',
+    voucherReceivedFromLabel:'Received from', voucherPaidToLabel:'Paid to',
+    voucherForAccountLabel_receipt:'Debit/Credit account (customer/revenue)', voucherForAccountLabel_payment:'Debit/Credit account (expense/liability)',
+    voucherDescLabel:'Description / For', voucherFieldsRequired:'Please complete all required fields with an amount greater than zero',
+    companyDocInfoTitle:'Company Info on Printed Documents', companyDocInfoDesc:'Shown in the letterhead of printed invoices and cash vouchers.',
+    uploadLogoBtn:'⬆ Upload Company Logo', removeLogoBtn:'Remove Logo', logoTooLargeError:'Image is too large — use one under 900 KB',
+    customersLinkedDesc:'This list is built from customer names already used in posted journal entries — any name that appears in the journal shows up here automatically, and you can fill in its details (phone, tax ID, receivable account) whenever you like.',
+    productsLinkedDesc:'This list is built from item names already used in posted journal entries — any item that appears in the journal shows up here automatically, and you can fill in its details (price, tax, revenue account) whenever you like.',
+    invoicesLinkedDesc:'The invoices shown here are the same entries posted under the "فواتير العملاء" (Sales Invoices) book — whether created here, through the regular journal entry screen, or via Excel import. You can fill in missing print details (quantity, unit price, due date) and print.',
+    vouchersLinkedDesc:'The vouchers shown here are the same entries posted under the "سند قبض"/"سند صرف" (Receipt/Payment) books — whether created here, through the regular journal entry screen, or via Excel import. You can add a clear serial number and description and print.',
+    completeDataBtn:'Complete Details', dataCompleteLabel:'Complete', dataIncompleteLabel:'Missing Details', deleteBtn:'Delete',
+    invExtrasHint:'This is print-only detail (quantity, unit price, discount) — the accounting entry and amounts are not changed here; it only clarifies how the already-posted total was reached.',
+    invExtrasAmountNote:'The actual posted total is the one in the "Total" column — changing quantity or price here does not change the journal entry, it only adds detail to the printed document.',
+    popupBlockedError:'Please allow pop-ups to print this document',
+    multiFileHint:'You can select more than one Excel file at once (hold Ctrl/Cmd while selecting) — each one will be imported in turn.',
+    multiFileImportResultsTitle:'File Import Results', fileNameCol:'File Name', journalAddedCol:'Added', journalSkippedCol:'Skipped',
+    multiFileImportDoneToast:'Finished importing all files',
+    noUnnumberedVouchers:'All vouchers are already numbered', autoNumberVouchersBtn:'Auto-number ${n} old voucher(s)', vouchersNumberedToast:'${n} voucher(s) numbered successfully',
+    voucherCashLabelHint:'This is only how the account is displayed on the printed document — you can add an account number, branch name, or other details; it never changes the actual GL account.',
     amount:'Amount',
     newEntryBtn:'New Entry', newEntryTitle:'Create New Journal Entry',
     newEntryDesc:'The entry number is generated automatically on save, based on the journal book, year and month. The entry must be balanced (total debit = total credit) before saving.',
@@ -3261,10 +3333,15 @@ const STATE = {
   depEntries: [],    // Depreciation batch entries [{id,period,date,assetIds,totalAmt,status,entryNo}]
   prepaidExpenses:[],// Prepaid expense items [{id,name,total,startDate,periods,periodUnit,prepaidAcc,expenseAcc,allocAmt,status,...}]
   prepaidDepEntries: [], // Prepaid allocation batch entries [{id,ym,date,peRows,totalAmt,status,entryNo}] — same draft/approve flow as depEntries, for prepaidExpenses
+  customers: [],      // [{id,name,code,phone,email,address,taxRegNo,arAccount,notes,status}] — enrichment records; the customer LIST shown to the user is this merged with every distinct partner name already used in the journal (distinctPartnerNames()), so customers already "living" in posted entries always show up even before anyone fills in their contact details.
+  products: [],        // [{id,name,code,unit,price,revenueAccount,taxPct,notes,status}] — same idea: merged with distinctProductNames() from the journal.
+  invoiceDrafts: [],   // [{id,date,dueDate,customerId,lines:[{productId,name,unit,qty,unitPrice,discountPct,taxPct,lineTotal}],notes}] — invoices not yet posted to the journal. Once posted they stop existing here and become a real journal entry (journal:'فواتير العملاء'); the Sales Invoices page is driven by scanning the journal for that book, not by a separate shadow list.
+  invoiceExtras: [],   // [{entryNo, invoiceNo, dueDate, notes, lineExtras:[{code,qty,unitPrice,discountPct}]}] — print-only supplementary data for invoices that live in the journal (whether posted through this app or entered directly as a normal journal entry / imported from Excel), since the journal itself only stores net debit/credit amounts, not quantities or unit prices.
+  voucherExtras: [],   // [{entryNo, serial, description}] — print-only supplementary data (friendly serial number, wording) for receipt/payment vouchers that live in the journal under 'سند قبض'/'سند صرف'.
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
-  settings: { companyName:'' },
+  settings: { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
   ui: {
     view:'dashboard',
     filters: { start: '', end: '', years: [], months: [] }, // default = ALL periods; user narrows manually
@@ -5356,6 +5433,123 @@ async function reserveNextEntryNumber(bookName, dateISO){
   return `${code}-${y}-${m}-${String(next).padStart(4,'0')}`;
 }
 
+// Standalone document-number sequencer for printed documents (invoices,
+// receipt/payment vouchers) — separate from journal entry numbering above,
+// since a document can exist as a draft (and needs its own permanent number
+// for the customer-facing paper) well before it's ever posted to the
+// journal. One running counter per kind, per calendar year.
+async function nextDocSerial(kind, dateISO){
+  const year = (dateISO||new Date().toISOString().slice(0,10)).slice(0,4);
+  const key = `${kind}-${year}`;
+  STATE.settings.docSerialCounters = STATE.settings.docSerialCounters || {};
+  const next = (STATE.settings.docSerialCounters[key] || 0) + 1;
+  STATE.settings.docSerialCounters[key] = next;
+  await storeSet('settings', STATE.settings);
+  return { year, seq: next, label: `${year}/${String(next).padStart(5,'0')}` };
+}
+
+// A journal line touches treasury (cash-in-hand or a bank account) if its
+// account is classified under the 'البنك والنقد' type in the chart of
+// accounts — this is what identifies a receipt/payment voucher now, instead
+// of relying on the free-text 'دفتر اليومية' (journal book) column matching
+// an exact name. Any entry that moves treasury, however it was entered or
+// imported, is recognized as a voucher.
+function isTreasuryAccount(code){
+  const acc = STATE.accountsByCode[code];
+  return !!acc && acc.type === 'البنك والنقد';
+}
+
+// Receipt/payment vouchers are numbered per physical treasury account and
+// per direction — exactly like a real paper receipt/payment booklet kept at
+// each cash register or bank account: "سند قبض" #1,2,3... for money coming
+// into THIS account, and a completely separate "سند صرف" #1,2,3... for
+// money going out of it. The counter never resets by year (a physical
+// booklet doesn't either) and is stored per account+direction key.
+async function nextVoucherSerial(accountCode, type){
+  STATE.settings.docSerialCounters = STATE.settings.docSerialCounters || {};
+  const key = `voucherSerial-${accountCode}-${type}`;
+  const next = (STATE.settings.docSerialCounters[key] || 0) + 1;
+  STATE.settings.docSerialCounters[key] = next;
+  await storeSet('settings', STATE.settings);
+  const typeLabel = type==='receipt' ? 'سند قبض' : 'سند صرف';
+  const accLabel = accName(accountCode);
+  return { seq: next, serial: `${typeLabel} - ${accLabel} رقم ${String(next).padStart(6,'0')}` };
+}
+
+// Converts a non-negative amount (up to trillions, 2 decimal places) into
+// Arabic words, e.g. 1250.50 -> "ألف ومائتان وخمسون جنيهاً مصرياً وخمسون قرشاً"
+// — used on printed invoices/vouchers where the amount must appear spelled
+// out in words as well as digits (standard practice on formal receipts).
+// Maps an ISO currency code to its Arabic main/minor unit names for use with
+// numberToArabicWords() — e.g. so a voucher against a USD treasury account
+// reads "...دولار أمريكي لا غير" instead of always assuming Egyptian pounds.
+function currencyWordNames(currencyCode){
+  const map = {
+    EGP: ['جنيه مصري', 'قرش'],
+    USD: ['دولار أمريكي', 'سنت'],
+    EUR: ['يورو', 'سنت'],
+    GBP: ['جنيه إسترليني', 'بنس'],
+    SAR: ['ريال سعودي', 'هللة'],
+    AED: ['درهم إماراتي', 'فلس'],
+    KWD: ['دينار كويتي', 'فلس'],
+    QAR: ['ريال قطري', 'درهم'],
+    JOD: ['دينار أردني', 'قرش'],
+  };
+  return map[currencyCode] || [currencyCode || 'جنيه مصري', ''];
+}
+
+function numberToArabicWords(num, currencyMain, currencyMinor){
+  currencyMain = currencyMain || 'جنيه مصري';
+  currencyMinor = currencyMinor || 'قرش';
+  const ones = ['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
+  const onesFem = ['','واحدة','اثنتان','ثلاث','أربع','خمس','ست','سبع','ثمان','تسع'];
+  const teens = ['عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر'];
+  const tens = ['','عشرة','عشرون','ثلاثون','أربعون','خمسون','ستون','سبعون','ثمانون','تسعون'];
+  const hundreds = ['','مائة','مائتان','ثلاثمائة','أربعمائة','خمسمائة','ستمائة','سبعمائة','ثمانمائة','تسعمائة'];
+  function threeDigits(n, fem){
+    if(n===0) return '';
+    const h = Math.floor(n/100), t = Math.floor((n%100)/10), o = n%10;
+    const parts = [];
+    if(h) parts.push(hundreds[h]);
+    const rem = n%100;
+    if(rem>=10 && rem<20) parts.push(teens[rem-10]);
+    else {
+      const oWord = fem ? onesFem[o] : ones[o];
+      if(o) parts.push(oWord);
+      if(t) parts.push(tens[t]);
+    }
+    return parts.join(' و');
+  }
+  function groupWord(n, singular, dualForm, plural, fem){
+    if(n===0) return '';
+    if(n===1) return singular;
+    if(n===2) return dualForm;
+    if(n>=3 && n<=10) return threeDigits(n,fem) + ' ' + plural;
+    return threeDigits(n,fem) + ' ' + singular;
+  }
+  const wholeNum = Math.floor(Math.abs(num));
+  const fraction = Math.round((Math.abs(num) - wholeNum) * 100);
+  const groups = [
+    { div: 1000000000, singular:'مليار', dual:'ملياران', plural:'مليارات' },
+    { div: 1000000, singular:'مليون', dual:'مليونان', plural:'ملايين' },
+    { div: 1000, singular:'ألف', dual:'ألفان', plural:'آلاف' },
+  ];
+  let remaining = wholeNum;
+  const segments = [];
+  for(const g of groups){
+    const count = Math.floor(remaining / g.div);
+    if(count>0){
+      segments.push(groupWord(count, g.singular, g.dual, g.plural, false));
+      remaining = remaining % g.div;
+    }
+  }
+  if(remaining>0 || segments.length===0) segments.push(threeDigits(remaining, false));
+  let text = segments.filter(Boolean).join(' و') + ' ' + currencyMain;
+  if(fraction>0) text += ' و' + threeDigits(fraction, false) + ' ' + currencyMinor;
+  text += ' لا غير';
+  return text;
+}
+
 function blankNewEntryLine(date, journalBook, ref){
   return { entry:'', date, code:'', name:'', cur:'EGP', convFactor:1, partner:'', debit:0, credit:0, cc:'', ccAmt:0, product:'', journal:journalBook, curAmt:0, ref: ref||'', source:'manual-entry' };
 }
@@ -6060,7 +6254,8 @@ async function initApp(){
   if(STATE.meta.journalSeqCounter == null) STATE.meta.journalSeqCounter = 0;
 
   let settings = await storeGet('settings');
-  STATE.settings = settings || { companyName:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  STATE.settings = settings || { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  if(!STATE.settings.docSerialCounters) STATE.settings.docSerialCounters = {};
   STATE.ui.sidebarCollapsed = !!STATE.settings.sidebarCollapsed;
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
   if(!STATE.settings.lang) STATE.settings.lang = 'ar';
@@ -6077,6 +6272,8 @@ async function initApp(){
       {name:'عمليات متنوعة',       code:'MISC'},
       {name:'فواتير العملاء',      code:'INV'},
       {name:'فواتير المورد',       code:'BILL'},
+      {name:'سند قبض',            code:'RCT'},
+      {name:'سند صرف',            code:'PAY'},
     ];
   }
   if(!STATE.settings.journalSerialCounters) STATE.settings.journalSerialCounters = {};
@@ -6107,6 +6304,28 @@ async function initApp(){
   STATE.depEntries = (await storeGet('depEntries')) || [];
   STATE.prepaidExpenses = (await storeGet('prepaidExpenses')) || [];
   STATE.prepaidDepEntries = (await storeGet('prepaidDepEntries')) || [];
+  STATE.customers = (await storeGet('customers')) || [];
+  STATE.products = (await storeGet('products')) || [];
+  STATE.invoiceDrafts = (await storeGet('invoiceDrafts')) || [];
+  STATE.invoiceExtras = (await storeGet('invoiceExtras')) || [];
+  STATE.voucherExtras = (await storeGet('voucherExtras')) || [];
+  // One-time migration from the earlier standalone invoices/cashVouchers
+  // arrays (now replaced by journal-derived lists + these lightweight
+  // extras tables) so nobody's existing drafts silently disappear.
+  if(!STATE.invoiceDrafts.length && !STATE.invoiceExtras.length){
+    const legacyInvoices = (await storeGet('invoices')) || [];
+    STATE.invoiceDrafts = legacyInvoices.filter(i=>i.status==='draft').map(({status,postedEntryNo,paidAmt,...rest})=>rest);
+    STATE.invoiceExtras = legacyInvoices.filter(i=>i.status==='posted' && i.postedEntryNo).map(i=>({
+      entryNo: i.postedEntryNo, invoiceNo: i.invoiceNo, dueDate: i.dueDate, notes: i.notes,
+      lineExtras: (i.lines||[]).map(l=>({ code: (STATE.products.find(p=>p.id===l.productId)||{}).revenueAccount||'', qty:l.qty, unitPrice:l.unitPrice, discountPct:l.discountPct }))
+    }));
+    if(STATE.invoiceDrafts.length || STATE.invoiceExtras.length){ await storeSet('invoiceDrafts', STATE.invoiceDrafts); await storeSet('invoiceExtras', STATE.invoiceExtras); }
+  }
+  if(!STATE.voucherExtras.length){
+    const legacyVouchers = (await storeGet('cashVouchers')) || [];
+    STATE.voucherExtras = legacyVouchers.filter(v=>v.postedEntryNo).map(v=>({ entryNo:v.postedEntryNo, serial:v.serial, description:v.description }));
+    if(STATE.voucherExtras.length) await storeSet('voucherExtras', STATE.voucherExtras);
+  }
 
   // Backward compatibility: data imported before the Sequential Journal
   // Number feature existed has no `seq` field. Backfill it once, using the
@@ -6217,6 +6436,12 @@ const NAV = [
   {id:'depentries', label:'قيود الإهلاك', labelEn:'Depreciation Entries', icon:'cashflow'},
   {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
   {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
+  {section:'المبيعات والفواتير', sectionEn:'Sales & Invoicing'},
+  {id:'customers', label:'العملاء', labelEn:'Customers', icon:'users'},
+  {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
+  {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
+  {section:'الخزنة والسندات', sectionEn:'Treasury & Vouchers'},
+  {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
   {section:'الإعداد', sectionEn:'Setup'},
   {id:'import', label:'الإعداد والاستيراد', labelEn:'Setup & Import', icon:'upload'},
 ];
@@ -7088,6 +7313,10 @@ function renderApp(){
     depentries: renderDepEntriesView,
     assetreport: renderAssetReportView,
     prepaidexpenses: renderPrepaidExpensesView,
+    customers: renderCustomersView,
+    products: renderProductsView,
+    invoices: renderInvoicesView,
+    cashvouchers: renderCashVouchersView,
   };
   (renderers[STATE.ui.view] || renderDashboard)(root);
 
@@ -7656,6 +7885,26 @@ function renderImportView(root){
       </div>
       <a class="btn btn-gold" style="white-space:nowrap" download="${guideFilename}" href="data:application/pdf;base64,${guideB64}">${ICONS.download||''} ${t('userGuideBtn')}</a>
     </div>` : ''}
+    <div class="card">
+      <h2>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('companyDocInfoTitle')}</h2>
+      <div class="desc">${t('companyDocInfoDesc')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label class="lbl">${t('custAddressCol')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
+        <div><label class="lbl">${t('custPhoneCol')}</label><input id="cfgCompanyPhone" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyPhone||'')}"></div>
+        <div><label class="lbl">${t('custEmailCol')}</label><input id="cfgCompanyEmail" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyEmail||'')}"></div>
+        <div><label class="lbl">${t('custTaxIdCol')}</label><input id="cfgCompanyTaxId" class="input" value="${escapeHtml(STATE.settings.companyTaxId||'')}"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          ${STATE.settings.companyLogo?`<img src="${STATE.settings.companyLogo}" style="width:52px;height:52px;object-fit:contain;border-radius:8px;border:1px solid var(--line)">`:''}
+          <label class="btn btn-outline" style="cursor:pointer;margin:0;padding:6px 14px;font-size:11px">
+            ${t('uploadLogoBtn')}
+            <input type="file" id="cfgCompanyLogoInput" accept="image/*" style="display:none">
+          </label>
+          ${STATE.settings.companyLogo?`<button type="button" class="btn btn-outline" id="removeLogoBtn" style="padding:6px 14px;font-size:11px">${t('removeLogoBtn')}</button>`:''}
+        </div>
+      </div>
+    </div>
     <div class="grid-2">
       <div class="card">
         <h2>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${t('importAccountsTitle')}</h2>
@@ -7677,7 +7926,8 @@ function renderImportView(root){
       <h2>${ICONS.upload.replace('currentColor','var(--gold-dim)')} ${t('importJournalTitle')}</h2>
       <div class="desc">${t('importJournalDesc')}</div>
       <button type="button" class="btn btn-outline" data-dl-template="journal" style="margin-bottom:10px">${t('downloadTemplate')}</button>
-      <div class="upload-box"><input type="file" id="fileJournal" accept=".xlsx,.xls,.xlsm"></div>
+      <div class="upload-box"><input type="file" id="fileJournal" accept=".xlsx,.xls,.xlsm" multiple></div>
+      <div class="hint" style="margin-top:4px">${t('multiFileHint')}</div>
       <div id="journalPreviewArea"></div>
     </div>
 
@@ -7710,6 +7960,41 @@ function renderImportView(root){
     downloadImportTemplate(btn.dataset.dlTemplate);
   }));
 
+  // Company info fields used on printed invoices/vouchers (address, phone,
+  // email, tax ID, logo). Saved with the same debounced-on-change pattern as
+  // companyNameInput above.
+  const bindCompanyField = (id, key) => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('change', debounce(async (e) => {
+      STATE.settings[key] = e.target.value.trim();
+      await storeSet('settings', STATE.settings);
+      showToast(t('savedToast'));
+    }, 400));
+  };
+  bindCompanyField('cfgCompanyAddress', 'companyAddress');
+  bindCompanyField('cfgCompanyPhone', 'companyPhone');
+  bindCompanyField('cfgCompanyEmail', 'companyEmail');
+  bindCompanyField('cfgCompanyTaxId', 'companyTaxId');
+  const logoInput = document.getElementById('cfgCompanyLogoInput');
+  if(logoInput) logoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0]; if(!file) return;
+    if(file.size > 900*1024){ showToast(t('logoTooLargeError')); return; }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      STATE.settings.companyLogo = reader.result;
+      await storeSet('settings', STATE.settings);
+      renderApp();
+      showToast(t('savedToast'));
+    };
+    reader.readAsDataURL(file);
+  });
+  const removeLogoBtn = document.getElementById('removeLogoBtn');
+  if(removeLogoBtn) removeLogoBtn.addEventListener('click', async () => {
+    STATE.settings.companyLogo = '';
+    await storeSet('settings', STATE.settings);
+    renderApp();
+  });
+
   const downloadBackupBtn = document.getElementById('downloadBackupBtn');
   if(downloadBackupBtn) downloadBackupBtn.addEventListener('click', downloadFullBackup);
   const restoreBackupInput = document.getElementById('restoreBackupInput');
@@ -7740,16 +8025,65 @@ function renderImportView(root){
   });
 
   document.getElementById('fileJournal').addEventListener('change', async (e) => {
-    const file = e.target.files[0]; if(!file) return;
+    const files = Array.from(e.target.files || []);
+    if(!files.length) return;
     const area = document.getElementById('journalPreviewArea');
-    area.innerHTML = `<div class="progress-note">${t('analyzingFileEllipsis')}</div>`;
-    try{
-      const { wb, sheetName, sheetNames } = await parseFileForPreview(file, 'journal');
-      renderJournalPreview(area, wb, sheetName, sheetNames, file);
-    }catch(err){
-      area.innerHTML = `<div class="progress-note">${t('fileReadFailedError')}${escapeHtml(err.message)}</div>`;
+    if(files.length === 1){
+      const file = files[0];
+      area.innerHTML = `<div class="progress-note">${t('analyzingFileEllipsis')}</div>`;
+      try{
+        const { wb, sheetName, sheetNames } = await parseFileForPreview(file, 'journal');
+        renderJournalPreview(area, wb, sheetName, sheetNames, file);
+      }catch(err){
+        area.innerHTML = `<div class="progress-note">${t('fileReadFailedError')}${escapeHtml(err.message)}</div>`;
+      }
+      return;
     }
+    // Multiple files selected at once: each is parsed and merged in turn
+    // (same detection + validation as the single-file path, using the
+    // default "update" mode), and a combined result log is shown at the
+    // end. A file with undetectable columns is reported and skipped rather
+    // than aborting the whole batch.
+    await importMultipleJournalFiles(files, area);
   });
+}
+
+async function importMultipleJournalFiles(files, area){
+  area.innerHTML = `<div class="progress-note">${t('processingEllipsis')}</div>`;
+  const results = [];
+  for(const file of files){
+    try{
+      const { wb, sheetName } = await parseFileForPreview(file, 'journal');
+      const preview = buildJournalPreview(wb, sheetName, 'import');
+      const missing = ['entry','date','account'].filter(f => !preview.mapping[f]);
+      if(missing.length){
+        results.push({ file: file.name, error: tf('columnsNotDetectedError', {cols: missing.map(m=>FIELD_LABELS[m]).join('، ')}) });
+        continue;
+      }
+      const res = await mergeJournalImport(preview.lines, file.name, 'update');
+      results.push({ file: file.name, added: res.added, skipped: res.skipped });
+    }catch(err){
+      results.push({ file: file.name, error: err.message });
+    }
+  }
+  // renderApp() rebuilds the whole Setup & Import page (refreshing nav
+  // counts, totals, etc.), which replaces #journalPreviewArea with a fresh
+  // empty node — so the results table is written into that fresh node
+  // *after* renderApp() returns, not into the (by then detached) `area`
+  // reference captured before the re-render.
+  renderApp();
+  const freshArea = document.getElementById('journalPreviewArea');
+  if(freshArea) freshArea.innerHTML = `
+    <div class="section-title"><span>${t('multiFileImportResultsTitle')}</span></div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('fileNameCol')}</th><th class="num">${t('journalAddedCol')}</th><th class="num">${t('journalSkippedCol')}</th>
+    </tr></thead><tbody>
+      ${results.map(r=>`<tr>
+        <td>${escapeHtml(r.file)}</td>
+        ${r.error ? `<td colspan="2" style="color:var(--brick)">${escapeHtml(r.error)}</td>` : `<td class="num">${fmtInt(r.added)}</td><td class="num">${fmtInt(r.skipped)}</td>`}
+      </tr>`).join('')}
+    </tbody></table></div>`;
+  showToast(t('multiFileImportDoneToast'));
 }
 
 function renderJournalPreview(area, wb, sheetName, sheetNames, file){
@@ -9578,6 +9912,1017 @@ async function postPrepaidDepEntry(entryId){
   await storeSet('prepaidExpenses', STATE.prepaidExpenses);
   showToast(t('depPostedToast'));
   renderApp();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SALES: Customers, Products, Invoices, and Treasury Cash Vouchers
+//
+// Design note: none of this is a parallel bookkeeping system. Customers and
+// products are the same partner/product names already used in the journal
+// (distinctPartnerNames()/distinctProductNames()), just with an optional
+// contact-info sheet attached. Invoices and cash vouchers are read directly
+// off STATE.journal by scanning for the 'فواتير العملاء' / 'سند قبض' /
+// 'سند صرف' books — an invoice or voucher entered the normal way in the
+// General Journal screen, or imported from Excel, shows up here exactly the
+// same as one created from this page. The small *Extras/*Drafts arrays only
+// hold print-only details the journal has no room for (quantities, unit
+// prices, due dates, a friendly serial) — never the amounts themselves.
+// ══════════════════════════════════════════════════════════════════════════
+
+function normalizeKey(s){ return normalize(s||'').toLowerCase(); }
+
+// ── VIEW: Customers ───────────────────────────────────────────────────────────
+// Every partner name that has ever appeared on a journal line is a
+// "customer" here automatically; STATE.customers only adds optional contact
+// details (phone/address/tax id/receivable account) on top of that name.
+function renderCustomersView(root){
+  const byKey = new Map(STATE.customers.map(c=>[normalizeKey(c.name), c]));
+  const journalNames = distinctPartnerNames();
+  const rows = [];
+  journalNames.forEach(name=>{
+    const rec = byKey.get(normalizeKey(name));
+    rows.push(rec ? {...rec, fromJournal:true} : { id:null, name, code:'', phone:'', taxRegNo:'', arAccount:'', fromJournal:true, complete:false });
+    if(rec) byKey.delete(normalizeKey(name));
+  });
+  // Customers created manually here that haven't posted any journal line yet
+  byKey.forEach(rec => rows.push({...rec, fromJournal:false}));
+  rows.forEach(r=>{ r.complete = !!(r.id!=null && r.phone && r.arAccount); });
+  rows.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.users.replace('currentColor','var(--gold-dim)')} ${t('customersTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openCustomerModal(null)">+ ${t('newCustomerBtn')}</button>
+    </h2>
+    <div class="desc">${t('customersLinkedDesc')}</div>
+    ${!rows.length ? `<div class="empty">${t('noCustomers')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('custNameCol')}</th><th>${t('custCodeCol')}</th><th>${t('custPhoneCol')}</th>
+      <th>${t('custTaxIdCol')}</th><th>${t('custArAccCol')}</th><th>${t('assetStatusCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(c=>`<tr>
+        <td style="font-weight:600">${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.code||'—')}</td>
+        <td dir="ltr" style="text-align:right">${escapeHtml(c.phone||'—')}</td>
+        <td>${escapeHtml(c.taxRegNo||'—')}</td>
+        <td>${escapeHtml(c.arAccount||'—')}</td>
+        <td><span style="color:${c.complete?'var(--green)':'var(--gold-dim)'}">${c.complete?t('dataCompleteLabel'):t('dataIncompleteLabel')}</span></td>
+        <td>${c.id!=null
+          ? `<span class="drill" onclick="openCustomerModal(${c.id})">✎</span>`
+          : `<span class="drill" onclick="openCustomerModal(null, ${JSON.stringify(c.name).replace(/"/g,'&quot;')})">${t('completeDataBtn')}</span>`}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function openCustomerModal(custId, prefillName){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = custId ? STATE.customers.find(c=>c.id===custId) : null;
+  const arAccounts = STATE.accounts.filter(a=>a.type==='المدين');
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:520px;width:97%">
+    <h3>${existing ? t('editCustomerTitle') : t('newCustomerBtn')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label class="lbl">${t('custNameCol')}</label><input id="custName" class="input" value="${escapeHtml(existing?.name||prefillName||'')}" ${prefillName?'readonly':''}></div>
+      <div><label class="lbl">${t('custCodeCol')}</label><input id="custCode" class="input" value="${escapeHtml(existing?.code||'')}"></div>
+      <div><label class="lbl">${t('custPhoneCol')}</label><input id="custPhone" class="input" dir="ltr" value="${escapeHtml(existing?.phone||'')}"></div>
+      <div><label class="lbl">${t('custEmailCol')}</label><input id="custEmail" class="input" dir="ltr" value="${escapeHtml(existing?.email||'')}"></div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('custAddressCol')}</label><input id="custAddress" class="input" value="${escapeHtml(existing?.address||'')}"></div>
+      <div><label class="lbl">${t('custTaxIdCol')}</label><input id="custTaxId" class="input" value="${escapeHtml(existing?.taxRegNo||'')}"></div>
+      <div><label class="lbl">${t('custArAccCol')}</label>
+        <select id="custArAccount" class="input">
+          <option value="">—</option>
+          ${arAccounts.map(a=>`<option value="${a.code}" ${existing?.arAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('notesLabel')}</label><textarea id="custNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveCustBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveCustBtn').onclick = async () => {
+    const name = overlay.querySelector('#custName').value.trim();
+    if(!name){ showToast(t('custNameRequired')); return; }
+    const rec = {
+      id: existing ? existing.id : assetNextId(STATE.customers),
+      name,
+      code: overlay.querySelector('#custCode').value.trim(),
+      phone: overlay.querySelector('#custPhone').value.trim(),
+      email: overlay.querySelector('#custEmail').value.trim(),
+      address: overlay.querySelector('#custAddress').value.trim(),
+      taxRegNo: overlay.querySelector('#custTaxId').value.trim(),
+      arAccount: overlay.querySelector('#custArAccount').value,
+      notes: overlay.querySelector('#custNotes').value.trim(),
+      status: 'active'
+    };
+    if(existing){ const idx=STATE.customers.findIndex(c=>c.id===existing.id); STATE.customers[idx]=rec; }
+    else STATE.customers.push(rec);
+    await storeSet('customers', STATE.customers);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── VIEW: Products & Services ─────────────────────────────────────────────────
+// Same idea as customers: every product name already used on a journal line
+// (distinctProductNames()) shows up automatically; STATE.products only adds
+// the optional price/unit/tax/revenue-account defaults on top.
+function renderProductsView(root){
+  const byKey = new Map(STATE.products.map(p=>[normalizeKey(p.name),p]));
+  const journalNames = distinctProductNames();
+  const rows = [];
+  journalNames.forEach(name=>{
+    const rec = byKey.get(normalizeKey(name));
+    rows.push(rec ? {...rec, fromJournal:true} : { id:null, name, code:'', unit:'', price:0, taxPct:0, revenueAccount:'', fromJournal:true });
+    if(rec) byKey.delete(normalizeKey(name));
+  });
+  byKey.forEach(rec => rows.push({...rec, fromJournal:false}));
+  rows.forEach(r=>{ r.complete = !!(r.id!=null && r.revenueAccount); });
+  rows.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.target.replace('currentColor','var(--gold-dim)')} ${t('productsTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openProductModal(null)">+ ${t('newProductBtn')}</button>
+    </h2>
+    <div class="desc">${t('productsLinkedDesc')}</div>
+    ${!rows.length ? `<div class="empty">${t('noProducts')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th><th>${t('prodUnitCol')}</th>
+      <th class="num">${t('prodPriceCol')}</th><th class="num">${t('prodTaxCol')}</th><th>${t('prodRevAccCol')}</th>
+      <th>${t('assetStatusCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(p=>`<tr>
+        <td style="font-weight:600">${escapeHtml(p.name)}</td>
+        <td>${escapeHtml(p.code||'—')}</td>
+        <td>${escapeHtml(p.unit||'—')}</td>
+        <td class="num">${fmt(p.price||0)}</td>
+        <td class="num">${p.taxPct||0}%</td>
+        <td>${escapeHtml(p.revenueAccount||'—')}</td>
+        <td><span style="color:${p.complete?'var(--green)':'var(--gold-dim)'}">${p.complete?t('dataCompleteLabel'):t('dataIncompleteLabel')}</span></td>
+        <td>${p.id!=null
+          ? `<span class="drill" onclick="openProductModal(${p.id})">✎</span>`
+          : `<span class="drill" onclick="openProductModal(null, ${JSON.stringify(p.name).replace(/"/g,'&quot;')})">${t('completeDataBtn')}</span>`}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function openProductModal(prodId, prefillName){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = prodId ? STATE.products.find(p=>p.id===prodId) : null;
+  const revAccounts = STATE.accounts.filter(a=>a.type==='الدخل');
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:480px;width:97%">
+    <h3>${existing ? t('editProductTitle') : t('newProductBtn')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('prodNameCol')}</label><input id="prodName" class="input" value="${escapeHtml(existing?.name||prefillName||'')}" ${prefillName?'readonly':''}></div>
+      <div><label class="lbl">${t('prodCodeCol')}</label><input id="prodCode" class="input" value="${escapeHtml(existing?.code||'')}"></div>
+      <div><label class="lbl">${t('prodUnitCol')}</label><input id="prodUnit" class="input" value="${escapeHtml(existing?.unit||'قطعة')}"></div>
+      <div><label class="lbl">${t('prodPriceCol')}</label><input id="prodPrice" type="number" step="0.01" class="input" value="${existing?.price||0}"></div>
+      <div><label class="lbl">${t('prodTaxCol')}</label><input id="prodTax" type="number" step="0.01" class="input" value="${existing?.taxPct||0}"></div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('prodRevAccCol')}</label>
+        <select id="prodRevAccount" class="input">
+          <option value="">—</option>
+          ${revAccounts.map(a=>`<option value="${a.code}" ${existing?.revenueAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('notesLabel')}</label><textarea id="prodNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveProdBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveProdBtn').onclick = async () => {
+    const name = overlay.querySelector('#prodName').value.trim();
+    if(!name){ showToast(t('prodNameRequired')); return; }
+    const rec = {
+      id: existing ? existing.id : assetNextId(STATE.products),
+      name,
+      code: overlay.querySelector('#prodCode').value.trim(),
+      unit: overlay.querySelector('#prodUnit').value.trim() || 'قطعة',
+      price: parseFloat(overlay.querySelector('#prodPrice').value)||0,
+      taxPct: parseFloat(overlay.querySelector('#prodTax').value)||0,
+      revenueAccount: overlay.querySelector('#prodRevAccount').value,
+      notes: overlay.querySelector('#prodNotes').value.trim(),
+      status: 'active'
+    };
+    if(existing){ const idx=STATE.products.findIndex(p=>p.id===existing.id); STATE.products[idx]=rec; }
+    else STATE.products.push(rec);
+    await storeSet('products', STATE.products);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Invoice line-item math (used while composing a not-yet-posted draft) ─────
+function computeInvoiceTotals(lines){
+  let subtotal=0, discountTotal=0, taxTotal=0;
+  lines.forEach(l=>{
+    const gross = (l.qty||0) * (l.unitPrice||0);
+    const disc = gross * ((l.discountPct||0)/100);
+    const net = gross - disc;
+    const tax = net * ((l.taxPct||0)/100);
+    subtotal += gross; discountTotal += disc; taxTotal += tax;
+    l.lineTotal = Math.round((net+tax)*100)/100;
+  });
+  subtotal = Math.round(subtotal*100)/100;
+  discountTotal = Math.round(discountTotal*100)/100;
+  taxTotal = Math.round(taxTotal*100)/100;
+  const grandTotal = Math.round((subtotal-discountTotal+taxTotal)*100)/100;
+  return { subtotal, discountTotal, taxTotal, grandTotal };
+}
+
+// ── Reading invoices straight out of the journal ──────────────────────────────
+// Any entry posted under the 'فواتير العملاء' book — whether created from
+// this page, typed directly into the General Journal screen, or brought in
+// by an Excel import — is grouped by entry number into one invoice row here.
+// STATE.invoiceExtras only adds the print-only details (due date, per-line
+// quantity/unit price/discount) the journal has no field for.
+function getJournalInvoices(){
+  const groups = {};
+  STATE.journal.forEach(l=>{
+    if(l.journal !== 'فواتير العملاء') return;
+    (groups[l.entry] = groups[l.entry] || []).push(l);
+  });
+  const taxAcc = '212102';
+  return Object.keys(groups).map(entryNo=>{
+    const gl = groups[entryNo];
+    const arLine = gl.find(l=>/^112/.test(l.code) && l.debit>0) || gl.find(l=>l.debit>0);
+    const taxLines = gl.filter(l=>l.code===taxAcc);
+    const revenueLines = gl.filter(l=>l!==arLine && !taxLines.includes(l) && l.credit>0);
+    const taxTotal = Math.round(taxLines.reduce((s,l)=>s+l.credit,0)*100)/100;
+    const grandTotal = Math.round((arLine ? arLine.debit : revenueLines.reduce((s,l)=>s+l.credit,0)+taxTotal)*100)/100;
+    const extras = STATE.invoiceExtras.find(e=>e.entryNo===entryNo) || null;
+    const paidAmt = journalReceiptsAgainst(entryNo, extras?.invoiceNo);
+    return {
+      entryNo, date: gl.reduce((min,l)=> (!min||l.date<min)?l.date:min, ''),
+      invoiceNo: extras?.invoiceNo || entryNo,
+      customerName: arLine?.partner || '—', arAccount: arLine?.code || '',
+      lines: revenueLines.map(l=>({ code:l.code, name:l.product||accName(l.code), amount:l.credit })),
+      taxTotal, grandTotal, paidAmt, dueDate: extras?.dueDate||'', notes: extras?.notes||'',
+      lineExtras: extras?.lineExtras || [], hasExtras: !!extras
+    };
+  }).sort((a,b)=> b.date.localeCompare(a.date) || b.entryNo.localeCompare(a.entryNo));
+}
+
+// Sums receipt-voucher journal lines that reference a given invoice (by
+// entry number or, if assigned, its friendlier invoiceNo) — this is how
+// "amount collected" is derived without a separate paidAmt field to keep in
+// sync by hand.
+function journalReceiptsAgainst(entryNo, invoiceNo){
+  const keys = [entryNo, invoiceNo].filter(Boolean);
+  if(!keys.length) return 0;
+  const total = getJournalVouchers()
+    .filter(v => v.type==='receipt' && keys.some(k=>(v.description||'').includes(k)))
+    .reduce((s,v)=>s+v.amount, 0);
+  return Math.round(total*100)/100;
+}
+
+// ── VIEW: Sales Invoices ──────────────────────────────────────────────────────
+function renderInvoicesView(root){
+  const posted = getJournalInvoices();
+  const drafts = STATE.invoiceDrafts;
+  const totalInvoiced = posted.reduce((s,i)=>s+i.grandTotal,0);
+  const totalPaid = posted.reduce((s,i)=>s+i.paidAmt,0);
+  root.innerHTML = `
+  <div class="grid-3" style="margin-bottom:16px">
+    <div class="kpi"><div class="lbl">${t('invTotalInvoicedKpi')}</div><div class="val num-lg">${fmt(totalInvoiced)}</div></div>
+    <div class="kpi"><div class="lbl">${t('invTotalPaidKpi')}</div><div class="val num-lg" style="color:var(--green)">${fmt(totalPaid)}</div></div>
+    <div class="kpi"><div class="lbl">${t('invTotalOutstandingKpi')}</div><div class="val num-lg" style="color:var(--gold-dim)">${fmt(totalInvoiced-totalPaid)}</div></div>
+  </div>
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('invoicesTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openInvoiceModal(null)">+ ${t('newInvoiceBtn')}</button>
+    </h2>
+    <div class="desc">${t('invoicesLinkedDesc')}</div>
+    ${!posted.length && !drafts.length ? `<div class="empty">${t('noInvoices')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('invNoCol')}</th><th>${t('invDateCol')}</th><th>${t('invCustomerCol')}</th>
+      <th class="num">${t('invTotalCol')}</th><th class="num">${t('invPaidCol')}</th><th class="num">${t('invRemainingCol')}</th>
+      <th>${t('assetStatusCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${drafts.map(d=>{
+        const cust = STATE.customers.find(c=>c.id===d.customerId);
+        const totals = computeInvoiceTotals(d.lines.map(l=>({...l})));
+        return `<tr>
+          <td style="font-weight:600;color:var(--gold-dim)">${t('draftStatus')}</td>
+          <td>${d.date||'—'}</td>
+          <td>${escapeHtml(cust?.name||'—')}</td>
+          <td class="num">${fmt(totals.grandTotal)}</td>
+          <td class="num">0</td>
+          <td class="num">${fmt(totals.grandTotal)}</td>
+          <td><span style="color:var(--gold-dim)">${t('draftStatus')}</span></td>
+          <td><span class="drill" title="${t('viewBtn')}" onclick="openInvoiceModal('${d.id}')">✎</span></td>
+        </tr>`;
+      }).join('')}
+      ${posted.map(inv=>{
+        const remaining = Math.round((inv.grandTotal-inv.paidAmt)*100)/100;
+        const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
+        const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(inv.invoiceNo)}</td>
+          <td>${inv.date||'—'}</td>
+          <td>${escapeHtml(inv.customerName)}</td>
+          <td class="num">${fmt(inv.grandTotal)}</td>
+          <td class="num">${fmt(inv.paidAmt)}</td>
+          <td class="num">${fmt(remaining)}</td>
+          <td><span style="color:${statusColor}">${statusLabel}</span> ${!inv.hasExtras?`<span class="hint" style="font-size:10px">(${t('completeDataBtn')})</span>`:''}</td>
+          <td style="white-space:nowrap">
+            <span class="drill" title="${t('completeDataBtn')}" onclick="openInvoiceExtrasModal('${inv.entryNo}')">✎</span>
+            <span class="drill" style="margin-right:6px;opacity:.7" title="${t('printBtn')}" onclick="printInvoice('${inv.entryNo}')">🖨</span>
+            <span class="drill" style="margin-right:6px;opacity:.7" title="${t('recordPaymentBtn')}" onclick="openCashVoucherModal(null, {type:'receipt', invoiceEntryNo:'${inv.entryNo}', invoiceNo:'${inv.invoiceNo}', customerName:${JSON.stringify(inv.customerName)}, arAccount:'${inv.arAccount}', suggestedAmount:${remaining}})">💰</span>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+// Draft composer: builds a full invoice with product/qty/price line items,
+// then posts it straight to the journal (Dr customer AR, Cr each product's
+// revenue account, Cr VAT payable if any line carries tax) exactly like any
+// other journal entry — nothing about it is kept outside the ledger except
+// the print-only quantity/price/discount breakdown, saved to invoiceExtras.
+function openInvoiceModal(draftId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = draftId ? STATE.invoiceDrafts.find(d=>d.id==draftId) : null;
+  let draftLines = existing ? existing.lines.map(l=>({...l})) : [{productId:'',name:'',unit:'',qty:1,unitPrice:0,discountPct:0,taxPct:0,lineTotal:0}];
+  const today = new Date().toISOString().slice(0,10);
+  let invDate = existing?.date || today;
+  let invDueDate = existing?.dueDate || today;
+  let invCustomerId = existing?.customerId || (STATE.customers[0]?.id||'');
+  let invNotes = existing?.notes || '';
+
+  function renderModal(){
+    const totals = computeInvoiceTotals(draftLines);
+    overlay.innerHTML = `
+    <div class="modal-box" style="max-width:820px;width:98%">
+      <h3>${existing ? t('editInvoiceTitle') : t('newInvoiceBtn')}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><label class="lbl">${t('invCustomerCol')}</label>
+          <select id="invCustomer" class="input">
+            ${STATE.customers.length ? STATE.customers.map(c=>`<option value="${c.id}" ${invCustomerId==c.id?'selected':''}>${escapeHtml(c.name)}</option>`).join('') : `<option value="">${t('noCustomers')}</option>`}
+          </select>
+        </div>
+        <div><label class="lbl">${t('date')}</label><input id="invDate" type="date" class="input" value="${invDate}"></div>
+        <div><label class="lbl">${t('invDueDateCol')}</label><input id="invDueDate" type="date" class="input" value="${invDueDate}"></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>${t('productCol')}</th><th style="width:70px">${t('prodUnitCol')}</th><th class="num" style="width:75px">${t('invQtyCol')}</th>
+        <th class="num" style="width:100px">${t('invUnitPriceCol')}</th><th class="num" style="width:65px">${t('invDiscCol')}</th>
+        <th class="num" style="width:65px">${t('invTaxPctCol')}</th><th class="num" style="width:100px">${t('invLineTotalCol')}</th><th style="width:30px"></th>
+      </tr></thead><tbody id="invLinesBody">
+        ${draftLines.map((l,i)=>`<tr>
+          <td><input list="prodDatalist" class="input inv-line-field" data-i="${i}" data-f="name" value="${escapeHtml(l.name)}" style="width:100%"></td>
+          <td><input class="input inv-line-field" data-i="${i}" data-f="unit" value="${escapeHtml(l.unit||'')}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input inv-line-field" data-i="${i}" data-f="qty" value="${l.qty}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input inv-line-field" data-i="${i}" data-f="unitPrice" value="${l.unitPrice}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input inv-line-field" data-i="${i}" data-f="discountPct" value="${l.discountPct||0}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input inv-line-field" data-i="${i}" data-f="taxPct" value="${l.taxPct||0}" style="width:100%"></td>
+          <td class="num">${fmt(l.lineTotal||0)}</td>
+          <td><span class="drill" onclick="__invRemoveLine(${i})">✕</span></td>
+        </tr>`).join('')}
+      </tbody></table></div>
+      <datalist id="prodDatalist">${STATE.products.map(p=>`<option value="${escapeHtml(p.name)}" data-id="${p.id}" data-price="${p.price}" data-unit="${escapeHtml(p.unit||'')}" data-tax="${p.taxPct||0}">`).join('')}</datalist>
+      <button class="btn btn-outline" style="margin-top:8px;padding:5px 12px;font-size:11px" onclick="__invAddLine()">+ ${t('invAddLineBtn')}</button>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <div style="width:280px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invSubtotalRow')}</span><span>${fmt(totals.subtotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invDiscountRow')}</span><span>-${fmt(totals.discountTotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invTaxRow')}</span><span>${fmt(totals.taxTotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);font-weight:700;font-size:15px"><span>${t('invGrandTotalRow')}</span><span>${fmt(totals.grandTotal)}</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px"><label class="lbl">${t('notesLabel')}</label><textarea id="invNotes" class="input" rows="2">${escapeHtml(invNotes)}</textarea></div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+        ${existing?`<button class="btn btn-outline" id="deleteDraftInvBtn" style="color:var(--red);border-color:var(--red)">${t('deleteBtn')}</button>`:''}
+        <button class="btn btn-outline" id="saveDraftInvBtn">${t('saveDraftBtn')}</button>
+        <button class="btn" id="postInvBtn">${t('postAndPrintBtn')}</button>
+      </div>
+    </div>`;
+    overlay.style.display='flex';
+
+    overlay.querySelectorAll('.inv-line-field').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const i = parseInt(e.target.dataset.i), f = e.target.dataset.f;
+        let v = e.target.value;
+        if(f==='name'){
+          draftLines[i].name = v;
+          const opt = Array.from(document.querySelectorAll('#prodDatalist option')).find(o=>o.value===v);
+          if(opt){
+            draftLines[i].productId = parseInt(opt.dataset.id);
+            draftLines[i].unitPrice = parseFloat(opt.dataset.price)||0;
+            draftLines[i].unit = opt.dataset.unit||'';
+            draftLines[i].taxPct = parseFloat(opt.dataset.tax)||0;
+          }
+        } else if(f==='qty'||f==='unitPrice'||f==='discountPct'||f==='taxPct'){
+          draftLines[i][f] = parseFloat(v)||0;
+        } else { draftLines[i][f] = v; }
+      });
+      inp.addEventListener('change', renderModal);
+    });
+    overlay.querySelector('#invCustomer').onchange = e=>{ invCustomerId = parseInt(e.target.value)||''; };
+    overlay.querySelector('#invDate').onchange = e=>{ invDate = e.target.value; };
+    overlay.querySelector('#invDueDate').onchange = e=>{ invDueDate = e.target.value; };
+    overlay.querySelector('#invNotes').oninput = e=>{ invNotes = e.target.value; };
+    overlay.querySelector('#saveDraftInvBtn').onclick = ()=>saveDraft(false);
+    overlay.querySelector('#postInvBtn').onclick = ()=>saveDraft(true);
+    const delBtn = overlay.querySelector('#deleteDraftInvBtn');
+    if(delBtn) delBtn.onclick = async ()=>{
+      STATE.invoiceDrafts = STATE.invoiceDrafts.filter(d=>d.id!==existing.id);
+      await storeSet('invoiceDrafts', STATE.invoiceDrafts);
+      overlay.style.display='none'; overlay.innerHTML='';
+      renderApp();
+    };
+    overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+  }
+
+  window.__invAddLine = ()=>{ draftLines.push({productId:'',name:'',unit:'',qty:1,unitPrice:0,discountPct:0,taxPct:0,lineTotal:0}); renderModal(); };
+  window.__invRemoveLine = (i)=>{ if(draftLines.length>1){ draftLines.splice(i,1); renderModal(); } };
+
+  async function saveDraft(post){
+    if(!invCustomerId){ showToast(t('invCustomerRequired')); return; }
+    const validLines = draftLines.filter(l=>l.name && l.qty>0);
+    if(!validLines.length){ showToast(t('invLinesRequired')); return; }
+    const rec = { id: existing ? existing.id : 'd'+assetNextId(STATE.invoiceDrafts.map(d=>({id:parseInt(String(d.id).replace('d',''))||0}))),
+      date: invDate, dueDate: invDueDate, customerId: invCustomerId, lines: validLines, notes: invNotes };
+    if(existing){ const idx=STATE.invoiceDrafts.findIndex(d=>d.id===existing.id); STATE.invoiceDrafts[idx]=rec; }
+    else STATE.invoiceDrafts.push(rec);
+    await storeSet('invoiceDrafts', STATE.invoiceDrafts);
+    if(post){
+      const entryNo = await postInvoiceDraft(rec);
+      if(entryNo){
+        STATE.invoiceDrafts = STATE.invoiceDrafts.filter(d=>d.id!==rec.id);
+        await storeSet('invoiceDrafts', STATE.invoiceDrafts);
+        overlay.style.display='none'; overlay.innerHTML='';
+        renderApp();
+        showToast(t('depPostedToast'));
+        printInvoice(entryNo);
+        return;
+      }
+    }
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  }
+
+  renderModal();
+}
+
+// Posts a draft invoice to the journal: Dr customer AR account for the full
+// amount, Cr each product's revenue account with its line's pre-tax net
+// amount, Cr VAT Payable (212102) for the aggregate tax if any line carries
+// a tax rate. The quantity/price/discount breakdown is preserved separately
+// in invoiceExtras purely so it can be reprinted later — it plays no part
+// in the accounting, which is already fully expressed in the journal lines.
+async function postInvoiceDraft(draft){
+  const cust = STATE.customers.find(c=>c.id===draft.customerId);
+  const arAcc = cust?.arAccount;
+  if(!arAcc){ showToast(t('invCustomerNoArAccount')); return null; }
+  const totals = computeInvoiceTotals(draft.lines.map(l=>({...l})));
+  const entryNo = await reserveNextEntryNumber('فواتير العملاء', draft.date);
+  const lines = [];
+  let seq = (STATE.meta.journalSeqCounter||0);
+  lines.push({ entry:entryNo, date:draft.date, code:arAcc, name:accName(arAcc), debit:totals.grandTotal, credit:0, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:totals.grandTotal, product:'', journal:'فواتير العملاء', curAmt:totals.grandTotal, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
+  const lineExtras = [];
+  draft.lines.forEach(l=>{
+    const prod = STATE.products.find(p=>p.id===l.productId);
+    const revAcc = prod?.revenueAccount;
+    const gross = l.qty*l.unitPrice;
+    const net = Math.round((gross - gross*((l.discountPct||0)/100))*100)/100;
+    if(revAcc) lines.push({ entry:entryNo, date:draft.date, code:revAcc, name:accName(revAcc), debit:0, credit:net, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:-net, product:l.name, journal:'فواتير العملاء', curAmt:-net, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
+    lineExtras.push({ code:revAcc||'', qty:l.qty, unitPrice:l.unitPrice, discountPct:l.discountPct||0 });
+  });
+  if(totals.taxTotal>0 && STATE.accountsByCode['212102']){
+    lines.push({ entry:entryNo, date:draft.date, code:'212102', name:accName('212102'), debit:0, credit:totals.taxTotal, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:-totals.taxTotal, product:'', journal:'فواتير العملاء', curAmt:-totals.taxTotal, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
+  }
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  STATE.invoiceExtras.push({ entryNo, invoiceNo: entryNo, dueDate: draft.dueDate, notes: draft.notes, lineExtras });
+  await storeSet('invoiceExtras', STATE.invoiceExtras);
+  return entryNo;
+}
+
+// Lets the user fill in (or fix) the print-only details for an invoice that
+// already lives in the journal — its due date, notes, and the per-line
+// quantity/unit price/discount that a plain journal entry (typed by hand or
+// imported) never had a place to record. The accounting itself is never
+// touched here.
+function openInvoiceExtrasModal(entryNo){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const inv = getJournalInvoices().find(i=>i.entryNo===entryNo);
+  if(!inv) return;
+  const existingExtras = STATE.invoiceExtras.find(e=>e.entryNo===entryNo);
+  const lineExtras = inv.lines.map((l,i)=> (existingExtras?.lineExtras||[])[i] || { code:l.code, qty:1, unitPrice:l.amount, discountPct:0 });
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:640px;width:98%">
+    <h3>${t('completeDataBtn')} — ${escapeHtml(inv.invoiceNo)}</h3>
+    <div class="desc">${t('invExtrasHint')}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label class="lbl">${t('invNoCol')}</label><input id="exInvoiceNo" class="input" value="${escapeHtml(inv.invoiceNo)}"></div>
+      <div><label class="lbl">${t('invDueDateCol')}</label><input id="exDueDate" type="date" class="input" value="${inv.dueDate||''}"></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('productCol')}</th><th class="num">${t('invQtyCol')}</th><th class="num">${t('invUnitPriceCol')}</th><th class="num">${t('invDiscCol')}</th><th class="num">${t('invLineTotalCol')}</th>
+    </tr></thead><tbody id="exLinesBody">
+      ${inv.lines.map((l,i)=>`<tr>
+        <td>${escapeHtml(l.name)}</td>
+        <td><input type="number" step="0.01" class="input ex-line-field" data-i="${i}" data-f="qty" value="${lineExtras[i].qty}" style="width:80px"></td>
+        <td><input type="number" step="0.01" class="input ex-line-field" data-i="${i}" data-f="unitPrice" value="${lineExtras[i].unitPrice}" style="width:100px"></td>
+        <td><input type="number" step="0.01" class="input ex-line-field" data-i="${i}" data-f="discountPct" value="${lineExtras[i].discountPct}" style="width:70px"></td>
+        <td class="num">${fmt(l.amount)}</td>
+      </tr>`).join('')}
+    </tbody></table></div>
+    <div class="hint" style="margin:6px 0 0">${t('invExtrasAmountNote')}</div>
+    <div style="margin-top:10px"><label class="lbl">${t('notesLabel')}</label><textarea id="exNotes" class="input" rows="2">${escapeHtml(inv.notes||'')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveExtrasBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveExtrasBtn').onclick = async () => {
+    const newLineExtras = inv.lines.map((l,i)=>{
+      const row = overlay.querySelectorAll('.ex-line-field');
+      const qty = parseFloat(overlay.querySelector(`.ex-line-field[data-i="${i}"][data-f="qty"]`).value)||1;
+      const unitPrice = parseFloat(overlay.querySelector(`.ex-line-field[data-i="${i}"][data-f="unitPrice"]`).value)||l.amount;
+      const discountPct = parseFloat(overlay.querySelector(`.ex-line-field[data-i="${i}"][data-f="discountPct"]`).value)||0;
+      return { code:l.code, qty, unitPrice, discountPct };
+    });
+    const rec = { entryNo, invoiceNo: overlay.querySelector('#exInvoiceNo').value.trim()||entryNo, dueDate: overlay.querySelector('#exDueDate').value, notes: overlay.querySelector('#exNotes').value.trim(), lineExtras: newLineExtras };
+    const idx = STATE.invoiceExtras.findIndex(e=>e.entryNo===entryNo);
+    if(idx>=0) STATE.invoiceExtras[idx]=rec; else STATE.invoiceExtras.push(rec);
+    await storeSet('invoiceExtras', STATE.invoiceExtras);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// Formal, printable invoice built entirely from the journal (customer,
+// lines, tax, total) plus whatever print-only extras have been filled in —
+// opens in a new tab with the company letterhead, a line-item table,
+// totals, the amount spelled out in Arabic words, and a signature/stamp area.
+function printInvoice(entryNo){
+  const inv = getJournalInvoices().find(i=>i.entryNo===entryNo);
+  if(!inv) return;
+  const cust = STATE.customers.find(c=>normalizeKey(c.name)===normalizeKey(inv.customerName)) || {};
+  const w = window.open('', '_blank');
+  if(!w){ showToast(t('popupBlockedError')); return; }
+  const esc = escapeHtml;
+  const lineExtras = inv.lines.map((l,i)=> inv.lineExtras[i] || { qty:1, unitPrice:l.amount, discountPct:0 });
+  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(inv.invoiceNo)}</title>
+${DOC_PRINT_STYLE}
+</head><body>
+  <div class="doc-page">
+    ${docHeaderHtml()}
+    <div class="doc-title-row">
+      <div class="doc-title">فاتورة مبيعات<div class="doc-title-en">Sales Invoice</div></div>
+      <div class="doc-meta">
+        <div><b>رقم الفاتورة:</b> ${esc(inv.invoiceNo)}</div>
+        <div><b>التاريخ:</b> ${esc(inv.date)}</div>
+        ${inv.dueDate?`<div><b>تاريخ الاستحقاق:</b> ${esc(inv.dueDate)}</div>`:''}
+      </div>
+    </div>
+    <div class="doc-partner-box">
+      <div><b>السادة / </b>${esc(inv.customerName)}</div>
+      ${cust.address?`<div>${esc(cust.address)}</div>`:''}
+      ${cust.phone?`<div>هاتف: ${esc(cust.phone)}</div>`:''}
+      ${cust.taxRegNo?`<div>الرقم الضريبي: ${esc(cust.taxRegNo)}</div>`:''}
+    </div>
+    <table class="doc-table"><thead><tr>
+      <th>#</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الخصم %</th><th>الإجمالي</th>
+    </tr></thead><tbody>
+      ${inv.lines.map((l,i)=>`<tr>
+        <td>${i+1}</td><td>${esc(l.name)}</td>
+        <td class="num">${lineExtras[i].qty}</td><td class="num">${fmt(lineExtras[i].unitPrice)}</td>
+        <td class="num">${lineExtras[i].discountPct||0}%</td>
+        <td class="num">${fmt(l.amount)}</td>
+      </tr>`).join('')}
+    </tbody></table>
+    <div class="doc-totals">
+      <div><span>إجمالي الأصناف</span><span>${fmt(inv.lines.reduce((s,l)=>s+l.amount,0))}</span></div>
+      <div><span>الضريبة</span><span>${fmt(inv.taxTotal)}</span></div>
+      <div class="doc-total-final"><span>الإجمالي المستحق</span><span>${fmt(inv.grandTotal)} جنيه</span></div>
+    </div>
+    <div class="doc-words">فقط وقدره: ${esc(numberToArabicWords(inv.grandTotal))}</div>
+    ${inv.notes?`<div class="doc-notes"><b>ملاحظات:</b> ${esc(inv.notes)}</div>`:''}
+    ${docSignatureBlockHtml()}
+    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+  </div>
+</body></html>`;
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
+// ── Shared printable-document header/signature/CSS building blocks ───────────
+// Used by printInvoice() and printCashVoucher() so every formal, stampable
+// document in the system shares one consistent official letterhead layout.
+function docHeaderHtml(){
+  const s = STATE.settings;
+  return `<div class="doc-header">
+    ${s.companyLogo?`<img class="doc-logo" src="${s.companyLogo}">`:''}
+    <div class="doc-company">
+      <div class="doc-company-name">${escapeHtml(s.companyName||'')}</div>
+      ${s.companyAddress?`<div class="doc-company-line">${escapeHtml(s.companyAddress)}</div>`:''}
+      <div class="doc-company-line">${[s.companyPhone?('هاتف: '+s.companyPhone):'', s.companyEmail?('بريد: '+s.companyEmail):''].filter(Boolean).join(' — ')}</div>
+      ${s.companyTaxId?`<div class="doc-company-line">الرقم الضريبي: ${escapeHtml(s.companyTaxId)}</div>`:''}
+    </div>
+  </div>`;
+}
+function docSignatureBlockHtml(){
+  return `<div class="doc-sign-row">
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المستلم</div></div>
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المحاسب</div></div>
+    <div class="doc-sign-box doc-stamp-box"><div>ختم الشركة</div></div>
+  </div>`;
+}
+const DOC_PRINT_STYLE = `<style>
+  *{box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#fff;color:#1A2027;margin:0;padding:0}
+  .doc-page{max-width:780px;margin:0 auto;padding:36px}
+  .doc-header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #1F2E3B;padding-bottom:14px;margin-bottom:18px}
+  .doc-logo{width:64px;height:64px;object-fit:contain;border-radius:8px}
+  .doc-company-name{font-size:20px;font-weight:800;color:#1F2E3B}
+  .doc-company-line{font-size:12px;color:#6B7680;margin-top:2px}
+  .doc-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .doc-title{font-size:19px;font-weight:800;color:#1F2E3B}
+  .doc-title-en{font-size:11px;font-weight:400;color:#8B978D;direction:ltr}
+  .doc-meta{font-size:12px;color:#3a4552;text-align:left;direction:rtl}
+  .doc-meta div{margin-bottom:3px}
+  .doc-partner-box{background:#F8F5EA;border:1px solid #ECE6D2;border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px}
+  .doc-partner-box div{margin-bottom:3px}
+  .doc-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
+  .doc-table th,.doc-table td{padding:8px 9px;border-bottom:1px solid #ECE6D2;text-align:right}
+  .doc-table th{background:#1F2E3B;color:#F2EBD3;font-weight:600}
+  .doc-table td.num,.doc-table th.num{direction:ltr;text-align:left}
+  .doc-totals{width:280px;margin-inline-start:auto;font-size:13px;margin-bottom:10px}
+  .doc-totals div{display:flex;justify-content:space-between;padding:4px 0}
+  .doc-total-final{border-top:2px solid #1F2E3B;font-weight:800;font-size:15px;padding-top:8px !important;margin-top:4px}
+  .doc-words{font-size:13px;font-weight:600;background:#F3EEDD;border-radius:6px;padding:10px 12px;margin-bottom:16px}
+  .doc-notes{font-size:12px;color:#3a4552;margin-bottom:16px}
+  .doc-sign-row{display:flex;gap:16px;margin-top:50px}
+  .doc-sign-box{flex:1;text-align:center;font-size:12px;color:#3a4552}
+  .doc-sign-line{border-top:1px solid #8B978D;margin-bottom:6px;height:40px}
+  .doc-stamp-box{display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px}
+  .doc-print-btn{text-align:center;margin-top:26px}
+  .doc-print-btn button{background:#1F2E3B;color:#F2EBD3;border:none;padding:10px 26px;border-radius:8px;font-size:13px;cursor:pointer}
+  @media print{ .no-print{display:none} .doc-page{padding:0} }
+</style>`;
+
+// ── Reading cash vouchers straight out of the journal ─────────────────────────
+// Any entry posted under 'سند قبض' or 'سند صرف' — from this page, typed
+// directly into the General Journal, or imported — is grouped by entry
+// number into one voucher row. voucherExtras only adds a friendlier serial
+// number and description if the entry doesn't already carry one.
+// ── Reading cash vouchers straight out of the journal ─────────────────────────
+// Any journal entry that moves money into or out of a treasury account
+// (isTreasuryAccount()) is a voucher — regardless of what its 'دفتر اليومية'
+// (journal book) text field says, so entries typed directly into the
+// General Journal, imported from any Excel layout, or created from this
+// page all show up the same way. An entry with more than one treasury line
+// (a transfer between two of our own accounts) has no external "party" to
+// issue a receipt to, so it's excluded from this list on purpose.
+function getJournalVouchers(){
+  const groups = {};
+  STATE.journal.forEach(l=>{ (groups[l.entry] = groups[l.entry] || []).push(l); });
+  const result = [];
+  Object.keys(groups).forEach(entryNo=>{
+    const gl = groups[entryNo];
+    const treasuryLines = gl.filter(l=>isTreasuryAccount(l.code) && (l.debit>0 || l.credit>0));
+    if(treasuryLines.length !== 1) return; // not a voucher, or an internal transfer between two treasury accounts
+    const tLine = treasuryLines[0];
+    const isReceipt = tLine.debit > 0;
+    // Use curAmt (original currency amount) when the account is in a foreign
+    // currency (e.g. USD), so the voucher shows the USD figure, not the EGP
+    // converted equivalent. Fall back to debit/credit (EGP) for EGP accounts.
+    const egpAmt = isReceipt ? tLine.debit : tLine.credit;
+    const accountCurrency = (STATE.accountsByCode[tLine.code]||{}).currency || 'EGP';
+    const hasForeignCurrency = accountCurrency !== 'EGP';
+    const amount = hasForeignCurrency && tLine.curAmt ? Math.abs(tLine.curAmt) : egpAmt;
+    const counterLines = gl.filter(l=>l!==tLine && (l.debit>0 || l.credit>0));
+    if(!counterLines.length) return;
+    const derivedPartnerName = tLine.partner || (counterLines.find(l=>l.partner)||{}).partner || '—';
+    const counterAccount = counterLines.map(l=>l.code).join(', ');
+    const counterAccountLabel = counterLines.map(l=>accName(l.code)).join('، ');
+    const extras = STATE.voucherExtras.find(e=>e.entryNo===entryNo);
+    result.push({
+      entryNo, date: gl.reduce((min,l)=> (!min||l.date<min)?l.date:min, ''),
+      type: isReceipt?'receipt':'payment',
+      serial: extras?.serial || entryNo,
+      // partnerName ("استلمنا من / صرفنا إلى") and cashAccountLabel (how the
+      // treasury account is printed — e.g. with an account number or bank
+      // branch added) are free-text overrides the user can set from
+      // "استكمال البيانات"; they never change the actual GL account or
+      // amounts, only how the voucher reads when printed.
+      partnerName: extras?.partnerName || derivedPartnerName,
+      cashAccount: tLine.code, cashAccountLabel: extras?.cashAccountLabel || accName(tLine.code),
+      currency: (STATE.accountsByCode[tLine.code]||{}).currency || 'EGP',
+      counterAccount, counterAccountLabel,
+      description: extras?.description || (counterLines[0]||{}).ref || tLine.ref || '',
+      amount: Math.round(amount*100)/100, hasExtras: !!extras
+    });
+  });
+  return result.sort((a,b)=> b.date.localeCompare(a.date) || b.entryNo.localeCompare(a.entryNo));
+}
+
+// Assigns a proper per-account, per-direction serial (see nextVoucherSerial)
+// to every voucher that doesn't have one yet — grouped by (account,
+// direction) and numbered in date order, so a backlog of historical entries
+// (freshly imported, or entered before this page existed) gets clean
+// sequential numbering in one click instead of one-by-one.
+async function autoAssignVoucherSerials(){
+  const unnumbered = getJournalVouchers().filter(v=>!v.hasExtras);
+  if(!unnumbered.length){ showToast(t('noUnnumberedVouchers')); return; }
+  const groups = {};
+  unnumbered.forEach(v=>{ (groups[`${v.cashAccount}|${v.type}`] = groups[`${v.cashAccount}|${v.type}`] || []).push(v); });
+  let count = 0;
+  for(const key in groups){
+    const [accountCode, type] = key.split('|');
+    const group = groups[key].sort((a,b)=> a.date.localeCompare(b.date) || a.entryNo.localeCompare(b.entryNo));
+    for(const v of group){
+      const s = await nextVoucherSerial(accountCode, type);
+      STATE.voucherExtras.push({ entryNo: v.entryNo, serial: s.serial, description: v.description });
+      count++;
+    }
+  }
+  await storeSet('voucherExtras', STATE.voucherExtras);
+  renderApp();
+  showToast(tf('vouchersNumberedToast', {n: count}));
+}
+
+// ── VIEW: Treasury Cash Vouchers (سندات القبض والصرف) ─────────────────────────
+function renderCashVouchersView(root){
+  const allList = getJournalVouchers();
+  const viewKey = 'cashvouchers';
+  const colf = { serial:'colf_cv_serial', type:'colf_cv_type', date:'colf_cv_date', cashAccount:'colf_cv_cashaccount', partner:'colf_cv_partner', amount:'colf_cv_amount', description:'colf_cv_description', status:'colf_cv_status' };
+  const typeLabelOf = v => v.type==='receipt'?t('voucherTypeReceipt'):t('voucherTypePayment');
+  const statusLabelOf = v => v.hasExtras?t('dataCompleteLabel'):t('dataIncompleteLabel');
+  // Amount label shown in table: includes currency symbol if not EGP
+  const amountLabelOf = v => `${fmt(v.amount||0)}${v.currency&&v.currency!=='EGP'?' '+v.currency:''}`;
+
+  const filtered = allList.filter(v =>
+    passesColFilter(colf.serial, v.serial) && passesColFilter(colf.type, typeLabelOf(v)) && passesColFilter(colf.date, v.date) &&
+    passesColFilter(colf.cashAccount, v.cashAccountLabel) && passesColFilter(colf.partner, v.partnerName) &&
+    passesColFilter(colf.amount, v.amount) && passesColFilter(colf.description, v.description||'') &&
+    passesColFilter(colf.status, statusLabelOf(v)));
+  const sortAccessor = (v, col) => {
+    if(col==='type') return typeLabelOf(v);
+    if(col==='cashAccount') return v.cashAccountLabel;
+    if(col==='status') return statusLabelOf(v);
+    if(col==='partner') return v.partnerName;
+    if(col==='description') return v.description||'';
+    return v[col];
+  };
+  getSortState(viewKey, 'date', 'desc');
+  const sorted = applySort(viewKey, filtered, sortAccessor);
+  const unnumberedCount = allList.filter(v=>!v.hasExtras).length;
+
+  root.innerHTML = `
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('cashVouchersTitle')} <span class="badge-count">${sorted.length}</span></span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${unnumberedCount ? `<button class="btn btn-outline" id="autoNumberVouchersBtn" style="padding:5px 14px;font-size:11px">🔢 ${tf('autoNumberVouchersBtn',{n:unnumberedCount})}</button>` : ''}
+        <button class="btn btn-outline" style="padding:5px 14px;font-size:11px;color:var(--green);border-color:var(--green)" onclick="openCashVoucherModal(null, {type:'receipt'})">+ ${t('newReceiptVoucherBtn')}</button>
+        <button class="btn btn-outline" style="padding:5px 14px;font-size:11px;color:var(--red);border-color:var(--red)" onclick="openCashVoucherModal(null, {type:'payment'})">+ ${t('newPaymentVoucherBtn')}</button>
+      </div>
+    </h2>
+    <div class="desc">${t('vouchersLinkedDesc')}</div>
+    ${!allList.length ? `<div class="empty">${t('noCashVouchers')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      ${filterableTh(viewKey,'serial',t('voucherSerialCol'),colf.serial,allList.map(v=>v.serial))}
+      ${filterableTh(viewKey,'type',t('voucherTypeCol'),colf.type,allList.map(typeLabelOf))}
+      ${filterableTh(viewKey,'date',t('date'),colf.date,allList.map(v=>v.date))}
+      ${filterableTh(viewKey,'cashAccount',t('voucherCashAccCol'),colf.cashAccount,allList.map(v=>v.cashAccountLabel))}
+      ${filterableTh(viewKey,'partner',t('voucherPartnerCol'),colf.partner,allList.map(v=>v.partnerName))}
+      ${filterableTh(viewKey,'amount',t('voucherAmountCol'),colf.amount,allList.map(v=>v.amount),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'description',t('voucherDescCol'),colf.description,allList.map(v=>v.description||''))}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allList.map(statusLabelOf))}
+      <th></th>
+    </tr></thead><tbody>
+      ${sorted.map(v=>`<tr>
+        <td style="font-weight:600">${escapeHtml(v.serial)}</td>
+        <td><span style="color:${v.type==='receipt'?'var(--green)':'var(--red)'}">${typeLabelOf(v)}</span></td>
+        <td>${v.date||'—'}</td>
+        <td>${escapeHtml(v.cashAccountLabel)}</td>
+        <td>${escapeHtml(v.partnerName||'—')}</td>
+        <td class="num">${fmt(v.amount||0)} ${v.currency&&v.currency!=='EGP'?`<span class="pill pill-gold" style="font-size:9px">${escapeHtml(v.currency)}</span>`:''}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(v.description||'')}">${v.description?escapeHtml(v.description):'<span class="hint">—</span>'}</td>
+        <td>${!v.hasExtras?`<span class="hint" style="font-size:10px">(${t('completeDataBtn')})</span>`:`<span style="color:var(--green)">${t('dataCompleteLabel')}</span>`}</td>
+        <td style="white-space:nowrap">
+          <span class="drill" title="${t('completeDataBtn')}" onclick="openVoucherExtrasModal('${v.entryNo}')">✎</span>
+          <span class="drill" style="margin-right:6px;opacity:.7" title="${t('printBtn')}" onclick="printCashVoucher('${v.entryNo}')">🖨</span>
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>`}
+  </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
+  const autoBtn = document.getElementById('autoNumberVouchersBtn');
+  if(autoBtn) autoBtn.addEventListener('click', autoAssignVoucherSerials);
+}
+
+// Creates a brand-new receipt/payment voucher: posts straight to the
+// journal (Dr/Cr cash-or-bank vs. the counter account) and, in the same
+// step, saves the friendly serial number + description as voucherExtras so
+// the printed slip reads naturally. If opened from an invoice's "collect
+// payment" action, it's pre-filled with that invoice's customer/AR account
+// and outstanding balance.
+function openCashVoucherModal(_unused, prefill){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const voucherType = prefill?.type || 'receipt';
+  const cashAccounts = STATE.accounts.filter(a=>a.type==='البنك والنقد');
+  const today = new Date().toISOString().slice(0,10);
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:520px;width:97%">
+    <h3 style="color:${voucherType==='receipt'?'var(--green)':'var(--red)'}">${voucherType==='receipt'?t('newReceiptVoucherBtn'):t('newPaymentVoucherBtn')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label class="lbl">${t('date')}</label><input id="vDate" type="date" class="input" value="${today}"></div>
+      <div><label class="lbl">${t('voucherCashAccCol')}</label>
+        <select id="vCashAccount" class="input">
+          ${cashAccounts.map(a=>`<option value="${a.code}">${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${voucherType==='receipt'?t('voucherReceivedFromLabel'):t('voucherPaidToLabel')}</label>
+        <input id="vPartnerName" class="input" value="${escapeHtml(prefill?.customerName||'')}">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('voucherAmountCol')}</label>
+        <input id="vAmount" type="number" step="0.01" class="input" value="${prefill?.suggestedAmount||''}">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${voucherType==='receipt'?t('voucherForAccountLabel_receipt'):t('voucherForAccountLabel_payment')}</label>
+        ${voucherType==='receipt'
+          ? `<select id="vCounterAccount" class="input">
+              ${STATE.accounts.filter(a=>['المدين','الدخل'].includes(a.type)).map(a=>`<option value="${a.code}" ${prefill?.arAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+            </select>`
+          : `<select id="vCounterAccount" class="input">
+              ${STATE.accounts.filter(a=>['النفقات','تكاليف الإيرادات','الدائن','الالتزامات الجارية','الالتزامات غير الجارية'].includes(a.type)).map(a=>`<option value="${a.code}">${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+            </select>`}
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('voucherDescLabel')}</label>
+        <textarea id="vDesc" class="input" rows="2">${escapeHtml(prefill?.invoiceEntryNo?`تحصيل فاتورة ${prefill.invoiceNo||prefill.invoiceEntryNo}`:'')}</textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="postVoucherBtn" style="background:${voucherType==='receipt'?'var(--green)':'var(--red)'};border-color:${voucherType==='receipt'?'var(--green)':'var(--red)'}">${t('postAndPrintBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  overlay.querySelector('#postVoucherBtn').onclick = async () => {
+    const partnerName = overlay.querySelector('#vPartnerName').value.trim();
+    const amount = parseFloat(overlay.querySelector('#vAmount').value)||0;
+    const cashAccount = overlay.querySelector('#vCashAccount').value;
+    const counterAccount = overlay.querySelector('#vCounterAccount').value;
+    const description = overlay.querySelector('#vDesc').value.trim();
+    const date = overlay.querySelector('#vDate').value || today;
+    if(!partnerName || amount<=0 || !cashAccount || !counterAccount){ showToast(t('voucherFieldsRequired')); return; }
+    const entryNo = await postCashVoucherEntry({ type:voucherType, date, partnerName, amount, cashAccount, counterAccount, description });
+    const s = await nextVoucherSerial(cashAccount, voucherType);
+    STATE.voucherExtras.push({ entryNo, serial: s.serial, description });
+    await storeSet('voucherExtras', STATE.voucherExtras);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('depPostedToast'));
+    printCashVoucher(entryNo);
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// Writes the two journal lines for a cash voucher. Receipt: Dr cash/bank,
+// Cr counter account (usually the customer's AR account, settling their
+// balance). Payment: Dr counter account (expense/liability), Cr cash/bank.
+async function postCashVoucherEntry({type, date, partnerName, amount, cashAccount, counterAccount, description}){
+  const bookName = type==='receipt' ? 'سند قبض' : 'سند صرف';
+  const entryNo = await reserveNextEntryNumber(bookName, date);
+  let seq = (STATE.meta.journalSeqCounter||0);
+  const lines = [];
+  const ref = description || entryNo;
+  if(type==='receipt'){
+    lines.push({ entry:entryNo, date, code:cashAccount, name:accName(cashAccount), debit:amount, credit:0, cur:'EGP', convFactor:1, partner:partnerName, cc:'', ccAmt:amount, product:'', journal:bookName, curAmt:amount, ref, source:'voucher-auto', seq:++seq });
+    lines.push({ entry:entryNo, date, code:counterAccount, name:accName(counterAccount), debit:0, credit:amount, cur:'EGP', convFactor:1, partner:partnerName, cc:'', ccAmt:-amount, product:'', journal:bookName, curAmt:-amount, ref, source:'voucher-auto', seq:++seq });
+  } else {
+    lines.push({ entry:entryNo, date, code:counterAccount, name:accName(counterAccount), debit:amount, credit:0, cur:'EGP', convFactor:1, partner:partnerName, cc:'', ccAmt:amount, product:'', journal:bookName, curAmt:amount, ref, source:'voucher-auto', seq:++seq });
+    lines.push({ entry:entryNo, date, code:cashAccount, name:accName(cashAccount), debit:0, credit:amount, cur:'EGP', convFactor:1, partner:partnerName, cc:'', ccAmt:-amount, product:'', journal:bookName, curAmt:-amount, ref, source:'voucher-auto', seq:++seq });
+  }
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  return entryNo;
+}
+
+// Lets the user assign a friendly serial number / wording to a receipt or
+// payment voucher that already exists in the journal (e.g. entered directly
+// in the General Journal screen, or imported) but has no voucherExtras yet.
+function openVoucherExtrasModal(entryNo){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const v = getJournalVouchers().find(x=>x.entryNo===entryNo);
+  if(!v) return;
+  const partnerLabel = v.type==='receipt' ? t('voucherReceivedFromLabel') : t('voucherPaidToLabel');
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:460px;width:97%">
+    <h3>${t('completeDataBtn')}</h3>
+    <div style="margin:12px 0">
+      <label class="lbl">${t('voucherSerialCol')}</label>
+      <input id="exVoucherSerial" class="input" value="${escapeHtml(v.serial)}">
+    </div>
+    <div style="margin-bottom:12px">
+      <label class="lbl">${partnerLabel}</label>
+      <input id="exVoucherPartner" class="input" value="${escapeHtml(v.partnerName||'')}">
+    </div>
+    <div style="margin-bottom:12px">
+      <label class="lbl">${t('voucherCashAccCol')}</label>
+      <input id="exVoucherCashLabel" class="input" value="${escapeHtml(v.cashAccountLabel||'')}">
+      <div class="hint" style="margin-top:4px">${t('voucherCashLabelHint')}</div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label class="lbl">${t('voucherDescLabel')}</label>
+      <textarea id="exVoucherDesc" class="input" rows="2">${escapeHtml(v.description||'')}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveVoucherExtrasBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveVoucherExtrasBtn').onclick = async () => {
+    const rec = {
+      entryNo,
+      serial: overlay.querySelector('#exVoucherSerial').value.trim()||entryNo,
+      description: overlay.querySelector('#exVoucherDesc').value.trim(),
+      partnerName: overlay.querySelector('#exVoucherPartner').value.trim(),
+      cashAccountLabel: overlay.querySelector('#exVoucherCashLabel').value.trim()||accName(v.cashAccount)
+    };
+    const idx = STATE.voucherExtras.findIndex(e=>e.entryNo===entryNo);
+    if(idx>=0) STATE.voucherExtras[idx]=rec; else STATE.voucherExtras.push(rec);
+    await storeSet('voucherExtras', STATE.voucherExtras);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// Formal, stampable receipt/payment voucher built from the journal — printed
+// in a new tab with the company letterhead, a large serial number, the
+// amount in both digits and Arabic words, and a signature/stamp area. This
+// is the document handed to (or signed by) the customer/vendor as proof the
+// cash actually changed hands.
+function printCashVoucher(entryNo){
+  const v = getJournalVouchers().find(x=>x.entryNo===entryNo);
+  if(!v) return;
+  const w = window.open('', '_blank');
+  if(!w){ showToast(t('popupBlockedError')); return; }
+  const esc = escapeHtml;
+  const isReceipt = v.type==='receipt';
+  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(v.serial)}</title>
+${DOC_PRINT_STYLE}
+<style>
+  .voucher-serial{font-size:15px;font-weight:800;color:${isReceipt?'#2E7D32':'#B03A2E'};border:2px solid ${isReceipt?'#2E7D32':'#B03A2E'};border-radius:8px;padding:8px 16px;display:inline-block}
+  .voucher-line{font-size:15px;margin:16px 0;line-height:2}
+  .voucher-line b{color:#1F2E3B}
+  .voucher-amount-box{font-size:22px;font-weight:800;text-align:center;background:#F3EEDD;border-radius:8px;padding:14px;margin:18px 0}
+</style>
+</head><body>
+  <div class="doc-page">
+    ${docHeaderHtml()}
+    <div class="doc-title-row">
+      <div class="doc-title">${isReceipt?'سند قبض نقدية':'سند صرف نقدية'}<div class="doc-title-en">${isReceipt?'Cash Receipt Voucher':'Cash Payment Voucher'}</div></div>
+      <div class="voucher-serial">${esc(v.serial)}</div>
+    </div>
+    <div class="doc-meta" style="text-align:right;margin-bottom:10px"><b>التاريخ:</b> ${esc(v.date)}</div>
+    <div class="voucher-line"><b>${isReceipt?'استلمنا من السيد / السادة:':'صرفنا إلى السيد / السادة:'}</b> ${esc(v.partnerName)}</div>
+    <div class="voucher-amount-box">${fmt(v.amount)} ${esc(currencyWordNames(v.currency)[0])}</div>
+    <div class="voucher-line"><b>فقط وقدره:</b> ${esc(numberToArabicWords(v.amount, ...currencyWordNames(v.currency)))}</div>
+    <div class="voucher-line"><b>وذلك عن:</b> ${esc(v.description||'—')}</div>
+    <div class="voucher-line"><b>يُقيد على حساب:</b> ${esc(v.counterAccountLabel||accName(v.counterAccount))} — ${isReceipt?'من حساب':'إلى حساب'} ${esc(v.cashAccountLabel||accName(v.cashAccount))}</div>
+    ${docSignatureBlockHtml()}
+    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+  </div>
+</body></html>`;
+  w.document.open(); w.document.write(html); w.document.close();
 }
 
 // ── Account picker helper ─────────────────────────────────────────────────────
