@@ -365,6 +365,21 @@ thead th{
 thead th.col-draggable{ cursor:grab; }
 thead th.col-dragging{ opacity:.4; cursor:grabbing; }
 thead th.col-drop-target{ box-shadow: inset 2px 0 0 var(--gold-light), inset -2px 0 0 var(--gold-light); }
+/* Column resize handle — a thin draggable strip at each th's leading edge
+   (inline-start in RTL = right edge of the cell). Positioned absolutely so
+   it doesn't disturb the header's own padding/text layout. */
+thead th{ position:relative; }
+.col-resize-handle{
+  position:absolute; top:0; bottom:0; left:0; width:5px; cursor:col-resize;
+  z-index:10; user-select:none;
+}
+.col-resize-handle::after{
+  content:''; position:absolute; top:20%; bottom:20%; left:2px; width:1px;
+  background:rgba(217,180,92,.4); transition:background .15s;
+}
+.col-resize-handle:hover::after,
+.col-resize-handle.resizing::after{ background:var(--gold-light); width:2px; left:1px; }
+table.col-resizing{ cursor:col-resize; user-select:none; }
 tbody td{ padding:6px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); }
 tbody tr:hover{ background:var(--paper-2); }
 tbody tr.total-row td{ font-weight:800; border-top:2px solid var(--gold); background:var(--paper-3); }
@@ -2085,6 +2100,7 @@ function attachTableExportButtons(){
     // and doesn't depend on which currency/account happens to be selected).
     const tableKey = (STATE.ui.view||'view') + '_t' + tableIdx;
     attachColumnReordering(tableEl, tableKey);
+    attachColumnResizing(tableEl, tableKey);
     attachColumnVisibilityToggle(tableEl, toolbar, tableKey);
   });
 }
@@ -2291,6 +2307,70 @@ function reorderTableColumns(tableEl, order){
     const newCells = order.map(key => cells[keyToIndex[key]]).filter(Boolean);
     if(newCells.length !== colCount) return; // stale/unknown key — don't risk it
     newCells.forEach(cell => row.appendChild(cell));
+  });
+}
+// ── Column resize (drag the leading edge of any th left/right) ────────────────
+// Saved widths live in STATE.ui.colWidths[tableKey][colKey] (px strings).
+// On every render, enhanceAllTables() re-applies them before re-attaching.
+// Works on desktop only (touch devices skip). RTL-aware: dragging left WIDENS
+// the column, dragging right NARROWS it (leading edge is on the right in RTL).
+function attachColumnResizing(tableEl, tableKey){
+  if(window.innerWidth <= 900) return;
+  const headRow = tableEl.querySelector('thead tr');
+  if(!headRow) return;
+  assignColKeys(headRow);
+  STATE.ui.colWidths = STATE.ui.colWidths || {};
+  const saved = STATE.ui.colWidths[tableKey] || {};
+  // Apply any previously-saved widths immediately.
+  Array.from(headRow.children).forEach(th => {
+    const key = th.dataset.colKey;
+    if(key && saved[key]) th.style.width = saved[key];
+  });
+  // Sync body column widths using a <colgroup> so cells wrap correctly.
+  function syncColgroup(){
+    let cg = tableEl.querySelector('colgroup.resize-cg');
+    if(!cg){ cg = document.createElement('colgroup'); cg.className='resize-cg'; tableEl.prepend(cg); }
+    const ths = Array.from(headRow.children);
+    while(cg.children.length < ths.length) cg.appendChild(document.createElement('col'));
+    while(cg.children.length > ths.length) cg.removeChild(cg.lastChild);
+    ths.forEach((th,i)=>{ cg.children[i].style.width = th.style.width || ''; });
+  }
+  syncColgroup();
+  // Attach a resize handle to each th.
+  Array.from(headRow.children).forEach(th => {
+    if(th.querySelector('.col-resize-handle')) return; // already attached
+    const handle = document.createElement('div');
+    handle.className = 'col-resize-handle';
+    handle.title = '';
+    th.appendChild(handle);
+    let startX, startW, isRTL;
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      startX = e.clientX;
+      startW = th.getBoundingClientRect().width;
+      isRTL  = document.dir === 'rtl' || document.documentElement.dir === 'rtl';
+      handle.classList.add('resizing');
+      tableEl.classList.add('col-resizing');
+      function onMove(ev){
+        const dx = ev.clientX - startX;
+        // In RTL the leading edge is on the right, so dragging left (negative dx)
+        // means increasing width; dragging right narrows it.
+        const newW = Math.max(40, isRTL ? startW - dx : startW + dx);
+        th.style.width = newW + 'px';
+        syncColgroup();
+      }
+      function onUp(){
+        handle.classList.remove('resizing');
+        tableEl.classList.remove('col-resizing');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        STATE.ui.colWidths = STATE.ui.colWidths || {};
+        STATE.ui.colWidths[tableKey] = STATE.ui.colWidths[tableKey] || {};
+        STATE.ui.colWidths[tableKey][th.dataset.colKey] = th.style.width;
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
   });
 }
 window.__exportData = window.__exportData || {};
@@ -10609,40 +10689,51 @@ function getJournalVouchers(){
   Object.keys(groups).forEach(entryNo=>{
     const gl = groups[entryNo];
     const treasuryLines = gl.filter(l=>isTreasuryAccount(l.code) && (l.debit>0 || l.credit>0));
-    if(treasuryLines.length !== 1) return; // not a voucher, or an internal transfer between two treasury accounts
-    const tLine = treasuryLines[0];
-    const isReceipt = tLine.debit > 0;
-    // Use curAmt (original currency amount) when the account is in a foreign
-    // currency (e.g. USD), so the voucher shows the USD figure, not the EGP
-    // converted equivalent. Fall back to debit/credit (EGP) for EGP accounts.
-    const egpAmt = isReceipt ? tLine.debit : tLine.credit;
-    const accountCurrency = (STATE.accountsByCode[tLine.code]||{}).currency || 'EGP';
-    const hasForeignCurrency = accountCurrency !== 'EGP';
-    const amount = hasForeignCurrency && tLine.curAmt ? Math.abs(tLine.curAmt) : egpAmt;
-    const counterLines = gl.filter(l=>l!==tLine && (l.debit>0 || l.credit>0));
-    if(!counterLines.length) return;
-    const derivedPartnerName = tLine.partner || (counterLines.find(l=>l.partner)||{}).partner || '—';
-    const counterAccount = counterLines.map(l=>l.code).join(', ');
-    const counterAccountLabel = counterLines.map(l=>accName(l.code)).join('، ');
+    // Must have at least one treasury line to be a voucher.
+    // For entries with more than one treasury line (e.g. bank-to-bank transfers,
+    // or a single debit split across cash registers) we generate one voucher row
+    // per treasury line, each paired with the non-treasury counter lines.
+    if(!treasuryLines.length) return;
     const extras = STATE.voucherExtras.find(e=>e.entryNo===entryNo);
-    result.push({
-      entryNo, date: gl.reduce((min,l)=> (!min||l.date<min)?l.date:min, ''),
-      type: isReceipt?'receipt':'payment',
-      serial: extras?.serial || entryNo,
-      // partnerName ("استلمنا من / صرفنا إلى") and cashAccountLabel (how the
-      // treasury account is printed — e.g. with an account number or bank
-      // branch added) are free-text overrides the user can set from
-      // "استكمال البيانات"; they never change the actual GL account or
-      // amounts, only how the voucher reads when printed.
-      partnerName: extras?.partnerName || derivedPartnerName,
-      cashAccount: tLine.code, cashAccountLabel: extras?.cashAccountLabel || accName(tLine.code),
-      currency: (STATE.accountsByCode[tLine.code]||{}).currency || 'EGP',
-      counterAccount, counterAccountLabel,
-      description: extras?.description || (counterLines[0]||{}).ref || tLine.ref || '',
-      amount: Math.round(amount*100)/100, hasExtras: !!extras
+    const entryDate = gl.reduce((min,l)=> (!min||l.date<min)?l.date:min, '');
+    treasuryLines.forEach(tLine => {
+      const isReceipt = tLine.debit > 0;
+      // Use curAmt (original currency amount) when the treasury account is
+      // in a foreign currency (e.g. USD) so the voucher shows the USD figure,
+      // not the EGP-converted equivalent. Fall back to EGP debit/credit for
+      // accounts that are in EGP.
+      const egpAmt  = isReceipt ? tLine.debit : tLine.credit;
+      const acctCur = (STATE.accountsByCode[tLine.code]||{}).currency || 'EGP';
+      const hasFX   = acctCur !== 'EGP';
+      const amount  = hasFX && tLine.curAmt ? Math.abs(tLine.curAmt) : egpAmt;
+      // Counter lines: everything that is NOT this specific treasury line.
+      const counterLines = gl.filter(l=>l!==tLine && (l.debit>0 || l.credit>0));
+      const derivedPartnerName = tLine.partner || (counterLines.find(l=>l.partner)||{}).partner || '—';
+      const counterAccount      = counterLines.map(l=>l.code).join(', ');
+      const counterAccountLabel = counterLines.map(l=>accName(l.code)).join('، ');
+      // Use a composite key when the same entry has multiple treasury lines
+      // so each gets a stable unique entryNo for extras lookup.
+      const rowEntryNo = treasuryLines.length > 1 ? entryNo + '_' + tLine.code : entryNo;
+      const rowExtras  = treasuryLines.length > 1
+        ? STATE.voucherExtras.find(e=>e.entryNo===rowEntryNo) || extras
+        : extras;
+      result.push({
+        entryNo: rowEntryNo, _baseEntryNo: entryNo, date: entryDate,
+        type: isReceipt ? 'receipt' : 'payment',
+        serial: rowExtras?.serial || entryNo,
+        // partnerName and cashAccountLabel are free-text overrides settable via
+        // "استكمال البيانات"; they never touch the underlying GL amounts.
+        partnerName:      rowExtras?.partnerName      || derivedPartnerName,
+        cashAccount:      tLine.code,
+        cashAccountLabel: rowExtras?.cashAccountLabel || accName(tLine.code),
+        currency: acctCur,
+        counterAccount, counterAccountLabel,
+        description: rowExtras?.description || (counterLines[0]||{}).ref || tLine.ref || '',
+        amount: Math.round(amount*100)/100, hasExtras: !!rowExtras
+      });
     });
   });
-  return result.sort((a,b)=> b.date.localeCompare(a.date) || b.entryNo.localeCompare(a.entryNo));
+  return result.sort((a,b)=> b.date.localeCompare(a.date) || b._baseEntryNo.localeCompare(a._baseEntryNo));
 }
 
 // Assigns a proper per-account, per-direction serial (see nextVoucherSerial)
@@ -10675,21 +10766,19 @@ function renderCashVouchersView(root){
   const allList = getJournalVouchers();
   const viewKey = 'cashvouchers';
   const colf = { serial:'colf_cv_serial', type:'colf_cv_type', date:'colf_cv_date', cashAccount:'colf_cv_cashaccount', partner:'colf_cv_partner', amount:'colf_cv_amount', description:'colf_cv_description', status:'colf_cv_status' };
-  const typeLabelOf = v => v.type==='receipt'?t('voucherTypeReceipt'):t('voucherTypePayment');
-  const statusLabelOf = v => v.hasExtras?t('dataCompleteLabel'):t('dataIncompleteLabel');
-  // Amount label shown in table: includes currency symbol if not EGP
-  const amountLabelOf = v => `${fmt(v.amount||0)}${v.currency&&v.currency!=='EGP'?' '+v.currency:''}`;
+  const typeLabelOf    = v => v.type==='receipt'?t('voucherTypeReceipt'):t('voucherTypePayment');
+  const statusLabelOf  = v => v.hasExtras?t('dataCompleteLabel'):t('dataIncompleteLabel');
 
   const filtered = allList.filter(v =>
-    passesColFilter(colf.serial, v.serial) && passesColFilter(colf.type, typeLabelOf(v)) && passesColFilter(colf.date, v.date) &&
-    passesColFilter(colf.cashAccount, v.cashAccountLabel) && passesColFilter(colf.partner, v.partnerName) &&
-    passesColFilter(colf.amount, v.amount) && passesColFilter(colf.description, v.description||'') &&
-    passesColFilter(colf.status, statusLabelOf(v)));
+    passesColFilter(colf.serial, v.serial) && passesColFilter(colf.type, typeLabelOf(v)) &&
+    passesColFilter(colf.date, v.date) && passesColFilter(colf.cashAccount, v.cashAccountLabel) &&
+    passesColFilter(colf.partner, v.partnerName) && passesColFilter(colf.amount, v.amount) &&
+    passesColFilter(colf.description, v.description||'') && passesColFilter(colf.status, statusLabelOf(v)));
   const sortAccessor = (v, col) => {
-    if(col==='type') return typeLabelOf(v);
+    if(col==='type')        return typeLabelOf(v);
     if(col==='cashAccount') return v.cashAccountLabel;
-    if(col==='status') return statusLabelOf(v);
-    if(col==='partner') return v.partnerName;
+    if(col==='status')      return statusLabelOf(v);
+    if(col==='partner')     return v.partnerName;
     if(col==='description') return v.description||'';
     return v[col];
   };
@@ -10721,17 +10810,21 @@ function renderCashVouchersView(root){
       <th></th>
     </tr></thead><tbody>
       ${sorted.map(v=>`<tr>
-        <td style="font-weight:600">${escapeHtml(v.serial)}</td>
+        <td style="font-weight:700">
+          <span class="drill" title="${t('journalEntriesTitle')||'قيود اليومية'}"
+            onclick="navigateToVoucherEntry('${jsAttrEscape(v._baseEntryNo||v.entryNo)}')"
+          >${escapeHtml(v.serial)}</span>
+        </td>
         <td><span style="color:${v.type==='receipt'?'var(--green)':'var(--red)'}">${typeLabelOf(v)}</span></td>
         <td>${v.date||'—'}</td>
         <td>${escapeHtml(v.cashAccountLabel)}</td>
         <td>${escapeHtml(v.partnerName||'—')}</td>
-        <td class="num">${fmt(v.amount||0)} ${v.currency&&v.currency!=='EGP'?`<span class="pill pill-gold" style="font-size:9px">${escapeHtml(v.currency)}</span>`:''}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(v.description||'')}">${v.description?escapeHtml(v.description):'<span class="hint">—</span>'}</td>
+        <td class="num">${fmt(v.amount||0)}${v.currency&&v.currency!=='EGP'?` <span class="pill pill-gold" style="font-size:9px">${escapeHtml(v.currency)}</span>`:''}</td>
+        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(v.description||'')}">${v.description?escapeHtml(v.description):'<span class="hint">—</span>'}</td>
         <td>${!v.hasExtras?`<span class="hint" style="font-size:10px">(${t('completeDataBtn')})</span>`:`<span style="color:var(--green)">${t('dataCompleteLabel')}</span>`}</td>
         <td style="white-space:nowrap">
-          <span class="drill" title="${t('completeDataBtn')}" onclick="openVoucherExtrasModal('${v.entryNo}')">✎</span>
-          <span class="drill" style="margin-right:6px;opacity:.7" title="${t('printBtn')}" onclick="printCashVoucher('${v.entryNo}')">🖨</span>
+          <span class="drill" title="${t('completeDataBtn')}" onclick="openVoucherExtrasModal('${jsAttrEscape(v.entryNo)}')">✎</span>
+          <span class="drill" style="margin-right:6px;opacity:.7" title="${t('printBtn')}" onclick="printCashVoucher('${jsAttrEscape(v._baseEntryNo||v.entryNo)}')">🖨</span>
         </td>
       </tr>`).join('')}
     </tbody></table></div>`}
@@ -10740,6 +10833,19 @@ function renderCashVouchersView(root){
   bindColFilterHandler(Object.values(colf));
   const autoBtn = document.getElementById('autoNumberVouchersBtn');
   if(autoBtn) autoBtn.addEventListener('click', autoAssignVoucherSerials);
+}
+
+// Navigate from a voucher row to its journal entry: switch to قيود اليومية
+// and pre-fill the voucher search box with the base entry number so the user
+// lands directly on that entry without having to search manually.
+function navigateToVoucherEntry(baseEntryNo){
+  STATE.ui.glAccounts    = [];
+  STATE.ui.glPartners    = [];
+  STATE.ui.glJournals    = [];
+  STATE.ui.glCostCenters = [];
+  STATE.ui.glVoucherSearch = baseEntryNo;
+  STATE.ui.glPage = 0;
+  switchView('journalentries');
 }
 
 // Creates a brand-new receipt/payment voucher: posts straight to the
