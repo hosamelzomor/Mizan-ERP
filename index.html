@@ -65,7 +65,7 @@ html,body{margin:0;padding:0; max-width:100%;}
    transform: scale() wrapper which would require compensating width/height
    hacks and can misbehave with sticky headers. Widely supported across
    modern Chrome/Edge/Safari/Firefox. */
-html{ zoom: 1; }
+html{ zoom: 0.9; }
 body{
   background: var(--ink);
   color: var(--paper);
@@ -4435,23 +4435,16 @@ function projectTxFor(projectId){
   return STATE.projectTx.filter(t=>t.projectId===projectId).sort((a,b)=>a.date.localeCompare(b.date));
 }
 function projectTotals(project){
-  // التحصيل والفواتير من اليومية مباشرة — partner = اسم المشروع
-  const projectName = project.name;
-  // سندات القبض: partner = اسم المشروع
-  const vouchers = getJournalVouchers();
-  const collections = Math.round(
-    vouchers.filter(v => v.type==='receipt' && v.partnerName === projectName)
-            .reduce((s,v) => s + v.amount, 0) * 100) / 100;
-  // فواتير العملاء: partner = اسم المشروع
-  const invoiced = Math.round(
-    getJournalInvoices().filter(i => i.customerName === projectName)
-                        .reduce((s,i) => s + i.grandTotal, 0) * 100) / 100;
-  const remaining = Math.round(((project.amount||0) - collections) * 100) / 100;
+  const txs = projectTxFor(project.id);
+  const deals = txs.filter(t=>t.type==='deal').reduce((s,t)=>s+t.amount,0);
+  const collections = txs.filter(t=>t.type==='collection').reduce((s,t)=>s+t.amount,0);
+  const invoiced = txs.filter(t=>t.type==='invoicing').reduce((s,t)=>s+t.amount,0);
+  const remaining = (project.amount||0) - collections;
   let status = 'notStarted';
   if(collections > 0 && remaining <= 0.01) status = 'complete';
   else if(collections > 0) status = 'partial';
-  else if(invoiced > 0) status = 'invoicedNotCollected';
-  return { collections, invoiced, remaining, status };
+  else if(invoiced > 0) status = 'invoicedNotCollected'; // has an invoice on record, but zero collected — distinct from a project that was never invoiced at all
+  return { deals, collections, invoiced, remaining, status, txCount: txs.length };
 }
 // Cross-reference: the actual ledger balance for a partner with this exact
 // name, as of today — null if no matching partner name exists in the
@@ -5316,80 +5309,78 @@ function openProjectTxModal(projectId){
   if(!overlay) return;
   const project = STATE.projects.find(p=>p.id===projectId);
   if(!project) return;
+  let showAddForm = false;
+  let editingRowId = null; // null = adding a new transaction; set = editing this existing one
+  let localSort = { col: 'date', dir: 'asc' }; // this modal has its own render() loop (not the global renderApp()), so sorting is handled locally rather than via the shared filterableTh/toggleSort machinery
+  function txSortValue(tx, col){
+    if(col==='amount') return tx.amount||0;
+    if(col==='exRate') return tx.exRate||0;
+    if(col==='type') return tx.type==='deal'?t('txTypeDeal'):tx.type==='collection'?t('txTypeCollection'):t('txTypeInvoicing');
+    return tx[col]||'';
+  }
+  function localSortTh(col, label, extraClass){
+    const active = localSort.col === col;
+    const arrow = active ? (localSort.dir==='asc'?' ▲':' ▼') : '';
+    return `<th class="sortable-th${extraClass?' '+extraClass:''}" data-local-sort-col="${col}">${label}${arrow}</th>`;
+  }
 
   function render(){
+    const txs = projectTxFor(projectId);
+    const sortedTxs = [...txs].sort((a,b) => {
+      const va = txSortValue(a, localSort.col), vb = txSortValue(b, localSort.col);
+      const cmp = (typeof va === 'number' && typeof vb === 'number') ? va - vb : String(va).localeCompare(String(vb), 'ar');
+      return localSort.dir === 'asc' ? cmp : -cmp;
+    });
     const tot = projectTotals(project);
-    const projectName = project.name;
-    // سندات القبض من اليومية
-    const vouchers = getJournalVouchers().filter(v => v.type==='receipt' && v.partnerName === projectName)
-      .sort((a,b) => b.date.localeCompare(a.date));
-    // فواتير العملاء من اليومية
-    const invoices = getJournalInvoices().filter(i => i.customerName === projectName)
-      .sort((a,b) => b.date.localeCompare(a.date));
-
+    const editing = editingRowId ? txs.find(tx=>tx.rowId===editingRowId) : null;
     overlay.innerHTML = `
-      <div class="modal-box" style="max-width:760px;width:96%">
-        <h3>${escapeHtml(project.name)} <span style="font-size:13px;color:var(--ink-soft)">(${project.id})</span></h3>
-        <div class="grid-3" style="margin-bottom:16px">
+      <div class="modal-box" style="max-width:720px;width:96%">
+        <h3>${t('projectTxModalTitle')} — ${escapeHtml(project.name)} (${project.id})</h3>
+        <div class="grid-3" style="margin-bottom:12px">
           ${kpi(t('projectAmountCol'), fmt(project.amount)+' '+project.currency, '', '')}
-          ${kpi(t('projectCollectedCol'), fmt(tot.collections), tot.collections>0?'pos':'', '')}
+          ${kpi(t('projectCollectedCol'), fmt(tot.collections), '', '')}
           ${kpi(t('projectRemainingCol'), fmt(tot.remaining), tot.remaining>0?'neg':'pos', '')}
         </div>
-
-        <div style="margin-bottom:16px">
-          <div class="section-title">${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('voucherTypeReceipt')} <span class="badge-count">${vouchers.length}</span></div>
-          ${vouchers.length ? `
-          <div class="table-wrap"><table><thead><tr>
-            <th>${t('date')}</th>
-            <th>${t('voucherSerialCol')}</th>
-            <th>${t('voucherCashAccCol')}</th>
-            <th class="num-cell">${t('voucherAmountCol')}</th>
-            <th>${t('voucherDescCol')}</th>
+        <div class="table-wrap" style="max-height:320px;overflow:auto">
+          <table><thead><tr>
+            ${localSortTh('date',t('txDateCol'))}${localSortTh('type',t('txTypeCol'))}${localSortTh('amount',t('txAmountCol'),'num-cell')}${localSortTh('invoiceNo',t('txInvoiceNoCol'))}${localSortTh('exRate',t('txExRateCol'))}${localSortTh('remarks',t('txRemarksCol'))}<th></th>
           </tr></thead><tbody>
-            ${vouchers.map(v=>`<tr>
-              <td class="num">${v.date||'—'}</td>
-              <td style="font-weight:600">
-                <span class="drill" onclick="navigateToVoucherEntry('${jsAttrEscape(v._baseEntryNo||v.entryNo)}')">${escapeHtml(v.serial)}</span>
+            ${sortedTxs.length ? sortedTxs.map(tx=>`<tr>
+              <td class="num">${tx.date}</td>
+              <td><span class="pill pill-gold">${tx.type==='deal'?t('txTypeDeal'):tx.type==='collection'?t('txTypeCollection'):t('txTypeInvoicing')}</span></td>
+              <td class="num-cell num">${fmt(tx.amount)}</td>
+              <td class="num">${escapeHtml(tx.invoiceNo||'—')}</td>
+              <td class="num">${tx.exRate?fmt(tx.exRate):'—'}</td>
+              <td>${escapeHtml(tx.remarks||'—')}</td>
+              <td style="white-space:nowrap">
+                <span class="drill" title="${t('editTxBtn')}" data-edit-tx="${tx.rowId}">✎</span>
+                <span class="drill" title="${t('deleteTxConfirm')}" data-del-tx="${tx.rowId}" style="color:var(--brick);margin-inline-start:6px">✕</span>
               </td>
-              <td>${escapeHtml(v.cashAccountLabel)}</td>
-              <td class="num-cell num">${fmt(v.amount)}${v.currency&&v.currency!=='EGP'?' '+escapeHtml(v.currency):''}</td>
-              <td>${v.description?escapeHtml(v.description):'<span class="hint">—</span>'}</td>
-            </tr>`).join('')}
-            <tr class="total-row">
-              <td colspan="3">${t('total')}</td>
-              <td class="num-cell num">${fmt(tot.collections)}</td>
-              <td></td>
-            </tr>
-          </tbody></table></div>` : `<div class="empty" style="padding:14px">${t('noCashVouchers')}</div>`}
+            </tr>`).join('') : `<tr><td colspan="7" class="empty">${t('noTxYet')}</td></tr>`}
+          </tbody></table>
         </div>
-
-        <div>
-          <div class="section-title">${ICONS.invoice.replace('currentColor','var(--gold-dim)')} ${t('invoicesTitle')||'الفواتير'} <span class="badge-count">${invoices.length}</span></div>
-          ${invoices.length ? `
-          <div class="table-wrap"><table><thead><tr>
-            <th>${t('date')}</th>
-            <th>${t('invoiceNoCol')||'رقم الفاتورة'}</th>
-            <th class="num-cell">${t('invTotalCol')||'الإجمالي'}</th>
-            <th class="num-cell">${t('invPaidCol')||'المحصّل'}</th>
-            <th class="num-cell">${t('invBalanceCol')||'المتبقي'}</th>
-          </tr></thead><tbody>
-            ${invoices.map(i=>`<tr>
-              <td class="num">${i.date||'—'}</td>
-              <td style="font-weight:600">${escapeHtml(i.invoiceNo)}</td>
-              <td class="num-cell num">${fmt(i.grandTotal)}</td>
-              <td class="num-cell num pos-text">${fmt(i.paidAmt)}</td>
-              <td class="num-cell num ${(i.grandTotal-i.paidAmt)>0.01?'neg-text':'pos-text'}">${fmt(Math.round((i.grandTotal-i.paidAmt)*100)/100)}</td>
-            </tr>`).join('')}
-            <tr class="total-row">
-              <td colspan="2">${t('total')}</td>
-              <td class="num-cell num">${fmt(tot.invoiced)}</td>
-              <td class="num-cell num">${fmt(invoices.reduce((s,i)=>s+i.paidAmt,0))}</td>
-              <td class="num-cell num">${fmt(Math.round((tot.invoiced - invoices.reduce((s,i)=>s+i.paidAmt,0))*100)/100)}</td>
-            </tr>
-          </tbody></table></div>` : `<div class="empty" style="padding:14px">${t('noInvoicesYet')||'لا توجد فواتير'}</div>`}
-        </div>
-
-        <div class="modal-actions">
+        ${(showAddForm || editing) ? `
+          <div class="card" style="margin:12px 0;background:var(--paper-2)">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">
+              <div><label class="lbl">${t('txTypeCol')}</label>
+                <select class="input" id="txType">
+                  <option value="deal" ${editing&&editing.type==='deal'?'selected':''}>${t('txTypeDeal')}</option>
+                  <option value="collection" ${!editing||editing.type==='collection'?'selected':''}>${t('txTypeCollection')}</option>
+                  <option value="invoicing" ${editing&&editing.type==='invoicing'?'selected':''}>${t('txTypeInvoicing')}</option>
+                </select>
+              </div>
+              <div><label class="lbl">${t('txDateCol')}</label><input type="date" class="input" id="txDate" value="${editing?editing.date:todayISO()}"></div>
+              <div><label class="lbl">${t('txAmountCol')}</label><input type="number" step="0.01" class="input" id="txAmount" style="width:110px" value="${editing?editing.amount:0}"></div>
+              <div><label class="lbl">${t('txInvoiceNoCol')}</label><input type="text" class="input" id="txInvoiceNo" style="width:110px" value="${escapeHtml(editing&&editing.invoiceNo||'')}"></div>
+              ${project.currency==='USD' ? `<div><label class="lbl">${t('txExRateCol')}</label><input type="number" step="0.0001" class="input" id="txExRate" style="width:100px" value="${editing&&editing.exRate?editing.exRate:''}"></div>` : ''}
+              <div style="flex:1;min-width:140px"><label class="lbl">${t('txRemarksCol')}</label><input type="text" class="input" id="txRemarks" style="width:100%" value="${escapeHtml(editing&&editing.remarks||'')}"></div>
+              <button type="button" class="btn btn-gold" id="txSave">${t('saveProjectBtn')}</button>
+              ${editing ? `<button type="button" class="btn btn-outline" id="txCancelEdit">${t('cancelEdit')}</button>` : ''}
+            </div>
+          </div>
+        ` : ''}
+        <div class="modal-actions" style="justify-content:space-between">
+          <button type="button" class="btn btn-outline" id="txAddToggle">${t('addTxBtn')}</button>
           <button type="button" class="btn btn-outline" id="txClose">${t('done')}</button>
         </div>
       </div>
@@ -5397,6 +5388,50 @@ function openProjectTxModal(projectId){
     overlay.style.display = 'flex';
     document.getElementById('txClose').addEventListener('click', close);
     overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+    overlay.querySelectorAll('[data-local-sort-col]').forEach(th => th.addEventListener('click', () => {
+      const col = th.dataset.localSortCol;
+      if(localSort.col === col) localSort.dir = localSort.dir === 'asc' ? 'desc' : 'asc';
+      else { localSort.col = col; localSort.dir = 'asc'; }
+      render();
+    }));
+    document.getElementById('txAddToggle').addEventListener('click', () => { showAddForm = !showAddForm; editingRowId = null; render(); });
+    const cancelEditBtn = document.getElementById('txCancelEdit');
+    if(cancelEditBtn) cancelEditBtn.addEventListener('click', () => { editingRowId = null; render(); });
+    overlay.querySelectorAll('[data-edit-tx]').forEach(el => el.addEventListener('click', () => {
+      editingRowId = el.dataset.editTx;
+      showAddForm = false;
+      render();
+    }));
+    overlay.querySelectorAll('[data-del-tx]').forEach(el => el.addEventListener('click', () => {
+      const rowId = el.dataset.delTx;
+      showConfirmModal(t('addTxBtn'), t('deleteTxConfirm'), async () => {
+        STATE.projectTx = STATE.projectTx.filter(tx=>tx.rowId!==rowId);
+        await storeSet('projectTx', STATE.projectTx);
+        if(editingRowId===rowId) editingRowId = null;
+        render();
+      });
+    }));
+    const txSaveBtn = document.getElementById('txSave');
+    if(txSaveBtn) txSaveBtn.addEventListener('click', async () => {
+      const type = document.getElementById('txType').value;
+      const date = document.getElementById('txDate').value;
+      const amount = Number(document.getElementById('txAmount').value) || 0;
+      if(!date || amount <= 0){ showToast(t('txAmountCol')); return; }
+      const invoiceNo = document.getElementById('txInvoiceNo').value.trim();
+      const exRateEl = document.getElementById('txExRate');
+      const remarks = document.getElementById('txRemarks').value.trim();
+      const exRate = exRateEl ? (Number(exRateEl.value)||null) : null;
+      if(editingRowId){
+        const tx = STATE.projectTx.find(x=>x.rowId===editingRowId);
+        if(tx) Object.assign(tx, { date, type, amount, invoiceNo, exRate, remarks });
+      } else {
+        STATE.projectTx.push({ rowId: 'tx_' + Date.now() + '_' + Math.random().toString(36).slice(2,7), projectId, date, type, amount, invoiceNo, exRate, remarks });
+      }
+      await storeSet('projectTx', STATE.projectTx);
+      showAddForm = false;
+      editingRowId = null;
+      render();
+    });
   }
   function close(){ overlay.style.display = 'none'; overlay.innerHTML = ''; renderApp(); }
   render();
