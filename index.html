@@ -65,7 +65,7 @@ html,body{margin:0;padding:0; max-width:100%;}
    transform: scale() wrapper which would require compensating width/height
    hacks and can misbehave with sticky headers. Widely supported across
    modern Chrome/Edge/Safari/Firefox. */
-html{ zoom: 0.9; }
+html{ zoom: 1; }
 body{
   background: var(--ink);
   color: var(--paper);
@@ -4434,17 +4434,18 @@ function nextProjectId(currency){
 function projectTxFor(projectId){
   return STATE.projectTx.filter(t=>t.projectId===projectId).sort((a,b)=>a.date.localeCompare(b.date));
 }
-function projectTotals(project, cachedVouchers, cachedInvoices){
+function projectTotals(project){
   // التحصيل والفواتير من اليومية مباشرة — partner = اسم المشروع
   const projectName = project.name;
-  const vouchers  = cachedVouchers  || getJournalVouchers();
-  const invoices  = cachedInvoices  || getJournalInvoices();
+  // سندات القبض: partner = اسم المشروع
+  const vouchers = getJournalVouchers();
   const collections = Math.round(
     vouchers.filter(v => v.type==='receipt' && v.partnerName === projectName)
             .reduce((s,v) => s + v.amount, 0) * 100) / 100;
+  // فواتير العملاء: partner = اسم المشروع
   const invoiced = Math.round(
-    invoices.filter(i => i.customerName === projectName)
-            .reduce((s,i) => s + i.grandTotal, 0) * 100) / 100;
+    getJournalInvoices().filter(i => i.customerName === projectName)
+                        .reduce((s,i) => s + i.grandTotal, 0) * 100) / 100;
   const remaining = Math.round(((project.amount||0) - collections) * 100) / 100;
   let status = 'notStarted';
   if(collections > 0 && remaining <= 0.01) status = 'complete';
@@ -9156,28 +9157,14 @@ function ccDrill(ccName, kind){
 function renderProjectsView(root){
   STATE.ui.projectsFilter = STATE.ui.projectsFilter || { currency:[], seller:[], status:[], name:[] };
   const pf = STATE.ui.projectsFilter;
-  if(!pf.name) pf.name = [];
+  if(!pf.name) pf.name = []; // upgrade older saved state that predates this filter
   const sellers = uniq(STATE.projects.map(p=>p.seller).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
   const projectNames = uniq(STATE.projects.map(p=>p.name).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'ar'));
   const statusValues = ['complete','partial','invoicedNotCollected','notStarted'];
   const viewKey = 'projects';
   const colf = { id:'colf_pj_id', name:'colf_pj_name', currency:'colf_pj_currency', amount:'colf_pj_amount', collected:'colf_pj_collected', remaining:'colf_pj_remaining', status:'colf_pj_status', ledger:'colf_pj_ledger', seller:'colf_pj_seller', startDate:'colf_pj_startDate' };
 
-  // ── حساب كل القيم مرة واحدة بدل loop لكل مشروع ──────────────────────────
-  const allVouchers = getJournalVouchers();
-  const allInvoices = getJournalInvoices();
-
-  // ledger balance: نبني map من partner → balance في pass واحدة على الـ journal
-  const partnerBalanceMap = {};
-  const partnerSeen = new Set();
-  STATE.journal.forEach(l => { if(l.partner) partnerSeen.add(l.partner); });
-  STATE.journal.forEach(l => {
-    if(!l.partner) return;
-    partnerBalanceMap[l.partner] = (partnerBalanceMap[l.partner] || 0) + l.debit - l.credit;
-  });
-  const getLedger = name => partnerSeen.has(name) ? Math.round(partnerBalanceMap[name]*100)/100 : null;
-
-  const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p, allVouchers, allInvoices), ledger: getLedger(p.name) }))
+  const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
     .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)) && (pf.name.length===0 || pf.name.includes(r.p.name)));
   const rows = baseRows.filter(r =>
     passesColFilter(colf.id, r.p.id) && passesColFilter(colf.name, r.p.name) && passesColFilter(colf.currency, r.p.currency) &&
@@ -9189,11 +9176,11 @@ function renderProjectsView(root){
     if(col==='status') return r.t.status; if(col==='ledger') return r.ledger; if(col==='seller') return r.p.seller||'';
     if(col==='startDate') return r.p.startDate||''; return '';
   };
-  getSortState(viewKey, 'startDate', 'asc');
+  getSortState(viewKey, 'startDate', 'asc'); // preserves the table's previous default order until the user picks a column
   const sortedRows = applySort(viewKey, rows, sortAccessor);
 
-  const totalRemainingEGP = STATE.projects.filter(p=>p.currency==='EGP').reduce((s,p)=>s+projectTotals(p, allVouchers, allInvoices).remaining,0);
-  const totalRemainingUSD = STATE.projects.filter(p=>p.currency==='USD').reduce((s,p)=>s+projectTotals(p, allVouchers, allInvoices).remaining,0);
+  const totalRemainingEGP = STATE.projects.filter(p=>p.currency==='EGP').reduce((s,p)=>s+projectTotals(p).remaining,0);
+  const totalRemainingUSD = STATE.projects.filter(p=>p.currency==='USD').reduce((s,p)=>s+projectTotals(p).remaining,0);
   const statusLabel = s => s==='complete'?t('statusComplete'):s==='partial'?t('statusPartial'):s==='invoicedNotCollected'?t('statusInvoicedNotCollected'):t('statusNotStarted');
   const statusPillClass = s => s==='complete'?'pill-em':s==='partial'?'pill-gold':s==='invoicedNotCollected'?'pill-blue':'pill-brick';
 
@@ -10211,16 +10198,13 @@ function computeInvoiceTotals(lines){
 // STATE.invoiceExtras only adds the print-only details (due date, per-line
 // quantity/unit price/discount) the journal has no field for.
 function getJournalInvoices(){
-  const key = _memoKey();
-  if(_memo.invoicesKey === key && _memo.invoices) return _memo.invoices;
-  _memo.invoicesKey = key;
   const groups = {};
   STATE.journal.forEach(l=>{
     if(l.journal !== 'فواتير العملاء') return;
     (groups[l.entry] = groups[l.entry] || []).push(l);
   });
   const taxAcc = '212102';
-  _memo.invoices = Object.keys(groups).map(entryNo=>{
+  return Object.keys(groups).map(entryNo=>{
     const gl = groups[entryNo];
     const arLine = gl.find(l=>/^112/.test(l.code) && l.debit>0) || gl.find(l=>l.debit>0);
     const taxLines = gl.filter(l=>l.code===taxAcc);
@@ -10238,7 +10222,6 @@ function getJournalInvoices(){
       lineExtras: extras?.lineExtras || [], hasExtras: !!extras
     };
   }).sort((a,b)=> b.date.localeCompare(a.date) || b.entryNo.localeCompare(a.entryNo));
-  return _memo.invoices;
 }
 
 // Sums receipt-voucher journal lines that reference a given invoice (by
@@ -10664,18 +10647,7 @@ const DOC_PRINT_STYLE = `<style>
 // page all show up the same way. An entry with more than one treasury line
 // (a transfer between two of our own accounts) has no external "party" to
 // issue a receipt to, so it's excluded from this list on purpose.
-// ── Memoization cache ─────────────────────────────────────────────────────────
-// Both getJournalVouchers and getJournalInvoices scan the entire journal on
-// every call. With many projects each calling projectTotals, this caused the
-// page to hang. We invalidate the cache whenever STATE.journal changes length
-// or STATE.voucherExtras / STATE.invoiceExtras change.
-const _memo = { vouchersKey: null, vouchers: null, invoicesKey: null, invoices: null };
-function _memoKey(){ return STATE.journal.length + '|' + STATE.voucherExtras.length + '|' + STATE.invoiceExtras.length; }
-
 function getJournalVouchers(){
-  const key = _memoKey();
-  if(_memo.vouchersKey === key && _memo.vouchers) return _memo.vouchers;
-  _memo.vouchersKey = key;
   const groups = {};
   STATE.journal.forEach(l=>{ (groups[l.entry] = groups[l.entry] || []).push(l); });
   const result = [];
@@ -10726,8 +10698,7 @@ function getJournalVouchers(){
       });
     });
   });
-  _memo.vouchers = result.sort((a,b)=> b.date.localeCompare(a.date) || b._baseEntryNo.localeCompare(a._baseEntryNo));
-  return _memo.vouchers;
+  return result.sort((a,b)=> b.date.localeCompare(a.date) || b._baseEntryNo.localeCompare(a._baseEntryNo));
 }
 
 // Assigns a proper per-account, per-direction serial (see nextVoucherSerial)
