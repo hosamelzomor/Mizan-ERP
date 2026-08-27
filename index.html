@@ -7529,6 +7529,11 @@ function renderApp(){
       if(themeBtn) mobileQuickControls.appendChild(themeBtn);
     }
   }
+  // Build analytics dashboard charts if the ratios view is active.
+  if(STATE.ui.view === 'ratios' && typeof window.__buildRatiosDashCharts === 'function'){
+    const ids = window.__rdChartIds;
+    if(ids) window.__buildRatiosDashCharts(ids.rev, ids.exp, ids.margin, ids.cash);
+  }
 }
 
 function needsFilters(view){
@@ -12068,6 +12073,8 @@ function renderRatiosView(root){
   const marginChartId = cid('margin');
   const cashChartId  = cid('cash');
   const expPieId     = cid('exp');
+  // Store IDs so renderApp() can call __buildRatiosDashCharts after the DOM is ready
+  window.__rdChartIds = { rev: revChartId, exp: expPieId, margin: marginChartId, cash: cashChartId };
 
   // ── KPI helpers ─────────────────────────────────────────────────────────
   const totalRev  = is.revenue + is.otherIncome;
@@ -12172,7 +12179,7 @@ function renderRatiosView(root){
     <!-- ═══════════════════════════════════════════════════════════════
          END OF ANALYTICS DASHBOARD SECTION
          ═══════════════════════════════════════════════════════════════ -->
-    <img src="x" onerror="window.__buildRatiosDashCharts('${revChartId}','${expPieId}','${marginChartId}','${cashChartId}')" style="display:none" alt="">
+
 
     <div class="card">
       <h2>${ICONS.ratio.replace('currentColor','var(--gold-dim)')} ${t('liquidityRatios')}</h2>
