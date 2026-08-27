@@ -265,13 +265,13 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .date-input-wrap{ position:relative; display:inline-flex; align-items:center; }
 .date-text-input{
   background:var(--ink); color:var(--paper-2); border:1px solid rgba(217,180,92,.25);
-  border-radius:6px; padding:5px 6px 5px 26px; font-size:11px; width:110px; direction:ltr; text-align:center; letter-spacing:-.3px;
+  border-radius:6px; padding:4px 4px 4px 22px; font-size:10.5px; width:88px; direction:ltr; text-align:center; letter-spacing:-.3px;
 }
 .date-text-input.date-input-invalid{ border-color:var(--brick); box-shadow:0 0 0 1px var(--brick); }
 .date-hidden-picker{ position:absolute; inset:0; opacity:0; pointer-events:none; width:1px; height:1px; }
 .date-picker-btn{
-  position:absolute; left:4px; top:50%; transform:translateY(-50%);
-  background:transparent; border:none; color:var(--gold-dim); cursor:pointer; padding:2px; display:flex;
+  position:absolute; left:3px; top:50%; transform:translateY(-50%);
+  background:transparent; border:none; color:var(--gold-dim); cursor:pointer; padding:1px; display:flex; font-size:11px;
 }
 .date-picker-btn:hover{ color:var(--gold-light); }
 .chip-btns{ display:flex; gap:5px; }
@@ -9285,6 +9285,7 @@ function renderProjectsView(root){
     </div>
   `;
 
+  attachSortEvents();
   STATE.ui.__msHandler = (id, values) => {
     if(id === 'pf_name'){ pf.name = values; renderApp(); }
     else if(id === 'pf_currency'){ pf.currency = values; renderApp(); }
@@ -12069,8 +12070,8 @@ function renderRatiosView(root){
   const expPieId     = cid('exp');
 
   // ── KPI helpers ─────────────────────────────────────────────────────────
-  const totalRev  = dashRevenue.reduce((a,b)=>a+b,0);
-  const totalNet  = dashNetIncome.reduce((a,b)=>a+b,0);
+  const totalRev  = is.revenue + is.otherIncome;
+  const totalNet  = is.netIncome;
   const totalExp  = totalCosts;
   const avgMargin = totalRev ? (totalNet/totalRev*100).toFixed(1) : null;
 
@@ -12101,7 +12102,7 @@ function renderRatiosView(root){
       <h2 style="margin-bottom:16px">
         ${ICONS.statement.replace('currentColor','var(--gold-dim)')}
         لوحة التحليل المالي
-        <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:8px">آخر ${DASH_N} أشهر · بيانات حقيقية</span>
+        <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:8px">${_r.start ? _r.start+' → '+(_r.end||todayISO()) : 'كل الفترات'} · بيانات حقيقية</span>
       </h2>
 
       <!-- KPI Row -->
