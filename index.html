@@ -1378,7 +1378,7 @@ const I18N = {
     keyFiguresExplained:'إيضاح الأرقام الرئيسية', totalRevenueNote:'مبيعات النشاط + إيرادات أخرى (فروق عملة، إلخ) خلال الفترة فقط، باستثناء أي قيود إقفال.',
     totalCostsNote:'تكلفة الإيرادات + المصروفات العمومية والإدارية والبيعية + الإهلاك.', totalAssetsNote:'رصيد تراكمي كما في', includesAllAssets:'، يشمل كل الأصول المتداولة والثابتة.',
     totalLiabilitiesNote:'رصيد تراكمي كما في', netEquityNote:'رأس المال المسجل + أرباح/خسائر الفترة الحالية غير المرحّلة بعد.',
-    aiAssistantTitle:'المساعد الذكي', aiAssistantDesc:'مساعد يجاوب من بيانات نظامك الفعلية مباشرة (وليس اتصالاً بخدمة ذكاء اصطناعي خارجية، لأن هذا الملف يعمل بالكامل داخل متصفحك بدون خادم). يفهم أنماط أسئلة شائعة بالعربية أو الإنجليزية عن المبيعات، العملاء، المصروفات، الأرصدة، والأسباب وراء التغيرات.',
+    aiAssistantTitle:'المساعد الذكي', aiAssistantDesc:'مساعد تحليلي يعمل على بيانات نظامك الفعلية مباشرة. يفهم الأسئلة بالعربية أو الإنجليزية ويحلل القوائم، الأرصدة، العملاء، المشاريع، المنتجات، المبيعات، المصروفات، الربحية والتدفقات النقدية، مع ربط الإجابة بالصفحة ذات الصلة.',
     chatEmptyPrompt:'ابدأ بسؤال، مثلاً: "كم بلغت المبيعات هذا الشهر؟" أو "من أكبر عميل؟"', chatInputPlaceholder:'اكتب سؤالك هنا بالعربية أو الإنجليزية...',
     journalEntriesTitle:'قيود اليومية', generalLedgerTitle:'الأستاذ العام',
     cfNetIncreaseDecrease:'صافي الزيادة (النقص) في النقدية وما في حكمها', cfCashBeginning:'رصيد النقدية وما في حكمها في بداية الفترة', cfCashEnding:'رصيد النقدية وما في حكمها في نهاية الفترة (المحسوب)',
@@ -1439,6 +1439,7 @@ const I18N = {
     custNameCol:'اسم العميل', custCodeCol:'الرمز', custPhoneCol:'الهاتف', custEmailCol:'البريد الإلكتروني', custAddressCol:'العنوان', custTaxIdCol:'الرقم الضريبي', custArAccCol:'حساب العميل (مدين)',
     custNameRequired:'اكتب اسم العميل', notesLabel:'ملاحظات', saveBtn:'حفظ', savedToast:'تم الحفظ بنجاح',
     productsTitle:'المنتجات والخدمات', newProductBtn:'منتج / خدمة جديدة', editProductTitle:'تعديل منتج', noProducts:'لا توجد منتجات — أنشئ منتجاً جديداً',
+    productsImportHint:'استورد قائمة المنتجات والخدمات من Excel بنفس نموذج النظام، مع السعر والضريبة وحساب الإيراد والبيانات الأساسية.', productsImportResult:'تم: ${added} منتج/خدمة جديد، ${updated} محدَّث، ${skipped} صف متجاوز. الإجمالي ${total}.' , productsImportEmpty:'لم يتم العثور على صفوف منتجات صالحة في الملف.',
     prodNameCol:'اسم المنتج/الخدمة', prodCodeCol:'الرمز', prodUnitCol:'الوحدة', prodPriceCol:'السعر', prodTaxCol:'الضريبة', prodRevAccCol:'حساب الإيراد', prodNameRequired:'اكتب اسم المنتج',
     invoicesTitle:'فواتير المبيعات', newInvoiceBtn:'فاتورة جديدة', editInvoiceTitle:'تعديل فاتورة', noInvoices:'لا توجد فواتير — أنشئ فاتورة جديدة',
     invTotalInvoicedKpi:'إجمالي المفوتر', invTotalPaidKpi:'إجمالي المحصّل', invTotalOutstandingKpi:'إجمالي المتبقي',
@@ -1524,7 +1525,7 @@ const I18N = {
     keyFiguresExplained:'Key Figures Explained', totalRevenueNote:'Operating sales + other income (FX differences, etc.) for the period only, excluding any closing entries.',
     totalCostsNote:'Cost of revenue + general, administrative & selling expenses + depreciation.', totalAssetsNote:'Cumulative balance as of', includesAllAssets:', including all current and fixed assets.',
     totalLiabilitiesNote:'Cumulative balance as of', netEquityNote:'Registered capital + current period profit/loss not yet carried forward.',
-    aiAssistantTitle:'AI Assistant', aiAssistantDesc:'An assistant that answers directly from your system\'s actual data (not a connection to an external AI service, since this file runs entirely in your browser with no server). It understands common question patterns in Arabic or English about sales, customers, expenses, balances, and reasons behind changes.',
+    aiAssistantTitle:'AI Assistant', aiAssistantDesc:'A data-grounded analytical assistant that works directly from your system data. It understands Arabic or English questions about statements, balances, customers, projects, products, sales, expenses, profitability and cash flow, and can link answers to the relevant page.',
     chatEmptyPrompt:'Start with a question, e.g.: "What were sales this month?" or "Who is my biggest customer?"', chatInputPlaceholder:'Type your question here in Arabic or English...',
     journalEntriesTitle:'Journal Entries', generalLedgerTitle:'General Ledger',
     cfNetIncreaseDecrease:'Net Increase (Decrease) in Cash and Cash Equivalents', cfCashBeginning:'Cash and Cash Equivalents at Beginning of Period', cfCashEnding:'Cash and Cash Equivalents at End of Period (Computed)',
@@ -1734,6 +1735,7 @@ const I18N = {
     custNameCol:'Customer Name', custCodeCol:'Code', custPhoneCol:'Phone', custEmailCol:'Email', custAddressCol:'Address', custTaxIdCol:'Tax ID', custArAccCol:'Receivable Account',
     custNameRequired:'Enter the customer name', notesLabel:'Notes', saveBtn:'Save', savedToast:'Saved successfully',
     productsTitle:'Products & Services', newProductBtn:'New Product/Service', editProductTitle:'Edit Product', noProducts:'No products yet — create one',
+    productsImportHint:'Import your products and services from Excel using the system template, including price, tax, revenue account and core details.', productsImportResult:'Done: ${added} new product/service(s), ${updated} updated, ${skipped} row(s) skipped. Total ${total}.', productsImportEmpty:'No valid product/service rows were found in the file.',
     prodNameCol:'Product/Service Name', prodCodeCol:'Code', prodUnitCol:'Unit', prodPriceCol:'Price', prodTaxCol:'Tax', prodRevAccCol:'Revenue Account', prodNameRequired:'Enter the product name',
     invoicesTitle:'Sales Invoices', newInvoiceBtn:'New Invoice', editInvoiceTitle:'Edit Invoice', noInvoices:'No invoices yet — create one',
     invTotalInvoicedKpi:'Total Invoiced', invTotalPaidKpi:'Total Collected', invTotalOutstandingKpi:'Total Outstanding',
@@ -2531,6 +2533,10 @@ function attachColumnResizing(tableEl, tableKey){
         STATE.ui.colWidths = STATE.ui.colWidths || {};
         STATE.ui.colWidths[tableKey] = STATE.ui.colWidths[tableKey] || {};
         STATE.ui.colWidths[tableKey][th.dataset.colKey] = th.style.width;
+        // User-adjusted column widths are a real UI preference, so persist them
+        // immediately rather than losing them on refresh/reopen.
+        STATE.settings.colWidths = STATE.ui.colWidths;
+        storeSet('settings', STATE.settings).catch(()=>{});
       }
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
@@ -2781,6 +2787,24 @@ function downloadImportTemplate(kind){
         ['ملاحظة: النظام يجمّع الأصول اللي عندها نفس (الطريقة + المدة + الحسابات) في "نموذج إهلاك" واحد تلقائياً وراء الكواليس — مش محتاج تنشئ نماذج إهلاك يدوياً قبل استيراد هذا الملف.'],
         ['الرمز (اختياري): اتركه فارغاً في الوضع الطبيعي — كل سطر هيتضاف كأصل جديد مستقل حتى لو كان بنفس اسم وبيانات ومبلغ أصل آخر (زي 5 كراسي مكتب متطابقة مثلاً)، ومفيش أي دمج أو استبدال بين الأصول بناءً على تشابه الاسم. لو عايز ترفع نفس الملف تاني بعد كده وتحدّث نفس الأصول بدل ما تتكرر، حط لكل أصل رمزاً فريداً (زي كود جرد داخلي) وهيتم التحديث بناءً عليه فقط.'],
         ['احذف صفوف المثال قبل الرفع، أو استبدلها بأصولك الفعلية.'],
+      ];
+    } else if(kind === 'products') {
+      headers = ['اسم المنتج / الخدمة','رمز المنتج','الوحدة','السعر','نسبة الضريبة %','حساب الإيراد','ملاحظات','الحالة'];
+      exampleRows = [['خدمة استشارية','SRV-001','خدمة',1000,14,'411103','مثال فقط - استبدله ببياناتك','active']];
+      sheetName = 'المنتجات والخدمات';
+      filename = 'نموذج_استيراد_المنتجات_والخدمات.xlsx';
+      legendRows = [
+        ['تعليمات التعبئة'],
+        ['اسم المنتج / الخدمة: مطلوب، وهو الاسم الذي سيظهر في النظام.'],
+        ['رمز المنتج: اختياري، ويفضل أن يكون فريداً لتحديث نفس السجل عند إعادة الاستيراد.'],
+        ['الوحدة: مثل قطعة، خدمة، ساعة، متر. إذا تركت فارغة سيستخدم النظام قيمة افتراضية.'],
+        ['السعر: السعر الافتراضي للبيع/الخدمة، رقم فقط.'],
+        ['نسبة الضريبة %: اكتب النسبة كرقم مثل 14 أو 15.'],
+        ['حساب الإيراد: رمز حساب الإيراد الموجود في شجرة الحسابات، مثل 411103، ويمكن أيضاً كتابة اسم الحساب.'],
+        ['ملاحظات: اختيارية.'],
+        ['الحالة: active أو inactive، وإذا تركت فارغة تعتبر active.'],
+        ['إذا كان رمز المنتج موجوداً بالفعل فسيتم تحديث المنتج بدلاً من إنشاء نسخة جديدة. وإذا لم يوجد رمز يعتمد النظام على اسم المنتج/الخدمة.'],
+        ['احذف صف المثال قبل الرفع أو استبدله ببياناتك الفعلية.']
       ];
     } else if(kind === 'prepaidExpenses'){
       // Same flat column shape as the "assets" template above, reused for
@@ -4117,6 +4141,224 @@ function findPartnersByNameFragment(frag){
   return all.filter(p => normalizeArabic(p).includes(nf));
 }
 
+function smartPeriodFromQuestion(question){
+  const q=normalizeArabic(question);
+  const f=STATE.ui.filters||{};
+  const ym=q.match(/(20\d{2})\s*[-\/]\s*(0?[1-9]|1[0-2])/);
+  if(ym){ const y=ym[1], m=String(ym[2]).padStart(2,'0'); const d=new Date(Number(y),Number(m),0).getDate(); return {start:`${y}-${m}-01`,end:`${y}-${m}-${String(d).padStart(2,'0')}`}; }
+  const y=q.match(/\b(20\d{2})\b/);
+  if(y) return {start:`${y[1]}-01-01`,end:`${y[1]}-12-31`};
+  if(q.includes('الشهر ده')||q.includes('هذا الشهر')||q.includes('الشهر الحالي')||q.includes('this month')||q.includes('current month')) return currentMonthRange();
+  if(q.includes('السنه دي')||q.includes('هذه السنه')||q.includes('العام الحالي')||q.includes('this year')||q.includes('year to date')) return {start:`${new Date().getFullYear()}-01-01`,end:todayISO()};
+  return {start:f.start||'',end:f.end||''};
+}
+function smartDataAnswer(question){
+  const q=normalizeArabic(question);
+  const p=smartPeriodFromQuestion(question);
+  const periodActive=!!(p.start||p.end);
+  const lines=periodActive ? filterLinesByPeriod(STATE.journal,{start:p.start,end:p.end,years:[],months:[]}) : STATE.journal;
+  const is=incomeStatement(lines,p.start,p.end);
+  const bs=balanceSheet(lines,p.end||todayISO());
+  const cf=cashFlowStatement(lines,p.start,p.end);
+  const r=ratios(is,bs);
+  const metric =
+    (q.includes('صافي الربح')||q.includes('net profit')||q.includes('net income')||q.includes('الربح الصافي')) ? 'net' :
+    (q.includes('اجمالي الربح')||q.includes('إجمالي الربح')||q.includes('gross profit')) ? 'gross' :
+    (q.includes('المبيعات')||q.includes('الايرادات')||q.includes('الإيرادات')||q.includes('revenue')||q.includes('sales')) ? 'revenue' :
+    (q.includes('المصروفات')||q.includes('المصاريف')||q.includes('expenses')||q.includes('costs')) ? 'expenses' :
+    (q.includes('اجمالي الاصول')||q.includes('إجمالي الأصول')||q.includes('total assets')) ? 'assets' :
+    (q.includes('اجمالي الالتزامات')||q.includes('إجمالي الالتزامات')||q.includes('total liabilities')) ? 'liabilities' :
+    (q.includes('حقوق الملكيه')||q.includes('حقوق الملكية')||q.includes('equity')) ? 'equity' :
+    (q.includes('التدفق النقدي التشغيلي')||q.includes('operating cash flow')) ? 'ocf' :
+    (q.includes('هامش صافي الربح')||q.includes('net margin')||q.includes('هامش الربح')) ? 'margin' :
+    (q.includes('نسبة التداول')||q.includes('current ratio')) ? 'currentRatio' : null;
+  if(metric){
+    const labelMap={revenue:'إجمالي الإيرادات',gross:'إجمالي الربح',net:'صافي الربح/الخسارة',expenses:'إجمالي التكاليف والمصروفات',assets:'إجمالي الأصول',liabilities:'إجمالي الالتزامات',equity:'إجمالي حقوق الملكية',ocf:'التدفق النقدي التشغيلي',margin:'هامش صافي الربح',currentRatio:'نسبة التداول'};
+    const valueMap={revenue:is.revenue+is.otherIncome,gross:is.grossProfit,net:is.netIncome,expenses:is.cogs+is.expenses+is.depreciation,assets:bs.assets,liabilities:bs.liabilities,equity:bs.equityTotal,ocf:cf.operating,margin:r.netMargin,currentRatio:r.currentRatio};
+    const v=valueMap[metric];
+    if(v!=null){ const suffix=(metric==='margin'||metric==='currentRatio')?'':' ج.م'; return {text:`${labelMap[metric]} ${periodActive?`للفترة ${p.start||'البداية'} إلى ${p.end||todayISO()}`:'حسب الفترة الحالية'}: ${fmt(v)}${suffix}.`,action:{label:'عرض القوائم المالية',view:'statements'}}; }
+  }
+  // Project-specific questions: identify the project by name and answer from its sub-ledger.
+  const project=STATE.projects.find(x=>q.includes(normalizeArabic(x.name)));
+  if(project){
+    const pt=projectTotals(project);
+    if(q.includes('تحصيل')||q.includes('collected')||q.includes('مدفوع')) return {text:`المشروع "${project.name}": إجمالي المحصل ${fmt(pt.collections)} ${project.currency}، والمتبقي ${fmt(Math.max(0,pt.remaining))} ${project.currency}.`};
+    if(q.includes('متبقي')||q.includes('باقي')||q.includes('remaining')||q.includes('outstanding')) return {text:`المتبقي في المشروع "${project.name}" هو ${fmt(Math.max(0,pt.remaining))} ${project.currency}.`};
+    if(q.includes('حال')||q.includes('status')) return {text:`حالة المشروع "${project.name}": ${statusLabel(pt.status)}`};
+    return {text:`المشروع "${project.name}" قيمته ${fmt(project.amount)} ${project.currency}، المحصل ${fmt(pt.collections)} ${project.currency}، والمتبقي ${fmt(Math.max(0,pt.remaining))} ${project.currency}.`};
+  }
+  // Product/service-specific questions.
+  const product=STATE.products.find(x=>q.includes(normalizeArabic(x.name)));
+  if(product){
+    return {text:`المنتج/الخدمة "${product.name}": السعر ${fmt(product.price||0)}، الضريبة ${fmt(product.taxPct||0)}%، الوحدة ${product.unit||'—'}، وحساب الإيراد ${product.revenueAccount||'غير محدد'}.` ,action:{label:'عرض المنتجات والخدمات',view:'products'}};
+  }
+  return null;
+}
+
+/* =========================================================================
+   Natural-language data assistant v2
+   -------------------------------------------------------------------------
+   This layer is intentionally deterministic and local: it does not invent
+   facts and it never calls an external model. It parses intent/entities from
+   the user's wording, searches the actual system datasets, then delegates
+   calculations to the same accounting/project functions used by the UI.
+   It is designed to handle many phrasings instead of a fixed list of exact
+   questions, including compound questions and follow-ups.
+   ========================================================================= */
+function aiTokens(s){
+  return normalizeArabic(s).replace(/[^\u0600-\u06FFa-z0-9]+/gi,' ').split(/\s+/).filter(Boolean);
+}
+function aiHasAny(q, arr){ return arr.some(x=>q.includes(normalizeArabic(x))); }
+function aiPeriod(question){
+  const q=normalizeArabic(question);
+  const base=smartPeriodFromQuestion(question);
+  let start=base.start||'', end=base.end||'';
+  const m=q.match(/(?:من|from)\s+(20\d{2}[-\/]\d{1,2}[-\/]\d{1,2})\s+(?:الى|إلى|to|حتى|until)\s+(20\d{2}[-\/]\d{1,2}[-\/]\d{1,2})/);
+  if(m){ start=m[1].replaceAll('/','-'); end=m[2].replaceAll('/','-'); }
+  if(q.includes('امبارح')||q.includes('yesterday')){ const d=new Date(); d.setDate(d.getDate()-1); const x=d.toISOString().slice(0,10); start=end=x; }
+  if(q.includes('السنه الماضيه')||q.includes('العام الماضي')||q.includes('last year')){ const y=new Date().getFullYear()-1; start=`${y}-01-01`; end=`${y}-12-31`; }
+  return {start,end};
+}
+function aiScopedLines(question){
+  const p=aiPeriod(question);
+  return { ...p, lines:(p.start||p.end)?filterLinesByPeriod(STATE.journal,{start:p.start,end:p.end,years:[],months:[]}):STATE.journal };
+}
+function aiFindProject(question){
+  const q=normalizeArabic(question);
+  let best=null, score=0;
+  for(const p of STATE.projects||[]){
+    const n=normalizeArabic(p.name); if(!n) continue;
+    if(q.includes(n) && n.length>score){ best=p; score=n.length; }
+  }
+  return best;
+}
+function aiFindProduct(question){
+  const q=normalizeArabic(question);
+  let best=null, score=0;
+  for(const p of STATE.products||[]){
+    const n=normalizeArabic(p.name); if(!n) continue;
+    if(q.includes(n) && n.length>score){ best=p; score=n.length; }
+  }
+  return best;
+}
+function aiFindPartner(question){
+  const q=normalizeArabic(question);
+  const names=uniq((STATE.journal||[]).filter(l=>l.partner).map(l=>l.partner));
+  let best=null, score=0;
+  for(const n0 of names){ const n=normalizeArabic(n0); if(n && q.includes(n) && n.length>score){best=n0;score=n.length;} }
+  return best;
+}
+function aiMoney(v,cur){ return `${fmt(v)} ${cur||'ج.م'}`; }
+function aiPeriodLabel(start,end,en){ return en ? `for ${start||'the beginning'} to ${end||todayISO()}` : `خلال الفترة ${start||'بداية النشاط'} إلى ${end||todayISO()}`; }
+function aiAnswerText(ar,en){ return STATE.settings.lang==='en' ? en : ar; }
+function aiNaturalAnswer(question){
+  const q=normalizeArabic(question);
+  const en=STATE.settings.lang==='en';
+  const {start,end,lines}=aiScopedLines(question);
+  const asOf=end||todayISO();
+
+  // Greetings / conversational intent.
+  if(aiHasAny(q,['مرحبا','اهلا','السلام عليكم','hello','hi','hey']))
+    return {text:en?'Hello. Ask me about any figure, account, project, customer, invoice, product, period or financial analysis in the system.':'أهلاً بك. اسألني عن أي رقم أو حساب أو مشروع أو عميل أو فاتورة أو منتج أو فترة أو تحليل مالي داخل النظام.'};
+
+  // Explicit project collection / status / profitability questions.
+  const project=aiFindProject(question) || ((STATE.ui.chatContext||{}).lastProjectId ? (STATE.projects||[]).find(p=>p.id===STATE.ui.chatContext.lastProjectId) : null);
+  if(project && aiHasAny(q,['تحصيل','محصل','مدفوع','باقي','متبقي','رصيد','status','collection','collected','remaining','outstanding','profit','ربح'])){
+    const pt=projectTotals(project); STATE.ui.chatContext.lastProjectId=project.id;
+    if(aiHasAny(q,['حاله','الحالة','status','مكتمل','مكتمله','complete']))
+      return {text:en?`Project "${project.name}" status: ${statusLabel(pt.status)}. Collected ${aiMoney(pt.collections,project.currency)}, remaining ${aiMoney(Math.max(0,pt.remaining),project.currency)}.`:`حالة المشروع "${project.name}": ${statusLabel(pt.status)}. المحصل ${aiMoney(pt.collections,project.currency)}، والمتبقي ${aiMoney(Math.max(0,pt.remaining),project.currency)}.`};
+    return {text:en?`Project "${project.name}": value ${aiMoney(project.amount,project.currency)}, collected ${aiMoney(pt.collections,project.currency)}, invoiced ${aiMoney(pt.invoiced,project.currency)}, remaining ${aiMoney(Math.max(0,pt.remaining),project.currency)}.`:`المشروع "${project.name}": قيمته ${aiMoney(project.amount,project.currency)}، المحصل ${aiMoney(pt.collections,project.currency)}، المفوتر ${aiMoney(pt.invoiced,project.currency)}، والمتبقي ${aiMoney(Math.max(0,pt.remaining),project.currency)}.`};
+  }
+
+  // Project portfolio questions: all / completed / outstanding / top.
+  if(aiHasAny(q,['مشاريع','مشروع','projects','project']) && aiHasAny(q,['مكتمل','مكتمله','مكتملة','completed','complete','تحصيل كامل'])){
+    const rows=(STATE.projects||[]).map(p=>({p,t:projectTotals(p)})).filter(x=>x.t.status==='complete');
+    if(!rows.length) return {text:en?'There are no fully collected projects.':'لا توجد مشاريع مكتملة التحصيل حالياً.'};
+    const total=rows.reduce((s,x)=>s+x.p.amount,0), txt=rows.slice(0,10).map(x=>`${x.p.name}: ${fmt(x.t.collections)} ${x.p.currency}`).join(en?', ': '، ');
+    return {text:en?`${rows.length} fully collected projects. Total collected value: ${fmt(total)} (mixed currencies are not converted). ${txt}.`:`عدد المشاريع مكتملة التحصيل: ${rows.length}. إجمالي قيمتها حسب العملات دون تحويل: ${fmt(total)}. ${txt}.`,action:{label:en?'Open Projects & Collections':'فتح متابعة المشاريع والتحصيل',view:'projects'}};
+  }
+  if(aiHasAny(q,['مشاريع','مشروع','projects','project']) && aiHasAny(q,['متبقي','باقي','مستحق','تحصيل','outstanding','remaining','due'])){
+    const rows=(STATE.projects||[]).map(p=>({p,t:projectTotals(p)})).filter(x=>x.t.remaining>0.01).sort((a,b)=>b.t.remaining-a.t.remaining);
+    if(!rows.length) return {text:en?'No project has an outstanding collection balance.':'لا يوجد حالياً أي مشروع عليه متبقي تحصيل.'};
+    const txt=rows.slice(0,10).map(x=>`${x.p.name}: ${fmt(x.t.remaining)} ${x.p.currency}`).join(en?', ': '، ');
+    return {text:en?`There are ${rows.length} projects with outstanding collection. Top balances: ${txt}.`:`يوجد ${rows.length} مشروع عليه متبقي تحصيل. أكبر الأرصدة: ${txt}.`,action:{label:en?'Open Projects & Collections':'فتح متابعة المشاريع والتحصيل',view:'projects'}};
+  }
+  if(aiHasAny(q,['اعلى','أعلى','اكبر','أكبر','top','largest','highest']) && aiHasAny(q,['مشاريع','مشروع','projects','project'])){
+    const rows=(STATE.projects||[]).map(p=>({p,t:projectTotals(p)})).sort((a,b)=>b.p.amount-a.p.amount).slice(0,5);
+    const txt=rows.map((x,i)=>`${i+1}. ${x.p.name}: ${fmt(x.p.amount)} ${x.p.currency}`).join(en?', ': '، ');
+    return {text:en?`Top 5 projects by contract value: ${txt}.`:`أعلى 5 مشاريع حسب قيمة المشروع: ${txt}.`,action:{label:en?'Open Projects & Collections':'فتح متابعة المشاريع والتحصيل',view:'projects'}};
+  }
+
+  // Product/service lookup and pricing questions.
+  const product=aiFindProduct(question) || ((STATE.ui.chatContext||{}).lastProductId ? (STATE.products||[]).find(p=>p.id===STATE.ui.chatContext.lastProductId) : null);
+  if(product && aiHasAny(q,['سعر','اسعار','price','tax','ضريبه','ضريبة','وحده','وحدة','unit','منتج','خدمه','خدمة','product','service'])){
+    STATE.ui.chatContext.lastProductId=product.id;
+    return {text:en?`Product/service "${product.name}": price ${fmt(product.price||0)}, tax ${fmt(product.taxPct||0)}%, unit ${product.unit||'—'}, revenue account ${product.revenueAccount||'—'}.`:`المنتج/الخدمة "${product.name}": السعر ${fmt(product.price||0)}، الضريبة ${fmt(product.taxPct||0)}%، الوحدة ${product.unit||'—'}، حساب الإيراد ${product.revenueAccount||'—'}.`,action:{label:en?'Open Products & Services':'فتح المنتجات والخدمات',view:'products'}};
+  }
+
+  // Financial metric + comparison intent. This catches natural wording like
+  // "how did profit perform" or "what happened to sales" rather than exact
+  // question templates.
+  const is=incomeStatement(lines,start,end), bs=balanceSheet(lines,asOf), cf=cashFlowStatement(lines,start,end), rr=ratios(is,bs);
+  let metric=null;
+  if(aiHasAny(q,['صافي الربح','الربح الصافي','صافي الارباح','net profit','net income','profit'])) metric='net';
+  else if(aiHasAny(q,['اجمالي الربح','الربح الاجمالي','gross profit'])) metric='gross';
+  else if(aiHasAny(q,['مبيعات','بيع','ايرادات','الإيرادات','revenue','sales','turnover'])) metric='revenue';
+  else if(aiHasAny(q,['مصروف','مصروفات','مصاريف','expenses','costs'])) metric='expenses';
+  else if(aiHasAny(q,['اصول','الأصول','assets'])) metric='assets';
+  else if(aiHasAny(q,['التزامات','liabilities'])) metric='liabilities';
+  else if(aiHasAny(q,['حقوق الملكيه','حقوق الملكية','equity'])) metric='equity';
+  else if(aiHasAny(q,['تدفق نقدي تشغيلي','operating cash flow'])) metric='ocf';
+  else if(aiHasAny(q,['هامش','margin'])) metric='margin';
+  else if(aiHasAny(q,['نسبه التداول','نسبة التداول','current ratio'])) metric='currentRatio';
+  else if(aiHasAny(q,['نسبه سريعه','النسبة السريعه','quick ratio'])) metric='quickRatio';
+  if(metric){
+    const values={revenue:is.revenue+is.otherIncome,gross:is.grossProfit,net:is.netIncome,expenses:is.cogs+is.expenses+is.depreciation,assets:bs.assets,liabilities:bs.liabilities,equity:bs.equityTotal,ocf:cf.operating,margin:rr.netMargin,currentRatio:rr.currentRatio,quickRatio:rr.quickRatio};
+    const labels={revenue:['إجمالي الإيرادات','Total revenue'],gross:['إجمالي الربح','Gross profit'],net:['صافي الربح/الخسارة','Net profit/loss'],expenses:['إجمالي التكاليف والمصروفات','Total costs & expenses'],assets:['إجمالي الأصول','Total assets'],liabilities:['إجمالي الالتزامات','Total liabilities'],equity:['إجمالي حقوق الملكية','Total equity'],ocf:['التدفق النقدي التشغيلي','Operating cash flow'],margin:['هامش صافي الربح','Net profit margin'],currentRatio:['نسبة التداول','Current ratio'],quickRatio:['النسبة السريعة','Quick ratio']}[metric];
+    const v=values[metric];
+    if(v!=null){
+      const suffix=['margin','currentRatio','quickRatio'].includes(metric)?'':' '+(en?'EGP':'ج.م');
+      const periodTxt=aiPeriodLabel(start,end,en);
+      return {text:en?`${labels[1]} is ${fmt(v)}${suffix} ${periodTxt}.`:`${labels[0]} ${periodTxt}: ${fmt(v)}${suffix}.`,action:{label:en?'Open Financial Statements':'عرض القوائم المالية',view:'statements'}};
+    }
+  }
+
+  // "Why / analyze / compare" — produce a compact evidence-based analysis
+  // using current-vs-prior period rather than pretending to understand causes
+  // that are not visible in the ledger.
+  if(aiHasAny(q,['حلل','تحليل','ليه','لماذا','سبب','قارن','مقارنه','تحسن','انخفض','زاد','analyze','why','compare','improved','dropped','increased'])){
+    const periodStart=start || currentMonthRange().start, periodEnd=end || currentMonthRange().end;
+    const a=generateAnalysis(STATE.journal,periodStart,periodEnd);
+    const prior=a.prior;
+    if(prior){
+      const revNow=a.is.revenue+a.is.otherIncome, revPrev=prior.revenue+prior.otherIncome;
+      const revCh=revNow-revPrev, netCh=a.is.netIncome-prior.netIncome;
+      const facts= en
+        ? `Revenue changed from ${fmt(revPrev)} EGP to ${fmt(revNow)} EGP (${revCh>=0?'+':''}${fmt(revCh)}). Net profit/loss changed from ${fmt(prior.netIncome)} EGP to ${fmt(a.is.netIncome)} EGP (${netCh>=0?'+':''}${fmt(netCh)}). ${a.notes.slice(0,2).join(' ')}`
+        : `الإيرادات تغيرت من ${fmt(revPrev)} ج.م إلى ${fmt(revNow)} ج.م (التغير ${revCh>=0?'+':''}${fmt(revCh)}). صافي الربح/الخسارة تغير من ${fmt(prior.netIncome)} ج.م إلى ${fmt(a.is.netIncome)} ج.م (التغير ${netCh>=0?'+':''}${fmt(netCh)}). ${a.notes.slice(0,2).join(' ')}`;
+      return {text:facts,action:{label:en?'Open Full Analysis':'عرض التحليل الكامل',view:'notes'}};
+    }
+  }
+
+  // Named partner with contextual questions. Keep exact partner matching
+  // separate from the generic account matcher to avoid false positives.
+  const partner=aiFindPartner(question);
+  if(partner){
+    const stmt=partnerStatement(STATE.journal,partner,'',asOf,{mode:'EGP'});
+    STATE.ui.chatContext.lastPartner=partner;
+    if(aiHasAny(q,['فاتوره','فواتير','invoice','sales']) || aiHasAny(q,['رصيد','balance','مدين','دائن','مستحق','due']))
+      return {text:en?`"${partner}" balance is ${fmt(Math.abs(stmt.closing))} EGP (${stmt.closing>=0?'debit/customer receivable':'credit/payable'}).`:`رصيد "${partner}" هو ${fmt(Math.abs(stmt.closing))} ج.م (${stmt.closing>=0?'مدين / مستحق لنا':'دائن / مستحق عليه'}).`,action:{label:en?'Open Statement':'فتح كشف الحساب',view:'partnerstatement',partner}};
+  }
+
+  // Data inventory questions: what is loaded in the system?
+  if(aiHasAny(q,['ايه البيانات','ما البيانات','ماذا يوجد','الموجود','البيانات المحمله','what data','what is loaded','data available'])){
+    const uniqueEntries=new Set(STATE.journal.map(l=>l.entry+'|'+l.date)).size;
+    return {text:en?`The system currently has ${fmtInt(STATE.journal.length)} journal lines, about ${fmtInt(uniqueEntries)} vouchers, ${fmtInt(STATE.accounts.length)} accounts, ${(STATE.projects||[]).length} projects and ${(STATE.products||[]).length} products/services.`:`النظام يحتوي حالياً على ${fmtInt(STATE.journal.length)} سطر قيد، وحوالي ${fmtInt(uniqueEntries)} قيد يومية، و${fmtInt(STATE.accounts.length)} حساب، و${(STATE.projects||[]).length} مشروع، و${(STATE.products||[]).length} منتج/خدمة.`};
+  }
+
+  return null;
+}
+
 function answerQuery(question){
   const q = normalizeArabic(question);
   const f = STATE.ui.filters;
@@ -4125,6 +4367,14 @@ function answerQuery(question){
   if(!STATE.journal.length){
     return { text: 'لا توجد بيانات محمّلة بعد في النظام. ابدأ من صفحة "الإعداد والاستيراد" أولاً.' };
   }
+
+  // Natural-language layer first: it handles broad phrasing, entities and
+  // compound questions; the older deterministic rules remain as a safety net.
+  const naturalAnswer = aiNaturalAnswer(question);
+  if(naturalAnswer) return naturalAnswer;
+
+  const smartAnswer = smartDataAnswer(question);
+  if(smartAnswer) return smartAnswer;
 
   // 1) Sales / revenue this month
   if((q.includes('مبيعات') || q.includes('sales') || q.includes('ايرادات') || q.includes('revenue')) && (q.includes('شهر') || q.includes('month') || !/\d{4}/.test(q))){
@@ -6574,6 +6824,8 @@ async function initApp(){
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
   if(!STATE.settings.lang) STATE.settings.lang = 'ar';
   if(!STATE.settings.palette) STATE.settings.palette = 'gold';
+  // Persist user table column widths across sessions/devices supported by the app storage.
+  STATE.ui.colWidths = STATE.settings.colWidths || {};
   // Manual journal-entry feature: named journal books (each with a short
   // code used to build auto-generated entry numbers) and the per-book
   // per-year-per-month running sequence counter. Seeded with common books
@@ -6738,7 +6990,6 @@ const NAV = [
   {id:'cashflow', label:'التدفقات النقدية', labelEn:'Cash Flow Statement', icon:'cashflow'},
   {section:'التحليل والمتابعة', sectionEn:'Analysis & Follow-up'},
   {id:'costcenters', label:'مراكز التكلفة', labelEn:'Cost Centers', icon:'target'},
-  {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
   {id:'liquidity', label:'السيولة', labelEn:'Liquidity', icon:'droplet'},
   {id:'fxrevaluation', label:'فروق العملة', labelEn:'FX Revaluation', icon:'exchange'},
   {id:'ratios', label:'التحليل المالي والنسب', labelEn:'Financial Analysis & Ratios', icon:'ratio'},
@@ -6750,8 +7001,8 @@ const NAV = [
   {id:'depentries', label:'قيود الإهلاك', labelEn:'Depreciation Entries', icon:'cashflow'},
   {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
   {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
-  {section:'المبيعات والفواتير', sectionEn:'Sales & Invoicing'},
-  {id:'customers', label:'العملاء', labelEn:'Customers', icon:'users'},
+  {section:'المبيعات والتحصيل', sectionEn:'Sales, Invoicing & Collections'},
+  {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
   {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
   {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
   {section:'الخزنة والسندات', sectionEn:'Treasury & Vouchers'},
@@ -7636,6 +7887,8 @@ function renderApp(){
     cashvouchers: renderCashVouchersView,
   };
   (renderers[STATE.ui.view] || renderDashboard)(root);
+
+  if(STATE.ui.view === 'products') mountProductImportStrip();
 
   // Bound once per render, after both the topbar and the view's own content
   // exist in the DOM, so every .ms-toggle on the page gets exactly one
@@ -10474,6 +10727,77 @@ function openCustomerModal(custId, prefillName){
 // Same idea as customers: every product name already used on a journal line
 // (distinctProductNames()) shows up automatically; STATE.products only adds
 // the optional price/unit/tax/revenue-account defaults on top.
+async function importProductsFile(file){
+  const wb = await readWorkbook(file);
+  const sheetName = wb.SheetNames.find(n => normalize(n) === normalize('المنتجات والخدمات')) || wb.SheetNames[0];
+  if(!sheetName) return {added:0,updated:0,skipped:0,total:STATE.products.length};
+  const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, raw:true, defval:''});
+  if(!rows.length) return {added:0,updated:0,skipped:0,total:STATE.products.length};
+  const headers = rows[0].map(v => normalize(v));
+  const aliases = {
+    name:['اسم المنتج / الخدمة','اسم المنتج','المنتج','اسم الصنف','product name','product/service','name'],
+    code:['رمز المنتج','كود المنتج','الرمز','product code','sku','code'],
+    unit:['الوحدة','unit','uom'],
+    price:['السعر','سعر البيع','price','sale price'],
+    taxPct:['نسبة الضريبة %','نسبة الضريبة','الضريبة','tax %','tax rate','tax'],
+    revenueAccount:['حساب الإيراد','حساب الدخل','حساب المبيعات','revenue account','income account','sales account'],
+    notes:['ملاحظات','notes','note'],
+    status:['الحالة','status']
+  };
+  const findCol = list => { for(const a of list){ const i=headers.indexOf(normalize(a)); if(i>=0) return i; } return -1; };
+  const ix = Object.fromEntries(Object.entries(aliases).map(([k,v])=>[k,findCol(v)]));
+  if(ix.name < 0) throw new Error('عمود اسم المنتج / الخدمة غير موجود في الملف.');
+  let added=0, updated=0, skipped=0;
+  const byCode = new Map(STATE.products.filter(p=>p.code).map(p=>[normalizeKey(p.code),p]));
+  const byName = new Map(STATE.products.map(p=>[normalizeKey(p.name),p]));
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r]||[];
+    const name=(ix.name>=0 ? row[ix.name] : '').toString().trim();
+    if(!name){ skipped++; continue; }
+    const code=(ix.code>=0 ? row[ix.code] : '').toString().trim();
+    const unit=(ix.unit>=0 ? row[ix.unit] : '').toString().trim() || 'قطعة';
+    const priceRaw=ix.price>=0 ? row[ix.price] : 0;
+    const taxRaw=ix.taxPct>=0 ? row[ix.taxPct] : 0;
+    const price=parseFloat(String(priceRaw).replace(/,/g,''));
+    const taxPct=parseFloat(String(taxRaw).replace(/,/g,''));
+    const revenueCell=(ix.revenueAccount>=0 ? row[ix.revenueAccount] : '').toString().trim();
+    let revenueAccount='';
+    if(revenueCell){
+      const m=revenueCell.match(/^(\d+)/); revenueAccount=m ? m[1] : (STATE.accounts.find(a=>normalizeKey(a.name)===normalizeKey(revenueCell))||{}).code||'';
+    }
+    const notes=(ix.notes>=0 ? row[ix.notes] : '').toString().trim();
+    const statusRaw=(ix.status>=0 ? row[ix.status] : '').toString().trim().toLowerCase();
+    const status = statusRaw==='inactive' || statusRaw==='غير فعال' ? 'inactive' : 'active';
+    const existing = (code && byCode.get(normalizeKey(code))) || byName.get(normalizeKey(name));
+    const rec={
+      id: existing ? existing.id : assetNextId(STATE.products), name, code, unit,
+      price: Number.isFinite(price) ? price : 0, taxPct: Number.isFinite(taxPct) ? taxPct : 0,
+      revenueAccount, notes, status
+    };
+    if(existing){ const idx2=STATE.products.findIndex(p=>p.id===existing.id); STATE.products[idx2]=rec; updated++; }
+    else { STATE.products.push(rec); added++; }
+    byName.set(normalizeKey(name),rec); if(code) byCode.set(normalizeKey(code),rec);
+  }
+  await storeSet('products', STATE.products);
+  return {added,updated,skipped,total:STATE.products.length};
+}
+
+function productImportStripHtml(){
+  return `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button type="button" class="btn btn-outline" id="dl-products" style="padding:5px 12px;font-size:11px">${t('downloadTemplate')}</button>
+    <label class="btn btn-outline" style="cursor:pointer;margin:0;padding:5px 12px;font-size:11px">${t('uploadExcelBtn')}<input type="file" id="file-products" accept=".xlsx,.xls" style="display:none"></label>
+  </div>`;
+}
+function mountProductImportStrip(){
+  const dl=document.getElementById('dl-products'), fi=document.getElementById('file-products');
+  if(dl) dl.addEventListener('click',()=>downloadImportTemplate('products'));
+  if(fi) fi.addEventListener('change',async e=>{
+    const file=e.target.files[0]; if(!file) return; e.target.value='';
+    try{ const r=await importProductsFile(file); showToast(tf('productsImportResult',r),4200); renderApp(); }
+    catch(err){ showToast(t('fileReadError')+err.message,4200); }
+  });
+}
+
 function renderProductsView(root){
   const byKey = new Map(STATE.products.map(p=>[normalizeKey(p.name),p]));
   const journalNames = distinctProductNames();
@@ -10491,9 +10815,13 @@ function renderProductsView(root){
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span>${ICONS.target.replace('currentColor','var(--gold-dim)')} ${t('productsTitle')}</span>
-      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openProductModal(null)">+ ${t('newProductBtn')}</button>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${productImportStripHtml()}
+        <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openProductModal(null)">+ ${t('newProductBtn')}</button>
+      </div>
     </h2>
     <div class="desc">${t('productsLinkedDesc')}</div>
+    <div class="hint" style="margin-top:6px">${t('productsImportHint')}</div>
     ${!rows.length ? `<div class="empty">${t('noProducts')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
       <th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th><th>${t('prodUnitCol')}</th>
