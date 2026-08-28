@@ -745,7 +745,30 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
 }
 </style>
 <style id="rd-svg-chart-styles">
-.rd-canvas-wrap{position:relative;min-height:245px;width:100%;overflow:hidden}.rd-svg{display:block;width:100%;height:245px;overflow:visible}.rd-axis{font:10px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a)}.rd-legend{font:10px Cairo,Arial,sans-serif;fill:var(--ink,#17212b)}.rd-donut{display:block;width:100%;height:245px}.rd-donut-total{font:700 18px Cairo,Arial,sans-serif;fill:var(--ink,#17212b)}.rd-svg-empty{height:245px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-soft,#71808a);font:12px Cairo,Arial,sans-serif;padding:20px;box-sizing:border-box}
+.rd-canvas-wrap{position:relative;min-height:245px;width:100%;overflow:hidden}
+.rd-svg{display:block;width:100%;height:245px;overflow:visible}
+/* Axis/total labels mix Latin digits with an Arabic unit suffix (e.g. "-195ألف").
+   Without forcing LTR + isolation, the page's RTL context reorders these mixed
+   runs inconsistently (minus sign / digits / unit swap places per label). */
+.rd-axis{font:10px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a);direction:ltr;unicode-bidi:isolate}
+.rd-legend{font:10.5px Cairo,Arial,sans-serif;fill:var(--ink,#17212b)}
+.rd-donut-total{font:800 19px Cairo,Arial,sans-serif;fill:var(--ink,#17212b);direction:ltr;unicode-bidi:isolate}
+.rd-donut-caption{font:10px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a)}
+.rd-svg-empty{height:245px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-soft,#71808a);font:12px Cairo,Arial,sans-serif;padding:20px;box-sizing:border-box}
+
+/* Expense donut: square SVG (never distorts in a narrow grid column) + a
+   real HTML legend beside it, so long category names/values wrap and align
+   naturally instead of relying on fixed SVG text coordinates that used to
+   overlap the donut when the column was narrower than the chart was designed for. */
+.rd-donut-flex{display:flex;align-items:center;gap:16px;height:100%;flex-wrap:wrap}
+.rd-donut-svg-wrap{flex:0 0 auto;width:132px;max-width:42%}
+.rd-donut-svg-wrap .rd-donut{display:block;width:100%;height:auto}
+.rd-legend-list{flex:1 1 150px;min-width:130px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.rd-legend-row{display:flex;align-items:center;gap:8px;min-width:0}
+.rd-legend-swatch{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.rd-legend-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700;color:var(--ink)}
+.rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-soft);white-space:nowrap}
+.rd-legend-val b{color:var(--ink);font-weight:800}
 </style>
 </head>
 <body>
@@ -4473,9 +4496,21 @@ function projectTotals(project){
 // Cross-reference: the actual ledger balance for a partner with this exact
 // name, as of today — null if no matching partner name exists in the
 // journal yet (e.g. a brand-new project with no accounting entries posted).
+//
+// IMPORTANT: this must be scoped to the customer/vendor receivable-payable
+// accounts only (same scope used by the "Customer Statement" page), NOT
+// summed across every account in the journal. Every leg of a double-entry
+// transaction (invoice, cash voucher, etc.) carries the same `partner`
+// value on all its lines — the AR line AND the revenue/tax line, or the
+// cash line AND the AR line. Summing debit-credit across ALL of a
+// partner's lines therefore always nets to ~zero for a complete
+// transaction (debits = credits by definition), which made this balance
+// meaningless/wrong for any project whose collections or invoices were
+// posted through the normal accounting flow. Restricting to just the
+// receivable/payable account codes gives the real outstanding balance.
 function linkedLedgerBalance(projectName){
   if(!STATE.journal.some(l => l.partner === projectName)) return null;
-  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {mode:'EGP'});
+  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {mode:'EGP', accountCodes: CUSTOMER_STATEMENT_ACCOUNTS});
   return stmt.closing;
 }
 
@@ -7610,19 +7645,26 @@ function buildRatiosDashCharts(){
     rev.parentElement.innerHTML=svgWrap(inner);
   }
 
-  // 2) Expense distribution — CSS/SVG donut, no external library.
+  // 2) Expense distribution — square SVG donut + adaptive HTML legend
+  // (no external library). The legend used to be baked into the same wide
+  // SVG as fixed-position <text> elements, which overlapped the donut once
+  // this chart landed in the narrower grid column. A real HTML legend lays
+  // out with normal flex/text-overflow rules at any width.
   const exp=document.getElementById('rd_chart_exp');
   if(exp){
     const cats=(d.expCats||[]).filter(e=>num(e.v)>0), total=cats.reduce((a,e)=>a+num(e.v),0);
     if(!cats.length || !total){ exp.parentElement.innerHTML=empty('لا توجد تكاليف أو مصروفات للفترة المحددة.'); }
     else {
-      const cx=250, cy=122, r=72, sw=34, circ=2*Math.PI*r;
+      const cx=100, cy=100, r=68, sw=30, circ=2*Math.PI*r;
       let offset=0, arcs='';
-      const colors=['#A23B31','#B8902E','#1F6D5A'];
+      const colors=['#A23B31','#B8902E','#1F6D5A','#5B6A72','#8A6E27'];
       cats.forEach((e,i)=>{const frac=num(e.v)/total, len=circ*frac; arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="${sw}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"><title>${esc(e.n)}: ${esc(fmtN(e.v))}</title></circle>`; offset+=len;});
-      let inner=`<svg class="rd-donut" viewBox="0 0 620 245"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-3}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+17}" text-anchor="middle" class="rd-axis">الإجمالي</text>`;
-      cats.forEach((e,i)=>{const y=62+i*48; const pct=(num(e.v)/total*100).toFixed(1); inner+=`<rect x="390" y="${y-9}" width="11" height="11" rx="2" fill="${colors[i%colors.length]}"/><text x="408" y="${y}" class="rd-legend">${esc(e.n)}</text><text x="595" y="${y}" text-anchor="end" class="rd-legend">${esc(fmtN(e.v))} (${pct}%)</text>`;});
-      inner+='</svg>'; exp.parentElement.innerHTML=inner;
+      const donutSvg = `<svg class="rd-donut" viewBox="0 0 200 200" role="img" aria-label="توزيع التكاليف والمصروفات"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-6}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="rd-donut-caption">الإجمالي</text></svg>`;
+      const legendRows = cats.map((e,i)=>{
+        const pct=(num(e.v)/total*100).toFixed(1);
+        return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name">${esc(e.n)}</span><span class="rd-legend-val">${esc(fmtN(e.v))} <b>(${pct}%)</b></span></div>`;
+      }).join('');
+      exp.parentElement.innerHTML = `<div class="rd-donut-flex"><div class="rd-donut-svg-wrap">${donutSvg}</div><div class="rd-legend-list">${legendRows}</div></div>`;
     }
   }
 
