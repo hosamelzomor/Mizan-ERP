@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ميزان | لوحة التحكم المالية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -465,24 +465,25 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .chart-box{ position:relative; height:280px; }
 .chart-box.sm{ height:220px; }
 
-/* Financial-analysis dashboard charts: render directly in the page so they
-   use the already-loaded Chart.js instance and follow the global period filters. */
+/* Financial-analysis dashboard charts — spacious, readable report layout. */
 .rd-charts-grid{
-  display:grid; grid-template-columns:2fr 1fr; gap:8px;
-  background:var(--paper-2); padding:8px; border-radius:8px;
+  display:grid; grid-template-columns:1fr; gap:14px;
+  background:var(--paper-2); padding:12px; border-radius:10px;
 }
 .rd-chart-box{
-  background:var(--paper); border-radius:8px; padding:10px; border-top:2px solid var(--gold);
-  height:250px; display:flex; flex-direction:column; min-width:0;
+  background:var(--paper); border-radius:10px; padding:14px 16px;
+  border-top:3px solid var(--gold); min-width:0; min-height:350px;
+  display:flex; flex-direction:column; break-inside:avoid;
 }
-.rd-chart-box-sm{ height:225px; }
-.rd-chart-title{ font-size:11px; font-weight:800; color:var(--ink-soft); margin-bottom:5px; flex:0 0 auto; }
-.rd-canvas-wrap{ position:relative; flex:1 1 auto; min-height:0; width:100%; }
+.rd-chart-box-sm{ min-height:330px; }
+.rd-chart-title{ font-family:'Cairo','Almarai',sans-serif; font-size:14px; font-weight:800; color:var(--ink-2); margin-bottom:8px; flex:0 0 auto; }
+.rd-canvas-wrap{ position:relative; flex:1 1 auto; min-height:290px; width:100%; overflow:hidden; }
 .rd-canvas-wrap canvas{ width:100% !important; height:100% !important; }
 @media (max-width:900px){
-  .rd-charts-grid{ grid-template-columns:1fr; }
-  .rd-chart-box,.rd-chart-box-sm{ height:240px; }
+  .rd-chart-box,.rd-chart-box-sm{ min-height:300px; }
+  .rd-canvas-wrap{ min-height:245px; }
 }
+
 
 
 .mobile-filters-toggle{ display:none; }
@@ -745,30 +746,67 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
 }
 </style>
 <style id="rd-svg-chart-styles">
-.rd-canvas-wrap{position:relative;min-height:245px;width:100%;overflow:hidden}
-.rd-svg{display:block;width:100%;height:245px;overflow:visible}
+.rd-canvas-wrap{position:relative;min-height:290px;width:100%;overflow:hidden}
+.rd-svg{display:block;width:100%;height:290px;overflow:visible}
 /* Axis/total labels mix Latin digits with an Arabic unit suffix (e.g. "-195ألف").
    Without forcing LTR + isolation, the page's RTL context reorders these mixed
    runs inconsistently (minus sign / digits / unit swap places per label). */
-.rd-axis{font:10px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a);direction:ltr;unicode-bidi:isolate}
-.rd-legend{font:10.5px Cairo,Arial,sans-serif;fill:var(--ink,#17212b)}
-.rd-donut-total{font:800 19px Cairo,Arial,sans-serif;fill:var(--ink,#17212b);direction:ltr;unicode-bidi:isolate}
-.rd-donut-caption{font:10px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a)}
-.rd-svg-empty{height:245px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-soft,#71808a);font:12px Cairo,Arial,sans-serif;padding:20px;box-sizing:border-box}
+.rd-axis{font:12px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a);direction:ltr;unicode-bidi:isolate}
+.rd-legend{font:12px Cairo,Arial,sans-serif;fill:var(--ink,#17212b)}
+.rd-donut-total{font:800 22px Cairo,Arial,sans-serif;fill:var(--ink,#17212b);direction:ltr;unicode-bidi:isolate}
+.rd-donut-caption{font:12px Cairo,Arial,sans-serif;fill:var(--ink-soft,#71808a)}
+.rd-svg-empty{height:290px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-soft,#71808a);font:12px Cairo,Arial,sans-serif;padding:20px;box-sizing:border-box}
 
 /* Expense donut: square SVG (never distorts in a narrow grid column) + a
    real HTML legend beside it, so long category names/values wrap and align
    naturally instead of relying on fixed SVG text coordinates that used to
    overlap the donut when the column was narrower than the chart was designed for. */
-.rd-donut-flex{display:flex;align-items:center;gap:16px;height:100%;flex-wrap:wrap}
-.rd-donut-svg-wrap{flex:0 0 auto;width:132px;max-width:42%}
+.rd-donut-flex{display:flex;align-items:center;gap:28px;height:100%;min-height:290px;flex-wrap:nowrap}
+.rd-donut-svg-wrap{flex:0 0 210px;width:210px;max-width:32%}
 .rd-donut-svg-wrap .rd-donut{display:block;width:100%;height:auto}
-.rd-legend-list{flex:1 1 150px;min-width:130px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.rd-legend-list{flex:1 1 auto;min-width:220px;display:flex;flex-direction:column;justify-content:center;gap:14px}
 .rd-legend-row{display:flex;align-items:center;gap:8px;min-width:0}
 .rd-legend-swatch{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
-.rd-legend-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700;color:var(--ink)}
-.rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-soft);white-space:nowrap}
+.rd-legend-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink)}
+.rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-soft);white-space:nowrap}
 .rd-legend-val b{color:var(--ink);font-weight:800}
+
+.rd-print-header{display:none}
+.rd-pdf-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:-4px 0 12px}
+.rd-pdf-actions .btn{font-family:'Cairo','Almarai',sans-serif;font-size:12px;padding:7px 13px}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  html{zoom:1 !important}
+  body{background:#fff !important;color:#111 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sidebar,.topbar-title-row,#scrollTopBtn,.no-print,.rd-pdf-actions,.mobile-filters-toggle{display:none !important}
+  .main{padding:0 !important;width:100% !important}
+  #viewRoot{width:100% !important}
+  .rd-print-header{display:block !important;text-align:center;margin:0 0 12px;padding:0 0 10px;border-bottom:2px solid #B8902E}
+  .rd-print-header h1{margin:0 0 4px;font:800 22px Cairo,Arial,sans-serif;color:#1F2E3B}
+  .rd-print-header .meta{font:12px Cairo,Arial,sans-serif;color:#5B6A72}
+  .rd-dash-card{border:none !important;box-shadow:none !important;padding:0 !important;margin:0 !important}
+  .rd-dash-card>h2{display:none !important}
+  .rd-charts-grid{background:transparent !important;padding:0 !important;gap:10mm !important}
+  .rd-chart-box,.rd-chart-box-sm{border:1px solid #d9cfae !important;border-top:3px solid #B8902E !important;box-shadow:none !important;min-height:0 !important;height:auto !important;padding:8px 10px !important;break-inside:avoid;page-break-inside:avoid}
+  .rd-canvas-wrap{min-height:0 !important;height:82mm !important}
+  .rd-svg{height:82mm !important}
+  .rd-chart-title{font-size:12px !important;margin-bottom:3px !important}
+  .rd-donut-flex{min-height:72mm !important;height:72mm !important}
+  .rd-donut-svg-wrap{width:155px !important;flex-basis:155px !important}
+  .rd-legend-list{gap:7px !important}
+  .rd-legend-name{font-size:10px !important}
+  .rd-legend-val{font-size:9px !important}
+  .rd-axis{font-size:9px !important}
+  .rd-legend{font-size:10px !important}
+  .rd-dash-kpis{margin-bottom:7mm !important}
+  .card{box-shadow:none !important}
+  .card:not(#rd_dashCard){break-inside:avoid;page-break-inside:avoid}
+}
+@media screen and (max-width:900px){
+  .rd-donut-flex{flex-wrap:wrap}
+  .rd-donut-svg-wrap{width:180px;flex-basis:180px;max-width:48%}
+  .rd-legend-list{min-width:180px}
+}
 </style>
 </head>
 <body>
@@ -1104,6 +1142,14 @@ const I18N = {
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
     exportExcel:'تصدير Excel', printPdf:'طباعة / PDF',
+    exportAnalysisPdf:'تصدير تقرير التحليل PDF', analysisPdfHint:'يفتح نافذة الطباعة لحفظ التقرير كاملاً بصيغة PDF.', analysisReportTitle:'تقرير التحليل المالي',
+    chartRevenueTrend:'اتجاه الإيرادات والربح شهرياً', chartExpenseDistribution:'توزيع التكاليف والمصروفات',
+    chartProfitMargins:'هامش الربح الإجمالي والصافي (%)', chartCashFlow:'التدفق النقدي الشهري',
+    chartRevenue:'الإيرادات', chartGrossProfit:'إجمالي الربح', chartNetProfit:'صافي الربح',
+    chartGrossMargin:'هامش إجمالي %', chartNetMargin:'هامش صافي %',
+    chartOperating:'تشغيلي', chartInvesting:'استثماري', chartFinancing:'تمويلي', chartNet:'الصافي',
+    chartTotal:'الإجمالي', chartNoExpenses:'لا توجد تكاليف أو مصروفات للفترة المحددة.',
+    chart:'رسم بياني', thousandShort:'ألف', millionShort:'م' ,
     openingBalance:'رصيد افتتاحي', closingBalance:'رصيد ختامي', code:'الكود', accountName:'اسم الحساب',
     classification:'التصنيف', movement:'رصيد الحركة', revenue:'الإيرادات', cost:'التكاليف',
     profitLoss:'الربح/الخسارة', margin:'الهامش %', costCenterProject:'المشروع / مركز التكلفة',
@@ -1535,6 +1581,14 @@ const I18N = {
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
     exportExcel:'Export Excel', printPdf:'Print / PDF',
+    exportAnalysisPdf:'Export Financial Analysis PDF', analysisPdfHint:'Opens the print dialog so you can save the complete report as a PDF.', analysisReportTitle:'Financial Analysis Report',
+    chartRevenueTrend:'Monthly Revenue & Profit Trend', chartExpenseDistribution:'Cost & Expense Distribution',
+    chartProfitMargins:'Gross & Net Profit Margin (%)', chartCashFlow:'Monthly Cash Flow',
+    chartRevenue:'Revenue', chartGrossProfit:'Gross Profit', chartNetProfit:'Net Income',
+    chartGrossMargin:'Gross Margin %', chartNetMargin:'Net Margin %',
+    chartOperating:'Operating', chartInvesting:'Investing', chartFinancing:'Financing', chartNet:'Net',
+    chartTotal:'Total', chartNoExpenses:'No costs or expenses for the selected period.',
+    chart:'Chart', thousandShort:'K', millionShort:'M',
     openingBalance:'Opening Balance', closingBalance:'Closing Balance', code:'Code', accountName:'Account Name',
     classification:'Classification', movement:'Movement', revenue:'Revenue', cost:'Cost',
     profitLoss:'Profit/Loss', margin:'Margin %', costCenterProject:'Project / Cost Center',
@@ -4496,21 +4550,9 @@ function projectTotals(project){
 // Cross-reference: the actual ledger balance for a partner with this exact
 // name, as of today — null if no matching partner name exists in the
 // journal yet (e.g. a brand-new project with no accounting entries posted).
-//
-// IMPORTANT: this must be scoped to the customer/vendor receivable-payable
-// accounts only (same scope used by the "Customer Statement" page), NOT
-// summed across every account in the journal. Every leg of a double-entry
-// transaction (invoice, cash voucher, etc.) carries the same `partner`
-// value on all its lines — the AR line AND the revenue/tax line, or the
-// cash line AND the AR line. Summing debit-credit across ALL of a
-// partner's lines therefore always nets to ~zero for a complete
-// transaction (debits = credits by definition), which made this balance
-// meaningless/wrong for any project whose collections or invoices were
-// posted through the normal accounting flow. Restricting to just the
-// receivable/payable account codes gives the real outstanding balance.
 function linkedLedgerBalance(projectName){
   if(!STATE.journal.some(l => l.partner === projectName)) return null;
-  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {mode:'EGP', accountCodes: CUSTOMER_STATEMENT_ACCOUNTS});
+  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {mode:'EGP'});
   return stmt.closing;
 }
 
@@ -7596,35 +7638,35 @@ function buildRatiosDashCharts(){
   const root = document.getElementById('rd_charts');
   if(!root || !d) return;
 
-  // Fully dependency-free dashboard charts. The ratios page must work as a
-  // single offline HTML file, so it does not depend on Chart.js/CDN availability.
+  // Dependency-free SVG charts. Everything is translated from I18N so the
+  // complete analysis page follows the selected language.
   const esc = v => String(v==null?'':v).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const num = v => (v==null || !isFinite(v)) ? 0 : Number(v);
   const fmtN = v => {
     if(v==null || !isFinite(v)) return '—';
     const a=Math.abs(v);
-    if(a>=1000000) return (v/1000000).toFixed(1)+'م';
-    if(a>=1000) return (v/1000).toFixed(0)+'ألف';
+    if(a>=1000000) return (v/1000000).toFixed(1)+t('millionShort');
+    if(a>=1000) return (v/1000).toFixed(0)+t('thousandShort');
     return String(Math.round(v*100)/100);
   };
-  const W=760, H=245, L=58, R=18, T=28, B=42;
+  const W=1100, H=300, L=78, R=24, T=38, B=50;
   const PW=W-L-R, PH=H-T-B;
   const xAt=(i,n)=> n<=1 ? L+PW/2 : L+(i/(n-1))*PW;
   const barX=(i,n,bw)=> n<=1 ? L+PW/2-bw/2 : L+(i/n)*PW+(PW/n-bw)/2;
   const yAt=(v,min,max)=> T+PH-((v-min)/((max-min)||1))*PH;
-  const grid = (min,max, suffix='') => {
+  const grid = (min,max,suffix='') => {
     let out='';
-    for(let i=0;i<4;i++){
-      const v=min+(max-min)*(i/3), y=yAt(v,min,max);
+    for(let i=0;i<5;i++){
+      const v=min+(max-min)*(i/4), y=yAt(v,min,max);
       out += `<line x1="${L}" y1="${y.toFixed(1)}" x2="${W-R}" y2="${y.toFixed(1)}" stroke="rgba(217,207,174,.24)" stroke-width="1"/>`;
-      out += `<text x="${L-8}" y="${(y+3).toFixed(1)}" text-anchor="end" class="rd-axis">${esc(fmtN(v))}${suffix}</text>`;
+      out += `<text x="${L-10}" y="${(y+4).toFixed(1)}" text-anchor="end" class="rd-axis">${esc(fmtN(v))}${suffix}</text>`;
     }
     return out;
   };
   const labels = d.labels || [];
-  const labelSvg = (i,n,label) => `<text x="${xAt(i,n).toFixed(1)}" y="${H-14}" text-anchor="middle" class="rd-axis">${esc(label)}</text>`;
-  const empty = (msg) => `<div class="rd-svg-empty">${esc(msg)}</div>`;
-  const svgWrap = (inner, cls='') => `<svg class="rd-svg ${cls}" viewBox="0 0 ${W} ${H}" role="img" aria-label="رسم بياني">${inner}</svg>`;
+  const labelSvg = (i,n,label) => `<text x="${xAt(i,n).toFixed(1)}" y="${H-15}" text-anchor="middle" class="rd-axis">${esc(label)}</text>`;
+  const empty = msg => `<div class="rd-svg-empty">${esc(msg)}</div>`;
+  const svgWrap = inner => `<svg class="rd-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('chart'))}">${inner}</svg>`;
 
   // 1) Revenue / gross profit / net income
   const rev=document.getElementById('rd_chart_rev');
@@ -7633,33 +7675,29 @@ function buildRatiosDashCharts(){
     const rawMax=vals.length?Math.max(...vals):0, rawMin=vals.length?Math.min(...vals):0;
     const max=Math.max(rawMax,0), min=Math.min(rawMin,0);
     const pad=((max-min)||1)*.12, lo=min-pad, hi=max+pad, zero=yAt(0,lo,hi), n=labels.length;
-    let inner=`<rect x="${L}" y="${T}" width="${PW}" height="${PH}" fill="transparent"/>${grid(lo,hi)}<line x1="${L}" y1="${zero}" x2="${W-R}" y2="${zero}" stroke="#89939A" stroke-width="1"/>`;
-    const bw=Math.max(8,Math.min(28,(PW/Math.max(n,1))*0.24));
-    (d.rev||[]).forEach((v,i)=>{ const y=yAt(num(v),lo,hi), h=Math.abs(zero-y), yy=Math.min(zero,y); inner+=`<rect x="${barX(i,n,bw*3).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="3" fill="#B8902E" opacity=".82"><title>الإيرادات: ${esc(fmtN(v))}</title></rect>`; });
-    (d.gross||[]).forEach((v,i)=>{ const y=yAt(num(v),lo,hi), h=Math.abs(zero-y), yy=Math.min(zero,y); inner+=`<rect x="${(barX(i,n,bw*3)+bw*1.05).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="3" fill="#1F6D5A" opacity=".82"><title>إجمالي الربح: ${esc(fmtN(v))}</title></rect>`; });
+    let inner=grid(lo,hi)+`<line x1="${L}" y1="${zero}" x2="${W-R}" y2="${zero}" stroke="#89939A" stroke-width="1"/>`;
+    const bw=Math.max(12,Math.min(34,(PW/Math.max(n,1))*0.22));
+    (d.rev||[]).forEach((v,i)=>{ const y=yAt(num(v),lo,hi), h=Math.abs(zero-y), yy=Math.min(zero,y); inner+=`<rect x="${barX(i,n,bw*3).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="4" fill="#B8902E" opacity=".82"><title>${esc(t('chartRevenue'))}: ${esc(fmtN(v))}</title></rect>`; });
+    (d.gross||[]).forEach((v,i)=>{ const y=yAt(num(v),lo,hi), h=Math.abs(zero-y), yy=Math.min(zero,y); inner+=`<rect x="${(barX(i,n,bw*3)+bw*1.05).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="4" fill="#1F6D5A" opacity=".82"><title>${esc(t('chartGrossProfit'))}: ${esc(fmtN(v))}</title></rect>`; });
     const pts=(d.net||[]).map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).join(' ');
-    if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#C4574B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    (d.net||[]).forEach((v,i)=>{inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="3" fill="#C4574B"><title>صافي الربح: ${esc(fmtN(v))}</title></circle>`;});
+    if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#C4574B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+    (d.net||[]).forEach((v,i)=>{inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="#C4574B"><title>${esc(t('chartNetProfit'))}: ${esc(fmtN(v))}</title></circle>`;});
     labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},10)"><rect x="0" y="-7" width="10" height="10" rx="2" fill="#B8902E"/><text x="15" y="2" class="rd-legend">الإيرادات</text><rect x="82" y="-7" width="10" height="10" rx="2" fill="#1F6D5A"/><text x="97" y="2" class="rd-legend">إجمالي الربح</text><line x1="190" y1="-2" x2="202" y2="-2" stroke="#C4574B" stroke-width="2.5"/><text x="208" y="2" class="rd-legend">صافي الربح</text></g>`;
+    inner+=`<g transform="translate(${L},14)"><rect x="0" y="-8" width="12" height="12" rx="2" fill="#B8902E"/><text x="18" y="3" class="rd-legend">${esc(t('chartRevenue'))}</text><rect x="105" y="-8" width="12" height="12" rx="2" fill="#1F6D5A"/><text x="123" y="3" class="rd-legend">${esc(t('chartGrossProfit'))}</text><line x1="245" y1="-2" x2="260" y2="-2" stroke="#C4574B" stroke-width="3"/><text x="268" y="3" class="rd-legend">${esc(t('chartNetProfit'))}</text></g>`;
     rev.parentElement.innerHTML=svgWrap(inner);
   }
 
-  // 2) Expense distribution — square SVG donut + adaptive HTML legend
-  // (no external library). The legend used to be baked into the same wide
-  // SVG as fixed-position <text> elements, which overlapped the donut once
-  // this chart landed in the narrower grid column. A real HTML legend lays
-  // out with normal flex/text-overflow rules at any width.
+  // 2) Expense distribution
   const exp=document.getElementById('rd_chart_exp');
   if(exp){
     const cats=(d.expCats||[]).filter(e=>num(e.v)>0), total=cats.reduce((a,e)=>a+num(e.v),0);
-    if(!cats.length || !total){ exp.parentElement.innerHTML=empty('لا توجد تكاليف أو مصروفات للفترة المحددة.'); }
+    if(!cats.length || !total){ exp.parentElement.innerHTML=empty(t('chartNoExpenses')); }
     else {
       const cx=100, cy=100, r=68, sw=30, circ=2*Math.PI*r;
       let offset=0, arcs='';
       const colors=['#A23B31','#B8902E','#1F6D5A','#5B6A72','#8A6E27'];
       cats.forEach((e,i)=>{const frac=num(e.v)/total, len=circ*frac; arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="${sw}" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"><title>${esc(e.n)}: ${esc(fmtN(e.v))}</title></circle>`; offset+=len;});
-      const donutSvg = `<svg class="rd-donut" viewBox="0 0 200 200" role="img" aria-label="توزيع التكاليف والمصروفات"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-6}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="rd-donut-caption">الإجمالي</text></svg>`;
+      const donutSvg = `<svg class="rd-donut" viewBox="0 0 200 200" role="img" aria-label="${esc(t('chartExpenseDistribution'))}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-6}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="rd-donut-caption">${esc(t('chartTotal'))}</text></svg>`;
       const legendRows = cats.map((e,i)=>{
         const pct=(num(e.v)/total*100).toFixed(1);
         return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name">${esc(e.n)}</span><span class="rd-legend-val">${esc(fmtN(e.v))} <b>(${pct}%)</b></span></div>`;
@@ -7674,9 +7712,9 @@ function buildRatiosDashCharts(){
     const vals=[...(d.grossMargin||[]),...(d.netMargin||[])].filter(v=>v!=null).map(Number);
     const rawMin=vals.length?Math.min(...vals,0):0, rawMax=vals.length?Math.max(...vals,0):0, pad=((rawMax-rawMin)||1)*.15, lo=rawMin-pad, hi=rawMax+pad, n=labels.length;
     let inner=grid(lo,hi,'%');
-    const drawLine=(arr,color)=>{const pts=arr.map((v,i)=>v==null?'':`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).filter(Boolean).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`; arr.forEach((v,i)=>{if(v!=null)inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="3" fill="${color}"><title>${esc(fmtN(v))}%</title></circle>`;});};
-    drawLine(d.grossMargin||[],'#1F6D5A'); drawLine(d.netMargin||[],'#B8902E'); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},10)"><line x1="0" y1="-2" x2="12" y2="-2" stroke="#1F6D5A" stroke-width="2.5"/><text x="18" y="2" class="rd-legend">هامش إجمالي ٪</text><line x1="112" y1="-2" x2="124" y2="-2" stroke="#B8902E" stroke-width="2.5"/><text x="130" y="2" class="rd-legend">هامش صافي ٪</text></g>`;
+    const drawLine=(arr,color,key)=>{const pts=arr.map((v,i)=>v==null?'':`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).filter(Boolean).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`; arr.forEach((v,i)=>{if(v!=null)inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="${color}"><title>${esc(t(key))}: ${esc(fmtN(v))}%</title></circle>`;});};
+    drawLine(d.grossMargin||[],'#1F6D5A','chartGrossMargin'); drawLine(d.netMargin||[],'#B8902E','chartNetMargin'); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
+    inner+=`<g transform="translate(${L},14)"><line x1="0" y1="-2" x2="15" y2="-2" stroke="#1F6D5A" stroke-width="3"/><text x="22" y="3" class="rd-legend">${esc(t('chartGrossMargin'))}</text><line x1="155" y1="-2" x2="170" y2="-2" stroke="#B8902E" stroke-width="3"/><text x="177" y="3" class="rd-legend">${esc(t('chartNetMargin'))}</text></g>`;
     margin.parentElement.innerHTML=svgWrap(inner);
   }
 
@@ -7684,18 +7722,17 @@ function buildRatiosDashCharts(){
   const cash=document.getElementById('rd_chart_cash');
   if(cash){
     const vals=[...(d.ops||[]),...(d.inv||[]),...(d.fin||[])].map(num), max=Math.max(...vals,0), min=Math.min(...vals,0), pad=((max-min)||1)*.12, lo=min-pad, hi=max+pad, zero=yAt(0,lo,hi), n=labels.length;
-    let inner=grid(lo,hi); inner+=`<line x1="${L}" y1="${zero}" x2="${W-R}" y2="${zero}" stroke="#89939A" stroke-width="1"/>`;
-    const bw=Math.max(9,Math.min(24,(PW/Math.max(n,1))*0.18));
-    const arrs=[d.ops||[],d.inv||[],d.fin||[]], cols=['#1F6D5A','#A23B31','#8A6E27'], names=['تشغيلي','استثماري','تمويلي'];
-    arrs.forEach((arr,k)=>arr.forEach((v,i)=>{const y=yAt(num(v),lo,hi),h=Math.abs(zero-y),yy=Math.min(zero,y),x=n<=1?L+PW/2-1.5*bw+k*bw*1.05:barX(i,n,bw*3)+k*bw*1.05; inner+=`<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="2" fill="${cols[k]}" opacity=".82"><title>${names[k]}: ${esc(fmtN(v))}</title></rect>`;}));
+    let inner=grid(lo,hi)+`<line x1="${L}" y1="${zero}" x2="${W-R}" y2="${zero}" stroke="#89939A" stroke-width="1"/>`;
+    const bw=Math.max(12,Math.min(28,(PW/Math.max(n,1))*0.16));
+    const arrs=[d.ops||[],d.inv||[],d.fin||[]], cols=['#1F6D5A','#A23B31','#8A6E27'], keys=['chartOperating','chartInvesting','chartFinancing'];
+    arrs.forEach((arr,k)=>arr.forEach((v,i)=>{const y=yAt(num(v),lo,hi),h=Math.abs(zero-y),yy=Math.min(zero,y),x=n<=1?L+PW/2-1.5*bw+k*bw*1.05:barX(i,n,bw*3)+k*bw*1.05; inner+=`<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="3" fill="${cols[k]}" opacity=".82"><title>${esc(t(keys[k]))}: ${esc(fmtN(v))}</title></rect>`;}));
     const nc=(d.ops||[]).map((o,i)=>num(o)+num((d.inv||[])[i])+num((d.fin||[])[i]));
-    const pts=nc.map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(v,lo,hi).toFixed(1)}`).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#D9B45C" stroke-width="2.5" stroke-linecap="round"/>`;
-    nc.forEach((v,i)=>inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(v,lo,hi).toFixed(1)}" r="3" fill="#D9B45C"><title>الصافي: ${esc(fmtN(v))}</title></circle>`); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},10)"><rect x="0" y="-7" width="10" height="10" rx="2" fill="#1F6D5A"/><text x="15" y="2" class="rd-legend">تشغيلي</text><rect x="73" y="-7" width="10" height="10" rx="2" fill="#A23B31"/><text x="88" y="2" class="rd-legend">استثماري</text><rect x="157" y="-7" width="10" height="10" rx="2" fill="#8A6E27"/><text x="172" y="2" class="rd-legend">تمويلي</text><line x1="248" y1="-2" x2="260" y2="-2" stroke="#D9B45C" stroke-width="2.5"/><text x="266" y="2" class="rd-legend">الصافي</text></g>`;
+    const pts=nc.map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(v,lo,hi).toFixed(1)}`).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#D9B45C" stroke-width="3" stroke-linecap="round"/>`;
+    nc.forEach((v,i)=>inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(v,lo,hi).toFixed(1)}" r="4" fill="#D9B45C"><title>${esc(t('chartNet'))}: ${esc(fmtN(v))}</title></circle>`); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
+    inner+=`<g transform="translate(${L},14)"><rect x="0" y="-8" width="12" height="12" rx="2" fill="#1F6D5A"/><text x="18" y="3" class="rd-legend">${esc(t('chartOperating'))}</text><rect x="125" y="-8" width="12" height="12" rx="2" fill="#A23B31"/><text x="143" y="3" class="rd-legend">${esc(t('chartInvesting'))}</text><rect x="255" y="-8" width="12" height="12" rx="2" fill="#8A6E27"/><text x="273" y="3" class="rd-legend">${esc(t('chartFinancing'))}</text><line x1="405" y1="-2" x2="420" y2="-2" stroke="#D9B45C" stroke-width="3"/><text x="428" y="3" class="rd-legend">${esc(t('chartNet'))}</text></g>`;
     cash.parentElement.innerHTML=svgWrap(inner);
   }
 }
-
 function needsFilters(view){
   return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport'].includes(view);
 }
@@ -12273,12 +12310,14 @@ function renderRatiosView(root){
   // Chart colours (matching Mizan palette)
   const CPALETTE = ['#B8902E','#1F6D5A','#A23B31','#D9B45C','#28866D','#C4574B','#8A6E27'];
 
-  // Friendly month labels in Arabic; include the year when the selected
-  // filters span more than one calendar year.
-  const MONTHS_AR_SHORT = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  // Localized month labels; include the year when the selected filters span
+  // more than one calendar year.
+  const MONTHS_SHORT = STATE.settings.lang === 'en'
+    ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    : ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
   const dashLabels = dashMonths.map(m => {
     const [yy, mo] = m.split('-');
-    const label = MONTHS_AR_SHORT[parseInt(mo,10)-1] || m;
+    const label = MONTHS_SHORT[parseInt(mo,10)-1] || m;
     return dashMonths.some(x=>x.slice(0,4)!==yy) ? `${label} ${yy}` : label;
   });
 
@@ -12315,40 +12354,48 @@ function renderRatiosView(root){
   root.innerHTML = `
     ${currencyNote()}
 
-    <div id="rd_dashCard" class="card" style="border-top-color:var(--gold);margin-bottom:14px">
+    <div id="rd_dashCard" class="card rd-dash-card" style="border-top-color:var(--gold);margin-bottom:14px">
+      <div class="rd-print-header">
+        <h1>${t('analysisReportTitle')}</h1>
+        <div class="meta">${_r.start ? _r.start+' → '+(_r.end||todayISO()) : t('allPeriods')} · ${t('analysisFromRealData')}</div>
+      </div>
+      <div class="rd-pdf-actions no-print">
+        <button type="button" class="btn btn-gold" onclick="printCurrentView()">⬇ ${t('exportAnalysisPdf')}</button>
+        <span class="hint">${t('analysisPdfHint')}</span>
+      </div>
       <h2 style="margin-bottom:16px">
         ${ICONS.statement.replace('currentColor','var(--gold-dim)')}
-        لوحة التحليل المالي
-        <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:8px">${_r.start ? _r.start+' \u2192 '+(_r.end||todayISO()) : 'كل الفترات'} · بيانات حقيقية</span>
+        ${t('analysisReportTitle')}
+        <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:8px">${_r.start ? _r.start+' \u2192 '+(_r.end||todayISO()) : t('allPeriods')} · ${t('analysisFromRealData')}</span>
       </h2>
       <!-- KPI Row -->
-      <div class="grid-4" style="margin-bottom:18px">
+      <div class="grid-4 rd-dash-kpis" style="margin-bottom:18px">
         <div class="kpi pos">
-          <div class="lbl">إجمالي الإيرادات</div>
+          <div class="lbl">${t('totalRevenueLabel')}</div>
           <div class="val num-lg">${fmt(totalRev)}${chgBadge(totalRev, priorRev)}</div>
-          <div class="sub">خلال الفترة المحددة</div>
+          <div class="sub">${t('from')} ${_r.start||t('activityStart')} ${t('to')} ${_r.end||todayISO()}</div>
         </div>
         <div class="kpi ${totalNet>=0?'pos':'neg'}">
-          <div class="lbl">صافي الربح</div>
+          <div class="lbl">${t('netIncomeLabel')}</div>
           <div class="val num-lg">${fmt(totalNet)}${chgBadge(totalNet, priorNet)}</div>
-          <div class="sub">بعد كل المصروفات</div>
+          <div class="sub">${t('totalCostsNote')}</div>
         </div>
         <div class="kpi">
-          <div class="lbl">إجمالي المصروفات</div>
+          <div class="lbl">${t('totalCostsExpenses')}</div>
           <div class="val num-lg">${fmt(totalExp)}</div>
-          <div class="sub">تكاليف + نفقات + إهلاك</div>
+          <div class="sub">${t('totalCostsNote')}</div>
         </div>
         <div class="kpi ${avgMargin>=0?'pos':'neg'}">
-          <div class="lbl">هامش الربح الصافي</div>
+          <div class="lbl">${t('netMarginRatio')}</div>
           <div class="val num-lg">${avgMargin!=null ? avgMargin+'%' : '\u2014'}</div>
-          <div class="sub">متوسط الفترة</div>
+          <div class="sub">${t('periodCoveredLabel')}</div>
         </div>
       </div>
       <div id="rd_charts" class="rd-charts-grid">
-        <div class="rd-chart-box"><div class="rd-chart-title">اتجاه الإيرادات والربح شهرياً</div><div class="rd-canvas-wrap"><canvas id="rd_chart_rev"></canvas></div></div>
-        <div class="rd-chart-box"><div class="rd-chart-title">توزيع التكاليف والمصروفات</div><div class="rd-canvas-wrap"><canvas id="rd_chart_exp"></canvas></div></div>
-        <div class="rd-chart-box rd-chart-box-sm"><div class="rd-chart-title">هامش الربح الإجمالي والصافي (%)</div><div class="rd-canvas-wrap"><canvas id="rd_chart_margin"></canvas></div></div>
-        <div class="rd-chart-box rd-chart-box-sm"><div class="rd-chart-title">التدفق النقدي الشهري</div><div class="rd-canvas-wrap"><canvas id="rd_chart_cash"></canvas></div></div>
+        <div class="rd-chart-box"><div class="rd-chart-title">${t('chartRevenueTrend')}</div><div class="rd-canvas-wrap"><canvas id="rd_chart_rev"></canvas></div></div>
+        <div class="rd-chart-box"><div class="rd-chart-title">${t('chartExpenseDistribution')}</div><div class="rd-canvas-wrap"><canvas id="rd_chart_exp"></canvas></div></div>
+        <div class="rd-chart-box rd-chart-box-sm"><div class="rd-chart-title">${t('chartProfitMargins')}</div><div class="rd-canvas-wrap"><canvas id="rd_chart_margin"></canvas></div></div>
+        <div class="rd-chart-box rd-chart-box-sm"><div class="rd-chart-title">${t('chartCashFlow')}</div><div class="rd-canvas-wrap"><canvas id="rd_chart_cash"></canvas></div></div>
       </div>
     </div>
 
