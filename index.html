@@ -3306,12 +3306,16 @@ function attachMultiSelectEvents(onChange){
     panel.querySelectorAll('input.ms-leaf').forEach(leaf => { if(labels.includes(leaf.value)) leaf.checked = cb.checked; });
     const id = panel.id.replace('_panel','');
     STATE.ui.openMultiSelect = id;
+    try{ cb.blur(); }catch(e){}
     onChange(id, [...panel.querySelectorAll('input.ms-leaf:checked')].map(x=>x.value));
   }));
   document.querySelectorAll('.ms-panel input.ms-leaf').forEach(cb => cb.addEventListener('change', () => {
     const panel = cb.closest('.ms-panel');
     const id = panel.id.replace('_panel','');
     STATE.ui.openMultiSelect = id;
+    // Avoid a stale focused checkbox triggering browser auto-scroll while the
+    // entire panel is being rebuilt.
+    try{ cb.blur(); }catch(e){}
     onChange(id, [...panel.querySelectorAll('input.ms-leaf:checked')].map(x=>x.value));
   }));
   document.addEventListener('click', () => {
@@ -7261,7 +7265,10 @@ function renderApp(){
   // it after the new DOM + event listeners are back in place.
   const __msScrollSave = {};
   document.querySelectorAll('.ms-panel').forEach(el => {
-    __msScrollSave[el.id] = el.scrollTop;
+    // Save both axes for every multiselect panel, including a panel already
+    // portaled outside #app. A full render replaces the DOM node, so the
+    // position must be restored explicitly.
+    __msScrollSave[el.id] = { top: el.scrollTop, left: el.scrollLeft };
   });
   // Preserve sidebar scroll position across re-renders so clicking a nav item
   // never jumps the sidebar back to the top.
@@ -7660,7 +7667,10 @@ function renderApp(){
   // BUG FIX comment above) — must run after attachMultiSelectEvents so the
   // panels/items exist in the DOM.
   document.querySelectorAll('.ms-panel').forEach(el => {
-    if(Object.prototype.hasOwnProperty.call(__msScrollSave, el.id)) el.scrollTop = __msScrollSave[el.id];
+    const saved = __msScrollSave[el.id];
+    if(!saved) return;
+    el.scrollTop = saved.top;
+    el.scrollLeft = saved.left;
   });
   // Restore sidebar scroll position (saved before the re-render above).
   const __sidebarEl = document.querySelector('.sidebar');
@@ -7736,6 +7746,25 @@ function renderApp(){
         panel.style.left = '';
         panel.style.width = '';
         panel.style.margin = '';
+      }
+
+      // The browser may run focus/scroll anchoring after the synchronous
+      // restore above because the checked checkbox was just replaced. Restore
+      // the open panel again after layout, then once more on the following
+      // frame. This is intentionally shared by every multiselect in the app.
+      const saved = __msScrollSave[openId + '_panel'];
+      if(saved){
+        const restorePanelScroll = () => {
+          const livePanel = document.getElementById(openId + '_panel');
+          if(!livePanel) return;
+          livePanel.scrollTop = saved.top;
+          livePanel.scrollLeft = saved.left;
+        };
+        restorePanelScroll();
+        requestAnimationFrame(() => {
+          restorePanelScroll();
+          requestAnimationFrame(restorePanelScroll);
+        });
       }
     }
   }
