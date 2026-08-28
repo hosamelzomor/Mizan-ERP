@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-7">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ميزان | لوحة التحكم المالية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -479,9 +479,30 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .rd-chart-title{ font-family:'Cairo','Almarai',sans-serif; font-size:14px; font-weight:800; color:var(--ink-2); margin-bottom:8px; flex:0 0 auto; }
 .rd-canvas-wrap{ position:relative; flex:1 1 auto; min-height:290px; width:100%; overflow:hidden; }
 .rd-canvas-wrap canvas{ width:100% !important; height:100% !important; }
+/* Keep the four headline KPIs balanced on wide screens. The global .grid-4
+   becomes six columns above 1500px, which makes this report card too narrow. */
+.rd-dash-kpis{ grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+.rd-dash-kpis .kpi{ min-width:0; }
+.rd-dash-kpis .kpi-costs .lbl{ white-space:nowrap; font-size:clamp(12px,1.35vw,16px); }
+.rd-title-row{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;}
+.rd-title-row .rd-title-text{display:flex;align-items:center;gap:7px;min-width:0;}
+.rd-title-row .rd-pdf-btn{flex:0 0 auto;font-size:11px !important;padding:5px 9px !important;line-height:1.2;white-space:nowrap;}
+.rd-chart-legend{display:flex;align-items:center;justify-content:flex-start;gap:20px;flex-wrap:wrap;margin:0 4px 4px;min-height:22px;direction:inherit;}
+.rd-chart-legend-item{display:inline-flex;align-items:center;gap:7px;font:700 12px Cairo,Arial,sans-serif;color:var(--ink);white-space:nowrap;}
+.rd-chart-legend-swatch{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto;}
+.rd-chart-legend-line{width:17px;height:3px;border-radius:2px;display:inline-block;flex:0 0 auto;}
+@media (max-width:1100px){
+  .rd-dash-kpis{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+}
+@media (max-width:640px){
+  .rd-dash-kpis{grid-template-columns:1fr !important;}
+  .rd-dash-kpis .kpi-costs .lbl{white-space:normal;}
+}
 @media (max-width:900px){
   .rd-chart-box,.rd-chart-box-sm{ min-height:300px; }
   .rd-canvas-wrap{ min-height:245px; }
+  .rd-donut-flex{gap:12px;}
+  .rd-donut-svg-wrap{flex-basis:175px;width:175px;}
 }
 
 
@@ -761,16 +782,32 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
    real HTML legend beside it, so long category names/values wrap and align
    naturally instead of relying on fixed SVG text coordinates that used to
    overlap the donut when the column was narrower than the chart was designed for. */
-.rd-donut-flex{display:flex;align-items:center;gap:28px;height:100%;min-height:290px;flex-wrap:nowrap}
+.rd-donut-flex{display:flex;align-items:center;gap:18px;height:100%;min-height:290px;flex-wrap:nowrap;direction:rtl}
 .rd-donut-svg-wrap{flex:0 0 210px;width:210px;max-width:32%}
 .rd-donut-svg-wrap .rd-donut{display:block;width:100%;height:auto}
-.rd-legend-list{flex:1 1 auto;min-width:220px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.rd-legend-list{flex:0 1 520px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px;direction:inherit}
 .rd-legend-row{display:flex;align-items:center;gap:8px;min-width:0}
 .rd-legend-swatch{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
-.rd-legend-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink)}
-.rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-soft);white-space:nowrap}
+.rd-legend-name{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink)}
+.rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;text-align:left;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-soft);white-space:nowrap;margin-inline-start:10px}
 .rd-legend-val b{color:var(--ink);font-weight:800}
 
+.rd-notes-print-header{display:none}
+.rd-notes-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
+.rd-notes-title-text{display:flex;align-items:center;gap:7px;min-width:0}
+.rd-pdf-btn{font-family:'Cairo','Almarai',sans-serif;font-size:11px !important;padding:5px 10px !important;white-space:nowrap;flex:0 0 auto}
+@media print{
+  .rd-notes-print-header{display:block !important;text-align:center;margin:0 0 12px;padding:0 0 10px;border-bottom:2px solid #B8902E}
+  .rd-notes-print-header h1{margin:0 0 4px;font:800 22px Cairo,Arial,sans-serif;color:#1F2E3B}
+  .rd-notes-print-header .meta{font:12px Cairo,Arial,sans-serif;color:#5B6A72}
+  .rd-notes-title-row{display:block !important}
+  .rd-notes-title-row .rd-pdf-btn{display:none !important}
+  .rd-notes-title-row{margin-bottom:10px !important}
+  #viewRoot>.card, #viewRoot>.grid-2{break-inside:auto;page-break-inside:auto}
+  #viewRoot>.grid-2 .card, #viewRoot>.card{box-shadow:none !important}
+  #viewRoot table{font-size:10px}
+  #viewRoot li{break-inside:avoid;page-break-inside:avoid}
+}
 .rd-print-header{display:none}
 .rd-pdf-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:-4px 0 12px}
 .rd-pdf-actions .btn{font-family:'Cairo','Almarai',sans-serif;font-size:12px;padding:7px 13px}
@@ -1142,7 +1179,7 @@ const I18N = {
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
     exportExcel:'تصدير Excel', printPdf:'طباعة / PDF',
-    exportAnalysisPdf:'تصدير تقرير التحليل PDF', analysisPdfHint:'يفتح نافذة الطباعة لحفظ التقرير كاملاً بصيغة PDF.', analysisReportTitle:'تقرير التحليل المالي',
+    exportAnalysisPdf:'تصدير تقرير التحليل PDF', analysisPdfHint:'يفتح نافذة الطباعة لحفظ التقرير كاملاً بصيغة PDF.', analysisReportTitle:'تقرير التحليل المالي', exportNotesPdf:'تصدير تقرير الإيضاحات PDF', notesPdfHint:'يفتح نافذة الطباعة لحفظ تقرير الإيضاحات والتحليل كاملاً بصيغة PDF.', notesReportTitle:'تقرير الإيضاحات والتحليل',
     chartRevenueTrend:'اتجاه الإيرادات والربح شهرياً', chartExpenseDistribution:'توزيع التكاليف والمصروفات',
     chartProfitMargins:'هامش الربح الإجمالي والصافي (%)', chartCashFlow:'التدفق النقدي الشهري',
     chartRevenue:'الإيرادات', chartGrossProfit:'إجمالي الربح', chartNetProfit:'صافي الربح',
@@ -1581,7 +1618,7 @@ const I18N = {
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
     exportExcel:'Export Excel', printPdf:'Print / PDF',
-    exportAnalysisPdf:'Export Financial Analysis PDF', analysisPdfHint:'Opens the print dialog so you can save the complete report as a PDF.', analysisReportTitle:'Financial Analysis Report',
+    exportAnalysisPdf:'Export Financial Analysis PDF', analysisPdfHint:'Opens the print dialog so you can save the complete report as a PDF.', analysisReportTitle:'Financial Analysis Report', exportNotesPdf:'Export Notes & Analysis PDF', notesPdfHint:'Opens the print dialog so you can save the complete Notes & Analysis report as a PDF.', notesReportTitle:'Notes & Analysis Report',
     chartRevenueTrend:'Monthly Revenue & Profit Trend', chartExpenseDistribution:'Cost & Expense Distribution',
     chartProfitMargins:'Gross & Net Profit Margin (%)', chartCashFlow:'Monthly Cash Flow',
     chartRevenue:'Revenue', chartGrossProfit:'Gross Profit', chartNetProfit:'Net Income',
@@ -7667,6 +7704,7 @@ function buildRatiosDashCharts(){
   const labelSvg = (i,n,label) => `<text x="${xAt(i,n).toFixed(1)}" y="${H-15}" text-anchor="middle" class="rd-axis">${esc(label)}</text>`;
   const empty = msg => `<div class="rd-svg-empty">${esc(msg)}</div>`;
   const svgWrap = inner => `<svg class="rd-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('chart'))}">${inner}</svg>`;
+  const legendHtml = items => `<div class="rd-chart-legend">${items.map(it=>`<span class="rd-chart-legend-item"><span class="${it.line?'rd-chart-legend-line':'rd-chart-legend-swatch'}" style="background:${it.color}"></span>${esc(t(it.key))}</span>`).join('')}</div>`;
 
   // 1) Revenue / gross profit / net income
   const rev=document.getElementById('rd_chart_rev');
@@ -7683,8 +7721,7 @@ function buildRatiosDashCharts(){
     if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#C4574B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
     (d.net||[]).forEach((v,i)=>{inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="#C4574B"><title>${esc(t('chartNetProfit'))}: ${esc(fmtN(v))}</title></circle>`;});
     labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},14)"><rect x="0" y="-8" width="12" height="12" rx="2" fill="#B8902E"/><text x="18" y="3" class="rd-legend">${esc(t('chartRevenue'))}</text><rect x="105" y="-8" width="12" height="12" rx="2" fill="#1F6D5A"/><text x="123" y="3" class="rd-legend">${esc(t('chartGrossProfit'))}</text><line x1="245" y1="-2" x2="260" y2="-2" stroke="#C4574B" stroke-width="3"/><text x="268" y="3" class="rd-legend">${esc(t('chartNetProfit'))}</text></g>`;
-    rev.parentElement.innerHTML=svgWrap(inner);
+    rev.parentElement.innerHTML=legendHtml([{key:'chartRevenue',color:'#B8902E'},{key:'chartGrossProfit',color:'#1F6D5A'},{key:'chartNetProfit',color:'#C4574B',line:true}])+svgWrap(inner);
   }
 
   // 2) Expense distribution
@@ -7700,7 +7737,7 @@ function buildRatiosDashCharts(){
       const donutSvg = `<svg class="rd-donut" viewBox="0 0 200 200" role="img" aria-label="${esc(t('chartExpenseDistribution'))}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-6}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="rd-donut-caption">${esc(t('chartTotal'))}</text></svg>`;
       const legendRows = cats.map((e,i)=>{
         const pct=(num(e.v)/total*100).toFixed(1);
-        return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name">${esc(e.n)}</span><span class="rd-legend-val">${esc(fmtN(e.v))} <b>(${pct}%)</b></span></div>`;
+        return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name" dir="rtl">${esc(e.n)}</span><bdi class="rd-legend-val" dir="ltr">${esc(fmtN(e.v))} <bdi>(${pct}%)</bdi></bdi></div>`;
       }).join('');
       exp.parentElement.innerHTML = `<div class="rd-donut-flex"><div class="rd-donut-svg-wrap">${donutSvg}</div><div class="rd-legend-list">${legendRows}</div></div>`;
     }
@@ -7714,8 +7751,7 @@ function buildRatiosDashCharts(){
     let inner=grid(lo,hi,'%');
     const drawLine=(arr,color,key)=>{const pts=arr.map((v,i)=>v==null?'':`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).filter(Boolean).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`; arr.forEach((v,i)=>{if(v!=null)inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="${color}"><title>${esc(t(key))}: ${esc(fmtN(v))}%</title></circle>`;});};
     drawLine(d.grossMargin||[],'#1F6D5A','chartGrossMargin'); drawLine(d.netMargin||[],'#B8902E','chartNetMargin'); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},14)"><line x1="0" y1="-2" x2="15" y2="-2" stroke="#1F6D5A" stroke-width="3"/><text x="22" y="3" class="rd-legend">${esc(t('chartGrossMargin'))}</text><line x1="155" y1="-2" x2="170" y2="-2" stroke="#B8902E" stroke-width="3"/><text x="177" y="3" class="rd-legend">${esc(t('chartNetMargin'))}</text></g>`;
-    margin.parentElement.innerHTML=svgWrap(inner);
+    margin.parentElement.innerHTML=legendHtml([{key:'chartGrossMargin',color:'#1F6D5A',line:true},{key:'chartNetMargin',color:'#B8902E',line:true}])+svgWrap(inner);
   }
 
   // 4) Cash flow
@@ -7729,8 +7765,7 @@ function buildRatiosDashCharts(){
     const nc=(d.ops||[]).map((o,i)=>num(o)+num((d.inv||[])[i])+num((d.fin||[])[i]));
     const pts=nc.map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(v,lo,hi).toFixed(1)}`).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#D9B45C" stroke-width="3" stroke-linecap="round"/>`;
     nc.forEach((v,i)=>inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(v,lo,hi).toFixed(1)}" r="4" fill="#D9B45C"><title>${esc(t('chartNet'))}: ${esc(fmtN(v))}</title></circle>`); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
-    inner+=`<g transform="translate(${L},14)"><rect x="0" y="-8" width="12" height="12" rx="2" fill="#1F6D5A"/><text x="18" y="3" class="rd-legend">${esc(t('chartOperating'))}</text><rect x="125" y="-8" width="12" height="12" rx="2" fill="#A23B31"/><text x="143" y="3" class="rd-legend">${esc(t('chartInvesting'))}</text><rect x="255" y="-8" width="12" height="12" rx="2" fill="#8A6E27"/><text x="273" y="3" class="rd-legend">${esc(t('chartFinancing'))}</text><line x1="405" y1="-2" x2="420" y2="-2" stroke="#D9B45C" stroke-width="3"/><text x="428" y="3" class="rd-legend">${esc(t('chartNet'))}</text></g>`;
-    cash.parentElement.innerHTML=svgWrap(inner);
+    cash.parentElement.innerHTML=legendHtml([{key:'chartOperating',color:'#1F6D5A'},{key:'chartInvesting',color:'#A23B31'},{key:'chartFinancing',color:'#8A6E27'},{key:'chartNet',color:'#D9B45C',line:true}])+svgWrap(inner);
   }
 }
 function needsFilters(view){
@@ -12359,14 +12394,13 @@ function renderRatiosView(root){
         <h1>${t('analysisReportTitle')}</h1>
         <div class="meta">${_r.start ? _r.start+' → '+(_r.end||todayISO()) : t('allPeriods')} · ${t('analysisFromRealData')}</div>
       </div>
-      <div class="rd-pdf-actions no-print">
-        <button type="button" class="btn btn-gold" onclick="printCurrentView()">⬇ ${t('exportAnalysisPdf')}</button>
-        <span class="hint">${t('analysisPdfHint')}</span>
-      </div>
-      <h2 style="margin-bottom:16px">
-        ${ICONS.statement.replace('currentColor','var(--gold-dim)')}
-        ${t('analysisReportTitle')}
-        <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:8px">${_r.start ? _r.start+' \u2192 '+(_r.end||todayISO()) : t('allPeriods')} · ${t('analysisFromRealData')}</span>
+      <h2 class="rd-title-row" style="margin-bottom:16px">
+        <span class="rd-title-text">
+          ${ICONS.statement.replace('currentColor','var(--gold-dim)')}
+          <span>${t('analysisReportTitle')}</span>
+          <span style="font-size:11px;font-weight:400;color:var(--ink-soft);margin-inline-start:4px">${_r.start ? _r.start+' \u2192 '+(_r.end||todayISO()) : t('allPeriods')} · ${t('analysisFromRealData')}</span>
+        </span>
+        <button type="button" class="btn btn-gold rd-pdf-btn no-print" title="${t('analysisPdfHint')}" onclick="printCurrentView()">⬇ ${t('exportAnalysisPdf')}</button>
       </h2>
       <!-- KPI Row -->
       <div class="grid-4 rd-dash-kpis" style="margin-bottom:18px">
@@ -12380,7 +12414,7 @@ function renderRatiosView(root){
           <div class="val num-lg">${fmt(totalNet)}${chgBadge(totalNet, priorNet)}</div>
           <div class="sub">${t('totalCostsNote')}</div>
         </div>
-        <div class="kpi">
+        <div class="kpi kpi-costs">
           <div class="lbl">${t('totalCostsExpenses')}</div>
           <div class="val num-lg">${fmt(totalExp)}</div>
           <div class="sub">${t('totalCostsNote')}</div>
@@ -12483,8 +12517,18 @@ function renderNotesView(root){
 
   root.innerHTML = `
     ${currencyNote()}
+    <div class="rd-notes-print-header">
+      <h1>${t('notesReportTitle')}</h1>
+      <div class="meta">${t('from')} ${f.start||t('activityStart')} ${t('to')} ${f.end||todayISO()} · ${t('analysisFromRealData')}</div>
+    </div>
     <div class="card">
-      <h2>${ICONS.notes.replace('currentColor','var(--gold-dim)')} ${t('performanceSummary')}</h2>
+      <h2 class="rd-notes-title-row">
+        <span class="rd-notes-title-text">
+          ${ICONS.notes.replace('currentColor','var(--gold-dim)')}
+          <span>${t('performanceSummary')}</span>
+        </span>
+        <button type="button" class="btn btn-gold rd-pdf-btn no-print" title="${t('notesPdfHint')}" onclick="printCurrentView()">⬇ ${t('exportNotesPdf')}</button>
+      </h2>
       <div class="desc">${t('from')} ${f.start||t('activityStart')} ${t('to')} ${f.end} — ${t('analysisFromRealData')}</div>
       <div class="grid-4">
         ${kpi(t('netIncomeLoss'), fmt(a.is.netIncome), a.is.netIncome>=0?'pos':'neg', '')}
