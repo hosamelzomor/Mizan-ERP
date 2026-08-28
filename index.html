@@ -7534,80 +7534,61 @@ function renderApp(){
 }
 
 function buildRatiosDashCharts(){
+  const iframe = document.getElementById('rd_iframe');
   const d = window.__rdData;
-  if(!d || typeof Chart === 'undefined') return;
+  if(!iframe || !d) return;
 
-  function makeCanvas(wrapperId){
-    const wrap = document.getElementById(wrapperId);
-    if(!wrap) return null;
-    wrap.innerHTML = '';
-    const cv = document.createElement('canvas');
-    cv.style.width  = '100%';
-    cv.style.height = '100%';
-    cv.width  = wrap.offsetWidth  || 400;
-    cv.height = wrap.offsetHeight || 220;
-    wrap.appendChild(cv);
-    return cv;
-  }
-
-  Chart.defaults.font.family = "'Cairo','Almarai',sans-serif";
-  Chart.defaults.color = '#5B6A72';
-
-  const numFmt = v => {
-    const a = Math.abs(v);
-    if(a>=1e6) return (v/1e6).toFixed(1)+'م';
-    if(a>=1e3) return (v/1e3).toFixed(0)+'ألف';
-    return String(v);
-  };
-  const axY = { grid:{color:'rgba(217,207,174,.18)'}, ticks:{font:{size:10},color:'#5B6A72',callback:numFmt} };
-  const axX = { grid:{color:'rgba(217,207,174,.1)'},  ticks:{font:{size:10.5},color:'#5B6A72'} };
-  const tip = { rtl:true, callbacks:{label:c=>' '+c.dataset.label+': '+numFmt(c.raw)} };
-  const leg = (sz=11) => ({ position:'top', labels:{font:{size:sz},padding:10,usePointStyle:true} });
-  const base = { responsive:false, animation:{duration:400} };
-
-  // 1. Revenue chart
-  const cv1 = makeCanvas('rd_revWrap');
-  if(cv1) new Chart(cv1, { type:'bar', data:{ labels:d.labels,
-    datasets:[
-      {label:'الإيرادات',    data:d.rev,   backgroundColor:'#B8902EBB',borderColor:'#B8902E',borderWidth:1.5,borderRadius:3,order:2},
-      {label:'إجمالي الربح',data:d.gross,backgroundColor:'#1F6D5ABB',borderColor:'#1F6D5A',borderWidth:1.5,borderRadius:3,order:2},
-      {label:'صافي الربح',   data:d.net,   type:'line',borderColor:'#C4574B',backgroundColor:'transparent',borderWidth:2.5,tension:.35,pointRadius:4,fill:false,order:1},
-    ]}, options:{...base,plugins:{legend:leg(),tooltip:tip},scales:{x:axX,y:axY}} });
-
-  // 2. Expense pie
-  const cv2 = makeCanvas('rd_expWrap');
-  if(cv2 && d.expCats.length) new Chart(cv2, { type:'doughnut', data:{
-    labels:d.expCats.map(e=>e.n),
-    datasets:[{data:d.expCats.map(e=>e.v),
-      backgroundColor:['#A23B31CC','#B8902ECC','#1F6D5ACC'],
-      borderColor:['#A23B31','#B8902E','#1F6D5A'],borderWidth:1.5,hoverOffset:5}]},
-    options:{...base,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:10.5},padding:8,usePointStyle:true}},
-      tooltip:{rtl:true,callbacks:{label:c=>'  '+c.label+': '+numFmt(c.raw)}}}} });
-
-  // 3. Margin chart
-  const cv3 = makeCanvas('rd_marginWrap');
-  if(cv3) new Chart(cv3, { type:'line', data:{ labels:d.labels,
-    datasets:[
-      {label:'هامش إجمالي ٪',data:d.grossMargin,borderColor:'#1F6D5A',backgroundColor:'#1F6D5A18',borderWidth:2.5,tension:.35,fill:true,pointRadius:3},
-      {label:'هامش صافي ٪',   data:d.netMargin,  borderColor:'#B8902E',backgroundColor:'#B8902E18',borderWidth:2.5,tension:.35,fill:true,pointRadius:3},
-    ]}, options:{...base,plugins:{legend:leg(),tooltip:{rtl:true,callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw!=null?c.raw+'%':'—')}}},
-      scales:{x:axX,y:{...axY,ticks:{...axY.ticks,callback:v=>v+'%'}}}} });
-
-  // 4. Cash flow chart
-  const cv4 = makeCanvas('rd_cashWrap');
-  if(cv4){
-    const netCash = d.ops.map((o,i)=>o+d.inv[i]+d.fin[i]);
-    new Chart(cv4, { type:'bar', data:{ labels:d.labels,
-      datasets:[
-        {label:'تشغيلي',   data:d.ops,backgroundColor:'#1F6D5ABB',borderColor:'#1F6D5A',borderWidth:1.2,borderRadius:3,stack:'s'},
-        {label:'استثماري',data:d.inv,backgroundColor:'#A23B31BB',borderColor:'#A23B31',borderWidth:1.2,borderRadius:3,stack:'s'},
-        {label:'تمويلي',   data:d.fin,backgroundColor:'#8A6E27BB',borderColor:'#8A6E27',borderWidth:1.2,borderRadius:3,stack:'s'},
-        {label:'الصافي',   data:netCash,type:'line',borderColor:'#D9B45C',backgroundColor:'transparent',borderWidth:2.5,tension:.35,pointRadius:4,fill:false,order:0},
-      ]}, options:{...base,plugins:{legend:leg(10.5),tooltip:tip},
-        scales:{x:{...axX,stacked:true},y:{...axY,stacked:false}}} });
-  }
+  const enc = encodeURIComponent(JSON.stringify(d));
+  const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"><\/script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#F1ECDC;font-family:'Cairo',sans-serif;padding:8px}
+.row{display:grid;gap:8px;margin-bottom:8px}
+.r1{grid-template-columns:2fr 1fr}.r2{grid-template-columns:1fr 1fr}
+.lbl{font-size:11px;font-weight:800;color:#5B6A72;margin-bottom:5px}
+.box{background:#FBF8F1;border-radius:8px;padding:10px;border-top:2px solid #B8902E;height:210px;display:flex;flex-direction:column}
+.box.sm{height:185px}
+canvas{flex:1;min-height:0}
+</style></head><body>
+<div class="row r1">
+  <div class="box"><div class="lbl">\u0627\u062a\u062c\u0627\u0647 \u0627\u0644\u0625\u064a\u0631\u0627\u062f\u0627\u062a \u0648\u0627\u0644\u0631\u0628\u062d \u0634\u0647\u0631\u064a\u0627\u064b</div><canvas id="c1"></canvas></div>
+  <div class="box"><div class="lbl">\u062a\u0648\u0632\u064a\u0639 \u0627\u0644\u062a\u0643\u0627\u0644\u064a\u0641 \u0648\u0627\u0644\u0645\u0635\u0631\u0648\u0641\u0627\u062a</div><canvas id="c2"></canvas></div>
+</div>
+<div class="row r2">
+  <div class="box sm"><div class="lbl">\u0647\u0627\u0645\u0634 \u0627\u0644\u0631\u0628\u062d \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a \u0648\u0627\u0644\u0635\u0627\u0641\u064a (\u066a)</div><canvas id="c3"></canvas></div>
+  <div class="box sm"><div class="lbl">\u0627\u0644\u062a\u062f\u0641\u0642 \u0627\u0644\u0646\u0642\u062f\u064a \u0627\u0644\u0634\u0647\u0631\u064a</div><canvas id="c4"></canvas></div>
+</div>
+<script>
+const d=JSON.parse(decodeURIComponent('${enc}'));
+Chart.defaults.font.family="'Cairo',sans-serif";Chart.defaults.color='#5B6A72';
+const nf=v=>{const a=Math.abs(v);if(a>=1e6)return(v/1e6).toFixed(1)+'\u0645';if(a>=1e3)return(v/1e3).toFixed(0)+'\u0623\u0644\u0641';return String(v);};
+const axY={grid:{color:'rgba(217,207,174,.2)'},ticks:{font:{size:9},color:'#5B6A72',callback:nf}};
+const axX={grid:{color:'rgba(217,207,174,.1)'},ticks:{font:{size:9},color:'#5B6A72'}};
+const tip={rtl:true,callbacks:{label:c=>' '+c.dataset.label+': '+nf(c.raw)}};
+const leg=s=>({position:'top',labels:{font:{size:s||10},padding:7,usePointStyle:true}});
+const opt=(ex)=>({responsive:true,maintainAspectRatio:false,...ex});
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:d.labels,datasets:[
+  {label:'\u0627\u0644\u0625\u064a\u0631\u0627\u062f\u0627\u062a',data:d.rev,backgroundColor:'#B8902EBB',borderColor:'#B8902E',borderWidth:1.5,borderRadius:3,order:2},
+  {label:'\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0631\u0628\u062d',data:d.gross,backgroundColor:'#1F6D5ABB',borderColor:'#1F6D5A',borderWidth:1.5,borderRadius:3,order:2},
+  {label:'\u0635\u0627\u0641\u064a \u0627\u0644\u0631\u0628\u062d',data:d.net,type:'line',borderColor:'#C4574B',backgroundColor:'transparent',borderWidth:2,tension:.35,pointRadius:3,fill:false,order:1}
+]},options:opt({plugins:{legend:leg(),tooltip:tip},scales:{x:axX,y:axY}})});
+if(d.expCats&&d.expCats.length)new Chart(document.getElementById('c2'),{type:'doughnut',data:{labels:d.expCats.map(e=>e.n),datasets:[{data:d.expCats.map(e=>e.v),backgroundColor:['#A23B31CC','#B8902ECC','#1F6D5ACC'],borderColor:['#A23B31','#B8902E','#1F6D5A'],borderWidth:1.5,hoverOffset:4}]},options:opt({cutout:'55%',plugins:{legend:{position:'bottom',labels:{font:{size:9},padding:5,usePointStyle:true}},tooltip:{rtl:true,callbacks:{label:c=>'  '+c.label+': '+nf(c.raw)}}}})});
+new Chart(document.getElementById('c3'),{type:'line',data:{labels:d.labels,datasets:[
+  {label:'\u0647\u0627\u0645\u0634 \u0625\u062c\u0645\u0627\u0644\u064a \u066a',data:d.grossMargin,borderColor:'#1F6D5A',backgroundColor:'#1F6D5A18',borderWidth:2,tension:.35,fill:true,pointRadius:3},
+  {label:'\u0647\u0627\u0645\u0634 \u0635\u0627\u0641\u064a \u066a',data:d.netMargin,borderColor:'#B8902E',backgroundColor:'#B8902E18',borderWidth:2,tension:.35,fill:true,pointRadius:3}
+]},options:opt({plugins:{legend:leg(),tooltip:{rtl:true,callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw!=null?c.raw+'%':'—')}}},scales:{x:axX,y:{...axY,ticks:{...axY.ticks,callback:v=>v+'%'}}}})});
+const nc=d.ops.map((o,i)=>o+d.inv[i]+d.fin[i]);
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:d.labels,datasets:[
+  {label:'\u062a\u0634\u063a\u064a\u0644\u064a',data:d.ops,backgroundColor:'#1F6D5ABB',borderColor:'#1F6D5A',borderWidth:1.2,borderRadius:3,stack:'s'},
+  {label:'\u0627\u0633\u062a\u062b\u0645\u0627\u0631\u064a',data:d.inv,backgroundColor:'#A23B31BB',borderColor:'#A23B31',borderWidth:1.2,borderRadius:3,stack:'s'},
+  {label:'\u062a\u0645\u0648\u064a\u0644\u064a',data:d.fin,backgroundColor:'#8A6E27BB',borderColor:'#8A6E27',borderWidth:1.2,borderRadius:3,stack:'s'},
+  {label:'\u0627\u0644\u0635\u0627\u0641\u064a',data:nc,type:'line',borderColor:'#D9B45C',backgroundColor:'transparent',borderWidth:2,tension:.35,pointRadius:3,fill:false,order:0}
+]},options:opt({plugins:{legend:leg(9.5),tooltip:tip},scales:{x:{...axX,stacked:true},y:{...axY,stacked:false}}})});
+<\/script></body></html>`;
+  iframe.srcdoc = html;
 }
-
 function needsFilters(view){
   return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport'].includes(view);
 }
@@ -12201,28 +12182,7 @@ function renderRatiosView(root){
           <div class="sub">متوسط الفترة</div>
         </div>
       </div>
-      <!-- Chart Row 1 -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
-        <div>
-          <div style="font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:8px;font-family:'Cairo'">اتجاه الإيرادات والربح شهرياً</div>
-          <div id="rd_revWrap" style="height:220px;background:transparent"></div>
-        </div>
-        <div>
-          <div style="font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:8px;font-family:'Cairo'">توزيع التكاليف والمصروفات</div>
-          <div id="rd_expWrap" style="height:220px;background:transparent"></div>
-        </div>
-      </div>
-      <!-- Chart Row 2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div>
-          <div style="font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:8px;font-family:'Cairo'">هامش الربح الإجمالي والصافي (٪)</div>
-          <div id="rd_marginWrap" style="height:200px;background:transparent"></div>
-        </div>
-        <div>
-          <div style="font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:8px;font-family:'Cairo'">التدفق النقدي الشهري (تشغيلي · استثماري · تمويلي)</div>
-          <div id="rd_cashWrap" style="height:200px;background:transparent"></div>
-        </div>
-      </div>
+      <iframe id="rd_iframe" style="width:100%;height:480px;border:none;border-radius:8px;display:block"></iframe>
     </div>
 
 
