@@ -229,6 +229,29 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .topbar-compact-controls .filters label{ font-size:10.5px; }
 .topbar-compact-controls .filters input[type=date]{ font-size:11px; padding:3px 5px; }
 .topbar-compact-controls .filters .chip{ font-size:10.5px; padding:3px 8px; }
+/* Compact the global Year/Month multi-selects in the header on desktop.
+   Their labels are intentionally small so the filter bar stays balanced on
+   every page without changing the actual dropdown/panel width. */
+@media (min-width:901px){
+  .topbar-compact-controls .filters #filterYears,
+  .topbar-compact-controls .filters #filterMonths{
+    flex:0 0 128px;
+    width:128px;
+    min-width:128px;
+  }
+  .topbar-compact-controls .filters #filterYears .ms-toggle,
+  .topbar-compact-controls .filters #filterMonths .ms-toggle{
+    width:100%;
+    min-width:0 !important;
+    box-sizing:border-box;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:10.5px;
+    padding-left:6px;
+    padding-right:6px;
+  }
+}
 .lang-toggle{ background:transparent; border:1px solid rgba(217,180,92,.35); color:var(--gold-light); border-radius:20px; padding:5px 11px; font-size:11.5px; font-weight:800; letter-spacing:.5px; }
 .lang-toggle:hover{ background:rgba(217,180,92,.1); }
 
@@ -782,13 +805,16 @@ tr.detail-row td{ padding-right:28px; font-size:12px; color:var(--ink-soft); }
    real HTML legend beside it, so long category names/values wrap and align
    naturally instead of relying on fixed SVG text coordinates that used to
    overlap the donut when the column was narrower than the chart was designed for. */
-.rd-donut-flex{display:flex;align-items:center;gap:18px;height:100%;min-height:290px;flex-wrap:nowrap;direction:rtl}
+.rd-donut-flex{display:flex;align-items:center;gap:18px;height:100%;min-height:290px;flex-wrap:nowrap;direction:ltr}
+html[dir="rtl"] .rd-donut-flex{direction:rtl}
 .rd-donut-svg-wrap{flex:0 0 210px;width:210px;max-width:32%}
 .rd-donut-svg-wrap .rd-donut{display:block;width:100%;height:auto}
 .rd-legend-list{flex:0 1 520px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px;direction:inherit}
 .rd-legend-row{display:flex;align-items:center;gap:8px;min-width:0}
 .rd-legend-swatch{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
 .rd-legend-name{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink)}
+html[dir="ltr"] .rd-legend-name{direction:ltr;text-align:left;unicode-bidi:isolate}
+html[dir="rtl"] .rd-legend-name{direction:rtl;text-align:right;unicode-bidi:isolate}
 .rd-legend-val{flex:0 0 auto;direction:ltr;unicode-bidi:isolate;text-align:left;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-soft);white-space:nowrap;margin-inline-start:10px}
 .rd-legend-val b{color:var(--ink);font-weight:800}
 
@@ -1272,7 +1298,7 @@ const I18N = {
     backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، المجموعات، القيود، الإعدادات) في ملف واحد يمكن الاحتفاظ به في مكان آمن، أو استخدمه لاستعادة النظام على جهاز آخر أو بعد أي مشكلة.',
     glPageIndicator:'صفحة ${page} من ${total} — إجمالي ${count} حركة (الإجماليات والتصدير يشملان كل الحركات المطابقة للفلاتر، مش الصفحة الحالية بس)',
     glPagePrev:'◀ السابق', glPageNext:'التالي ▶',
-    projectsPageTitle:'متابعة المشاريع والتحصيل', projectsPageDesc:'دفتر منفصل لمتابعة قيمة كل مشروع والدفعات المحصّلة منه فعليًا — بغض النظر عن توقيت تسجيل الإيراد محاسبيًا. لو اسم المشروع مطابق لاسم شريك في القيود، هيظهرلك رصيده في الدفاتر جنب الباقي الحقيقي للمقارنة.',
+    projectsPageTitle:'متابعة المشاريع والتحصيل', projectsPageDesc:'دفتر منفصل لمتابعة قيمة كل مشروع والدفعات المحصّلة منه فعليًا — بغض النظر عن توقيت تسجيل الإيراد محاسبيًا. لو اسم المشروع مطابق لاسم شريك في القيود، هيظهرلك رصيد العميل/المورد في حساباته الدفترية جنب الباقي الحقيقي للمقارنة.',
     resetProjectsPageBtn:'🗑 مسح بيانات الصفحة', projectsPageResetToast:'تم مسح كل المشاريع وحركاتها — جاهز لاستيراد ملف إكسل جديد',
     resetProjectsPageConfirmMsg:'سيتم حذف كل المشاريع المسجّلة وكل حركاتها (الصفقات، التحصيلات، الفواتير) في هذه الصفحة نهائيًا، حتى تقدر تستوردها من إكسل من جديد. هذا لا يؤثر على القيود اليومية ولا باقي بيانات النظام. هذا الإجراء لا يمكن التراجع عنه.',
     addProjectBtn:'+ مشروع جديد', projectIdCol:'الكود', projectNameCol:'اسم المشروع', projectCurrencyCol:'العملة', projectAmountCol:'قيمة المشروع',
@@ -1535,7 +1561,7 @@ const I18N = {
     backupSectionTitle:'Backup & Restore', backupSectionDesc:'Download a complete copy of all system data (chart of accounts, groups, journal entries, settings) in a single file you can keep somewhere safe, or use it to restore the system on another device or after a problem.',
     glPageIndicator:'Page ${page} of ${total} — ${count} movements total (totals and export cover every matching movement, not just this page)',
     glPagePrev:'◀ Previous', glPageNext:'Next ▶',
-    projectsPageTitle:'Project & Collection Tracking', projectsPageDesc:'A separate ledger tracking each project\u2019s value and what has actually been collected — regardless of when revenue gets recognized in the books. If the project name matches a partner name in the journal, its ledger balance is shown alongside the real remaining amount for comparison.',
+    projectsPageTitle:'Project & Collection Tracking', projectsPageDesc:'A separate ledger tracking each project\u2019s value and what has actually been collected — regardless of when revenue gets recognized in the books. If the project name matches a partner name in the journal, the customer/supplier control-account balance is shown alongside the real remaining amount for comparison.',
     resetProjectsPageBtn:'🗑 Clear Page Data', projectsPageResetToast:'All projects and their transactions were cleared — ready for a fresh Excel import',
     resetProjectsPageConfirmMsg:'This will permanently delete every project and all its transactions (deals, collections, invoices) on this page, so you can re-import from Excel. It does not affect the journal or any other data in the system. This cannot be undone.',
     addProjectBtn:'+ New Project', projectIdCol:'ID', projectNameCol:'Project Name', projectCurrencyCol:'Currency', projectAmountCol:'Project Amount',
@@ -4405,8 +4431,11 @@ function generateAnalysis(lines, start, end){
   const cf = cashFlowStatement(lines, start, end);
   const cc = costCenterPL(lines, start, end);
   const partners = partnerBalances(lines, '', end);
+  const en = STATE.settings.lang === 'en';
+  const cur = en ? 'EGP' : 'ج.م';
+  const pct = v => `${fmt(v)}%`;
+  const period = (a,b) => en ? `from ${a||'start'} to ${b||todayISO()}` : `من ${a||'البداية'} إلى ${b||todayISO()}`;
 
-  // prior period of equal length, immediately before `start`
   let prior = null;
   if(start){
     const spanDays = Math.round((new Date(end) - new Date(start)) / 86400000);
@@ -4419,54 +4448,94 @@ function generateAnalysis(lines, start, end){
 
   // Profitability
   if(is.netIncome >= 0){
-    strengths.push(`تحقيق صافي ربح قدره ${fmt(is.netIncome)} ج.م خلال الفترة المحددة.`);
+    strengths.push(en
+      ? `Net profit of ${fmt(is.netIncome)} ${cur} was achieved during the selected period.`
+      : `تحقيق صافي ربح قدره ${fmt(is.netIncome)} ${cur} خلال الفترة المحددة.`);
   } else {
-    weaknesses.push(`تسجيل صافي خسارة قدرها ${fmt(Math.abs(is.netIncome))} ج.م خلال الفترة المحددة.`);
-    recommendations.push('مراجعة هيكل التكاليف والمصروفات العمومية والإدارية لتحديد فرص خفضها، ومقارنة نمو الإيرادات بنمو المصروفات بشكل دوري.');
+    weaknesses.push(en
+      ? `A net loss of ${fmt(Math.abs(is.netIncome))} ${cur} was recorded during the selected period.`
+      : `تسجيل صافي خسارة قدرها ${fmt(Math.abs(is.netIncome))} ${cur} خلال الفترة المحددة.`);
+    recommendations.push(en
+      ? 'Review the cost structure and general & administrative expenses to identify reduction opportunities, and compare revenue growth with expense growth regularly.'
+      : 'مراجعة هيكل التكاليف والمصروفات العمومية والإدارية لتحديد فرص خفضها، ومقارنة نمو الإيرادات بنمو المصروفات بشكل دوري.');
   }
   if(r.netMargin != null){
-    if(r.netMargin >= 10) strengths.push(`هامش صافي ربح جيد (${fmt(r.netMargin)}%) مقارنة بالإيرادات.`);
-    else if(r.netMargin < 0) notes.push(`هامش صافي الربح سالب (${fmt(r.netMargin)}%)، أي أن المصروفات تتجاوز الإيرادات خلال الفترة.`);
+    if(r.netMargin >= 10) strengths.push(en
+      ? `A healthy net profit margin of ${pct(r.netMargin)} was achieved relative to revenue.`
+      : `هامش صافي ربح جيد (${pct(r.netMargin)}) مقارنة بالإيرادات.`);
+    else if(r.netMargin < 0) notes.push(en
+      ? `The net profit margin is negative (${pct(r.netMargin)}), meaning expenses exceed revenue during the period.`
+      : `هامش صافي الربح سالب (${pct(r.netMargin)})، أي أن المصروفات تتجاوز الإيرادات خلال الفترة.`);
   }
 
   // Revenue trend vs prior period
   if(prior){
     const revChangePct = prior.revenue !== 0 ? ((is.revenue - prior.revenue) / Math.abs(prior.revenue)) * 100 : null;
     if(revChangePct != null){
-      if(revChangePct > 5) strengths.push(`نمو في الإيرادات بنسبة ${fmt(revChangePct)}% مقارنة بالفترة السابقة المكافئة لها في الطول.`);
-      else if(revChangePct < -5) weaknesses.push(`انخفاض في الإيرادات بنسبة ${fmt(Math.abs(revChangePct))}% مقارنة بالفترة السابقة المكافئة لها في الطول.`);
+      if(revChangePct > 5) strengths.push(en
+        ? `Revenue increased by ${pct(revChangePct)} compared with the prior period of equivalent length.`
+        : `نمو في الإيرادات بنسبة ${pct(revChangePct)} مقارنة بالفترة السابقة المكافئة لها في الطول.`);
+      else if(revChangePct < -5) weaknesses.push(en
+        ? `Revenue decreased by ${pct(Math.abs(revChangePct))} compared with the prior period of equivalent length.`
+        : `انخفاض في الإيرادات بنسبة ${pct(Math.abs(revChangePct))} مقارنة بالفترة السابقة المكافئة لها في الطول.`);
     }
     const niChangeAbs = is.netIncome - prior.netIncome;
-    notes.push(`صافي الربح/الخسارة تغيّر بمقدار ${fmt(niChangeAbs)} ج.م مقارنة بالفترة السابقة المكافئة (من ${prior.start||'البداية'} إلى ${prior.end}).`);
+    notes.push(en
+      ? `Net profit/loss changed by ${fmt(niChangeAbs)} ${cur} compared with the prior equivalent period (${period(prior.start, prior.end)}).`
+      : `صافي الربح/الخسارة تغيّر بمقدار ${fmt(niChangeAbs)} ${cur} مقارنة بالفترة السابقة المكافئة (${period(prior.start, prior.end)}).`);
   }
 
   // Liquidity
   if(r.currentRatio != null){
-    if(r.currentRatio < 1) { weaknesses.push(`نسبة التداول أقل من الواحد الصحيح (${fmt(r.currentRatio)})، ما يعني أن الأصول المتداولة لا تغطي الالتزامات المتداولة بالكامل.`); recommendations.push('العمل على تسريع تحصيل أرصدة العملاء، أو إعادة جدولة/تفاوض الالتزامات قصيرة الأجل لتحسين السيولة.'); }
-    else if(r.currentRatio >= 1.5) strengths.push(`نسبة تداول صحية (${fmt(r.currentRatio)}) تعكس قدرة جيدة على سداد الالتزامات قصيرة الأجل.`);
+    if(r.currentRatio < 1) {
+      weaknesses.push(en
+        ? `The current ratio is below 1.00 (${fmt(r.currentRatio)}), indicating that current assets do not fully cover current liabilities.`
+        : `نسبة التداول أقل من الواحد الصحيح (${fmt(r.currentRatio)})، ما يعني أن الأصول المتداولة لا تغطي الالتزامات المتداولة بالكامل.`);
+      recommendations.push(en
+        ? 'Accelerate customer collections or renegotiate/reschedule short-term liabilities to improve liquidity.'
+        : 'العمل على تسريع تحصيل أرصدة العملاء، أو إعادة جدولة/تفاوض الالتزامات قصيرة الأجل لتحسين السيولة.');
+    } else if(r.currentRatio >= 1.5) strengths.push(en
+      ? `A healthy current ratio of ${fmt(r.currentRatio)} indicates good capacity to meet short-term obligations.`
+      : `نسبة تداول صحية (${fmt(r.currentRatio)}) تعكس قدرة جيدة على سداد الالتزامات قصيرة الأجل.`);
   }
 
   // Leverage
   if(r.debtRatio != null && r.debtRatio > 0.6){
-    weaknesses.push(`نسبة الدين إلى إجمالي الأصول مرتفعة نسبياً (${fmt(r.debtRatio*100)}%).`);
-    recommendations.push('تقييم مدى الاعتماد على التمويل بالدين مقابل حقوق الملكية، ووضع خطة لخفض الالتزامات إن أمكن.');
+    weaknesses.push(en
+      ? `The debt-to-total-assets ratio is relatively high (${pct(r.debtRatio*100)}).`
+      : `نسبة الدين إلى إجمالي الأصول مرتفعة نسبياً (${pct(r.debtRatio*100)}).`);
+    recommendations.push(en
+      ? 'Evaluate reliance on debt financing versus equity and develop a plan to reduce liabilities where possible.'
+      : 'تقييم مدى الاعتماد على التمويل بالدين مقابل حقوق الملكية، ووضع خطة لخفض الالتزامات إن أمكن.');
   }
 
   // Cash flow quality
   if(cf.operating < 0 && is.netIncome >= 0){
-    notes.push('صافي الربح موجب إلا أن التدفق النقدي التشغيلي سالب — قد يشير ذلك إلى تعثر في تحصيل المستحقات أو نمو كبير في المخزون/أرصدة العملاء يستهلك السيولة رغم الربحية الدفترية.');
+    notes.push(en
+      ? 'Net profit is positive while operating cash flow is negative. This may indicate collection difficulties or significant growth in inventory/customer balances consuming liquidity despite accounting profitability.'
+      : 'صافي الربح موجب إلا أن التدفق النقدي التشغيلي سالب — قد يشير ذلك إلى تعثر في تحصيل المستحقات أو نمو كبير في المخزون/أرصدة العملاء يستهلك السيولة رغم الربحية الدفترية.');
   }
-  if(cf.operating >= 0) strengths.push(`التدفق النقدي من الأنشطة التشغيلية موجب (${fmt(cf.operating)} ج.م)، وهو مؤشر جيد على جودة الأرباح.`);
+  if(cf.operating >= 0) strengths.push(en
+    ? `Operating cash flow is positive (${fmt(cf.operating)} ${cur}), which is a good indicator of earnings quality.`
+    : `التدفق النقدي من الأنشطة التشغيلية موجب (${fmt(cf.operating)} ${cur})، وهو مؤشر جيد على جودة الأرباح.`);
 
   // Cost centers
   const lossCenters = cc.filter(c => c.profit < 0);
   if(cc.length){
     if(lossCenters.length){
-      weaknesses.push(`${lossCenters.length} من أصل ${cc.length} مركز تكلفة/مشروع حقق خسارة خلال الفترة (إجمالي خسائرها ${fmt(lossCenters.reduce((s,c)=>s+Math.abs(c.profit),0))} ج.م).`);
-      recommendations.push(`مراجعة جدوى المشاريع/مراكز التكلفة الخاسرة، وأبرزها: ${lossCenters.slice(0,3).map(c=>c.name).join('، ')}.`);
+      const lossTotal = fmt(lossCenters.reduce((s,c)=>s+Math.abs(c.profit),0));
+      weaknesses.push(en
+        ? `${lossCenters.length} of ${cc.length} cost centers/projects generated a loss during the period (total losses: ${lossTotal} ${cur}).`
+        : `${lossCenters.length} من أصل ${cc.length} مركز تكلفة/مشروع حقق خسارة خلال الفترة (إجمالي خسائرها ${lossTotal} ${cur}).`);
+      const names = lossCenters.slice(0,3).map(c=>c.name).join(en ? ', ' : '، ');
+      recommendations.push(en
+        ? `Review the viability of loss-making projects/cost centers, especially: ${names}.`
+        : `مراجعة جدوى المشاريع/مراكز التكلفة الخاسرة، وأبرزها: ${names}.`);
     }
     const best = cc[0];
-    if(best && best.profit > 0) strengths.push(`أفضل مركز تكلفة ربحية خلال الفترة هو "${best.name}" بصافي ربح ${fmt(best.profit)} ج.م.`);
+    if(best && best.profit > 0) strengths.push(en
+      ? `The most profitable cost center during the period is "${best.name}" with net profit of ${fmt(best.profit)} ${cur}.`
+      : `أفضل مركز تكلفة ربحية خلال الفترة هو "${best.name}" بصافي ربح ${fmt(best.profit)} ${cur}.`);
   }
 
   // Partner concentration
@@ -4475,8 +4544,12 @@ function generateAnalysis(lines, start, end){
     const top = partners[0];
     const topPct = totalAbs !== 0 ? (Math.abs(top.balance)/totalAbs)*100 : 0;
     if(topPct > 30){
-      weaknesses.push(`تركز مرتفع في الأرصدة لدى شريك واحد ("${top.name}")، يمثل ${fmt(topPct)}% من إجمالي أرصدة العملاء والموردين.`);
-      recommendations.push('تنويع قاعدة العملاء/الموردين لتقليل مخاطر التركز لدى طرف واحد.');
+      weaknesses.push(en
+        ? `High balance concentration with one partner ("${top.name}"), representing ${pct(topPct)} of total customer and supplier balances.`
+        : `تركز مرتفع في الأرصدة لدى شريك واحد ("${top.name}")، يمثل ${pct(topPct)} من إجمالي أرصدة العملاء والموردين.`);
+      recommendations.push(en
+        ? 'Diversify the customer/supplier base to reduce concentration risk with a single counterparty.'
+        : 'تنويع قاعدة العملاء/الموردين لتقليل مخاطر التركز لدى طرف واحد.');
     }
   }
 
@@ -4584,12 +4657,31 @@ function projectTotals(project){
   else if(invoiced > 0) status = 'invoicedNotCollected'; // has an invoice on record, but zero collected — distinct from a project that was never invoiced at all
   return { deals, collections, invoiced, remaining, status, txCount: txs.length };
 }
-// Cross-reference: the actual ledger balance for a partner with this exact
-// name, as of today — null if no matching partner name exists in the
-// journal yet (e.g. a brand-new project with no accounting entries posted).
-function linkedLedgerBalance(projectName){
-  if(!STATE.journal.some(l => l.partner === projectName)) return null;
-  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {mode:'EGP'});
+// Cross-reference: the actual *receivable/payable control-account* balance
+// for a partner with this exact name, as of today.
+//
+// IMPORTANT: Do NOT calculate this from every journal line carrying the
+// partner name. Revenue, COGS, cash, etc. may also carry the same partner and
+// would offset the customer/vendor balance, producing a misleading figure.
+// The Projects page needs the balance that would appear on the customer/
+// supplier statement itself: AR/AP control accounts only.
+//
+// This is also why a fully collected project now correctly shows zero when
+// its matching customer/vendor control account is settled.
+function linkedLedgerBalance(projectName, projectCurrency){
+  if(!projectName || !STATE.journal.some(l => l.partner === projectName)) return null;
+
+  // Keep the book balance in EGP, but restrict the calculation to the control
+  // account matching the project's currency. This prevents an EGP project
+  // from picking up a USD customer balance (and vice versa).
+  const accountCodes = projectCurrency === 'USD'
+    ? ['112201','211201']   // USD customers / suppliers
+    : ['112101','211101'];  // EGP customers / suppliers
+
+  const stmt = partnerStatement(STATE.journal, projectName, '', todayISO(), {
+    mode:'EGP',
+    accountCodes
+  });
   return stmt.closing;
 }
 
@@ -7737,7 +7829,7 @@ function buildRatiosDashCharts(){
       const donutSvg = `<svg class="rd-donut" viewBox="0 0 200 200" role="img" aria-label="${esc(t('chartExpenseDistribution'))}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(217,207,174,.18)" stroke-width="${sw}"/>${arcs}<text x="${cx}" y="${cy-6}" text-anchor="middle" class="rd-donut-total">${esc(fmtN(total))}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" class="rd-donut-caption">${esc(t('chartTotal'))}</text></svg>`;
       const legendRows = cats.map((e,i)=>{
         const pct=(num(e.v)/total*100).toFixed(1);
-        return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name" dir="rtl">${esc(e.n)}</span><bdi class="rd-legend-val" dir="ltr">${esc(fmtN(e.v))} <bdi>(${pct}%)</bdi></bdi></div>`;
+        return `<div class="rd-legend-row" title="${esc(e.n)}"><span class="rd-legend-swatch" style="background:${colors[i%colors.length]}"></span><span class="rd-legend-name" dir="auto">${esc(e.n)}</span><bdi class="rd-legend-val" dir="ltr">${esc(fmtN(e.v))} <bdi>(${pct}%)</bdi></bdi></div>`;
       }).join('');
       exp.parentElement.innerHTML = `<div class="rd-donut-flex"><div class="rd-donut-svg-wrap">${donutSvg}</div><div class="rd-legend-list">${legendRows}</div></div>`;
     }
@@ -9437,7 +9529,7 @@ function renderProjectsView(root){
   const viewKey = 'projects';
   const colf = { id:'colf_pj_id', name:'colf_pj_name', currency:'colf_pj_currency', amount:'colf_pj_amount', collected:'colf_pj_collected', remaining:'colf_pj_remaining', status:'colf_pj_status', ledger:'colf_pj_ledger', seller:'colf_pj_seller', startDate:'colf_pj_startDate' };
 
-  const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name) }))
+  const baseRows = STATE.projects.map(p => ({ p, t: projectTotals(p), ledger: linkedLedgerBalance(p.name, p.currency) }))
     .filter(r => (pf.currency.length===0 || pf.currency.includes(r.p.currency)) && (pf.seller.length===0 || pf.seller.includes(r.p.seller)) && (pf.status.length===0 || pf.status.includes(r.t.status)) && (pf.name.length===0 || pf.name.includes(r.p.name)));
   const rows = baseRows.filter(r =>
     passesColFilter(colf.id, r.p.id) && passesColFilter(colf.name, r.p.name) && passesColFilter(colf.currency, r.p.currency) &&
@@ -12512,7 +12604,9 @@ function renderNotesView(root){
 
   function bulletList(items, cls){
     if(!items.length) return `<div class="hint">${t('noNotesInSection')}</div>`;
-    return `<ul style="margin:0;padding-${document.dir==='rtl'?'right':'left'}:18px;line-height:1.9">${items.map(t=>`<li class="${cls||''}" style="margin-bottom:6px">${t}</li>`).join('')}</ul>`;
+    const dir = STATE.settings.lang==='en' ? 'ltr' : 'rtl';
+    const pad = dir==='rtl' ? 'right' : 'left';
+    return `<ul dir="${dir}" style="margin:0;padding-${pad}:18px;line-height:1.9;text-align:${dir==='ltr'?'left':'right'}">${items.map(t=>`<li class="${cls||''}" style="margin-bottom:6px">${t}</li>`).join('')}</ul>`;
   }
 
   root.innerHTML = `
@@ -12538,7 +12632,7 @@ function renderNotesView(root){
       </div>
     </div>
 
-    <div class="grid-2">
+    <div class="grid-2" dir="${STATE.settings.lang==='en'?'ltr':'rtl'}">
       <div class="card" style="border-top-color:var(--emerald)">
         <h2 style="color:var(--emerald)">${t('strengthsTitle')}</h2>
         ${bulletList(a.strengths)}
