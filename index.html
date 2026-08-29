@@ -30,6 +30,13 @@
   --shadow: 0 1px 2px rgba(80,60,20,.06), 0 10px 28px rgba(40,30,10,.14);
   --shadow-lift: 0 4px 10px rgba(80,60,20,.08), 0 18px 40px rgba(40,30,10,.18);
   --radius: 12px;
+  /* Surface / border aliases used by the Chart of Accounts screen (and any
+     modal built on top of it) so it always matches the "paper" look of
+     every other page and stays readable in both dark and light mode,
+     regardless of the app-shell theme toggle. */
+  --surface-1: var(--paper);
+  --surface-2: var(--paper-2);
+  --border: var(--line);
 }
 
 /* Item 6: Color Palette selector. Every accent element in the app already
@@ -870,6 +877,68 @@ html[dir="rtl"] .rd-legend-name{direction:rtl;text-align:right;unicode-bidi:isol
   .rd-donut-svg-wrap{width:180px;flex-basis:180px;max-width:48%}
   .rd-legend-list{min-width:180px}
 }
+
+/* ── Chart of Accounts page ─────────────────────────────────────── */
+/* NOTE: these rules used to be accidentally embedded inside the cash-voucher
+   print popup's own <style> tag, so they never actually applied to the
+   Chart of Accounts screen in the app — the page rendered with no custom
+   colors at all, which is why its text could vanish in dark mode. They now
+   live in the app's real stylesheet, and #coaPage itself is wrapped in the
+   same ".card" (paper) surface every other page uses, so it always matches
+   the rest of the app and stays legible in both dark and light mode. */
+#coaPage { color: var(--ink); }
+#coaPage table th { color: var(--ink); background: var(--surface-2); border-bottom: 2px solid var(--border); padding: 8px 10px; font-size: 12px; }
+#coaPage table td { color: var(--ink); padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
+#coaPage table tr:hover td { background: rgba(184,144,46,.06); }
+#coaPage code { color: var(--gold-light) !important; }
+#coaPage .btn-outline { border: 1px solid var(--border); color: var(--ink); background: transparent; }
+#coaPage .btn-outline:hover { background: var(--surface-2); }
+#coaPage .sortable-th { cursor: pointer; }
+#coaPage .sortable-th:hover { color: var(--gold); }
+#coaPage .sort-active { color: var(--gold-light); }
+#coaPage input, #coaPage select { color: var(--ink) !important; background: var(--surface-2) !important; border-color: var(--border) !important; }
+#coaPage input::placeholder { color: var(--ink-soft); }
+#coaPage mark { background: var(--gold) !important; color: #000 !important; border-radius: 2px; padding: 0 2px; }
+#coaPage .pill-gold { background: rgba(184,144,46,.2); color: var(--gold-light); border: 1px solid rgba(184,144,46,.3); }
+#coaPage tr[style*="rgba(184,144,46"] td { color: var(--ink) !important; }
+
+/* Chart of Accounts — right-side (in RTL) hierarchy navigator panel that
+   sits beside the account table (see buildTreeView()). The table stays a
+   normal, full-column table of postable ("leaf") accounts; the panel is a
+   compact, independently-scrolling index of the header/group accounts
+   (built dynamically from buildCoaTree()'s real code-prefix parent/child
+   relationships — never hardcoded), with an "All" master toggle at top. */
+.coa-tree-flex{ display:flex; gap:12px; align-items:flex-start; }
+.coa-tree-flex .table-wrap{ flex:1 1 auto; min-width:0; }
+.coa-hier-panel{
+  flex:0 0 152px; width:152px; box-sizing:border-box;
+  max-height:calc(100vh - 210px); overflow-y:auto; overflow-x:hidden;
+  position:sticky; top:0;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+  padding:8px 7px; font-family:'Courier New',monospace; font-size:11.5px; line-height:1.5;
+}
+.coa-hier-all{
+  display:flex; align-items:center; gap:5px; cursor:pointer; user-select:none;
+  font-weight:800; color:var(--gold-dim); font-family:'Cairo',sans-serif; font-size:12px;
+  padding-bottom:7px; margin-bottom:6px; border-bottom:1px solid var(--border);
+}
+.coa-hier-row{ display:flex; align-items:center; gap:4px; padding:2px 0; white-space:nowrap; }
+.coa-hier-toggle{
+  min-width:16px; height:16px; padding:0; font-size:10px; line-height:14px; text-align:center;
+  background:transparent; border:1px solid var(--border); border-radius:3px;
+  color:var(--ink-soft); cursor:pointer; flex:0 0 auto;
+}
+.coa-hier-toggle:hover{ color:var(--gold-dim); border-color:var(--gold-dim); }
+.coa-hier-code{ cursor:pointer; color:var(--ink); font-weight:700; }
+.coa-hier-code:hover{ color:var(--gold-dim); text-decoration:underline; }
+.coa-hier-code.coa-hier-active{ color:var(--gold-dim); }
+.coa-hier-code mark{ padding:0; }
+.coa-hier-children{ margin-inline-start:7px; padding-inline-start:6px; border-inline-start:1px dashed var(--line); }
+.coa-hier-empty{ color:var(--ink-faint); font-size:11px; padding:6px 2px; font-family:'Cairo',sans-serif; }
+@media (max-width:900px){
+  .coa-tree-flex{ flex-direction:column; }
+  .coa-hier-panel{ position:static; width:100%; flex:1 1 auto; max-height:220px; }
+}
 </style>
 </head>
 <body>
@@ -1218,7 +1287,7 @@ const I18N = {
     profitLoss:'الربح/الخسارة', margin:'الهامش %', costCenterProject:'المشروع / مركز التكلفة',
     noDataYet:'لا توجد بيانات بعد', startImporting:'ابدأ باستيراد القيود أولاً.', goToImport:'الذهاب إلى الإعداد والاستيراد', loadDemoDataBtn:'🎯 تجربة بيانات تجريبية', loadDemoDataDesc:'استكشف النظام ببيانات تجريبية كاملة قبل رفع بياناتك الحقيقية', resetDemoBtn:'🗑 إعادة تعيين النظام (حذف البيانات التجريبية)', resetDemoConfirm:'هل تريد حذف البيانات التجريبية والعودة للشاشة الرئيسية الفارغة؟ لا يمكن التراجع.', isDemoModeLabel:'وضع البيانات التجريبية',
     dashboardEmptyDesc:'ابدأ برفع القيود القديمة وشجرة الحسابات من صفحة "الإعداد والاستيراد" لتظهر لك لوحة التحكم.',
-    currentAccountsDesc:'حسابات الجاري لكل شريك (كود يبدأ بـ 32000)، بالجنيه، وبالعملة الأصلية لو كان الحساب بالدولار.',
+    currentAccountsDesc:'حسابات رأس المال والجاري لكل شريك، بالجنيه، وبالعملة الأصلية لو كان الحساب بعملة أجنبية.',
     noCurrentAccountsBalances:'لا توجد أرصدة على حسابات الجاري (32000) خلال هذه الفترة',
     combinedStatementsCurrencyNote:'ملحوظة: هذه الصفحة قوائم مجمّعة عبر كل الحسابات، ولذلك تُعرض دائماً بالجنيه المصري (عملة الدفاتر الأساسية) بغض النظر عن اختيار العملة أعلاه. زر العملة يؤثر على الكشوف التفصيلية لحساب أو شريك واحد فقط.',
     partnerColLabel:'العميل / المورد', debitEgpCol:'مدين (EGP)', creditEgpCol:'دائن (EGP)',
@@ -1261,7 +1330,7 @@ const I18N = {
     noCostCenterEntries:'لا توجد قيود تحمل مركز تكلفة خلال هذه الفترة',
     netIncomePeriod:'صافي الربح/الخسارة (الفترة)', totalRevenuePeriod:'إجمالي الإيرادات (الفترة)', netEquity:'صافي حقوق الملكية', workingCapital:'رأس المال العامل',
     currentLiquidity:'السيولة الحالية', viewDetails:'عرض التفاصيل ←', totalLiquidity:'إجمالي السيولة', periodReceipts:'مقبوضات الفترة', periodPayments:'مدفوعات الفترة',
-    balanceEGP:'الرصيد (EGP)', nativeCurrency:'بالعملة الأصلية', currentAccountsBalances:'أرصدة الحسابات الجارية (32000)', topCostCenters:'أفضل مراكز التكلفة ربحية',
+    balanceEGP:'الرصيد (EGP)', nativeCurrency:'بالعملة الأصلية', currentAccountsBalances:'أرصدة حسابات رأس المال والجاري', topCostCenters:'أفضل مراكز التكلفة ربحية',
     topPartnerBalances:'أكبر أرصدة العملاء / الموردين', updateStatus:'حالة التحديث', lastUpdateOp:'آخر عملية تحديث', lastEntryAdded:'آخر قيد مُضاف (تاريخه ورقمه)', totalEntriesStored:'إجمالي عدد القيود المخزنة',
     customersVendors:'العملاء / الموردون (اختر واحد أو أكثر)', accountsSubfilter:'الحسابات (اختر واحدًا أو أكثر — فارغ = كل حسابات الصفحة)',
     noMatchForFilter:'لا توجد بيانات مطابقة للفلتر المحدد ضمن الحسابات المحددة لهذه الصفحة', selectAtLeastOnePartner:'اختر عميلاً أو موردًا واحدًا على الأقل لعرض كشف الحساب',
@@ -1629,7 +1698,7 @@ const I18N = {
     viewSourceEntries:'View source entries', activityStart:'Start of activity',
     netIncomePeriod:'Net Income/Loss (Period)', totalRevenuePeriod:'Total Revenue (Period)', netEquity:'Net Equity', workingCapital:'Working Capital',
     currentLiquidity:'Current Liquidity', viewDetails:'View Details ←', totalLiquidity:'Total Liquidity', periodReceipts:'Period Receipts', periodPayments:'Period Payments',
-    balanceEGP:'Balance (EGP)', nativeCurrency:'Native Currency', currentAccountsBalances:'Current Accounts Balances (32000)', topCostCenters:'Top Profitable Cost Centers',
+    balanceEGP:'Balance (EGP)', nativeCurrency:'Native Currency', currentAccountsBalances:'Equity & Current Accounts Balances', topCostCenters:'Top Profitable Cost Centers',
     topPartnerBalances:'Largest Customer/Vendor Balances', updateStatus:'Update Status', lastUpdateOp:'Last Update', lastEntryAdded:'Last Entry Added (Date & No.)', totalEntriesStored:'Total Entries Stored',
     appName:'Mizan', appTagline:'Financial Dashboard', lightMode:'Light Mode', darkMode:'Dark Mode',
     allRightsReserved:'All rights reserved', designedBy:'Designed & developed by',
@@ -1658,7 +1727,7 @@ const I18N = {
     profitLoss:'Profit/Loss', margin:'Margin %', costCenterProject:'Project / Cost Center',
     noDataYet:'No data yet', startImporting:'Start by importing your journal entries first.', goToImport:'Go to Setup & Import', loadDemoDataBtn:'🎯 Try Demo Data', loadDemoDataDesc:'Explore the system with a complete realistic dataset before importing your real data', resetDemoBtn:'🗑 Reset System (Delete Demo Data)', resetDemoConfirm:'Delete demo data and return to the empty state? This cannot be undone.', isDemoModeLabel:'Demo Mode',
     dashboardEmptyDesc:'Upload your historical journal entries and chart of accounts from the "Setup & Import" page to see your dashboard.',
-    currentAccountsDesc:'Current (running) accounts per partner (code starting with 32000), in EGP, and in the original currency if the account is in USD.',
+    currentAccountsDesc:'Equity & partner current accounts, in EGP, and in the original currency if the account is in a foreign currency.',
     noCurrentAccountsBalances:'No balances on current accounts (32000) during this period',
     combinedStatementsCurrencyNote:'Note: this page shows combined statements across all accounts, so it is always displayed in EGP (the functional currency of the books) regardless of the currency selector above. The currency toggle only affects the detailed statement of a single account or partner.',
     partnerColLabel:'Customer / Vendor', debitEgpCol:'Debit (EGP)', creditEgpCol:'Credit (EGP)',
@@ -3889,13 +3958,39 @@ function sumRows(rows){ return rows.reduce((t,r)=>({opening:t.opening+r.opening,
 // the adjusting entry needed to recognise the unrealised FX gain/loss.
 // Only these specific accounts are relevant for the year-end FX revaluation
 // entry in this company's chart of accounts (per explicit instruction).
-const FX_REVALUATION_ACCOUNT_CODES = ['111102','111202','111204','112201','211401','320002','320004','320005'];
+// FX-revaluable account types: any balance-sheet account that can carry a
+// foreign-currency balance by its nature. No hardcoded account codes — this
+// works for any chart of accounts regardless of the code scheme used.
+const FX_REVALUABLE_TYPES = new Set([
+  'البنك والنقد',          // Cash & bank accounts in foreign currency
+  'المدين',                // Receivables / customers in foreign currency
+  'الأصول المتداولة',      // Other current assets (advances, deposits, etc.)
+  'الأصول غير المتداولة',  // Non-current assets (LT deposits, bonds, etc.)
+  'الدائن',                // Payables / suppliers in foreign currency
+  'الالتزامات الجارية',    // Current liabilities (ST loans, accruals, etc.)
+  'الالتزامات غير الجارية',// Non-current liabilities (LT loans, bonds, etc.)
+  'رأس المال',              // Partner current accounts (حساب الشريك الجاري) in foreign currency
+]);
+
+// Plausible EGP implied-rate ranges per currency.
+// Used to flag accounts whose EGP book values look inconsistently recorded.
+// Ranges are deliberately wide to avoid false positives as rates fluctuate.
+const FX_RATE_SANITY = {
+  USD: { min: 5,  max: 200  },  // EGP/USD  (current ~49–51)
+  EUR: { min: 5,  max: 220  },  // EGP/EUR  (typically slightly above USD)
+  SAR: { min: 1,  max: 55   },  // EGP/SAR  (current ~13–14)
+  AED: { min: 1,  max: 55   },  // EGP/AED  (current ~13–14)
+  GBP: { min: 5,  max: 260  },  // EGP/GBP
+};
+const FX_RATE_SANITY_DEFAULT = { min: 0.01, max: 10000 }; // fallback for unknown currencies
 
 function fxRevaluation(lines, asOf, rates){
   const bal = computeBalances(lines, asOf, null); // cumulative EGP book balance per account, as of date
   const rows = [];
   STATE.accounts.forEach(a => {
-    if(!FX_REVALUATION_ACCOUNT_CODES.includes(a.code)) return;
+    // Filter by account NATURE (type), not by hardcoded account code.
+    // This ensures any chart-of-accounts structure works correctly.
+    if(!FX_REVALUABLE_TYPES.has(a.type)) return;
     if(!a.currency || a.currency === 'EGP') return;
     const codeLines = lines.filter(l => l.code === a.code && l.date <= asOf);
     const nativeBalance = codeLines.reduce((s,l)=>{ const n = lineNative(l); return s + n.debit - n.credit; }, 0);
@@ -3903,27 +3998,19 @@ function fxRevaluation(lines, asOf, rates){
     if(Math.abs(nativeBalance) < 0.01 && Math.abs(egpBook) < 0.01) return;
     const rate = rates[a.currency] || 0;
     const hasMeaningfulNative = Math.abs(nativeBalance) >= 0.01;
-    const hasMeaningfulEgp = Math.abs(egpBook) >= 0.01;
     let impliedRate = null, anomaly = false;
     if(hasMeaningfulNative){
       impliedRate = egpBook / nativeBalance;
-      // A plausible EGP/USD implied historical rate for this dataset's
-      // timeframe is roughly 5–100; anything outside that signals the EGP
-      // book value wasn't tracked consistently for that account.
-      anomaly = impliedRate <= 0 || impliedRate < 5 || impliedRate > 100;
+      // Use per-currency sanity range instead of a USD-only hardcoded range.
+      // This prevents false anomaly flags for SAR/AED (rate ~13) or EUR (rate ~55).
+      const sanity = FX_RATE_SANITY[a.currency] || FX_RATE_SANITY_DEFAULT;
+      anomaly = impliedRate <= 0 || impliedRate < sanity.min || impliedRate > sanity.max;
     }
-    // BUG FIX: a near-zero NATIVE balance with a real EGP book balance is NOT
-    // bad data — it's the ordinary case of an account that's fully cleared
-    // out in its own currency (e.g. every dollar deposited was eventually
-    // withdrawn) but still carries a leftover EGP amount, because each of
-    // those native-currency movements was booked at a different historical
-    // rate. The correctly revalued EGP balance for a ~0 native balance is
-    // always ~0 too — 0 × any rate is 0 — regardless of today's entered
-    // rate, so this is fully computable with no rate needed at all: the
-    // entire remaining EGP balance IS the accumulated FX gain/loss to sweep.
-    // This was previously (and wrongly) flagged as "anomaly", which silently
-    // excluded the account from the suggested entry even though its book
-    // showed a perfectly real, correctly-EGP-recorded balance.
+    // A near-zero NATIVE balance with a real EGP book balance is NOT bad data —
+    // it's an account fully cleared in its own currency but carrying a leftover
+    // EGP residual from movements booked at different historical rates.
+    // The revalued EGP for a ~0 native balance is always ~0 (0 × any rate = 0),
+    // so the entire remaining EGP balance IS the accumulated FX gain/loss to sweep.
     const revaluedEGP = hasMeaningfulNative ? (rate ? nativeBalance * rate : egpBook) : 0;
     const diff = revaluedEGP - egpBook;
     rows.push({ code:a.code, name:accName(a.code), currency:a.currency, nativeBalance, egpBook, impliedRate, rate, revaluedEGP, diff, anomaly });
@@ -7008,6 +7095,7 @@ const NAV = [
   {section:'الخزنة والسندات', sectionEn:'Treasury & Vouchers'},
   {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
   {section:'الإعداد', sectionEn:'Setup'},
+  {id:'chartofaccounts', label:'شجرة الحسابات', labelEn:'Chart of Accounts', icon:'scale'},
   {id:'import', label:'الإعداد والاستيراد', labelEn:'Setup & Import', icon:'upload'},
 ];
 function navLabel(n){ return (STATE.settings.lang==='en' && n.labelEn) ? n.labelEn : n.label; }
@@ -7860,6 +7948,7 @@ function renderApp(){
   STATE.ui.__lastRenderedView = STATE.ui.view;
   const renderers = {
     dashboard: renderDashboard,
+    chartofaccounts: renderChartOfAccountsView,
     import: renderImportView,
     liquidity: renderLiquidityView,
     fxrevaluation: renderFxRevaluationView,
@@ -8308,7 +8397,10 @@ function renderDashboard(root){
   const bs = balanceSheet(STATE.journal, asOf);
   const rt = ratios(is, bs);
   const liq = liquidityPosition(STATE.journal, asOf, periodFilterActive(f) ? '' : f.start);
-  const currentAccounts = STATE.accounts.filter(a => a.code.startsWith('32000'))
+  // Filter by account TYPE (رأس المال), not by hardcoded code prefix.
+  // This captures partner current accounts, retained earnings vehicles, and
+  // any equity-section running account regardless of the code scheme used.
+  const currentAccounts = STATE.accounts.filter(a => a.type === 'رأس المال')
     .map(a => {
       const bal = computeBalances(STATE.journal, asOf, null)[a.code] || {closing:0};
       const native = a.currency !== 'EGP' ? STATE.journal.filter(l=>l.code===a.code && l.date<=asOf && !isFxAdjustmentLine(l)).reduce((s,l)=>{const n=lineNative(l);return s+n.debit-n.credit;},0) : null;
@@ -8556,6 +8648,709 @@ function emptyState(title,msg,goto){
 }
 
 /* =========================================================================
+   Chart of Accounts view
+   ========================================================================= */
+
+const SUPPORTED_CURRENCIES = ['EGP','USD','EUR','SAR','AED','GBP'];
+
+function suggestNextCode(type){
+  const peers = STATE.accounts.filter(a => a.type === type && /^\d+$/.test(a.code));
+  if(!peers.length) return '';
+  peers.sort((a,b) => b.code.localeCompare(a.code));
+  const maxCode = peers[0].code;
+  const next = (parseInt(maxCode, 10) + 1).toString().padStart(maxCode.length, '0');
+  return next;
+}
+
+// ── COA tree helpers ──────────────────────────────────────────────────────────
+// O(n log n) tree builder — sorted once, then each account does a binary-style
+// prefix walk instead of O(n²) nested forEach.
+function buildCoaTree(accounts){
+  const sorted = accounts.slice().sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}));
+  const children = {};
+  const parentOf  = {};
+  // For each account, find its parent = the longest code that is a strict prefix.
+  // Because sorted is in code order, we only need to scan backwards from the
+  // current position to find the nearest shorter prefix — O(n·d) where d is depth.
+  sorted.forEach((a, i) => {
+    let best = null;
+    for(let j = i - 1; j >= 0; j--){
+      const p = sorted[j];
+      if(a.code.startsWith(p.code)){
+        if(!best || p.code.length > best.code.length) best = p;
+        // Once we've found a prefix and the next candidate is shorter, stop.
+        if(best && sorted[j-1] && !a.code.startsWith(sorted[j-1].code)) break;
+      }
+    }
+    parentOf[a.code] = best ? best.code : null;
+    const pKey = best ? best.code : '__root__';
+    if(!children[pKey]) children[pKey] = [];
+    children[pKey].push(a);
+  });
+  return { children, parentOf };
+}
+function codeSort(a,b){ return a.code.localeCompare(b.code,undefined,{numeric:true}); }
+function getAncestors(code,parentOf){ const anc=[]; let cur=parentOf[code]; while(cur){anc.unshift(cur);cur=parentOf[cur];} return anc; }
+
+// Detect circular parent references: walk up from code; if we revisit any node → cycle.
+function hasCircularRef(code, parentMap){
+  const seen = new Set();
+  let cur = parentMap[code];
+  while(cur){
+    if(seen.has(cur)) return true;
+    seen.add(cur);
+    cur = parentMap[cur];
+  }
+  return false;
+}
+
+function renderChartOfAccountsView(root){
+  const en  = (STATE.settings.lang||'ar')==='en';
+  const dir = en ? 'ltr' : 'rtl';
+  const L = {
+    title:        en?'Chart of Accounts':'شجرة الحسابات',
+    newAccount:   en?'+ New Account':'+ حساب جديد',
+    importCoa:    en?'⬆ Import Excel':'⬆ استيراد Excel',
+    downloadTpl:  en?'⬇ Template':'⬇ تحميل النموذج',
+    exportExcel:  en?'⬇ Export Excel':'⬇ تصدير Excel',
+    listView:     en?'List':'قائمة',
+    treeView:     en?'Tree':'شجرة',
+    expandAll:    en?'Expand All':'توسيع الكل',
+    collapseAll:  en?'Collapse All':'طي الكل',
+    search:       en?'Search...':'بحث...',
+    colCode:      en?'Code':'الكود',
+    colNameAr:    en?'Arabic Name':'الاسم العربي',
+    colNameEn:    en?'English Name':'الاسم الإنجليزي',
+    colType:      en?'Account Type':'طبيعة الحساب',
+    colCurrency:  en?'Currency':'العملة',
+    colNature:    en?'Account Nature':'طبيعة الرصيد',
+    colActions:   en?'Actions':'إجراءات',
+    debit:        en?'Debit':'مدين',
+    credit:       en?'Credit':'دائن',
+    edit:         en?'Edit':'تعديل',
+    duplicate:    en?'Duplicate':'نسخ',
+    del:          en?'Delete':'حذف',
+    save:         en?'Save':'حفظ',
+    cancel:       en?'Cancel':'إلغاء',
+    newAccTitle:  en?'New Account':'حساب جديد',
+    editAccTitle: en?'Edit Account':'تعديل حساب',
+    code:         en?'Account Code *':'كود الحساب *',
+    nameAr:       en?'Arabic Name *':'الاسم العربي *',
+    nameEn:       en?'English Name':'الاسم الإنجليزي',
+    optional:     en?'(optional)':'(اختياري)',
+    accType:      en?'Account Type *':'طبيعة الحساب *',
+    currency:     en?'Currency':'العملة',
+    selectType:   en?'-- Select Type --':'-- اختر الطبيعة --',
+    noAccounts:   en?'No accounts found':'لا توجد حسابات',
+    confirmDel:   en?'Delete account':'حذف الحساب',
+    hasEntries:   en?'Account has journal entries and cannot be deleted.':'الحساب له قيود يومية ولا يمكن حذفه.',
+    dupCode:      en?'Code already exists:':'الكود موجود بالفعل:',
+    required:     en?'Code, Arabic name and account type are required.':'الكود والاسم العربي وطبيعة الحساب مطلوبة.',
+    importTitle:  en?'Import Chart of Accounts':'استيراد شجرة الحسابات',
+    preview:      en?'Preview':'معاينة',
+    validRows:    en?'Valid':'صحيح',
+    invalidRows:  en?'Invalid':'خطأ',
+    totalRows:    en?'Total Rows':'إجمالي الصفوف',
+    importConfirm:en?'Confirm Import':'تأكيد الاستيراد',
+    downloadErr:  en?'Download Error Report':'تحميل تقرير الأخطاء',
+    row:          en?'Row':'صف',
+    field:        en?'Field':'الحقل',
+    error:        en?'Error':'الخطأ',
+    hasEntriesTooltip: en?'Has journal entries':'له قيود يومية',
+  };
+
+  // ── state ──────────────────────────────────────────────────────────────────
+  const uic = STATE.ui.__coa = STATE.ui.__coa || {};
+  if(uic.search    === undefined) uic.search    = '';
+  if(uic.view      === undefined) uic.view      = 'list';
+  if(uic.expanded  === undefined) uic.expanded  = {};
+  if(uic.filterCur === undefined) uic.filterCur = '';
+  if(uic.filterType=== undefined) uic.filterType= '';
+  // Use system sort state
+  const VIEW_KEY = 'coa';
+  const sortState = getSortState(VIEW_KEY,'code','asc');
+
+  const usedCodes  = new Set(STATE.journal.map(l=>l.code));
+  const allTypes   = Object.keys(CLASS_MAP);
+  const allCodes   = STATE.accounts.map(a=>a.code);
+  const allNatures = [L.debit, L.credit];
+
+  // ── helpers ────────────────────────────────────────────────────────────────
+  function natureLbl(type){ const c=CLASS_MAP[type]; return c?(c.normal==='credit'?L.credit:L.debit):'—'; }
+  function hl(text,q){
+    if(!q||!text) return escapeHtml(text||'');
+    const esc=escapeHtml(text), qi=q.toLowerCase(), ti=esc.toLowerCase(), idx=ti.indexOf(qi);
+    if(idx===-1) return esc;
+    return esc.slice(0,idx)+`<mark style="background:var(--gold);color:#000;border-radius:2px;padding:0 1px">${esc.slice(idx,idx+q.length)}</mark>`+esc.slice(idx+q.length);
+  }
+
+  // ── filtered + sorted list ─────────────────────────────────────────────────
+  function filteredAccounts(){
+    const q = (uic.search||'').trim().toLowerCase();
+    let list = STATE.accounts.slice();
+    if(q) list = list.filter(a=>
+      a.code.toLowerCase().includes(q)||(a.name||'').toLowerCase().includes(q)||(a.nameEn||'').toLowerCase().includes(q));
+    if(uic.filterCur)  list = list.filter(a=>(a.currency||'EGP')===uic.filterCur);
+    if(uic.filterType) list = list.filter(a=>a.type===uic.filterType);
+    // Apply system col filters
+    const cf = (STATE.ui.colFilters)||{};
+    if(cf['coa-code']?.length)    list = list.filter(a=>cf['coa-code'].includes(a.code));
+    if(cf['coa-name']?.length)    list = list.filter(a=>cf['coa-name'].includes(a.name||''));
+    if(cf['coa-type']?.length)    list = list.filter(a=>cf['coa-type'].includes(accountTypeDisplay(a.type)||''));
+    if(cf['coa-currency']?.length)list = list.filter(a=>cf['coa-currency'].includes(a.currency||'EGP'));
+    if(cf['coa-nature']?.length)  list = list.filter(a=>cf['coa-nature'].includes(natureLbl(a.type)));
+    // Sort
+    const {col,dir:sd} = sortState;
+    list.sort((a,b)=>{
+      let va,vb;
+      if(col==='code')     { va=a.code;     vb=b.code; }
+      else if(col==='name'){ va=a.name||''; vb=b.name||''; }
+      else if(col==='nameEn'){va=a.nameEn||'';vb=b.nameEn||'';}
+      else if(col==='type'){ va=accountTypeDisplay(a.type)||''; vb=accountTypeDisplay(b.type)||''; }
+      else if(col==='currency'){va=a.currency||'EGP'; vb=b.currency||'EGP';}
+      else if(col==='nature'){va=natureLbl(a.type); vb=natureLbl(b.type);}
+      else { va=a.code; vb=b.code; }
+      const cmp = col==='code'
+        ? va.localeCompare(vb,undefined,{numeric:true})
+        : va.localeCompare(vb);
+      return sd==='asc'?cmp:-cmp;
+    });
+    return list;
+  }
+
+  // ── partial re-render (sidebar safe) ──────────────────────────────────────
+  function refresh(){
+    const el = document.getElementById('coaPage');
+    if(!el) return;
+    el.innerHTML = buildPage();
+    attachPageEvents();
+    if(uic.modal) showModal();
+  }
+  function refreshTable(){
+    const area = document.getElementById('coaTableArea');
+    if(!area) return;
+    area.innerHTML = uic.view==='tree' ? buildTreeView() : buildListView();
+    attachTableEvents();
+  }
+
+  // ── ACTION ROW ─────────────────────────────────────────────────────────────
+  function actionBtns(code){
+    const canDel = !usedCodes.has(code);
+    return `
+      <button class="btn btn-xs" data-coa-edit="${escapeHtml(code)}" title="${L.edit}" style="padding:2px 5px">✏️</button>
+      <button class="btn btn-xs" data-coa-dup="${escapeHtml(code)}"  title="${L.duplicate}" style="padding:2px 5px">📋</button>
+      ${canDel
+        ? `<button class="btn btn-xs btn-danger-soft" data-coa-del="${escapeHtml(code)}" title="${L.del}" style="padding:2px 5px">🗑️</button>`
+        : `<button class="btn btn-xs" disabled style="opacity:.2;cursor:default;padding:2px 5px" title="${L.hasEntriesTooltip}">🗑️</button>`}`;
+  }
+
+  // ── LIST VIEW ──────────────────────────────────────────────────────────────
+  function buildListView(){
+    const q    = (uic.search||'').trim().toLowerCase();
+    const list = filteredAccounts();
+    const types     = uniq(STATE.accounts.map(a=>accountTypeDisplay(a.type)||'').filter(Boolean));
+    const currencies= uniq(STATE.accounts.map(a=>a.currency||'EGP'));
+    const names     = uniq(STATE.accounts.map(a=>a.name||'').filter(Boolean));
+    const natures   = [L.debit,L.credit];
+    const codes     = uniq(STATE.accounts.map(a=>a.code));
+
+    return `
+      <div class="table-wrap" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
+        <table id="coaListTable" style="width:100%;min-width:700px" dir="${dir}">
+          <thead><tr>
+            ${filterableTh(VIEW_KEY,'code',    L.colCode,    'coa-code',     codes)}
+            ${filterableTh(VIEW_KEY,'name',    L.colNameAr,  'coa-name',     names)}
+            <th data-col-key="nameEn">${L.colNameEn}</th>
+            ${filterableTh(VIEW_KEY,'type',    L.colType,    'coa-type',     types)}
+            ${filterableTh(VIEW_KEY,'currency',L.colCurrency,'coa-currency', currencies)}
+            ${filterableTh(VIEW_KEY,'nature',  L.colNature,  'coa-nature',   natures)}
+            <th data-col-key="actions" style="text-align:center">${L.colActions}</th>
+          </tr></thead>
+          <tbody>
+            ${list.length ? list.map(a=>`<tr>
+              <td><code style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
+              <td style="color:var(--ink);font-family:'Cairo',sans-serif">${hl(a.name||'',q)}</td>
+              <td dir="ltr" style="color:var(--ink-soft);font-size:12px">${hl(a.nameEn||'—',q)}</td>
+              <td style="text-align:center"><span class="pill pill-gold" style="font-size:10px;white-space:nowrap">${escapeHtml(accountTypeDisplay(a.type)||'')}</span></td>
+              <td style="text-align:center"><span class="pill" style="font-size:10px;background:${(a.currency||'EGP')==='EGP'?'var(--surface-2)':'var(--emerald)'};color:${(a.currency||'EGP')==='EGP'?'var(--ink-soft)':'#fff'}">${escapeHtml(a.currency||'EGP')}</span></td>
+              <td style="text-align:center;font-size:12px;color:var(--ink-soft)">${natureLbl(a.type)}</td>
+              <td style="text-align:center;white-space:nowrap">${actionBtns(a.code)}</td>
+            </tr>`).join('')
+            : `<tr><td colspan="7" style="text-align:center;color:var(--ink-soft);padding:40px">${L.noAccounts}</td></tr>`}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── TREE VIEW ──────────────────────────────────────────────────────────────
+  // ── TREE VIEW ──────────────────────────────────────────────────────────────
+  // Reproduces the reference layout: the account table stays a normal,
+  // full-column table of postable ("leaf") accounts, in strict Account-Code
+  // order; a narrow hierarchy NAVIGATOR panel sits beside it (right side in
+  // RTL) showing only the header/group accounts — i.e. any account that is
+  // itself the parent of at least one other account, at any depth — built
+  // dynamically from buildCoaTree()'s real code-prefix parent/child
+  // relationships (never hardcoded, never assumes a fixed number of levels).
+  // Collapsing a header in the panel hides its descendant accounts from the
+  // table; nothing is duplicated — the panel and the table both read from
+  // the same STATE.accounts / buildCoaTree() output.
+  function buildTreeView(){
+    const q = (uic.search||'').trim().toLowerCase();
+    const { children, parentOf } = buildCoaTree(STATE.accounts);
+
+    // A "header" account is any code that is itself a parent of at least one
+    // other account (buildCoaTree only creates a `children[code]` bucket
+    // when something maps to it as its nearest existing code-prefix).
+    const headerCodesAll = Object.keys(children).filter(c => c !== '__root__');
+    const isHeader = code => children[code] !== undefined;
+
+    const matchesQ = a => !q ||
+      a.code.toLowerCase().includes(q) ||
+      (a.name||'').toLowerCase().includes(q) ||
+      (a.nameEn||'').toLowerCase().includes(q);
+    const cf = (STATE.ui.colFilters)||{};
+    const matchesFilters = a => {
+      if(uic.filterCur && (a.currency||'EGP')!==uic.filterCur) return false;
+      if(uic.filterType && a.type!==uic.filterType) return false;
+      if(cf['coa-code']?.length     && !cf['coa-code'].includes(a.code)) return false;
+      if(cf['coa-name']?.length     && !cf['coa-name'].includes(a.name||'')) return false;
+      if(cf['coa-type']?.length     && !cf['coa-type'].includes(accountTypeDisplay(a.type)||'')) return false;
+      if(cf['coa-currency']?.length && !cf['coa-currency'].includes(a.currency||'EGP')) return false;
+      if(cf['coa-nature']?.length   && !cf['coa-nature'].includes(natureLbl(a.type))) return false;
+      return true;
+    };
+    const activeCf = ['coa-code','coa-name','coa-type','coa-currency','coa-nature'].some(k=>cf[k]&&cf[k].length);
+    const hasActiveFilter = !!q || !!uic.filterCur || !!uic.filterType || activeCf;
+
+    // Table rows = leaf (postable) accounts only. Header/group accounts are
+    // navigated exclusively through the side panel (they're still editable
+    // there — see the code click handler below — nothing about them is lost).
+    const leaves = STATE.accounts.filter(a => !isHeader(a.code));
+    const eligibleLeaves = hasActiveFilter ? leaves.filter(a => matchesQ(a) && matchesFilters(a)) : leaves;
+    const eligibleSet = new Set(eligibleLeaves.map(a=>a.code));
+
+    // When searching/filtering, force-reveal every ancestor header of every
+    // matching leaf so the match stays reachable with its parent context —
+    // without permanently altering the user's own collapse choices.
+    const forceSet = new Set();
+    if(hasActiveFilter){
+      eligibleLeaves.forEach(a => getAncestors(a.code, parentOf).forEach(c => forceSet.add(c)));
+    }
+    const requiredHeaders = hasActiveFilter ? forceSet : null; // null = show the full header tree
+
+    function isExpanded(code){
+      if(hasActiveFilter && forceSet.has(code)) return true;
+      return uic.expanded[code] !== false;
+    }
+    function leafVisible(a){
+      if(hasActiveFilter && !eligibleSet.has(a.code)) return false;
+      return getAncestors(a.code, parentOf).every(h => isExpanded(h));
+    }
+
+    const visibleLeaves = leaves.filter(leafVisible).sort(codeSort);
+
+    // ── account table (leaf rows, strict code order) ──
+    const rowsHtml = visibleLeaves.length ? visibleLeaves.map(a=>{
+      const cur = a.currency||'EGP';
+      const isMatch = hasActiveFilter && q && matchesQ(a);
+      const rowBg = isMatch?'background:rgba(184,144,46,.1);':'';
+      return `<tr style="${rowBg}">
+        <td><code style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
+        <td style="color:var(--ink);font-family:'Cairo',sans-serif">${hl(a.name||'',q)}</td>
+        <td dir="ltr" style="color:var(--ink-soft);font-size:12px">${hl(a.nameEn||'—',q)}</td>
+        <td style="text-align:center"><span class="pill pill-gold" style="font-size:10px;white-space:nowrap">${escapeHtml(accountTypeDisplay(a.type)||'')}</span></td>
+        <td style="text-align:center"><span class="pill" style="font-size:10px;background:${cur==='EGP'?'var(--surface-2)':'var(--emerald)'};color:${cur==='EGP'?'var(--ink-soft)':'#fff'}">${escapeHtml(cur)}</span></td>
+        <td style="text-align:center;font-size:12px;color:var(--ink-soft)">${natureLbl(a.type)}</td>
+        <td style="text-align:center;white-space:nowrap">${actionBtns(a.code)}</td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--ink-soft);padding:40px">${L.noAccounts}</td></tr>`;
+
+    const tableHtml = `
+      <div class="table-wrap" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
+        <table id="coaTreeTable" style="width:100%;min-width:640px" dir="${dir}">
+          <thead><tr>
+            <th data-col-key="code">${L.colCode}</th>
+            <th data-col-key="name">${L.colNameAr}</th>
+            <th data-col-key="nameEn" dir="ltr">${L.colNameEn}</th>
+            <th data-col-key="type"  style="text-align:center">${L.colType}</th>
+            <th data-col-key="currency" style="text-align:center">${L.colCurrency}</th>
+            <th data-col-key="nature" style="text-align:center">${L.colNature}</th>
+            <th data-col-key="actions" style="text-align:center">${L.colActions}</th>
+          </tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>`;
+
+    // ── hierarchy navigator panel (header/group accounts only) ──
+    function headerKids(code){
+      return (children[code]||[]).filter(a => isHeader(a.code)).sort(codeSort);
+    }
+    function panelNode(a, level){
+      const code = a.code;
+      if(requiredHeaders && !requiredHeaders.has(code)) return '';
+      const exp = isExpanded(code);
+      const active = hasActiveFilter && forceSet.has(code);
+      const kids = headerKids(code);
+      const pad = level*13;
+      const row = `<div class="coa-hier-row" style="padding-${dir==='rtl'?'right':'left'}:${pad}px">
+          <button type="button" class="coa-hier-toggle" data-coa-toggle="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${exp?'▾':'▸'}</button>
+          <span class="coa-hier-code${active?' coa-hier-active':''}" data-coa-edit="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${hl(code,q)}</span>
+        </div>`;
+      let childHtml = '';
+      if(exp && kids.length){
+        childHtml = `<div class="coa-hier-children">${kids.map(k=>panelNode(k,level+1)).join('')}</div>`;
+      }
+      return row+childHtml;
+    }
+    const rootHeaders = (children['__root__']||[]).filter(a=>isHeader(a.code)).sort(codeSort);
+    const panelBody = rootHeaders.map(a=>panelNode(a,0)).join('') ||
+      `<div class="coa-hier-empty">${en?'No groups':'لا توجد مجموعات'}</div>`;
+    const allExpanded = headerCodesAll.length>0 && headerCodesAll.every(c=>uic.expanded[c]!==false);
+    const panelHtml = `
+      <div class="coa-hier-panel" dir="${dir}">
+        <div class="coa-hier-all" data-coa-toggle-all="1" title="${en?'Expand/collapse all groups':'فتح/طي كل المجموعات'}">
+          <button type="button" class="coa-hier-toggle">${allExpanded?'▾':'▸'}</button>
+          <span>${en?'All':'الكل'}</span>
+        </div>
+        <div class="coa-hier-body">${panelBody}</div>
+      </div>`;
+
+    // Panel stays on the right in both languages: first DOM child in RTL
+    // (rightmost in normal flow), last DOM child in LTR (also rightmost).
+    return `<div class="coa-tree-flex" dir="${dir}">
+        ${dir==='rtl' ? panelHtml+tableHtml : tableHtml+panelHtml}
+      </div>`;
+  }
+
+  // ── MODAL ──────────────────────────────────────────────────────────────────
+  function showModal(){
+    const old=document.getElementById('coaModalBd'); if(old) old.remove();
+    const m=uic.modal||{}, isNew=!!m._isNew;
+    const html=`
+      <div id="coaModalBd" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center" dir="${dir}">
+        <div style="background:var(--surface-1);border-radius:12px;padding:28px 32px;width:min(540px,95vw);box-shadow:0 8px 40px rgba(0,0,0,.5)">
+          <div style="display:flex;align-items:center;margin-bottom:20px">
+            <h3 style="margin:0;font-size:16px;font-family:'Cairo',sans-serif;color:var(--ink)">${isNew?L.newAccTitle:L.editAccTitle}</h3>
+            <div style="flex:1"></div>
+            <button id="coaMClose" class="btn btn-xs" style="font-size:16px">✕</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div>
+              <label style="font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px">${L.code}</label>
+              <input id="coaCodeI" type="text" class="date-text-input" style="width:100%;box-sizing:border-box;padding:7px 10px;font-size:13px;font-family:monospace" value="${escapeHtml(m.code||'')}" ${!isNew?'readonly':''}>
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px">${L.accType}</label>
+              <select id="coaTypeI" class="date-text-input" style="width:100%;box-sizing:border-box;padding:7px 8px;font-size:12px">
+                <option value="">${L.selectType}</option>
+                ${allTypes.map(tp=>`<option value="${escapeHtml(tp)}" ${tp===m.type?'selected':''}>${escapeHtml(accountTypeDisplay(tp))}</option>`).join('')}
+              </select>
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px">${L.nameAr}</label>
+              <input id="coaNameI" type="text" class="date-text-input" style="width:100%;box-sizing:border-box;padding:7px 10px;font-size:13px" value="${escapeHtml(m.name||'')}" placeholder="اسم الحساب">
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px">${L.nameEn} <span style="color:var(--ink-faint)">${L.optional}</span></label>
+              <input id="coaNameEnI" type="text" class="date-text-input" style="width:100%;box-sizing:border-box;padding:7px 10px;font-size:13px" value="${escapeHtml(m.nameEn||'')}" placeholder="Account name" dir="ltr">
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px">${L.currency} <span style="color:var(--ink-faint)">${L.optional}</span></label>
+              <select id="coaCurI" class="date-text-input" style="width:100%;box-sizing:border-box;padding:7px 8px;font-size:12px" dir="ltr">
+                ${SUPPORTED_CURRENCIES.map(c=>`<option value="${c}" ${c===(m.currency||'EGP')?'selected':''}>${c}</option>`).join('')}
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:4px">
+              <span id="coaNatureHint" style="font-size:11px;color:var(--ink-soft)"></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:22px">
+            <button id="coaMSave" class="btn btn-primary" style="padding:8px 22px;font-size:13px">${L.save}</button>
+            <button id="coaMCancel" class="btn" style="padding:8px 16px;font-size:13px">${L.cancel}</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend',html);
+    document.getElementById('coaMClose').onclick  = closeModal;
+    document.getElementById('coaMCancel').onclick = closeModal;
+    document.getElementById('coaMSave').onclick   = saveAccount;
+    const typeSel=document.getElementById('coaTypeI');
+    typeSel.addEventListener('change',()=>{
+      if(uic.modal?._isNew){ const s=suggestNextCode(typeSel.value); const ci=document.getElementById('coaCodeI'); if(ci&&s) ci.value=s; }
+      const hint=document.getElementById('coaNatureHint');
+      if(hint){ const cls=CLASS_MAP[typeSel.value]; hint.textContent=cls?(cls.normal==='credit'?(en?'Credit-normal':'طبيعته دائن'):(en?'Debit-normal':'طبيعته مدين')):''; }
+    });
+  }
+  function closeModal(){ uic.modal=null; const b=document.getElementById('coaModalBd'); if(b) b.remove(); }
+  function openAccountModal(acct){
+    uic.modal=acct?{...acct}:{code:'',name:'',nameEn:'',type:'',currency:'EGP',_isNew:true};
+    showModal();
+  }
+  function duplicateAccount(acct){
+    if(!acct) return;
+    uic.modal={code:suggestNextCode(acct.type),name:(acct.name||'')+' - نسخة',nameEn:(acct.nameEn||'')+' - Copy',type:acct.type,currency:acct.currency||'EGP',_isNew:true};
+    showModal();
+  }
+  async function saveAccount(){
+    const code=(document.getElementById('coaCodeI').value||'').trim();
+    const name=(document.getElementById('coaNameI').value||'').trim();
+    const nameEn=(document.getElementById('coaNameEnI').value||'').trim();
+    const type=(document.getElementById('coaTypeI').value||'').trim();
+    const cur=(document.getElementById('coaCurI').value||'EGP').trim();
+    if(!code||!name||!type){alert(L.required);return;}
+    const m=uic.modal||{};
+    if(m._isNew&&STATE.accountsByCode[code]){alert(L.dupCode+' '+code);return;}
+    const rec={code,name,type,currency:cur};
+    if(nameEn) rec.nameEn=nameEn;
+    const idx=STATE.accounts.findIndex(a=>a.code===code);
+    if(idx>=0) STATE.accounts[idx]={...STATE.accounts[idx],...rec};
+    else STATE.accounts.push(rec);
+    rebuildAccountIndex();
+    await storeSet('accounts',STATE.accounts);
+    closeModal(); refresh();
+  }
+  async function deleteAccount(code){
+    if(usedCodes.has(code)){alert(L.hasEntries);return;}
+    if(!confirm(L.confirmDel+' '+code+'?')) return;
+    STATE.accounts=STATE.accounts.filter(a=>a.code!==code);
+    rebuildAccountIndex();
+    await storeSet('accounts',STATE.accounts);
+    refresh();
+  }
+
+  // ── EXPORT ─────────────────────────────────────────────────────────────────
+  function exportToExcel(){
+    const {parentOf}=buildCoaTree(STATE.accounts);
+    const hdr=['Account Code','Account Name (AR)','Account Name (EN)','Account Type','Currency','Account Nature','Parent Account Code'];
+    const rows=STATE.accounts.slice().sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true})).map(a=>{
+      const cls=CLASS_MAP[a.type]||{};
+      return[a.code,a.name||'',a.nameEn||'',a.type||'',a.currency||'EGP',cls.normal==='credit'?'Credit':'Debit',parentOf[a.code]||''];
+    });
+    const ws=XLSX.utils.aoa_to_sheet([hdr,...rows]);
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Chart of Accounts');
+    XLSX.writeFile(wb,'chart_of_accounts.xlsx');
+  }
+  function downloadTemplate(){
+    const hdr=['Account Code *','Account Name (AR) *','Account Name (EN)','Account Type *','Currency','Parent Account Code'];
+    const note=['(required)','(required, Arabic)','(optional)','(required)','(optional, default EGP)','(optional)'];
+    const types=Object.keys(CLASS_MAP).map((t,i)=>i===0?['Valid Account Types:',t]:['',t]);
+    const ws=XLSX.utils.aoa_to_sheet([hdr,note,[],...types]);
+    ws['!cols']=[{wch:22},{wch:30},{wch:30},{wch:30},{wch:12},{wch:22}];
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Template');
+    XLSX.writeFile(wb,'coa_import_template.xlsx');
+  }
+
+  // ── IMPORT MODAL ───────────────────────────────────────────────────────────
+  function openImportModal(){
+    const old=document.getElementById('coaImpBd'); if(old) old.remove();
+    const html=`
+      <div id="coaImpBd" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center" dir="${dir}">
+        <div style="background:var(--surface-1);border-radius:12px;padding:28px 32px;width:min(700px,97vw);box-shadow:0 8px 40px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto">
+          <div style="display:flex;align-items:center;margin-bottom:18px">
+            <h3 style="margin:0;font-size:16px;font-family:'Cairo',sans-serif;color:var(--ink)">${L.importTitle}</h3>
+            <div style="flex:1"></div>
+            <button id="coaImpClose" class="btn btn-xs" style="font-size:16px">✕</button>
+          </div>
+          <label style="font-size:13px;color:var(--ink-soft);display:block;margin-bottom:10px">اختر ملف Excel (.xlsx)</label>
+          <input id="coaImpFile" type="file" accept=".xlsx,.xls" style="color:var(--ink)">
+          <button id="coaImpPreviewBtn" class="btn btn-primary" style="margin-top:14px;padding:7px 20px">${L.preview}</button>
+          <div id="coaImpPrev" style="margin-top:16px"></div>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend',html);
+    document.getElementById('coaImpClose').onclick=()=>{const b=document.getElementById('coaImpBd');if(b)b.remove();};
+    document.getElementById('coaImpPreviewBtn').onclick=previewImport;
+  }
+  async function previewImport(){
+    const fileEl=document.getElementById('coaImpFile');
+    if(!fileEl||!fileEl.files[0]){alert(en?'Select a file first.':'اختر ملفاً أولاً.');return;}
+    const buf=await fileEl.files[0].arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{defval:''});
+    const validTypes=new Set(Object.keys(CLASS_MAP));
+    const validCurrencies=new Set(SUPPORTED_CURRENCIES);
+    const errors=[],warnings=[],valid=[];
+    const existingCodes=new Set(STATE.accounts.map(a=>a.code));
+    const seenCodes=new Set(), fileParentMap={};
+    raw.forEach((r,i)=>{
+      const rn=i+2;
+      const code=(r['Account Code *']||r['Account Code']||'').toString().trim();
+      const name=(r['Account Name (AR) *']||r['Account Name (AR)']||r['Account Name']||'').toString().trim();
+      const type=(r['Account Type *']||r['Account Type']||'').toString().trim();
+      const cur=(r['Currency']||'EGP').toString().trim()||'EGP';
+      const nameEn=(r['Account Name (EN)']||'').toString().trim();
+      const parent=(r['Parent Account Code']||'').toString().trim();
+      const rowErrors=[];
+      if(!code)  rowErrors.push({row:rn,field:'Account Code',err:'مفقود',warn:false});
+      if(!name)  rowErrors.push({row:rn,field:'Account Name (AR)',err:'مفقود',warn:false});
+      if(!type)  rowErrors.push({row:rn,field:'Account Type',err:'مفقود',warn:false});
+      if(code&&seenCodes.has(code)) rowErrors.push({row:rn,field:'Account Code',err:'مكرر في الملف',warn:false});
+      if(code&&parent&&code===parent) rowErrors.push({row:rn,field:'Parent Account Code',err:'الحساب لا يمكن أن يكون أبًا لنفسه',warn:false});
+      if(type&&!validTypes.has(type)) rowErrors.push({row:rn,field:'Account Type',err:'قيمة غير صحيحة',warn:false});
+      if(cur&&!validCurrencies.has(cur)) warnings.push({row:rn,field:'Currency',err:'عملة غير معروفة، سيتم استخدام EGP',warn:true});
+      if(code&&!seenCodes.has(code)&&existingCodes.has(code)) warnings.push({row:rn,field:'Account Code',err:'موجود بالفعل — سيتم تحديثه',warn:true});
+      if(code){seenCodes.add(code); if(parent) fileParentMap[code]=parent;}
+      if(rowErrors.filter(e=>!e.warn).length) errors.push(...rowErrors.filter(e=>!e.warn));
+      else valid.push({code,name,nameEn,type,currency:validCurrencies.has(cur)?cur:'EGP',parent});
+    });
+    const allCodesAfter=new Set([...existingCodes,...seenCodes]);
+    const {parentOf:existingParentOf}=buildCoaTree(STATE.accounts);
+    const mergedParentOf={...existingParentOf};
+    Object.entries(fileParentMap).forEach(([c,p])=>{mergedParentOf[c]=p;});
+    const checkedP=new Set();
+    Object.entries(fileParentMap).forEach(([code,parent])=>{
+      if(checkedP.has(parent)) return; checkedP.add(parent);
+      if(!allCodesAfter.has(parent)) errors.push({row:'?',field:'Parent Account Code',err:'الأب غير موجود: '+parent,warn:false});
+      if(hasCircularRef(code,mergedParentOf)) errors.push({row:'?',field:'Parent Account Code',err:'مرجع دائري: '+code,warn:false});
+    });
+    const allIssues=[...errors,...warnings];
+    const prevEl=document.getElementById('coaImpPrev');
+    if(!prevEl) return;
+    const issueRows=allIssues.length?`<div class="table-wrap" style="max-height:220px;overflow-y:auto;margin-top:10px">
+      <table style="width:100%"><thead><tr><th>${L.row}</th><th>${L.field}</th><th>${L.error}</th></tr></thead>
+      <tbody>${allIssues.map(e=>`<tr><td style="font-size:12px">${e.row}</td><td style="font-size:12px">${escapeHtml(e.field)}</td>
+        <td style="font-size:12px;color:${e.warn?'var(--gold)':'var(--brick)'}">${e.warn?'⚠ ':'✕ '}${escapeHtml(e.err)}</td></tr>`).join('')}
+      </tbody></table></div>`:'';
+    const blockingErrors=errors.length>0;
+    prevEl.innerHTML=`
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;padding-top:8px;border-top:1px solid var(--border)">
+        <span style="font-size:13px;color:var(--ink)">${L.totalRows}: <b>${raw.length}</b></span>
+        <span style="font-size:13px;color:var(--emerald)">${L.validRows}: <b>${valid.length}</b></span>
+        ${errors.length?`<span style="font-size:13px;color:var(--brick)">✕ ${L.invalidRows}: <b>${errors.length}</b></span>`:''}
+        ${warnings.length?`<span style="font-size:13px;color:var(--gold)">⚠ ${en?'Warnings':'تحذيرات'}: <b>${warnings.length}</b></span>`:''}
+      </div>
+      ${issueRows}
+      ${!blockingErrors&&valid.length?`<button id="coaImpConfirm" class="btn btn-primary" style="margin-top:14px">${L.importConfirm} (${valid.length})</button>`:''}
+      ${allIssues.length?`<button id="coaErrRpt" class="btn" style="margin-top:14px;margin-right:8px">${L.downloadErr}</button>`:''}
+      ${blockingErrors?`<p style="color:var(--brick);font-size:12px;margin-top:10px">يرجى تصحيح الأخطاء قبل الاستيراد.</p>`:''}`;
+    const cb=document.getElementById('coaImpConfirm');
+    if(cb) cb.onclick=()=>doImport(valid);
+    const eb=document.getElementById('coaErrRpt');
+    if(eb) eb.onclick=()=>{
+      const ws2=XLSX.utils.aoa_to_sheet([[L.row,L.field,L.error,'النوع'],...allIssues.map(e=>[e.row,e.field,e.err,e.warn?'تحذير':'خطأ'])]);
+      const wb2=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb2,ws2,'Issues');
+      XLSX.writeFile(wb2,'coa_import_issues.xlsx');
+    };
+  }
+  async function doImport(rows){
+    rows.forEach(r=>{
+      const idx=STATE.accounts.findIndex(a=>a.code===r.code);
+      const rec={code:r.code,name:r.name,type:r.type,currency:r.currency||'EGP'};
+      if(r.nameEn) rec.nameEn=r.nameEn;
+      if(idx>=0) STATE.accounts[idx]={...STATE.accounts[idx],...rec};
+      else STATE.accounts.push(rec);
+    });
+    rebuildAccountIndex();
+    await storeSet('accounts',STATE.accounts);
+    const b=document.getElementById('coaImpBd'); if(b) b.remove();
+    refresh();
+  }
+
+  // ── PAGE HTML ──────────────────────────────────────────────────────────────
+  function buildPage(){
+    const total=STATE.accounts.length;
+    const isTree=uic.view==='tree';
+    return `
+      <div class="card" style="box-sizing:border-box" dir="${dir}">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <h2 style="margin:0;font-size:17px;font-family:'Cairo',sans-serif;color:var(--ink);white-space:nowrap">${L.title}</h2>
+          <span style="font-size:11px;color:var(--ink-soft)">(${total})</span>
+          <div style="flex:1;min-width:4px"></div>
+          <input id="coaSearchInput" type="text" class="date-text-input" placeholder="${L.search}"
+            value="${escapeHtml(uic.search||'')}" style="width:140px;padding:6px 10px;font-size:12px">
+          <select id="coaFilterCur" class="date-text-input" style="padding:6px 8px;font-size:12px">
+            <option value="">${en?'All Currencies':'كل العملات'}</option>
+            ${SUPPORTED_CURRENCIES.map(c=>`<option value="${c}" ${uic.filterCur===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+          <select id="coaFilterType" class="date-text-input" style="padding:6px 8px;font-size:12px">
+            <option value="">${en?'All Types':'كل الطبائع'}</option>
+            ${allTypes.map(tp=>`<option value="${escapeHtml(tp)}" ${uic.filterType===tp?'selected':''}>${escapeHtml(accountTypeDisplay(tp))}</option>`).join('')}
+          </select>
+          <div style="display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden">
+            <button id="coaViewList" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${!isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.listView}</button>
+            <button id="coaViewTree" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.treeView}</button>
+          </div>
+          <button id="coaNewBtn"    class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap">${L.newAccount}</button>
+          <button id="coaImportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.importCoa}</button>
+          <button id="coaTplBtn"    class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.downloadTpl}</button>
+          <button id="coaExportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.exportExcel}</button>
+        </div>
+        <div id="coaTableArea">
+          ${isTree ? buildTreeView() : buildListView()}
+        </div>
+      </div>`;
+  }
+
+  // ── ATTACH EVENTS ──────────────────────────────────────────────────────────
+  function attachTableEvents(){
+    // system sort
+    attachSortEvents();
+    // system col-filter
+    bindColFilterHandler(['coa-code','coa-name','coa-type','coa-currency','coa-nature']);
+    // col resize
+    const tbl=document.getElementById('coaListTable')||document.getElementById('coaTreeTable');
+    if(tbl) attachColumnResizing(tbl,'coa');
+    // toggle (tree)
+    if(page._coaClickHandler) page.removeEventListener('click',page._coaClickHandler);
+    page._coaClickHandler=e=>{
+      const all=e.target.closest('[data-coa-toggle-all]');
+      if(all){
+        const {children:ch}=buildCoaTree(STATE.accounts);
+        const headers=Object.keys(ch).filter(c=>c!=='__root__');
+        const isAllExp=headers.length>0 && headers.every(c=>uic.expanded[c]!==false);
+        headers.forEach(c=>{ uic.expanded[c]=!isAllExp; });
+        refreshTable();return;
+      }
+      const tgt=e.target.closest('[data-coa-toggle]');
+      if(tgt){const c=tgt.dataset.coaToggle;uic.expanded[c]=!(uic.expanded[c]!==false);refreshTable();return;}
+      const ed=e.target.closest('[data-coa-edit]');
+      if(ed){openAccountModal(STATE.accountsByCode[ed.dataset.coaEdit]);return;}
+      const dup=e.target.closest('[data-coa-dup]');
+      if(dup){duplicateAccount(STATE.accountsByCode[dup.dataset.coaDup]);return;}
+      const dl=e.target.closest('[data-coa-del]');
+      if(dl){deleteAccount(dl.dataset.coaDel);return;}
+    };
+    page.addEventListener('click',page._coaClickHandler);
+  }
+
+  function attachPageEvents(){
+    const searchEl=document.getElementById('coaSearchInput');
+    if(searchEl){
+      let st; searchEl.addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>{uic.search=e.target.value;refreshTable();},180);});
+    }
+    const cf=document.getElementById('coaFilterCur');
+    if(cf) cf.addEventListener('change',e=>{uic.filterCur=e.target.value;refreshTable();});
+    const tf=document.getElementById('coaFilterType');
+    if(tf) tf.addEventListener('change',e=>{uic.filterType=e.target.value;refreshTable();});
+    const vl=document.getElementById('coaViewList');
+    const vt=document.getElementById('coaViewTree');
+    if(vl) vl.addEventListener('click',()=>{uic.view='list';refresh();});
+    if(vt) vt.addEventListener('click',()=>{uic.view='tree';refresh();});
+    const ea=document.getElementById('coaExpandAll');
+    const ca=document.getElementById('coaCollapseAll');
+    if(ea) ea.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=true;});refreshTable();});
+    if(ca) ca.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=false;});refreshTable();});
+    const nb=document.getElementById('coaNewBtn');
+    if(nb) nb.addEventListener('click',()=>openAccountModal(null));
+    const ib=document.getElementById('coaImportBtn');
+    if(ib) ib.addEventListener('click',openImportModal);
+    const tb=document.getElementById('coaTplBtn');
+    if(tb) tb.addEventListener('click',downloadTemplate);
+    const eb=document.getElementById('coaExportBtn');
+    if(eb) eb.addEventListener('click',exportToExcel);
+    attachTableEvents();
+  }
+
+  // ── FIRST RENDER ───────────────────────────────────────────────────────────
+  const page=root;
+  root.innerHTML=`<div id="coaPage">${buildPage()}</div>`;
+  attachPageEvents();
+  if(uic.modal) showModal();
+}
+
+
+   /* =========================================================================
    Import / Setup view
    ========================================================================= */
 
@@ -9008,7 +9803,15 @@ function renderFxRevaluationView(root){
   if(!STATE.journal.length){ root.innerHTML = emptyState(t('noDataYet'),t('startImporting'),'import'); return; }
   const f = STATE.ui.filters;
   const asOf = f.end || todayISO();
-  const currencies = uniq(STATE.accounts.map(a=>a.currency).filter(c=>c && c!=='EGP'));
+  // Only show currencies that belong to revaluable account types (balance-sheet
+  // monetary accounts). Excludes income/expense accounts that happen to have a
+  // currency set — those are never revalued under IAS 21.
+  const currencies = uniq(
+    STATE.accounts
+      .filter(a => FX_REVALUABLE_TYPES.has(a.type))
+      .map(a => a.currency)
+      .filter(c => c && c !== 'EGP')
+  );
 
   if(!currencies.length){
     root.innerHTML = `<div class="card"><div class="empty">${t('noForeignAccounts')}</div></div>`;
