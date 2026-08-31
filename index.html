@@ -151,14 +151,17 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .brand svg{ width:30px; height:30px; flex:0 0 30px; }
 .brand-text .t1{ font-family:'Cairo'; font-weight:800; font-size:19px; color:var(--gold-light); letter-spacing:.5px; }
 .brand-text .t2{ font-size:11px; color:var(--ink-faint); margin-top:1px; }
-
-.company-field{ padding:10px 16px; border-bottom:1px solid rgba(217,180,92,.12); display:flex; flex-direction:column; gap:8px; }
-.company-field input{
-  width:100%; background:transparent; border:none; border-bottom:1px dashed rgba(217,180,92,.35);
-  color:var(--paper-2); font-size:12.5px; padding:4px 2px; outline:none;
+/* Company name shown under the app logo/tagline — display-only, language-aware
+   (see companyDisplayName()); editing happens only in Setup & Import. */
+.brand-company-name{
+  padding:9px 18px 12px; border-bottom:1px solid rgba(217,180,92,.18);
+  font-size:12.5px; font-weight:700; color:var(--paper-2); text-align:center;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.company-field input::placeholder{ color:var(--ink-faint); }
-.company-field input:focus{ border-bottom-color:var(--gold-light); }
+
+/* Company name/address are managed exclusively from Setup & Import — see
+   companyDisplayName()/companyDisplayAddress() — so there is no editable
+   .company-field in the sidebar anymore; the topbar subtitle shows it. */
 
 .nav{ padding:12px 9px; display:flex; flex-direction:column; gap:3px; }
 .nav-item{
@@ -1317,7 +1320,9 @@ const I18N = {
     companyNameEnPlaceholder:'Company name in English...',
     companyNameLabel:'اسم الشركة (عربي)', companyNameEnLabel:'اسم الشركة (إنجليزي)',
     companyNameFieldHint:'الاسم العربي يظهر في النسخة العربية من النظام، والاسم الإنجليزي يظهر في النسخة الإنجليزية.',
-    enterCompanyNameHint:'أدخل اسم شركتك من القائمة الجانبية',
+    companyAddressLabel:'عنوان الشركة (عربي)', companyAddressEnLabel:'عنوان الشركة (إنجليزي)',
+    companyAddressFieldHint:'العنوان العربي يظهر في النسخة العربية من النظام، والعنوان الإنجليزي يظهر في النسخة الإنجليزية.',
+    enterCompanyNameHint:'أدخل اسم شركتك من صفحة الإعداد والاستيراد',
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
     exportExcel:'تصدير Excel', printPdf:'طباعة / PDF',
@@ -1760,7 +1765,9 @@ const I18N = {
     companyNameEnPlaceholder:'Company name in English...',
     companyNameLabel:'Company Name (Arabic)', companyNameEnLabel:'Company Name (English)',
     companyNameFieldHint:'The Arabic name shows in the Arabic version of the system, and the English name shows in the English version.',
-    enterCompanyNameHint:'Enter your company name from the sidebar',
+    companyAddressLabel:'Company Address (Arabic)', companyAddressEnLabel:'Company Address (English)',
+    companyAddressFieldHint:'The Arabic address shows in the Arabic version of the system, and the English address shows in the English version.',
+    enterCompanyNameHint:'Enter your company name from the Setup & Import page',
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
     exportExcel:'Export Excel', printPdf:'Print / PDF',
@@ -3741,7 +3748,7 @@ const STATE = {
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
-  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
+  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
   ui: {
     view:'dashboard',
     filters: { start: '', end: '', years: [], months: [] }, // default = ALL periods; user narrows manually
@@ -3786,13 +3793,23 @@ function accName(code){
 function groupDisplayName(g){
   return (STATE.settings.lang === 'en' && g.nameEn) ? g.nameEn : g.name;
 }
-// Company name shown across the sidebar, printed documents, and vouchers:
-// uses the English name in English mode when one has been entered, falling
-// back to the Arabic name (never blank just because no English name was set).
+// Company name shown across the topbar, printed documents, and vouchers.
+// Each language has its own dedicated field (set from Setup & Import) — the
+// name is never auto-translated. If the field for the current language is
+// empty, fall back to the other language's field rather than showing blank.
 function companyDisplayName(){
   const s = STATE.settings;
-  if(STATE.settings.lang === 'en' && s.companyNameEn) return s.companyNameEn;
-  return s.companyName || '';
+  return STATE.settings.lang === 'en'
+    ? (s.companyNameEn || s.companyName || '')
+    : (s.companyName || s.companyNameEn || '');
+}
+// Company address counterpart to companyDisplayName() — same per-language
+// field + cross-language fallback behavior, never auto-translated.
+function companyDisplayAddress(){
+  const s = STATE.settings;
+  return STATE.settings.lang === 'en'
+    ? (s.companyAddressEn || s.companyAddress || '')
+    : (s.companyAddress || s.companyAddressEn || '');
 }
 // Requirement: accounts with zero posted transactions are pure noise in a
 // filter/tree picker — a real chart of accounts is almost always set up with
@@ -6972,7 +6989,7 @@ async function initApp(){
   if(STATE.meta.journalSeqCounter == null) STATE.meta.journalSeqCounter = 0;
 
   let settings = await storeGet('settings');
-  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
   if(!STATE.settings.docSerialCounters) STATE.settings.docSerialCounters = {};
   STATE.ui.sidebarCollapsed = !!STATE.settings.sidebarCollapsed;
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
@@ -7693,17 +7710,14 @@ function renderApp(){
     <a href="#mainContent" class="skip-to-content">${t('skipToContent')}</a>
     <div class="sidebar-backdrop ${STATE.ui.sidebarOpen?'show':''}" id="sidebarBackdrop"></div>
     <div class="sidebar ${STATE.ui.sidebarOpen?'open':''} ${STATE.ui.sidebarCollapsed?'sidebar-collapsed':''}">
-      <div class="brand">
+      <div class="brand" style="${companyDisplayName() ? 'border-bottom:none' : ''}">
         ${ICONS.scale.replace('currentColor','var(--gold-light)')}
         <div class="brand-text">
           <div class="t1">${t('appName')}</div>
           <div class="t2">${t('appTagline')}</div>
         </div>
       </div>
-      <div class="company-field">
-        <input id="companyNameInput" type="text" placeholder="${t('companyNamePlaceholder')}" value="${escapeHtml(STATE.settings.companyName||'')}">
-        <input id="companyNameEnInput" type="text" dir="ltr" placeholder="${t('companyNameEnPlaceholder')}" value="${escapeHtml(STATE.settings.companyNameEn||'')}">
-      </div>
+      ${companyDisplayName() ? `<div class="brand-company-name" title="${escapeHtml(companyDisplayName())}">${escapeHtml(companyDisplayName())}</div>` : ''}
       <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">
         ${(()=>{
           // Build accordion groups from the flat NAV array.
@@ -8000,19 +8014,6 @@ function renderApp(){
     if(DRIVE.pendingTimer){ clearTimeout(DRIVE.pendingTimer); DRIVE.pendingTimer = null; }
     scheduleDriveSyncNow();
   });
-  const cni = document.getElementById('companyNameInput');
-  cni.addEventListener('change', debounce(async (e) => {
-    STATE.settings.companyName = e.target.value;
-    await storeSet('settings', STATE.settings);
-    showToast('تم حفظ اسم الشركة');
-  }, 400));
-  const cnie = document.getElementById('companyNameEnInput');
-  if(cnie) cnie.addEventListener('change', debounce(async (e) => {
-    STATE.settings.companyNameEn = e.target.value;
-    await storeSet('settings', STATE.settings);
-    showToast(STATE.settings.lang==='en' ? 'Company name (English) saved' : 'تم حفظ اسم الشركة بالإنجليزي');
-  }, 400));
-
   const root = document.getElementById('viewRoot');
   // Item 4.1 — page transitions: #viewRoot is a fresh DOM element on every
   // single renderApp() call (the whole shell is rebuilt from one innerHTML
@@ -9546,8 +9547,12 @@ function renderImportView(root){
         <div><label class="lbl">${t('companyNameEnLabel')}</label><input id="cfgCompanyNameEn" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyNameEn||'')}"></div>
       </div>
       <div class="hint" style="margin:0 0 10px">${t('companyNameFieldHint')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+        <div><label class="lbl">${t('companyAddressLabel')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
+        <div><label class="lbl">${t('companyAddressEnLabel')}</label><input id="cfgCompanyAddressEn" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyAddressEn||'')}"></div>
+      </div>
+      <div class="hint" style="margin:0 0 10px">${t('companyAddressFieldHint')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div><label class="lbl">${t('custAddressCol')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
         <div><label class="lbl">${t('custPhoneCol')}</label><input id="cfgCompanyPhone" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyPhone||'')}"></div>
         <div><label class="lbl">${t('custEmailCol')}</label><input id="cfgCompanyEmail" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyEmail||'')}"></div>
         <div><label class="lbl">${t('custTaxIdCol')}</label><input id="cfgCompanyTaxId" class="input" value="${escapeHtml(STATE.settings.companyTaxId||'')}"></div>
@@ -9632,6 +9637,7 @@ function renderImportView(root){
   bindCompanyField('cfgCompanyName', 'companyName');
   bindCompanyField('cfgCompanyNameEn', 'companyNameEn');
   bindCompanyField('cfgCompanyAddress', 'companyAddress');
+  bindCompanyField('cfgCompanyAddressEn', 'companyAddressEn');
   bindCompanyField('cfgCompanyPhone', 'companyPhone');
   bindCompanyField('cfgCompanyEmail', 'companyEmail');
   bindCompanyField('cfgCompanyTaxId', 'companyTaxId');
