@@ -152,11 +152,14 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .brand-text .t1{ font-family:'Cairo'; font-weight:800; font-size:19px; color:var(--gold-light); letter-spacing:.5px; }
 .brand-text .t2{ font-size:11px; color:var(--ink-faint); margin-top:1px; }
 /* Company name shown under the app logo/tagline — display-only, language-aware
-   (see companyDisplayName()); editing happens only in Setup & Import. */
+   (see companyDisplayName()); editing happens only in Setup & Import.
+   Wraps onto 2 lines instead of truncating — text-overflow:ellipsis combined
+   with centered Arabic text clipped mid-letter and looked garbled instead of
+   showing a clean "…", so full wrapping is used instead. */
 .brand-company-name{
-  padding:9px 18px 12px; border-bottom:1px solid rgba(217,180,92,.18);
-  font-size:12.5px; font-weight:700; color:var(--paper-2); text-align:center;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  padding:9px 18px 13px; border-bottom:1px solid rgba(217,180,92,.18);
+  font-size:14.5px; font-weight:800; color:var(--gold-light); text-align:center;
+  line-height:1.45; white-space:normal; word-wrap:break-word; letter-spacing:.2px;
 }
 
 /* Company name/address are managed exclusively from Setup & Import — see
@@ -7828,8 +7831,8 @@ function renderApp(){
           <button id="hamburgerBtn" title="${t('toggleSidebarLabel')}" aria-label="${t('toggleSidebarLabel')}">☰</button>
           <span class="drive-status-lamp ${driveStatusInfo().cls}" id="driveStatusLamp" title="${escapeHtml(t('driveStatusTitle') + ': ' + driveStatusInfo().label)}" role="button" aria-label="${escapeHtml(t('driveStatusTitle'))}"></span>
           <div class="nav-arrows">
-            <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">→</button>
-            <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">←</button>
+            <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">${STATE.settings.lang==='en' ? '←' : '→'}</button>
+            <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">${STATE.settings.lang==='en' ? '→' : '←'}</button>
           </div>
           <div class="topbar-title-block">
             <h1>${navLabel(NAV.find(n=>n.id===STATE.ui.view)||{}) || ''}</h1>
