@@ -37,6 +37,12 @@
   --surface-1: var(--paper);
   --surface-2: var(--paper-2);
   --border: var(--line);
+  /* Actual measured height of .topbar-title-row, kept in sync by a
+     ResizeObserver (see setupTopbarHeightSync()) so sticky table headers
+     (thead th) can sit flush below it instead of both pinning to top:0 and
+     overlapping/hiding each other while scrolling. Default is a safe guess
+     for the first paint before the observer has measured anything. */
+  --topbar-h: 64px;
 }
 
 /* Item 6: Color Palette selector. Every accent element in the app already
@@ -146,7 +152,7 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .brand-text .t1{ font-family:'Cairo'; font-weight:800; font-size:19px; color:var(--gold-light); letter-spacing:.5px; }
 .brand-text .t2{ font-size:11px; color:var(--ink-faint); margin-top:1px; }
 
-.company-field{ padding:10px 16px; border-bottom:1px solid rgba(217,180,92,.12); }
+.company-field{ padding:10px 16px; border-bottom:1px solid rgba(217,180,92,.12); display:flex; flex-direction:column; gap:8px; }
 .company-field input{
   width:100%; background:transparent; border:none; border-bottom:1px dashed rgba(217,180,92,.35);
   color:var(--paper-2); font-size:12.5px; padding:4px 2px; outline:none;
@@ -165,6 +171,17 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .nav-item:hover{ background:rgba(217,180,92,.08); color:var(--paper-2); }
 .nav-item.active{ background:rgba(217,180,92,.14); color:var(--gold-light); border-color:rgba(217,180,92,.3); }
 .nav-item.active::before{ content:''; position:absolute; inset-inline-start:-9px; top:20%; bottom:20%; width:3px; border-radius:3px; background:linear-gradient(180deg, var(--gold-light), var(--gold-dim)); }
+/* Top-level standalone nav items (e.g. Dashboard) sit at the same visual
+   rank as a section/group header, so they use the same larger, bolder,
+   gold "section" typography instead of the smaller leaf-item style —
+   matching every other top-level entry in the sidebar. */
+.nav-item-primary{
+  font-size:13px; font-weight:800; color:var(--gold-light);
+  font-family:'Cairo','Almarai',sans-serif; letter-spacing:.2px;
+  min-height:auto; padding:11px 12px;
+}
+.nav-item-primary svg{ width:16px; height:16px; flex:0 0 16px; opacity:.9; }
+.nav-item-primary.active{ color:var(--gold-light); }
 .nav-section{ font-size:13px; color:var(--gold-light); font-family:'Cairo','Almarai',sans-serif; letter-spacing:.2px; font-weight:800; padding:16px 12px 5px; }
 /* Accordion nav groups */
 .nav-group-header{
@@ -271,7 +288,13 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 }
 .palette-toggle:hover{ background:rgba(217,180,92,.1); border-color:rgba(217,180,92,.6); }
 .palette-panel{
-  position:absolute; top:calc(100% + 6px); left:0; z-index:60; background:var(--paper); border:1px solid var(--line);
+  /* Anchored to the picker's RIGHT edge and growing left, not the other way
+     around: the picker button always sits near the right edge of the
+     topbar's control cluster (in both languages), so a panel that instead
+     anchored to the button's *left* edge and grew rightward (the old
+     `left:0`) would run past the edge of the viewport — exactly what the
+     English-mode screenshot showed. */
+  position:absolute; top:calc(100% + 6px); right:0; left:auto; z-index:60; background:var(--paper); border:1px solid var(--line);
   border-radius:10px; box-shadow:var(--shadow); padding:10px; display:flex; flex-wrap:wrap; gap:8px; width:250px; max-width:80vw;
 }
 .palette-swatch{
@@ -388,9 +411,22 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 table{ width:100%; border-collapse:collapse; font-size:12.5px; }
 thead th{
   text-align:right; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
-  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky; top:0;
+  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky;
+  /* Sticks just below .topbar-title-row (also position:sticky, top:0)
+     instead of both pinning to top:0 and overlapping/hiding one another —
+     see --topbar-h and setupTopbarHeightSync(). */
+  top:var(--topbar-h, 64px); z-index:20;
   border-bottom:2px solid var(--gold);
 }
+/* Tables that scroll INSIDE their own bounded box (a .table-wrap with an
+   inline max-height, e.g. most data grids and the Chart of Accounts tree)
+   are a nested scroll container, not the page itself — their sticky header
+   must stick to the TOP OF THAT BOX (top:0), not offset by the topbar's
+   height, or the header ends up pinned 60-some px into the box and
+   overlapping the first row(s) instead of sitting flush above them. Only
+   tables with no such wrapper (rare — they scroll with the page) use the
+   topbar-relative offset above. */
+.table-wrap[style*="max-height"] thead th{ top:0; }
 /* Column drag-to-reorder (desktop only — see attachColumnReordering) */
 thead th.col-draggable{ cursor:grab; }
 thead th.col-dragging{ opacity:.4; cursor:grabbing; }
@@ -561,6 +597,7 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .th-filter-icon:hover{ opacity:1; background:rgba(255,255,255,.12); }
 .th-filter-icon.active{ opacity:1; color:var(--ink); background:var(--gold); border-color:var(--gold); }
 .th-header-row{ display:inline-flex; align-items:center; gap:5px; }
+th.th-center .th-header-row{ justify-content:center; width:100%; }
 .th-sort-label{ cursor:pointer; user-select:none; }
 .th-sort-label:hover{ color:#fff; }
 th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn't inherit a num-cell header's left text-align */
@@ -904,37 +941,44 @@ html[dir="rtl"] .rd-legend-name{direction:rtl;text-align:right;unicode-bidi:isol
 
 /* Chart of Accounts — right-side (in RTL) hierarchy navigator panel that
    sits beside the account table (see buildTreeView()). The table stays a
-   normal, full-column table of postable ("leaf") accounts; the panel is a
-   compact, independently-scrolling index of the header/group accounts
-   (built dynamically from buildCoaTree()'s real code-prefix parent/child
-   relationships — never hardcoded), with an "All" master toggle at top. */
+   normal, full-column table of every account; the panel is a compact,
+   independently-scrolling index of the account GROUPS — built from
+   STATE.groups, the app's own explicit "Account Group" model (start/end
+   code-prefix ranges with real names — see buildAccountTree()), with an
+   "All" master toggle at top. Accounts never appear in the panel; groups
+   never appear in the table — the two are always kept in sync from the
+   same underlying data, never duplicated. */
 .coa-tree-flex{ display:flex; gap:12px; align-items:flex-start; }
 .coa-tree-flex .table-wrap{ flex:1 1 auto; min-width:0; }
 .coa-hier-panel{
-  flex:0 0 152px; width:152px; box-sizing:border-box;
+  flex:0 0 195px; width:195px; box-sizing:border-box;
   max-height:calc(100vh - 210px); overflow-y:auto; overflow-x:hidden;
   position:sticky; top:0;
   background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
-  padding:8px 7px; font-family:'Courier New',monospace; font-size:11.5px; line-height:1.5;
+  padding:8px 7px; font-family:'Cairo',sans-serif; font-size:12px; line-height:1.5;
 }
 .coa-hier-all{
   display:flex; align-items:center; gap:5px; cursor:pointer; user-select:none;
   font-weight:800; color:var(--gold-dim); font-family:'Cairo',sans-serif; font-size:12px;
   padding-bottom:7px; margin-bottom:6px; border-bottom:1px solid var(--border);
 }
-.coa-hier-row{ display:flex; align-items:center; gap:4px; padding:2px 0; white-space:nowrap; }
+.coa-hier-row{ display:flex; align-items:flex-start; gap:4px; padding:3px 0; }
 .coa-hier-toggle{
   min-width:16px; height:16px; padding:0; font-size:10px; line-height:14px; text-align:center;
   background:transparent; border:1px solid var(--border); border-radius:3px;
-  color:var(--ink-soft); cursor:pointer; flex:0 0 auto;
+  color:var(--ink-soft); cursor:pointer; flex:0 0 auto; margin-top:1px;
 }
 .coa-hier-toggle:hover{ color:var(--gold-dim); border-color:var(--gold-dim); }
-.coa-hier-code{ cursor:pointer; color:var(--ink); font-weight:700; }
-.coa-hier-code:hover{ color:var(--gold-dim); text-decoration:underline; }
+.coa-hier-code{ cursor:pointer; color:var(--ink); font-weight:700; font-family:monospace; font-size:11px; }
+.coa-hier-code:hover{ color:var(--gold-dim); }
+.coa-hier-code:hover .coa-hier-name{ text-decoration:underline; }
 .coa-hier-code.coa-hier-active{ color:var(--gold-dim); }
 .coa-hier-code mark{ padding:0; }
+.coa-hier-name{ color:var(--ink); font-weight:600; font-family:'Cairo',sans-serif; font-size:11.5px; }
 .coa-hier-children{ margin-inline-start:7px; padding-inline-start:6px; border-inline-start:1px dashed var(--line); }
-.coa-hier-empty{ color:var(--ink-faint); font-size:11px; padding:6px 2px; font-family:'Cairo',sans-serif; }
+.coa-hier-empty{ color:var(--ink-faint); font-size:11px; padding:6px 2px; line-height:1.6; font-family:'Cairo',sans-serif; }
+.coa-code-drill{ cursor:pointer; }
+.coa-code-drill:hover{ color:var(--gold-dim) !important; text-decoration:underline; }
 @media (max-width:900px){
   .coa-tree-flex{ flex-direction:column; }
   .coa-hier-panel{ position:static; width:100%; flex:1 1 auto; max-height:220px; }
@@ -1270,6 +1314,9 @@ const I18N = {
     date:'التاريخ', entry:'رقم القيد', account:'الحساب', partner:'الشريك', description:'البيان',
     debit:'مدين', credit:'دائن', balance:'الرصيد', runningBalance:'الرصيد التراكمي', total:'الإجمالي',
     currency:'العملة', resetSystem:'إعادة تعيين النظام بالكامل', companyNamePlaceholder:'اسم الشركة...',
+    companyNameEnPlaceholder:'Company name in English...',
+    companyNameLabel:'اسم الشركة (عربي)', companyNameEnLabel:'اسم الشركة (إنجليزي)',
+    companyNameFieldHint:'الاسم العربي يظهر في النسخة العربية من النظام، والاسم الإنجليزي يظهر في النسخة الإنجليزية.',
     enterCompanyNameHint:'أدخل اسم شركتك من القائمة الجانبية',
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
@@ -1710,6 +1757,9 @@ const I18N = {
     date:'Date', entry:'Entry No.', account:'Account', partner:'Partner', description:'Description',
     debit:'Debit', credit:'Credit', balance:'Balance', runningBalance:'Running Balance', total:'Total',
     currency:'Currency', resetSystem:'Full System Reset', companyNamePlaceholder:'Company name...',
+    companyNameEnPlaceholder:'Company name in English...',
+    companyNameLabel:'Company Name (Arabic)', companyNameEnLabel:'Company Name (English)',
+    companyNameFieldHint:'The Arabic name shows in the Arabic version of the system, and the English name shows in the English version.',
     enterCompanyNameHint:'Enter your company name from the sidebar',
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
@@ -2307,6 +2357,15 @@ function attachTableExportButtons(){
   if(!root) return;
   const usedNames = {};
   root.querySelectorAll('.table-wrap').forEach((wrap, tableIdx) => {
+    // Chart of Accounts' tree table lives inside a 2-column flex row
+    // (.coa-tree-flex: hierarchy panel + table-wrap) that this generic
+    // per-table toolbar isn't aware of — inserting a 3rd toolbar element
+    // between them broke that layout (a stray ~180px column wedged between
+    // the panel and the table instead of a proper row above either one).
+    // The Chart of Accounts page wires its own matching Export + Columns
+    // toolbar directly above the whole tree (see buildPage() / coaColsSlot),
+    // so it opts out here instead of getting a second, misplaced one.
+    if(wrap.dataset.noAutoToolbar) return;
     const tableEl = wrap.querySelector('table');
     if(!tableEl || !tableEl.rows.length) return; // nothing to export
     const card = wrap.closest('.card');
@@ -3682,7 +3741,7 @@ const STATE = {
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
-  settings: { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
+  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
   ui: {
     view:'dashboard',
     filters: { start: '', end: '', years: [], months: [] }, // default = ALL periods; user narrows manually
@@ -3726,6 +3785,14 @@ function accName(code){
 }
 function groupDisplayName(g){
   return (STATE.settings.lang === 'en' && g.nameEn) ? g.nameEn : g.name;
+}
+// Company name shown across the sidebar, printed documents, and vouchers:
+// uses the English name in English mode when one has been entered, falling
+// back to the Arabic name (never blank just because no English name was set).
+function companyDisplayName(){
+  const s = STATE.settings;
+  if(STATE.settings.lang === 'en' && s.companyNameEn) return s.companyNameEn;
+  return s.companyName || '';
 }
 // Requirement: accounts with zero posted transactions are pure noise in a
 // filter/tree picker — a real chart of accounts is almost always set up with
@@ -6905,7 +6972,7 @@ async function initApp(){
   if(STATE.meta.journalSeqCounter == null) STATE.meta.journalSeqCounter = 0;
 
   let settings = await storeGet('settings');
-  STATE.settings = settings || { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
   if(!STATE.settings.docSerialCounters) STATE.settings.docSerialCounters = {};
   STATE.ui.sidebarCollapsed = !!STATE.settings.sidebarCollapsed;
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
@@ -7635,6 +7702,7 @@ function renderApp(){
       </div>
       <div class="company-field">
         <input id="companyNameInput" type="text" placeholder="${t('companyNamePlaceholder')}" value="${escapeHtml(STATE.settings.companyName||'')}">
+        <input id="companyNameEnInput" type="text" dir="ltr" placeholder="${t('companyNameEnPlaceholder')}" value="${escapeHtml(STATE.settings.companyNameEn||'')}">
       </div>
       <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">
         ${(()=>{
@@ -7679,8 +7747,12 @@ function renderApp(){
             <div class="nav-item ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}" style="padding:8px 12px 8px 20px">
               ${ICONS[n.icon]} <span>${navLabel(n)}</span>
             </div>`;
+          const navItemHtmlPrimary = n => `
+            <div class="nav-item nav-item-primary ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}">
+              ${ICONS[n.icon]} <span>${navLabel(n)}</span>
+            </div>`;
 
-          const standaloneHtml = standaloneItems.map(navItemHtml).join('');
+          const standaloneHtml = standaloneItems.map(navItemHtmlPrimary).join('');
           const groupsHtml = Object.keys(groups).map(key => {
             const g = groups[key];
             const isOpen = !!STATE.ui.navGroupsOpen[key];
@@ -7747,7 +7819,7 @@ function renderApp(){
           </div>
           <div class="topbar-title-block">
             <h1>${navLabel(NAV.find(n=>n.id===STATE.ui.view)||{}) || ''}</h1>
-            <div class="sub">${escapeHtml(STATE.settings.companyName || t('enterCompanyNameHint'))}</div>
+            <div class="sub">${escapeHtml(companyDisplayName() || t('enterCompanyNameHint'))}</div>
           </div>
           <div class="mobile-quick-controls" id="mobileQuickControls"></div>
         </div>
@@ -7933,6 +8005,12 @@ function renderApp(){
     STATE.settings.companyName = e.target.value;
     await storeSet('settings', STATE.settings);
     showToast('تم حفظ اسم الشركة');
+  }, 400));
+  const cnie = document.getElementById('companyNameEnInput');
+  if(cnie) cnie.addEventListener('change', debounce(async (e) => {
+    STATE.settings.companyNameEn = e.target.value;
+    await storeSet('settings', STATE.settings);
+    showToast(STATE.settings.lang==='en' ? 'Company name (English) saved' : 'تم حفظ اسم الشركة بالإنجليزي');
   }, 400));
 
   const root = document.getElementById('viewRoot');
@@ -8131,6 +8209,38 @@ function renderApp(){
   }
   // Build analytics dashboard charts after full DOM render (ratios view only)
   if(STATE.ui.view === 'ratios') buildRatiosDashCharts();
+  // Keep --topbar-h in sync with the (freshly re-created) topbar element so
+  // every table's sticky thead sticks just below it instead of overlapping —
+  // see setupTopbarHeightSync() and thead th's `top:var(--topbar-h)` rule.
+  setupTopbarHeightSync();
+}
+
+// Measures .topbar-title-row's real rendered height (which varies with
+// content length / wrapping / language / screen width) and publishes it as
+// the --topbar-h CSS custom property that every sticky table header (thead
+// th) uses for its `top` offset. Without this, a sticky thead pinned to a
+// hardcoded top:0 would scroll up underneath the also-sticky topbar and
+// disappear from view — which was the actual bug behind "column headers
+// vanish when I scroll down". Re-attaches on every renderApp() call since
+// the topbar element is destroyed and recreated each time (innerHTML
+// re-render), and also tracks live size changes (e.g. text wrapping to a
+// second line) via ResizeObserver.
+let __topbarHeightObserver = null;
+function setupTopbarHeightSync(){
+  const bar = document.querySelector('.topbar-title-row');
+  if(!bar) return;
+  const apply = () => {
+    const h = bar.getBoundingClientRect().height;
+    if(h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+  };
+  apply();
+  if(__topbarHeightObserver) __topbarHeightObserver.disconnect();
+  if(typeof ResizeObserver !== 'undefined'){
+    __topbarHeightObserver = new ResizeObserver(apply);
+    __topbarHeightObserver.observe(bar);
+  } else {
+    window.addEventListener('resize', apply);
+  }
 }
 
 function buildRatiosDashCharts(){
@@ -8762,10 +8872,7 @@ function renderChartOfAccountsView(root){
   // ── state ──────────────────────────────────────────────────────────────────
   const uic = STATE.ui.__coa = STATE.ui.__coa || {};
   if(uic.search    === undefined) uic.search    = '';
-  if(uic.view      === undefined) uic.view      = 'list';
   if(uic.expanded  === undefined) uic.expanded  = {};
-  if(uic.filterCur === undefined) uic.filterCur = '';
-  if(uic.filterType=== undefined) uic.filterType= '';
   // Use system sort state
   const VIEW_KEY = 'coa';
   const sortState = getSortState(VIEW_KEY,'code','asc');
@@ -8829,7 +8936,7 @@ function renderChartOfAccountsView(root){
   function refreshTable(){
     const area = document.getElementById('coaTableArea');
     if(!area) return;
-    area.innerHTML = uic.view==='tree' ? buildTreeView() : buildListView();
+    area.innerHTML = buildTreeView();
     attachTableEvents();
   }
 
@@ -8883,79 +8990,145 @@ function renderChartOfAccountsView(root){
   }
 
   // ── TREE VIEW ──────────────────────────────────────────────────────────────
-  // ── TREE VIEW ──────────────────────────────────────────────────────────────
   // Reproduces the reference layout: the account table stays a normal,
-  // full-column table of postable ("leaf") accounts, in strict Account-Code
-  // order; a narrow hierarchy NAVIGATOR panel sits beside it (right side in
-  // RTL) showing only the header/group accounts — i.e. any account that is
-  // itself the parent of at least one other account, at any depth — built
-  // dynamically from buildCoaTree()'s real code-prefix parent/child
-  // relationships (never hardcoded, never assumes a fixed number of levels).
-  // Collapsing a header in the panel hides its descendant accounts from the
-  // table; nothing is duplicated — the panel and the table both read from
-  // the same STATE.accounts / buildCoaTree() output.
+  // full-column table of every account, in strict Account-Code order; a
+  // narrow hierarchy NAVIGATOR panel sits beside it (right side in RTL)
+  // built from STATE.groups — the app's own explicit, user-imported/edited
+  // "Account Group (account.group)" model (start/end code-prefix ranges with
+  // real Arabic/English names — see Setup & Import → مجموعات الحسابات).
+  // This is the real, explicitly-stored hierarchy (see codeInGroupRange() /
+  // buildAccountTree(), already used elsewhere in the app for reports), so
+  // unlike a naive code-prefix guess it works for any chart of accounts
+  // regardless of whether "header" accounts exist — including flat lists of
+  // purely postable accounts, which is why the previous prefix-guessing
+  // version showed "no groups" here. Collapsing a group in the panel hides
+  // its accounts (and its sub-groups' accounts) from the table; nothing is
+  // duplicated — panel and table both read the same STATE.groups /
+  // STATE.accounts.
   function buildTreeView(){
     const q = (uic.search||'').trim().toLowerCase();
-    const { children, parentOf } = buildCoaTree(STATE.accounts);
 
-    // A "header" account is any code that is itself a parent of at least one
-    // other account (buildCoaTree only creates a `children[code]` bucket
-    // when something maps to it as its nearest existing code-prefix).
-    const headerCodesAll = Object.keys(children).filter(c => c !== '__root__');
-    const isHeader = code => children[code] !== undefined;
+    // ── build the group tree from STATE.groups (explicit prefix ranges) ──
+    const groups = (STATE.groups||[]).slice().sort((a,b)=>a.start.length-b.start.length || a.start.localeCompare(b.start));
+    const gnodes = {};
+    groups.forEach(g => { gnodes[g.start] = { key:g.start, name:groupDisplayName(g), start:g.start, end:g.end, parentKey:null, children:[] }; });
+    const rootKeys = [];
+    groups.forEach(g => {
+      let bestParent = null;
+      groups.forEach(p => {
+        if(p.start.length < g.start.length && g.start.slice(0,p.start.length) >= p.start && g.start.slice(0,p.start.length) <= p.end){
+          if(!bestParent || p.start.length > bestParent.start.length) bestParent = p;
+        }
+      });
+      if(bestParent){ gnodes[bestParent.start].children.push(gnodes[g.start]); gnodes[g.start].parentKey = bestParent.start; }
+      else rootKeys.push(g.start);
+    });
+    Object.values(gnodes).forEach(n => n.children.sort((a,b)=>a.start.localeCompare(b.start,undefined,{numeric:true})));
+    rootKeys.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
 
+    // Map every account to the deepest (most specific) group whose range contains it.
+    const UNCLASSIFIED_KEY = '__unclassified__';
+    const accountGroupKey = {};
+    STATE.accounts.forEach(a => {
+      let best = null;
+      groups.forEach(g => { if(codeInGroupRange(a.code,g)){ if(!best || g.start.length > best.start.length) best = g; } });
+      accountGroupKey[a.code] = best ? best.start : null;
+    });
+    const hasUnclassified = STATE.accounts.some(a => accountGroupKey[a.code]===null);
+    if(hasUnclassified){
+      gnodes[UNCLASSIFIED_KEY] = { key:UNCLASSIFIED_KEY, name:(en?'Unclassified':'غير مصنف'), start:'', end:'', parentKey:null, children:[] };
+      rootKeys.push(UNCLASSIFIED_KEY);
+      STATE.accounts.forEach(a => { if(accountGroupKey[a.code]===null) accountGroupKey[a.code]=UNCLASSIFIED_KEY; });
+    }
+    function ancestorsOf(key){
+      const chain=[]; let k=key;
+      while(k){ chain.push(k); k = gnodes[k] ? gnodes[k].parentKey : null; }
+      return chain;
+    }
+    const allGroupKeys = Object.keys(gnodes);
+
+    // ── matching / filtering (applies to accounts; groups are pure navigation) ──
     const matchesQ = a => !q ||
       a.code.toLowerCase().includes(q) ||
       (a.name||'').toLowerCase().includes(q) ||
       (a.nameEn||'').toLowerCase().includes(q);
     const cf = (STATE.ui.colFilters)||{};
+    // Type/Nature filter values are checkbox lists built from the CURRENT
+    // language's translated display labels (filterableTh has no separate
+    // raw-value/display-label concept — see getColFilterValues()), so a
+    // selection saved while in Arabic literally stores Arabic strings and a
+    // selection saved in English stores English strings. Without accounting
+    // for that, switching the language after using either filter makes every
+    // row fail the check (stored label no longer matches the newly-
+    // translated one) and the whole table — and with it every group in the
+    // panel, since groups are only shown when they contain a visible
+    // account — silently goes empty. Matching against BOTH languages' label
+    // for these two columns keeps a saved filter working across a language
+    // switch instead of only in the language it was set in.
+    const typeBoth = a => [a.type, ACCOUNT_TYPE_TRANSLATIONS[a.type] || a.type];
+    const NATURE_BOTH = { debit:['مدين','Debit'], credit:['دائن','Credit'] };
+    const natureBoth = a => { const c=CLASS_MAP[a.type]; return c ? (NATURE_BOTH[c.normal]||[]) : []; };
     const matchesFilters = a => {
-      if(uic.filterCur && (a.currency||'EGP')!==uic.filterCur) return false;
-      if(uic.filterType && a.type!==uic.filterType) return false;
       if(cf['coa-code']?.length     && !cf['coa-code'].includes(a.code)) return false;
       if(cf['coa-name']?.length     && !cf['coa-name'].includes(a.name||'')) return false;
-      if(cf['coa-type']?.length     && !cf['coa-type'].includes(accountTypeDisplay(a.type)||'')) return false;
+      if(cf['coa-nameEn']?.length   && !cf['coa-nameEn'].includes(a.nameEn||'')) return false;
+      if(cf['coa-type']?.length     && !typeBoth(a).some(v=>cf['coa-type'].includes(v))) return false;
       if(cf['coa-currency']?.length && !cf['coa-currency'].includes(a.currency||'EGP')) return false;
-      if(cf['coa-nature']?.length   && !cf['coa-nature'].includes(natureLbl(a.type))) return false;
+      if(cf['coa-nature']?.length   && !natureBoth(a).some(v=>cf['coa-nature'].includes(v))) return false;
       return true;
     };
-    const activeCf = ['coa-code','coa-name','coa-type','coa-currency','coa-nature'].some(k=>cf[k]&&cf[k].length);
-    const hasActiveFilter = !!q || !!uic.filterCur || !!uic.filterType || activeCf;
+    const activeCf = ['coa-code','coa-name','coa-nameEn','coa-type','coa-currency','coa-nature'].some(k=>cf[k]&&cf[k].length);
+    const hasActiveFilter = !!q || activeCf;
 
-    // Table rows = leaf (postable) accounts only. Header/group accounts are
-    // navigated exclusively through the side panel (they're still editable
-    // there — see the code click handler below — nothing about them is lost).
-    const leaves = STATE.accounts.filter(a => !isHeader(a.code));
-    const eligibleLeaves = hasActiveFilter ? leaves.filter(a => matchesQ(a) && matchesFilters(a)) : leaves;
-    const eligibleSet = new Set(eligibleLeaves.map(a=>a.code));
+    const eligibleAccounts = hasActiveFilter ? STATE.accounts.filter(a => matchesQ(a) && matchesFilters(a)) : STATE.accounts;
+    const eligibleSet = new Set(eligibleAccounts.map(a=>a.code));
 
-    // When searching/filtering, force-reveal every ancestor header of every
-    // matching leaf so the match stays reachable with its parent context —
+    // When searching/filtering, force-reveal every ancestor group of every
+    // matching account so the match stays reachable with its parent context —
     // without permanently altering the user's own collapse choices.
     const forceSet = new Set();
     if(hasActiveFilter){
-      eligibleLeaves.forEach(a => getAncestors(a.code, parentOf).forEach(c => forceSet.add(c)));
+      eligibleAccounts.forEach(a => ancestorsOf(accountGroupKey[a.code]).forEach(k => forceSet.add(k)));
     }
-    const requiredHeaders = hasActiveFilter ? forceSet : null; // null = show the full header tree
+    const requiredGroups = hasActiveFilter ? forceSet : null; // null = show the full group tree
 
-    function isExpanded(code){
-      if(hasActiveFilter && forceSet.has(code)) return true;
-      return uic.expanded[code] !== false;
+    function isExpanded(key){
+      if(hasActiveFilter && forceSet.has(key)) return true;
+      return uic.expanded[key] !== false;
     }
-    function leafVisible(a){
+    function accountVisible(a){
       if(hasActiveFilter && !eligibleSet.has(a.code)) return false;
-      return getAncestors(a.code, parentOf).every(h => isExpanded(h));
+      return ancestorsOf(accountGroupKey[a.code]).every(k => isExpanded(k));
     }
 
-    const visibleLeaves = leaves.filter(leafVisible).sort(codeSort);
+    const visibleAccounts = STATE.accounts.filter(accountVisible);
+    // Excel-style sort: apply the active column/direction (from the header's
+    // sort click) to the currently-visible set. This only reorders rows
+    // within the table — it never changes which accounts are visible, so it
+    // can't disturb the hierarchy panel's grouping.
+    {
+      const { col, dir: sd } = sortState;
+      visibleAccounts.sort((a, b) => {
+        let va, vb;
+        if(col==='code')        { va=a.code;                         vb=b.code; }
+        else if(col==='name')   { va=a.name||'';                     vb=b.name||''; }
+        else if(col==='nameEn') { va=a.nameEn||'';                    vb=b.nameEn||''; }
+        else if(col==='type')   { va=accountTypeDisplay(a.type)||''; vb=accountTypeDisplay(b.type)||''; }
+        else if(col==='currency'){va=a.currency||'EGP';               vb=b.currency||'EGP'; }
+        else if(col==='nature') { va=natureLbl(a.type);               vb=natureLbl(b.type); }
+        else                    { va=a.code;                         vb=b.code; }
+        const cmp = col==='code' ? va.localeCompare(vb,undefined,{numeric:true}) : va.localeCompare(vb);
+        return sd==='asc' ? cmp : -cmp;
+      });
+    }
 
-    // ── account table (leaf rows, strict code order) ──
-    const rowsHtml = visibleLeaves.length ? visibleLeaves.map(a=>{
+    // ── account table (every account, strict code order) ──
+    const rowsHtml = visibleAccounts.length ? visibleAccounts.map(a=>{
       const cur = a.currency||'EGP';
       const isMatch = hasActiveFilter && q && matchesQ(a);
       const rowBg = isMatch?'background:rgba(184,144,46,.1);':'';
       return `<tr style="${rowBg}">
-        <td><code style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
+        <td><code class="coa-code-drill" data-coa-drill="${escapeHtml(a.code)}" title="${en?'Open journal entries for this account':'فتح كل القيود المربوطة بهذا الحساب'}" style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
         <td style="color:var(--ink);font-family:'Cairo',sans-serif">${hl(a.name||'',q)}</td>
         <td dir="ltr" style="color:var(--ink-soft);font-size:12px">${hl(a.nameEn||'—',q)}</td>
         <td style="text-align:center"><span class="pill pill-gold" style="font-size:10px;white-space:nowrap">${escapeHtml(accountTypeDisplay(a.type)||'')}</span></td>
@@ -8965,47 +9138,50 @@ function renderChartOfAccountsView(root){
       </tr>`;
     }).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--ink-soft);padding:40px">${L.noAccounts}</td></tr>`;
 
+    const namesEn = uniq(STATE.accounts.map(a=>a.nameEn||'').filter(Boolean));
+    const namesAr = uniq(STATE.accounts.map(a=>a.name||'').filter(Boolean));
+    const typeVals = uniq(STATE.accounts.map(a=>accountTypeDisplay(a.type)||'').filter(Boolean));
+    const currencyVals = uniq(STATE.accounts.map(a=>a.currency||'EGP'));
+    const natureVals = [L.debit, L.credit];
+    const codeVals = uniq(STATE.accounts.map(a=>a.code));
     const tableHtml = `
-      <div class="table-wrap" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
+      <div class="table-wrap" data-no-auto-toolbar="1" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
         <table id="coaTreeTable" style="width:100%;min-width:640px" dir="${dir}">
           <thead><tr>
-            <th data-col-key="code">${L.colCode}</th>
-            <th data-col-key="name">${L.colNameAr}</th>
-            <th data-col-key="nameEn" dir="ltr">${L.colNameEn}</th>
-            <th data-col-key="type"  style="text-align:center">${L.colType}</th>
-            <th data-col-key="currency" style="text-align:center">${L.colCurrency}</th>
-            <th data-col-key="nature" style="text-align:center">${L.colNature}</th>
+            ${filterableTh(VIEW_KEY,'code',    L.colCode,    'coa-code',     codeVals)}
+            ${filterableTh(VIEW_KEY,'name',    L.colNameAr,  'coa-name',     namesAr)}
+            ${filterableTh(VIEW_KEY,'nameEn',L.colNameEn,'coa-nameEn',namesEn,{displayLabel:L.colNameEn})}
+            ${filterableTh(VIEW_KEY,'type',    L.colType,    'coa-type',     typeVals,     {extraClass:'th-center'})}
+            ${filterableTh(VIEW_KEY,'currency',L.colCurrency,'coa-currency', currencyVals, {extraClass:'th-center'})}
+            ${filterableTh(VIEW_KEY,'nature',  L.colNature,  'coa-nature',   natureVals,   {extraClass:'th-center'})}
             <th data-col-key="actions" style="text-align:center">${L.colActions}</th>
           </tr></thead>
           <tbody>${rowsHtml}</tbody>
         </table>
       </div>`;
 
-    // ── hierarchy navigator panel (header/group accounts only) ──
-    function headerKids(code){
-      return (children[code]||[]).filter(a => isHeader(a.code)).sort(codeSort);
-    }
-    function panelNode(a, level){
-      const code = a.code;
-      if(requiredHeaders && !requiredHeaders.has(code)) return '';
-      const exp = isExpanded(code);
-      const active = hasActiveFilter && forceSet.has(code);
-      const kids = headerKids(code);
+    // ── hierarchy navigator panel (groups only — accounts never appear here) ──
+    function panelNode(node, level){
+      const key = node.key;
+      if(requiredGroups && !requiredGroups.has(key)) return '';
+      const exp = isExpanded(key);
+      const active = hasActiveFilter && forceSet.has(key);
       const pad = level*13;
       const row = `<div class="coa-hier-row" style="padding-${dir==='rtl'?'right':'left'}:${pad}px">
-          <button type="button" class="coa-hier-toggle" data-coa-toggle="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${exp?'▾':'▸'}</button>
-          <span class="coa-hier-code${active?' coa-hier-active':''}" data-coa-edit="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${hl(code,q)}</span>
+          <button type="button" class="coa-hier-toggle" data-coa-toggle="${escapeHtml(key)}" title="${escapeHtml(node.name||'')}">${exp?'▾':'▸'}</button>
+          <span class="coa-hier-code${active?' coa-hier-active':''}" data-coa-toggle="${escapeHtml(key)}" title="${escapeHtml(node.name||'')}">${node.start?`${hl(node.start,q)} <span class="coa-hier-name">${hl(node.name,q)}</span>`:hl(node.name,q)}</span>
         </div>`;
       let childHtml = '';
-      if(exp && kids.length){
-        childHtml = `<div class="coa-hier-children">${kids.map(k=>panelNode(k,level+1)).join('')}</div>`;
+      if(exp && node.children.length){
+        childHtml = `<div class="coa-hier-children">${node.children.map(k=>panelNode(k,level+1)).join('')}</div>`;
       }
       return row+childHtml;
     }
-    const rootHeaders = (children['__root__']||[]).filter(a=>isHeader(a.code)).sort(codeSort);
-    const panelBody = rootHeaders.map(a=>panelNode(a,0)).join('') ||
-      `<div class="coa-hier-empty">${en?'No groups':'لا توجد مجموعات'}</div>`;
-    const allExpanded = headerCodesAll.length>0 && headerCodesAll.every(c=>uic.expanded[c]!==false);
+    const panelBody = rootKeys.map(k=>panelNode(gnodes[k],0)).join('') ||
+      `<div class="coa-hier-empty">${en
+        ? 'No account groups defined yet — import them from Setup & Import.'
+        : 'لا توجد مجموعات حسابات معرّفة بعد — استوردها من الإعداد والاستيراد.'}</div>`;
+    const allExpanded = allGroupKeys.length>0 && allGroupKeys.every(k=>uic.expanded[k]!==false);
     const panelHtml = `
       <div class="coa-hier-panel" dir="${dir}">
         <div class="coa-hier-all" data-coa-toggle-all="1" title="${en?'Expand/collapse all groups':'فتح/طي كل المجموعات'}">
@@ -9015,10 +9191,12 @@ function renderChartOfAccountsView(root){
         <div class="coa-hier-body">${panelBody}</div>
       </div>`;
 
-    // Panel stays on the right in both languages: first DOM child in RTL
-    // (rightmost in normal flow), last DOM child in LTR (also rightmost).
+    // Panel is always the first DOM child, so normal document flow puts it
+    // on the natural "start" side for the current direction — the right in
+    // RTL (Arabic), the left in LTR (English) — mirroring properly instead
+    // of staying pinned to the right in both languages.
     return `<div class="coa-tree-flex" dir="${dir}">
-        ${dir==='rtl' ? panelHtml+tableHtml : tableHtml+panelHtml}
+        ${panelHtml}${tableHtml}
       </div>`;
   }
 
@@ -9250,7 +9428,6 @@ function renderChartOfAccountsView(root){
   // ── PAGE HTML ──────────────────────────────────────────────────────────────
   function buildPage(){
     const total=STATE.accounts.length;
-    const isTree=uic.view==='tree';
     return `
       <div class="card" style="box-sizing:border-box" dir="${dir}">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
@@ -9259,25 +9436,14 @@ function renderChartOfAccountsView(root){
           <div style="flex:1;min-width:4px"></div>
           <input id="coaSearchInput" type="text" class="date-text-input" placeholder="${L.search}"
             value="${escapeHtml(uic.search||'')}" style="width:140px;padding:6px 10px;font-size:12px">
-          <select id="coaFilterCur" class="date-text-input" style="padding:6px 8px;font-size:12px">
-            <option value="">${en?'All Currencies':'كل العملات'}</option>
-            ${SUPPORTED_CURRENCIES.map(c=>`<option value="${c}" ${uic.filterCur===c?'selected':''}>${c}</option>`).join('')}
-          </select>
-          <select id="coaFilterType" class="date-text-input" style="padding:6px 8px;font-size:12px">
-            <option value="">${en?'All Types':'كل الطبائع'}</option>
-            ${allTypes.map(tp=>`<option value="${escapeHtml(tp)}" ${uic.filterType===tp?'selected':''}>${escapeHtml(accountTypeDisplay(tp))}</option>`).join('')}
-          </select>
-          <div style="display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden">
-            <button id="coaViewList" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${!isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.listView}</button>
-            <button id="coaViewTree" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.treeView}</button>
-          </div>
           <button id="coaNewBtn"    class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap">${L.newAccount}</button>
           <button id="coaImportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.importCoa}</button>
           <button id="coaTplBtn"    class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.downloadTpl}</button>
           <button id="coaExportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.exportExcel}</button>
+          <span id="coaColsSlot" style="display:inline-block"></span>
         </div>
         <div id="coaTableArea">
-          ${isTree ? buildTreeView() : buildListView()}
+          ${buildTreeView()}
         </div>
       </div>`;
   }
@@ -9287,23 +9453,35 @@ function renderChartOfAccountsView(root){
     // system sort
     attachSortEvents();
     // system col-filter
-    bindColFilterHandler(['coa-code','coa-name','coa-type','coa-currency','coa-nature']);
+    bindColFilterHandler(['coa-code','coa-name','coa-nameEn','coa-type','coa-currency','coa-nature']);
     // col resize
-    const tbl=document.getElementById('coaListTable')||document.getElementById('coaTreeTable');
+    const tbl=document.getElementById('coaTreeTable');
     if(tbl) attachColumnResizing(tbl,'coa');
-    // toggle (tree)
+    // "الأعمدة" (show/hide columns) — same picker every other table on the
+    // dashboard gets automatically, wired in manually here since the Chart
+    // of Accounts tree table opts out of the generic per-table toolbar (see
+    // attachTableExportButtons()'s data-no-auto-toolbar check) to avoid it
+    // wedging a stray element into the panel+table flex layout.
+    const colsSlot=document.getElementById('coaColsSlot');
+    if(tbl && colsSlot){ colsSlot.innerHTML=''; attachColumnVisibilityToggle(tbl,colsSlot,'coa_tree'); }
+    // toggle (tree) + drill-to-ledger
     if(page._coaClickHandler) page.removeEventListener('click',page._coaClickHandler);
     page._coaClickHandler=e=>{
       const all=e.target.closest('[data-coa-toggle-all]');
       if(all){
-        const {children:ch}=buildCoaTree(STATE.accounts);
-        const headers=Object.keys(ch).filter(c=>c!=='__root__');
-        const isAllExp=headers.length>0 && headers.every(c=>uic.expanded[c]!==false);
-        headers.forEach(c=>{ uic.expanded[c]=!isAllExp; });
+        const groupKeys=(STATE.groups||[]).map(g=>g.start);
+        if(STATE.accounts.some(a=>{
+          const gs=(STATE.groups||[]);
+          return !gs.some(g=>codeInGroupRange(a.code,g));
+        })) groupKeys.push('__unclassified__');
+        const isAllExp=groupKeys.length>0 && groupKeys.every(k=>uic.expanded[k]!==false);
+        groupKeys.forEach(k=>{ uic.expanded[k]=!isAllExp; });
         refreshTable();return;
       }
       const tgt=e.target.closest('[data-coa-toggle]');
-      if(tgt){const c=tgt.dataset.coaToggle;uic.expanded[c]=!(uic.expanded[c]!==false);refreshTable();return;}
+      if(tgt){const k=tgt.dataset.coaToggle;uic.expanded[k]=!(uic.expanded[k]!==false);refreshTable();return;}
+      const drill=e.target.closest('[data-coa-drill]');
+      if(drill){drillToAccount(drill.dataset.coaDrill);return;}
       const ed=e.target.closest('[data-coa-edit]');
       if(ed){openAccountModal(STATE.accountsByCode[ed.dataset.coaEdit]);return;}
       const dup=e.target.closest('[data-coa-dup]');
@@ -9319,18 +9497,6 @@ function renderChartOfAccountsView(root){
     if(searchEl){
       let st; searchEl.addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>{uic.search=e.target.value;refreshTable();},180);});
     }
-    const cf=document.getElementById('coaFilterCur');
-    if(cf) cf.addEventListener('change',e=>{uic.filterCur=e.target.value;refreshTable();});
-    const tf=document.getElementById('coaFilterType');
-    if(tf) tf.addEventListener('change',e=>{uic.filterType=e.target.value;refreshTable();});
-    const vl=document.getElementById('coaViewList');
-    const vt=document.getElementById('coaViewTree');
-    if(vl) vl.addEventListener('click',()=>{uic.view='list';refresh();});
-    if(vt) vt.addEventListener('click',()=>{uic.view='tree';refresh();});
-    const ea=document.getElementById('coaExpandAll');
-    const ca=document.getElementById('coaCollapseAll');
-    if(ea) ea.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=true;});refreshTable();});
-    if(ca) ca.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=false;});refreshTable();});
     const nb=document.getElementById('coaNewBtn');
     if(nb) nb.addEventListener('click',()=>openAccountModal(null));
     const ib=document.getElementById('coaImportBtn');
@@ -9375,6 +9541,11 @@ function renderImportView(root){
     <div class="card">
       <h2>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('companyDocInfoTitle')}</h2>
       <div class="desc">${t('companyDocInfoDesc')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+        <div><label class="lbl">${t('companyNameLabel')}</label><input id="cfgCompanyName" class="input" value="${escapeHtml(STATE.settings.companyName||'')}"></div>
+        <div><label class="lbl">${t('companyNameEnLabel')}</label><input id="cfgCompanyNameEn" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyNameEn||'')}"></div>
+      </div>
+      <div class="hint" style="margin:0 0 10px">${t('companyNameFieldHint')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div><label class="lbl">${t('custAddressCol')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
         <div><label class="lbl">${t('custPhoneCol')}</label><input id="cfgCompanyPhone" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyPhone||'')}"></div>
@@ -9458,6 +9629,8 @@ function renderImportView(root){
       showToast(t('savedToast'));
     }, 400));
   };
+  bindCompanyField('cfgCompanyName', 'companyName');
+  bindCompanyField('cfgCompanyNameEn', 'companyNameEn');
   bindCompanyField('cfgCompanyAddress', 'companyAddress');
   bindCompanyField('cfgCompanyPhone', 'companyPhone');
   bindCompanyField('cfgCompanyEmail', 'companyEmail');
