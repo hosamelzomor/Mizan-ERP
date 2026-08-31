@@ -410,7 +410,7 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .table-wrap{ overflow-x:auto; }
 table{ width:100%; border-collapse:collapse; font-size:12.5px; }
 thead th{
-  text-align:right; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
+  text-align:center; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
   font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky;
   /* Sticks just below .topbar-title-row (also position:sticky, top:0)
      instead of both pinning to top:0 and overlapping/hiding one another —
@@ -9150,7 +9150,7 @@ function renderChartOfAccountsView(root){
           <thead><tr>
             ${filterableTh(VIEW_KEY,'code',    L.colCode,    'coa-code',     codeVals)}
             ${filterableTh(VIEW_KEY,'name',    L.colNameAr,  'coa-name',     namesAr)}
-            ${filterableTh(VIEW_KEY,'nameEn',L.colNameEn,'coa-nameEn',namesEn,{displayLabel:L.colNameEn})}
+            ${filterableTh(VIEW_KEY,'nameEn',L.colNameEn,'coa-nameEn',namesEn)}
             ${filterableTh(VIEW_KEY,'type',    L.colType,    'coa-type',     typeVals,     {extraClass:'th-center'})}
             ${filterableTh(VIEW_KEY,'currency',L.colCurrency,'coa-currency', currencyVals, {extraClass:'th-center'})}
             ${filterableTh(VIEW_KEY,'nature',  L.colNature,  'coa-nature',   natureVals,   {extraClass:'th-center'})}
@@ -12425,9 +12425,49 @@ async function autoAssignVoucherSerials(){
   showToast(tf('vouchersNumberedToast', {n: count}));
 }
 
+// Silent, synchronous twin of autoAssignVoucherSerials() — does the exact
+// same per-account/per-direction sequential numbering, but runs automatically
+// on every render of the Cash Vouchers view (no button, no toast) so the
+// user never has to remember to click "auto-number old vouchers" again: any
+// journal entry that becomes a treasury voucher (typed directly into the
+// General Journal, imported, etc.) gets numbered the moment the page opens,
+// and that numbering is written to voucherExtras/docSerialCounters exactly
+// like the manual flow, so it's permanent from then on.
+// Takes the already-computed voucher list (from getJournalVouchers()) so the
+// caller can just recompute it once more if this returns a non-zero count.
+function autoAssignVoucherSerialsSilent(list){
+  const unnumbered = list.filter(v=>!v.hasExtras);
+  if(!unnumbered.length) return 0;
+  STATE.settings.docSerialCounters = STATE.settings.docSerialCounters || {};
+  const groups = {};
+  unnumbered.forEach(v=>{ (groups[`${v.cashAccount}|${v.type}`] = groups[`${v.cashAccount}|${v.type}`] || []).push(v); });
+  let count = 0;
+  Object.keys(groups).forEach(key => {
+    const [accountCode, type] = key.split('|');
+    const group = groups[key].sort((a,b)=> a.date.localeCompare(b.date) || a.entryNo.localeCompare(b.entryNo));
+    group.forEach(v => {
+      const skey = `voucherSerial-${accountCode}-${type}`;
+      const next = (STATE.settings.docSerialCounters[skey] || 0) + 1;
+      STATE.settings.docSerialCounters[skey] = next;
+      const typeLabel = type==='receipt' ? 'سند قبض' : 'سند صرف';
+      const serial = `${typeLabel} - ${accName(accountCode)} رقم ${String(next).padStart(6,'0')}`;
+      STATE.voucherExtras.push({ entryNo: v.entryNo, serial, description: v.description });
+      count++;
+    });
+  });
+  if(count){
+    storeSet('settings', STATE.settings);
+    storeSet('voucherExtras', STATE.voucherExtras);
+  }
+  return count;
+}
+
 // ── VIEW: Treasury Cash Vouchers (سندات القبض والصرف) ─────────────────────────
 function renderCashVouchersView(root){
-  const allList = getJournalVouchers();
+  let allList = getJournalVouchers();
+  if(autoAssignVoucherSerialsSilent(allList) > 0){
+    allList = getJournalVouchers(); // refresh so the freshly-assigned serials show immediately
+  }
   const viewKey = 'cashvouchers';
   const colf = { serial:'colf_cv_serial', type:'colf_cv_type', date:'colf_cv_date', cashAccount:'colf_cv_cashaccount', partner:'colf_cv_partner', amount:'colf_cv_amount', description:'colf_cv_description', status:'colf_cv_status' };
   const typeLabelOf    = v => v.type==='receipt'?t('voucherTypeReceipt'):t('voucherTypePayment');
