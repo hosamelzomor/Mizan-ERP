@@ -8,7 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<!-- Chart.js was removed: all charts (dashboard KPI sparklines + Financial
+     Analysis charts) are now dependency-free inline SVG (see sparklineSVG()
+     and renderReportsDashboardCharts()), so the app has one less external
+     CDN dependency and no longer breaks if that CDN is unreachable. -->
 <style>
 :root{
   --ink:#101820;
@@ -21,7 +24,7 @@
   --gold:#B8902E;
   --gold-light:#D9B45C;
   --gold-dim:#8A6E27;
-  --emerald:#1F6D5A;
+  --emerald:#3F6D5A;
   --emerald-light:#28866D;
   --brick:#A23B31;
   --brick-light:#C4574B;
@@ -1325,7 +1328,16 @@ const I18N = {
     companyNameFieldHint:'الاسم العربي يظهر في النسخة العربية من النظام، والاسم الإنجليزي يظهر في النسخة الإنجليزية.',
     companyAddressLabel:'عنوان الشركة (عربي)', companyAddressEnLabel:'عنوان الشركة (إنجليزي)',
     companyAddressFieldHint:'العنوان العربي يظهر في النسخة العربية من النظام، والعنوان الإنجليزي يظهر في النسخة الإنجليزية.',
+    docSalesInvoiceTitle:'فاتورة مبيعات', docCashReceiptVoucherTitle:'سند قبض نقدية', docCashPaymentVoucherTitle:'سند صرف نقدية',
+    docBillToLabel:'السادة / ', docPhoneLabel:'هاتف', docTaxIdLabel:'الرقم الضريبي', docEmailLabel:'بريد',
+    docAmountInWordsLabel:'فقط وقدره', docNotesLabel:'ملاحظات', docPrintBtnLabel:'🖨 طباعة',
+    docRecipientSignatureLabel:'توقيع المستلم', docAccountantSignatureLabel:'توقيع المحاسب', docCompanyStampLabel:'ختم الشركة',
+    docReceivedFromLabel:'استلمنا من السيد / السادة:', docPaidToLabel:'صرفنا إلى السيد / السادة:',
+    docForLabel:'وذلك عن', docChargedToAccountLabel:'يُقيد على حساب', docFromAccountLabel:'من حساب', docToAccountLabel:'إلى حساب',
     enterCompanyNameHint:'أدخل اسم شركتك من صفحة الإعداد والاستيراد',
+    saveFailedToast:'⚠ تعذّر حفظ آخر تغيير — تحقق من مساحة التخزين المتاحة في المتصفح وحاول مجدداً.',
+    duplicateEntry:'تكرار القيد كقيد جديد', duplicateEntryNotFound:'تعذر العثور على القيد المطلوب تكراره',
+    currentPeriod:'مُتراكم حتى الآن',
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
     exportExcel:'تصدير Excel', printPdf:'طباعة / PDF',
@@ -1770,7 +1782,16 @@ const I18N = {
     companyNameFieldHint:'The Arabic name shows in the Arabic version of the system, and the English name shows in the English version.',
     companyAddressLabel:'Company Address (Arabic)', companyAddressEnLabel:'Company Address (English)',
     companyAddressFieldHint:'The Arabic address shows in the Arabic version of the system, and the English address shows in the English version.',
+    docSalesInvoiceTitle:'Sales Invoice', docCashReceiptVoucherTitle:'Cash Receipt Voucher', docCashPaymentVoucherTitle:'Cash Payment Voucher',
+    docBillToLabel:'Bill To: ', docPhoneLabel:'Phone', docTaxIdLabel:'Tax ID', docEmailLabel:'Email',
+    docAmountInWordsLabel:'Amount in words', docNotesLabel:'Notes', docPrintBtnLabel:'🖨 Print',
+    docRecipientSignatureLabel:'Recipient Signature', docAccountantSignatureLabel:'Accountant Signature', docCompanyStampLabel:'Company Stamp',
+    docReceivedFromLabel:'Received from Mr./Mrs.:', docPaidToLabel:'Paid to Mr./Mrs.:',
+    docForLabel:'For', docChargedToAccountLabel:'Charged to account', docFromAccountLabel:'from account', docToAccountLabel:'to account',
     enterCompanyNameHint:'Enter your company name from the Setup & Import page',
+    saveFailedToast:'⚠ Could not save your last change — check your browser has free storage space and try again.',
+    duplicateEntry:'Duplicate as a new entry', duplicateEntryNotFound:'Could not find the entry to duplicate',
+    currentPeriod:'Accumulated to date',
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
     exportExcel:'Export Excel', printPdf:'Print / PDF',
@@ -3509,6 +3530,19 @@ function attachMultiSelectEvents(onChange){
    guidance given alongside this change for what that means in practice. */
 const LOCAL_STORAGE_PREFIX = 'mizan_erp_';
 const HAS_ARTIFACT_STORAGE = typeof window !== 'undefined' && !!window.storage;
+// Surfaces storage failures to the user instead of failing silently — see
+// code review: 79 call sites relied on storeSet()'s return value, but none
+// checked it, so a failed save (e.g. localStorage quota exceeded) was
+// invisible. Centralized here so every call site is covered automatically.
+// Throttled so a burst of failures (e.g. during a large import) shows one
+// toast, not dozens.
+let __lastSaveFailToastAt = 0;
+function notifySaveFailed(){
+  const now = Date.now();
+  if(now - __lastSaveFailToastAt < 5000) return;
+  __lastSaveFailToastAt = now;
+  try{ showToast(t('saveFailedToast'), 5000); }catch(e){ /* toast system itself unavailable */ }
+}
 async function storeGet(key){
   if(HAS_ARTIFACT_STORAGE){
     try{ const r = await window.storage.get(key, false); return r ? JSON.parse(r.value) : null; }
@@ -3520,14 +3554,14 @@ async function storeGet(key){
 async function storeSet(key, value){
   if(HAS_ARTIFACT_STORAGE){
     try{ return await window.storage.set(key, JSON.stringify(value), false); }
-    catch(e){ console.error('storage set failed', key, e); return null; }
+    catch(e){ console.error('storage set failed', key, e); notifySaveFailed(); return null; }
   }
   try{
     localStorage.setItem(LOCAL_STORAGE_PREFIX + key, JSON.stringify(value));
     scheduleDriveSync();
     return { key, value };
   }
-  catch(e){ console.error('storage set failed (localStorage may be full)', key, e); return null; }
+  catch(e){ console.error('storage set failed (localStorage may be full)', key, e); notifySaveFailed(); return null; }
 }
 async function storeList(prefix){
   if(HAS_ARTIFACT_STORAGE){
@@ -6235,6 +6269,22 @@ function currencyWordNames(currencyCode){
   };
   return map[currencyCode] || [currencyCode || 'جنيه مصري', ''];
 }
+// English counterpart to currencyWordNames() — used on printed documents
+// when the interface language is English (see amountInWordsLocalized()).
+function currencyWordNamesEn(currencyCode){
+  const map = {
+    EGP: ['Egyptian Pounds', 'Piasters'],
+    USD: ['US Dollars', 'Cents'],
+    EUR: ['Euros', 'Cents'],
+    GBP: ['Pounds Sterling', 'Pence'],
+    SAR: ['Saudi Riyals', 'Halalas'],
+    AED: ['UAE Dirhams', 'Fils'],
+    KWD: ['Kuwaiti Dinars', 'Fils'],
+    QAR: ['Qatari Riyals', 'Dirhams'],
+    JOD: ['Jordanian Dinars', 'Piasters'],
+  };
+  return map[currencyCode] || [currencyCode || 'Egyptian Pounds', ''];
+}
 
 function numberToArabicWords(num, currencyMain, currencyMinor){
   currencyMain = currencyMain || 'جنيه مصري';
@@ -6286,6 +6336,67 @@ function numberToArabicWords(num, currencyMain, currencyMinor){
   if(fraction>0) text += ' و' + threeDigits(fraction, false) + ' ' + currencyMinor;
   text += ' لا غير';
   return text;
+}
+
+// English counterpart to numberToArabicWords() — same signature/behavior,
+// used on printed documents when the interface language is English.
+function numberToEnglishWords(num, currencyMain, currencyMinor){
+  currencyMain = currencyMain || 'Egyptian Pounds';
+  currencyMinor = currencyMinor || 'Piasters';
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine'];
+  const teens = ['Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function threeDigits(n){
+    if(n===0) return '';
+    const h = Math.floor(n/100), rem = n%100;
+    const parts = [];
+    if(h) parts.push(ones[h]+' Hundred');
+    if(rem>=10 && rem<20) parts.push(teens[rem-10]);
+    else {
+      const t = Math.floor(rem/10), o = rem%10;
+      if(t) parts.push(tens[t]);
+      if(o) parts.push(ones[o]);
+    }
+    return parts.join(' ');
+  }
+  const wholeNum = Math.floor(Math.abs(num));
+  const fraction = Math.round((Math.abs(num) - wholeNum) * 100);
+  const groups = [
+    { div: 1000000000, name:'Billion' },
+    { div: 1000000, name:'Million' },
+    { div: 1000, name:'Thousand' },
+  ];
+  let remaining = wholeNum;
+  const segments = [];
+  for(const g of groups){
+    const count = Math.floor(remaining / g.div);
+    if(count>0){ segments.push(threeDigits(count) + ' ' + g.name); remaining = remaining % g.div; }
+  }
+  if(remaining>0 || segments.length===0) segments.push(threeDigits(remaining));
+  let text = segments.filter(Boolean).join(' ') + ' ' + currencyMain;
+  if(fraction>0) text += ' and ' + threeDigits(fraction) + ' ' + currencyMinor;
+  text += ' Only';
+  return text;
+}
+// Language-aware wrapper — picks the Arabic or English number-to-words
+// converter (and matching currency name) based on the current UI language,
+// so printed documents (invoices/vouchers) speak the amount in the same
+// language as the rest of the document. See "print documents follow the
+// interface language" decision.
+function amountInWordsLocalized(num, currencyCode){
+  currencyCode = currencyCode || 'EGP';
+  if(STATE.settings.lang === 'en'){
+    const [main, minor] = currencyWordNamesEn(currencyCode);
+    return numberToEnglishWords(num, main, minor);
+  }
+  const [main, minor] = currencyWordNames(currencyCode);
+  return numberToArabicWords(num, main, minor);
+}
+// Just the [main, minor] currency name pair in the current UI language —
+// used where only the currency name is needed (e.g. next to a total), not
+// a full amount-in-words sentence.
+function currencyWordNamesLocalized(currencyCode){
+  return STATE.settings.lang === 'en' ? currencyWordNamesEn(currencyCode) : currencyWordNames(currencyCode);
 }
 
 function blankNewEntryLine(date, journalBook, ref){
@@ -7537,6 +7648,9 @@ function loadDemoData(){
 
   STATE.journal = lines;
   STATE.settings.companyName = 'شركة النموذج للتجارة والمقاولات (بيانات تجريبية)';
+  STATE.settings.companyNameEn = 'Model Trading & Contracting Co. (Demo Data)';
+  STATE.settings.companyAddress = 'القاهرة، جمهورية مصر العربية';
+  STATE.settings.companyAddressEn = 'Cairo, Egypt';
   STATE.settings.isDemoMode = true;
   STATE.meta.lastImportAt = new Date().toISOString();
   STATE.meta.lastEntry = lines[lines.length-1].entry;
@@ -7557,6 +7671,9 @@ function resetDemoData(){
       STATE.journal = []; STATE.accounts = []; STATE.groups = [];
       STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
       STATE.settings.companyName = '';
+      STATE.settings.companyNameEn = '';
+      STATE.settings.companyAddress = '';
+      STATE.settings.companyAddressEn = '';
       STATE.settings.isDemoMode = false;
       rebuildAccountIndex();
       STATE.ui.view = 'dashboard';
@@ -9626,9 +9743,9 @@ function renderImportView(root){
     downloadImportTemplate(btn.dataset.dlTemplate);
   }));
 
-  // Company info fields used on printed invoices/vouchers (address, phone,
-  // email, tax ID, logo). Saved with the same debounced-on-change pattern as
-  // companyNameInput above.
+  // Company info fields used on printed invoices/vouchers, and shown on the
+  // Home page / sidebar via companyDisplayName()/companyDisplayAddress().
+  // This is the only place these fields are editable (see Settings & Import).
   const bindCompanyField = (id, key) => {
     const el = document.getElementById(id);
     if(el) el.addEventListener('change', debounce(async (e) => {
@@ -12243,28 +12360,31 @@ function printInvoice(entryNo){
   const w = window.open('', '_blank');
   if(!w){ showToast(t('popupBlockedError')); return; }
   const esc = escapeHtml;
+  const lang = STATE.settings.lang === 'en' ? 'en' : 'ar';
+  const dir = lang === 'en' ? 'ltr' : 'rtl';
   const lineExtras = inv.lines.map((l,i)=> inv.lineExtras[i] || { qty:1, unitPrice:l.amount, discountPct:0 });
-  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(inv.invoiceNo)}</title>
+  const currencyMain = currencyWordNamesLocalized('EGP')[0];
+  const html = `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>${esc(inv.invoiceNo)}</title>
 ${DOC_PRINT_STYLE}
 </head><body>
   <div class="doc-page">
     ${docHeaderHtml()}
     <div class="doc-title-row">
-      <div class="doc-title">فاتورة مبيعات<div class="doc-title-en">Sales Invoice</div></div>
+      <div class="doc-title">${t('docSalesInvoiceTitle')}</div>
       <div class="doc-meta">
-        <div><b>رقم الفاتورة:</b> ${esc(inv.invoiceNo)}</div>
-        <div><b>التاريخ:</b> ${esc(inv.date)}</div>
-        ${inv.dueDate?`<div><b>تاريخ الاستحقاق:</b> ${esc(inv.dueDate)}</div>`:''}
+        <div><b>${t('invoiceNoLabel')}:</b> ${esc(inv.invoiceNo)}</div>
+        <div><b>${t('date')}:</b> ${esc(inv.date)}</div>
+        ${inv.dueDate?`<div><b>${t('invDueDateCol')}:</b> ${esc(inv.dueDate)}</div>`:''}
       </div>
     </div>
     <div class="doc-partner-box">
-      <div><b>السادة / </b>${esc(inv.customerName)}</div>
+      <div><b>${t('docBillToLabel')}</b>${esc(inv.customerName)}</div>
       ${cust.address?`<div>${esc(cust.address)}</div>`:''}
-      ${cust.phone?`<div>هاتف: ${esc(cust.phone)}</div>`:''}
-      ${cust.taxRegNo?`<div>الرقم الضريبي: ${esc(cust.taxRegNo)}</div>`:''}
+      ${cust.phone?`<div>${t('docPhoneLabel')}: ${esc(cust.phone)}</div>`:''}
+      ${cust.taxRegNo?`<div>${t('docTaxIdLabel')}: ${esc(cust.taxRegNo)}</div>`:''}
     </div>
     <table class="doc-table"><thead><tr>
-      <th>#</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الخصم %</th><th>الإجمالي</th>
+      <th>#</th><th>${t('itemCol')}</th><th>${t('invQtyCol')}</th><th>${t('invUnitPriceCol')}</th><th>${t('invDiscCol')}</th><th>${t('invLineTotalCol')}</th>
     </tr></thead><tbody>
       ${inv.lines.map((l,i)=>`<tr>
         <td>${i+1}</td><td>${esc(l.name)}</td>
@@ -12274,14 +12394,14 @@ ${DOC_PRINT_STYLE}
       </tr>`).join('')}
     </tbody></table>
     <div class="doc-totals">
-      <div><span>إجمالي الأصناف</span><span>${fmt(inv.lines.reduce((s,l)=>s+l.amount,0))}</span></div>
-      <div><span>الضريبة</span><span>${fmt(inv.taxTotal)}</span></div>
-      <div class="doc-total-final"><span>الإجمالي المستحق</span><span>${fmt(inv.grandTotal)} جنيه</span></div>
+      <div><span>${t('invSubtotalRow')}</span><span>${fmt(inv.lines.reduce((s,l)=>s+l.amount,0))}</span></div>
+      <div><span>${t('invTaxRow')}</span><span>${fmt(inv.taxTotal)}</span></div>
+      <div class="doc-total-final"><span>${t('invGrandTotalRow')}</span><span>${fmt(inv.grandTotal)} ${esc(currencyMain)}</span></div>
     </div>
-    <div class="doc-words">فقط وقدره: ${esc(numberToArabicWords(inv.grandTotal))}</div>
-    ${inv.notes?`<div class="doc-notes"><b>ملاحظات:</b> ${esc(inv.notes)}</div>`:''}
+    <div class="doc-words">${t('docAmountInWordsLabel')}: ${esc(amountInWordsLocalized(inv.grandTotal, 'EGP'))}</div>
+    ${inv.notes?`<div class="doc-notes"><b>${t('docNotesLabel')}:</b> ${esc(inv.notes)}</div>`:''}
     ${docSignatureBlockHtml()}
-    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+    <div class="doc-print-btn no-print"><button onclick="window.print()">${t('docPrintBtnLabel')}</button></div>
   </div>
 </body></html>`;
   w.document.open(); w.document.write(html); w.document.close();
@@ -12295,18 +12415,18 @@ function docHeaderHtml(){
   return `<div class="doc-header">
     ${s.companyLogo?`<img class="doc-logo" src="${s.companyLogo}">`:''}
     <div class="doc-company">
-      <div class="doc-company-name">${escapeHtml(s.companyName||'')}</div>
-      ${s.companyAddress?`<div class="doc-company-line">${escapeHtml(s.companyAddress)}</div>`:''}
-      <div class="doc-company-line">${[s.companyPhone?('هاتف: '+s.companyPhone):'', s.companyEmail?('بريد: '+s.companyEmail):''].filter(Boolean).join(' — ')}</div>
-      ${s.companyTaxId?`<div class="doc-company-line">الرقم الضريبي: ${escapeHtml(s.companyTaxId)}</div>`:''}
+      <div class="doc-company-name">${escapeHtml(companyDisplayName())}</div>
+      ${companyDisplayAddress()?`<div class="doc-company-line">${escapeHtml(companyDisplayAddress())}</div>`:''}
+      <div class="doc-company-line">${[s.companyPhone?(t('docPhoneLabel')+': '+s.companyPhone):'', s.companyEmail?(t('docEmailLabel')+': '+s.companyEmail):''].filter(Boolean).join(' — ')}</div>
+      ${s.companyTaxId?`<div class="doc-company-line">${t('docTaxIdLabel')}: ${escapeHtml(s.companyTaxId)}</div>`:''}
     </div>
   </div>`;
 }
 function docSignatureBlockHtml(){
   return `<div class="doc-sign-row">
-    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المستلم</div></div>
-    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المحاسب</div></div>
-    <div class="doc-sign-box doc-stamp-box"><div>ختم الشركة</div></div>
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>${t('docRecipientSignatureLabel')}</div></div>
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>${t('docAccountantSignatureLabel')}</div></div>
+    <div class="doc-sign-box doc-stamp-box"><div>${t('docCompanyStampLabel')}</div></div>
   </div>`;
 }
 const DOC_PRINT_STYLE = `<style>
@@ -12319,18 +12439,17 @@ const DOC_PRINT_STYLE = `<style>
   .doc-company-line{font-size:12px;color:#6B7680;margin-top:2px}
   .doc-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
   .doc-title{font-size:19px;font-weight:800;color:#1F2E3B}
-  .doc-title-en{font-size:11px;font-weight:400;color:#8B978D;direction:ltr}
-  .doc-meta{font-size:12px;color:#3a4552;text-align:left;direction:rtl}
+  .doc-meta{font-size:12px;color:#3a4552;text-align:start}
   .doc-meta div{margin-bottom:3px}
   .doc-partner-box{background:#F8F5EA;border:1px solid #ECE6D2;border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px}
   .doc-partner-box div{margin-bottom:3px}
   .doc-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
-  .doc-table th,.doc-table td{padding:8px 9px;border-bottom:1px solid #ECE6D2;text-align:right}
+  .doc-table th,.doc-table td{padding:8px 9px;border-bottom:1px solid #ECE6D2;text-align:start}
   .doc-table th{background:#1F2E3B;color:#F2EBD3;font-weight:600}
   .doc-table td.num,.doc-table th.num{direction:ltr;text-align:left}
-  .doc-totals{width:280px;margin-inline-start:auto;font-size:13px;margin-bottom:10px}
-  .doc-totals div{display:flex;justify-content:space-between;padding:4px 0}
-  .doc-total-final{border-top:2px solid #1F2E3B;font-weight:800;font-size:15px;padding-top:8px !important;margin-top:4px}
+  .doc-totals{width:340px;margin-inline-start:auto;font-size:13px;margin-bottom:10px}
+  .doc-totals div{display:flex;justify-content:space-between;padding:4px 0;gap:10px}
+  .doc-total-final{border-top:2px solid #1F2E3B;font-weight:800;font-size:14px;padding-top:8px !important;margin-top:4px;white-space:nowrap}
   .doc-words{font-size:13px;font-weight:600;background:#F3EEDD;border-radius:6px;padding:10px 12px;margin-bottom:16px}
   .doc-notes{font-size:12px;color:#3a4552;margin-bottom:16px}
   .doc-sign-row{display:flex;gap:16px;margin-top:50px}
@@ -12716,7 +12835,9 @@ function printCashVoucher(entryNo){
   if(!w){ showToast(t('popupBlockedError')); return; }
   const esc = escapeHtml;
   const isReceipt = v.type==='receipt';
-  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(v.serial)}</title>
+  const lang = STATE.settings.lang === 'en' ? 'en' : 'ar';
+  const dir = lang === 'en' ? 'ltr' : 'rtl';
+  const html = `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>${esc(v.serial)}</title>
 ${DOC_PRINT_STYLE}
 <style>
   .voucher-serial{font-size:15px;font-weight:800;color:${isReceipt?'#2E7D32':'#B03A2E'};border:2px solid ${isReceipt?'#2E7D32':'#B03A2E'};border-radius:8px;padding:8px 16px;display:inline-block}
@@ -12728,17 +12849,17 @@ ${DOC_PRINT_STYLE}
   <div class="doc-page">
     ${docHeaderHtml()}
     <div class="doc-title-row">
-      <div class="doc-title">${isReceipt?'سند قبض نقدية':'سند صرف نقدية'}<div class="doc-title-en">${isReceipt?'Cash Receipt Voucher':'Cash Payment Voucher'}</div></div>
+      <div class="doc-title">${isReceipt?t('docCashReceiptVoucherTitle'):t('docCashPaymentVoucherTitle')}</div>
       <div class="voucher-serial">${esc(v.serial)}</div>
     </div>
-    <div class="doc-meta" style="text-align:right;margin-bottom:10px"><b>التاريخ:</b> ${esc(v.date)}</div>
-    <div class="voucher-line"><b>${isReceipt?'استلمنا من السيد / السادة:':'صرفنا إلى السيد / السادة:'}</b> ${esc(v.partnerName)}</div>
-    <div class="voucher-amount-box">${fmt(v.amount)} ${esc(currencyWordNames(v.currency)[0])}</div>
-    <div class="voucher-line"><b>فقط وقدره:</b> ${esc(numberToArabicWords(v.amount, ...currencyWordNames(v.currency)))}</div>
-    <div class="voucher-line"><b>وذلك عن:</b> ${esc(v.description||'—')}</div>
-    <div class="voucher-line"><b>يُقيد على حساب:</b> ${esc(v.counterAccountLabel||accName(v.counterAccount))} — ${isReceipt?'من حساب':'إلى حساب'} ${esc(v.cashAccountLabel||accName(v.cashAccount))}</div>
+    <div class="doc-meta" style="margin-bottom:10px"><b>${t('date')}:</b> ${esc(v.date)}</div>
+    <div class="voucher-line"><b>${isReceipt?t('docReceivedFromLabel'):t('docPaidToLabel')}</b> ${esc(v.partnerName)}</div>
+    <div class="voucher-amount-box">${fmt(v.amount)} ${esc(currencyWordNamesLocalized(v.currency)[0])}</div>
+    <div class="voucher-line"><b>${t('docAmountInWordsLabel')}:</b> ${esc(amountInWordsLocalized(v.amount, v.currency))}</div>
+    <div class="voucher-line"><b>${t('docForLabel')}:</b> ${esc(v.description||'—')}</div>
+    <div class="voucher-line"><b>${t('docChargedToAccountLabel')}:</b> ${esc(v.counterAccountLabel||accName(v.counterAccount))} — ${isReceipt?t('docFromAccountLabel'):t('docToAccountLabel')} ${esc(v.cashAccountLabel||accName(v.cashAccount))}</div>
     ${docSignatureBlockHtml()}
-    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+    <div class="doc-print-btn no-print"><button onclick="window.print()">${t('docPrintBtnLabel')}</button></div>
   </div>
 </body></html>`;
   w.document.open(); w.document.write(html); w.document.close();
@@ -12850,7 +12971,7 @@ function openAssetModal(assetId){
         <div><label class="lbl">${t('assetDepStartLabel')} *</label><input id="asStart" type="date" class="input" value="${d.startDate||''}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('originalCostLabel')} *</label><input id="asCost" type="number" step="0.01" class="input" value="${d.cost||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('residualValueLabel')}</label><input id="asResidualAbs" type="number" step="0.01" class="input" value="${d.residualAbs!=null?d.residualAbs:''}" placeholder="${model?'من النموذج ('+(parseFloat(d.cost||0)*(model.residualPct||0)/100).toFixed(2)+')':''}" style="width:100%"></div>
-        <div><label class="lbl">${t('accumDepLabel')} (${t('currentPeriod') || 'مُتراكم حتى الآن'})</label><input id="asAccumDep" type="number" step="0.01" class="input" value="${d.accumDep||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
+        <div><label class="lbl">${t('accumDepLabel')} (${t('currentPeriod')})</label><input id="asAccumDep" type="number" step="0.01" class="input" value="${d.accumDep||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('supplierLabel')}</label><input id="asSupplier" class="input" value="${escapeHtml(d.supplier||'')}" style="width:100%"></div>
         <div><label class="lbl">${t('invoiceNoLabel')}</label><input id="asInvoice" class="input" value="${escapeHtml(d.invoiceNo||'')}" style="width:100%"></div>
         <div><label class="lbl">${t('locationLabel')}</label><input id="asLocation" class="input" value="${escapeHtml(d.location||'')}" style="width:100%"></div>
