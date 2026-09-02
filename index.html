@@ -8,7 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<!-- Chart.js was removed: all charts (dashboard KPI sparklines + Financial
+     Analysis charts) are now dependency-free inline SVG (see sparklineSVG()
+     and renderReportsDashboardCharts()), so the app has one less external
+     CDN dependency and no longer breaks if that CDN is unreachable. -->
 <style>
 :root{
   --ink:#101820;
@@ -37,6 +40,12 @@
   --surface-1: var(--paper);
   --surface-2: var(--paper-2);
   --border: var(--line);
+  /* Actual measured height of .topbar-title-row, kept in sync by a
+     ResizeObserver (see setupTopbarHeightSync()) so sticky table headers
+     (thead th) can sit flush below it instead of both pinning to top:0 and
+     overlapping/hiding each other while scrolling. Default is a safe guess
+     for the first paint before the observer has measured anything. */
+  --topbar-h: 64px;
 }
 
 /* Item 6: Color Palette selector. Every accent element in the app already
@@ -145,14 +154,27 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .brand svg{ width:30px; height:30px; flex:0 0 30px; }
 .brand-text .t1{ font-family:'Cairo'; font-weight:800; font-size:19px; color:var(--gold-light); letter-spacing:.5px; }
 .brand-text .t2{ font-size:11px; color:var(--ink-faint); margin-top:1px; }
-
-.company-field{ padding:10px 16px; border-bottom:1px solid rgba(217,180,92,.12); }
-.company-field input{
-  width:100%; background:transparent; border:none; border-bottom:1px dashed rgba(217,180,92,.35);
-  color:var(--paper-2); font-size:12.5px; padding:4px 2px; outline:none;
+/* Company name shown under the app logo/tagline — display-only, language-aware
+   (see companyDisplayName()); editing happens only in Setup & Import.
+   Wraps onto 2 lines instead of truncating — text-overflow:ellipsis combined
+   with centered Arabic text clipped mid-letter and looked garbled instead of
+   showing a clean "…", so full wrapping is used instead. */
+.brand-company-name{
+  padding:9px 18px 13px; border-bottom:1px solid rgba(217,180,92,.18);
+  font-size:14.5px; font-weight:800; color:var(--gold-light); text-align:center;
+  line-height:1.45; white-space:normal; word-wrap:break-word; letter-spacing:.2px;
 }
-.company-field input::placeholder{ color:var(--ink-faint); }
-.company-field input:focus{ border-bottom-color:var(--gold-light); }
+/* Lightweight current-user indicator (see USER_ROLES) — click to switch. */
+.brand-current-user{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  padding:7px 18px; border-bottom:1px solid rgba(217,180,92,.18);
+  font-size:12px; color:var(--paper-2); cursor:pointer;
+}
+.brand-current-user:hover{ background:rgba(217,180,92,.06); }
+
+/* Company name/address are managed exclusively from Setup & Import — see
+   companyDisplayName()/companyDisplayAddress() — so there is no editable
+   .company-field in the sidebar anymore; the topbar subtitle shows it. */
 
 .nav{ padding:12px 9px; display:flex; flex-direction:column; gap:3px; }
 .nav-item{
@@ -165,6 +187,17 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .nav-item:hover{ background:rgba(217,180,92,.08); color:var(--paper-2); }
 .nav-item.active{ background:rgba(217,180,92,.14); color:var(--gold-light); border-color:rgba(217,180,92,.3); }
 .nav-item.active::before{ content:''; position:absolute; inset-inline-start:-9px; top:20%; bottom:20%; width:3px; border-radius:3px; background:linear-gradient(180deg, var(--gold-light), var(--gold-dim)); }
+/* Top-level standalone nav items (e.g. Dashboard) sit at the same visual
+   rank as a section/group header, so they use the same larger, bolder,
+   gold "section" typography instead of the smaller leaf-item style —
+   matching every other top-level entry in the sidebar. */
+.nav-item-primary{
+  font-size:13px; font-weight:800; color:var(--gold-light);
+  font-family:'Cairo','Almarai',sans-serif; letter-spacing:.2px;
+  min-height:auto; padding:11px 12px;
+}
+.nav-item-primary svg{ width:16px; height:16px; flex:0 0 16px; opacity:.9; }
+.nav-item-primary.active{ color:var(--gold-light); }
 .nav-section{ font-size:13px; color:var(--gold-light); font-family:'Cairo','Almarai',sans-serif; letter-spacing:.2px; font-weight:800; padding:16px 12px 5px; }
 /* Accordion nav groups */
 .nav-group-header{
@@ -271,7 +304,13 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 }
 .palette-toggle:hover{ background:rgba(217,180,92,.1); border-color:rgba(217,180,92,.6); }
 .palette-panel{
-  position:absolute; top:calc(100% + 6px); left:0; z-index:60; background:var(--paper); border:1px solid var(--line);
+  /* Anchored to the picker's RIGHT edge and growing left, not the other way
+     around: the picker button always sits near the right edge of the
+     topbar's control cluster (in both languages), so a panel that instead
+     anchored to the button's *left* edge and grew rightward (the old
+     `left:0`) would run past the edge of the viewport — exactly what the
+     English-mode screenshot showed. */
+  position:absolute; top:calc(100% + 6px); right:0; left:auto; z-index:60; background:var(--paper); border:1px solid var(--line);
   border-radius:10px; box-shadow:var(--shadow); padding:10px; display:flex; flex-wrap:wrap; gap:8px; width:250px; max-width:80vw;
 }
 .palette-swatch{
@@ -321,7 +360,16 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
   border-image: linear-gradient(90deg, var(--gold-dim), var(--gold-light) 55%, var(--gold-dim)) 1;
   transition: box-shadow .22s ease, transform .22s ease;
 }
-.card:hover{ box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+/* NOTE: no `transform` here (previously `translateY(-1px)`) — see the BUG FIX
+   comment near setupTopbarHeightSync()/renderApp() for why. A `transform` on
+   `.card`, even a 1px one, creates a new CSS containing block for every
+   `position:sticky` and `position:fixed` descendant while hovered — which
+   broke sticky table headers (a data row would render above the header,
+   pinned to the wrong containing block, whenever the mouse hovered the
+   card — exactly when someone is scrolling the table with their cursor over
+   it) and, previously, buried filter dropdown panels under later cards. The
+   box-shadow lift alone still gives clear hover feedback without either bug. */
+.card:hover{ box-shadow: var(--shadow-lift); }
 .card h2{ font-size:14.5px; margin:0 0 12px; color:var(--ink-2); display:flex; align-items:center; gap:9px; letter-spacing:.15px; font-weight:800; }
 .card h2 svg{ width:16px; height:16px; flex:0 0 16px; }
 .card h2 .badge-count{ font-size:11px; background:var(--paper-3); color:var(--ink-soft); padding:2px 8px; border-radius:10px; font-weight:700; transition: background .18s ease, color .18s ease; }
@@ -387,18 +435,38 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 .table-wrap{ overflow-x:auto; }
 table{ width:100%; border-collapse:collapse; font-size:12.5px; }
 thead th{
-  text-align:right; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
-  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky; top:0;
+  text-align:center; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
+  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky;
+  /* Sticks just below .topbar-title-row (also position:sticky, top:0)
+     instead of both pinning to top:0 and overlapping/hiding one another —
+     see --topbar-h and setupTopbarHeightSync(). */
+  top:var(--topbar-h, 64px); z-index:20;
   border-bottom:2px solid var(--gold);
 }
+/* Tables that scroll INSIDE their own bounded box (a .table-wrap with an
+   inline max-height, e.g. most data grids and the Chart of Accounts tree)
+   are a nested scroll container, not the page itself — their sticky header
+   must stick to the TOP OF THAT BOX (top:0), not offset by the topbar's
+   height, or the header ends up pinned 60-some px into the box and
+   overlapping the first row(s) instead of sitting flush above them. Only
+   tables with no such wrapper (rare — they scroll with the page) use the
+   topbar-relative offset above. */
+.table-wrap[style*="max-height"] thead th{ top:0; }
 /* Column drag-to-reorder (desktop only — see attachColumnReordering) */
 thead th.col-draggable{ cursor:grab; }
 thead th.col-dragging{ opacity:.4; cursor:grabbing; }
 thead th.col-drop-target{ box-shadow: inset 2px 0 0 var(--gold-light), inset -2px 0 0 var(--gold-light); }
 /* Column resize handle — a thin draggable strip at each th's leading edge
    (inline-start in RTL = right edge of the cell). Positioned absolutely so
-   it doesn't disturb the header's own padding/text layout. */
-thead th{ position:relative; }
+   it doesn't disturb the header's own padding/text layout. NOTE: no extra
+   `position:relative` rule is needed here — position:sticky (set above)
+   already establishes a positioning context for this absolutely-positioned
+   child. Adding one anyway was the actual bug behind sticky headers not
+   sticking app-wide (a row appearing to float above the header while
+   scrolling): a same-specificity `thead th{ position:relative }` rule here,
+   later in the cascade, was silently overriding the `position:sticky`
+   declared above it — same selector, same specificity, later wins — so
+   headers were never actually sticky, just normal flow content. */
 .col-resize-handle{
   position:absolute; top:0; bottom:0; left:0; width:5px; cursor:col-resize;
   z-index:10; user-select:none;
@@ -561,6 +629,7 @@ label.lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; display:blo
 .th-filter-icon:hover{ opacity:1; background:rgba(255,255,255,.12); }
 .th-filter-icon.active{ opacity:1; color:var(--ink); background:var(--gold); border-color:var(--gold); }
 .th-header-row{ display:inline-flex; align-items:center; gap:5px; }
+th.th-center .th-header-row{ justify-content:center; width:100%; }
 .th-sort-label{ cursor:pointer; user-select:none; }
 .th-sort-label:hover{ color:#fff; }
 th.filter-th .ms-panel{ text-align:right; } /* the panel's own contents shouldn't inherit a num-cell header's left text-align */
@@ -904,37 +973,44 @@ html[dir="rtl"] .rd-legend-name{direction:rtl;text-align:right;unicode-bidi:isol
 
 /* Chart of Accounts — right-side (in RTL) hierarchy navigator panel that
    sits beside the account table (see buildTreeView()). The table stays a
-   normal, full-column table of postable ("leaf") accounts; the panel is a
-   compact, independently-scrolling index of the header/group accounts
-   (built dynamically from buildCoaTree()'s real code-prefix parent/child
-   relationships — never hardcoded), with an "All" master toggle at top. */
+   normal, full-column table of every account; the panel is a compact,
+   independently-scrolling index of the account GROUPS — built from
+   STATE.groups, the app's own explicit "Account Group" model (start/end
+   code-prefix ranges with real names — see buildAccountTree()), with an
+   "All" master toggle at top. Accounts never appear in the panel; groups
+   never appear in the table — the two are always kept in sync from the
+   same underlying data, never duplicated. */
 .coa-tree-flex{ display:flex; gap:12px; align-items:flex-start; }
 .coa-tree-flex .table-wrap{ flex:1 1 auto; min-width:0; }
 .coa-hier-panel{
-  flex:0 0 152px; width:152px; box-sizing:border-box;
+  flex:0 0 195px; width:195px; box-sizing:border-box;
   max-height:calc(100vh - 210px); overflow-y:auto; overflow-x:hidden;
   position:sticky; top:0;
   background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
-  padding:8px 7px; font-family:'Courier New',monospace; font-size:11.5px; line-height:1.5;
+  padding:8px 7px; font-family:'Cairo',sans-serif; font-size:12px; line-height:1.5;
 }
 .coa-hier-all{
   display:flex; align-items:center; gap:5px; cursor:pointer; user-select:none;
   font-weight:800; color:var(--gold-dim); font-family:'Cairo',sans-serif; font-size:12px;
   padding-bottom:7px; margin-bottom:6px; border-bottom:1px solid var(--border);
 }
-.coa-hier-row{ display:flex; align-items:center; gap:4px; padding:2px 0; white-space:nowrap; }
+.coa-hier-row{ display:flex; align-items:flex-start; gap:4px; padding:3px 0; }
 .coa-hier-toggle{
   min-width:16px; height:16px; padding:0; font-size:10px; line-height:14px; text-align:center;
   background:transparent; border:1px solid var(--border); border-radius:3px;
-  color:var(--ink-soft); cursor:pointer; flex:0 0 auto;
+  color:var(--ink-soft); cursor:pointer; flex:0 0 auto; margin-top:1px;
 }
 .coa-hier-toggle:hover{ color:var(--gold-dim); border-color:var(--gold-dim); }
-.coa-hier-code{ cursor:pointer; color:var(--ink); font-weight:700; }
-.coa-hier-code:hover{ color:var(--gold-dim); text-decoration:underline; }
+.coa-hier-code{ cursor:pointer; color:var(--ink); font-weight:700; font-family:monospace; font-size:11px; }
+.coa-hier-code:hover{ color:var(--gold-dim); }
+.coa-hier-code:hover .coa-hier-name{ text-decoration:underline; }
 .coa-hier-code.coa-hier-active{ color:var(--gold-dim); }
 .coa-hier-code mark{ padding:0; }
+.coa-hier-name{ color:var(--ink); font-weight:600; font-family:'Cairo',sans-serif; font-size:11.5px; }
 .coa-hier-children{ margin-inline-start:7px; padding-inline-start:6px; border-inline-start:1px dashed var(--line); }
-.coa-hier-empty{ color:var(--ink-faint); font-size:11px; padding:6px 2px; font-family:'Cairo',sans-serif; }
+.coa-hier-empty{ color:var(--ink-faint); font-size:11px; padding:6px 2px; line-height:1.6; font-family:'Cairo',sans-serif; }
+.coa-code-drill{ cursor:pointer; }
+.coa-code-drill:hover{ color:var(--gold-dim) !important; text-decoration:underline; }
 @media (max-width:900px){
   .coa-tree-flex{ flex-direction:column; }
   .coa-hier-panel{ position:static; width:100%; flex:1 1 auto; max-height:220px; }
@@ -950,6 +1026,7 @@ html[dir="rtl"] .rd-legend-name{direction:rtl;text-align:right;unicode-bidi:isol
 <div id="auditLogModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="projectFormModalOverlay" class="modal-overlay" style="display:none"></div>
 <div id="projectTxModalOverlay" class="modal-overlay" style="display:none"></div>
+<div id="userPickerModalOverlay" class="modal-overlay" style="display:none"></div>
 <!-- Portal target for the currently-open filter dropdown (.ms-panel). Filter
      panels are moved here at render time so they are never a descendant of a
      .card/table-wrap/other container and can never be clipped or repainted
@@ -1270,7 +1347,30 @@ const I18N = {
     date:'التاريخ', entry:'رقم القيد', account:'الحساب', partner:'الشريك', description:'البيان',
     debit:'مدين', credit:'دائن', balance:'الرصيد', runningBalance:'الرصيد التراكمي', total:'الإجمالي',
     currency:'العملة', resetSystem:'إعادة تعيين النظام بالكامل', companyNamePlaceholder:'اسم الشركة...',
-    enterCompanyNameHint:'أدخل اسم شركتك من القائمة الجانبية',
+    companyNameEnPlaceholder:'Company name in English...',
+    companyNameLabel:'اسم الشركة (عربي)', companyNameEnLabel:'اسم الشركة (إنجليزي)',
+    companyNameFieldHint:'الاسم العربي يظهر في النسخة العربية من النظام، والاسم الإنجليزي يظهر في النسخة الإنجليزية.',
+    companyAddressLabel:'عنوان الشركة (عربي)', companyAddressEnLabel:'عنوان الشركة (إنجليزي)',
+    companyAddressFieldHint:'العنوان العربي يظهر في النسخة العربية من النظام، والعنوان الإنجليزي يظهر في النسخة الإنجليزية.',
+    usersManagementTitle:'المستخدمون', usersManagementHint:'أضف اسم لكل شخص هيستخدم النظام عشان تعرف مين عمل إيه وإمتى في سجل التعديلات. ده مجرد تنظيم داخلي وليس حماية حقيقية — أي حد يفتح النظام من المتصفح يقدر يختار أي اسم.',
+    addUserBtn:'+ إضافة مستخدم', userNameLabel:'الاسم', userRoleLabel:'الدور', deleteUserBtn:'حذف',
+    userRoleAdmin:'مدير', userRoleAccountant:'محاسب', userRoleViewer:'مراجع (بدون حذف)',
+    noUsersYet:'لسه معملتش أي مستخدمين — النظام هيفضل يشتغل من غير تحديد هوية.',
+    whoAreYouTitle:'مين بيستخدم النظام دلوقتي؟', whoAreYouHint:'اختيارك بيتسجل مع أي تعديل تعمله عشان المراجعة لاحقاً.',
+    switchUserBtn:'تبديل المستخدم', currentUserLabel:'المستخدم الحالي',
+    auditNoUserLabel:'غير محدد', auditUserCol:'المستخدم',
+    deleteRestrictedForViewer:'دورك "مراجع" — مفيش صلاحية حذف. غيّر المستخدم لو محتاج تحذف.',
+    userNameRequired:'اكتب اسم المستخدم أولاً.', deleteUserConfirmMsg:'هل تريد حذف المستخدم "${name}"؟',
+    docSalesInvoiceTitle:'فاتورة مبيعات', docCashReceiptVoucherTitle:'سند قبض نقدية', docCashPaymentVoucherTitle:'سند صرف نقدية',
+    docBillToLabel:'السادة / ', docPhoneLabel:'هاتف', docTaxIdLabel:'الرقم الضريبي', docEmailLabel:'بريد',
+    docAmountInWordsLabel:'فقط وقدره', docNotesLabel:'ملاحظات', docPrintBtnLabel:'🖨 طباعة',
+    docRecipientSignatureLabel:'توقيع المستلم', docAccountantSignatureLabel:'توقيع المحاسب', docCompanyStampLabel:'ختم الشركة',
+    docReceivedFromLabel:'استلمنا من السيد / السادة:', docPaidToLabel:'صرفنا إلى السيد / السادة:',
+    docForLabel:'وذلك عن', docChargedToAccountLabel:'يُقيد على حساب', docFromAccountLabel:'من حساب', docToAccountLabel:'إلى حساب',
+    enterCompanyNameHint:'أدخل اسم شركتك من صفحة الإعداد والاستيراد',
+    saveFailedToast:'⚠ تعذّر حفظ آخر تغيير — تحقق من مساحة التخزين المتاحة في المتصفح وحاول مجدداً.',
+    duplicateEntry:'تكرار القيد كقيد جديد', duplicateEntryNotFound:'تعذر العثور على القيد المطلوب تكراره',
+    currentPeriod:'مُتراكم حتى الآن',
     tbCatAssets:'الأصول', tbCatLiab:'الالتزامات', tbCatEquity:'حقوق الملكية', tbCatRevenue:'الإيرادات', tbCatExpenses:'المصروفات وتكلفة الإيرادات',
     lastUpdate:'آخر تحديث', lastEntryDate:'تاريخ آخر قيد', lastEntryNo:'رقم آخر قيد', totalEntries:'إجمالي القيود', accountsCount:'عدد الحسابات',
     exportExcel:'تصدير Excel', printPdf:'طباعة / PDF',
@@ -1710,7 +1810,30 @@ const I18N = {
     date:'Date', entry:'Entry No.', account:'Account', partner:'Partner', description:'Description',
     debit:'Debit', credit:'Credit', balance:'Balance', runningBalance:'Running Balance', total:'Total',
     currency:'Currency', resetSystem:'Full System Reset', companyNamePlaceholder:'Company name...',
-    enterCompanyNameHint:'Enter your company name from the sidebar',
+    companyNameEnPlaceholder:'Company name in English...',
+    companyNameLabel:'Company Name (Arabic)', companyNameEnLabel:'Company Name (English)',
+    companyNameFieldHint:'The Arabic name shows in the Arabic version of the system, and the English name shows in the English version.',
+    companyAddressLabel:'Company Address (Arabic)', companyAddressEnLabel:'Company Address (English)',
+    companyAddressFieldHint:'The Arabic address shows in the Arabic version of the system, and the English address shows in the English version.',
+    usersManagementTitle:'Users', usersManagementHint:'Add a name for everyone who will use the system, so the audit log shows who did what and when. This is internal bookkeeping only, not real security — anyone with the browser open can pick any name.',
+    addUserBtn:'+ Add User', userNameLabel:'Name', userRoleLabel:'Role', deleteUserBtn:'Delete',
+    userRoleAdmin:'Admin', userRoleAccountant:'Accountant', userRoleViewer:'Viewer (no delete)',
+    noUsersYet:'No users set up yet — the system will keep working without an identity.',
+    whoAreYouTitle:'Who is using the system right now?', whoAreYouHint:'Your choice is recorded with any change you make, for later review.',
+    switchUserBtn:'Switch User', currentUserLabel:'Current User',
+    auditNoUserLabel:'Unspecified', auditUserCol:'User',
+    deleteRestrictedForViewer:'Your role is "Viewer" — no delete permission. Switch users if you need to delete.',
+    userNameRequired:'Enter the user name first.', deleteUserConfirmMsg:'Delete user "${name}"?',
+    docSalesInvoiceTitle:'Sales Invoice', docCashReceiptVoucherTitle:'Cash Receipt Voucher', docCashPaymentVoucherTitle:'Cash Payment Voucher',
+    docBillToLabel:'Bill To: ', docPhoneLabel:'Phone', docTaxIdLabel:'Tax ID', docEmailLabel:'Email',
+    docAmountInWordsLabel:'Amount in words', docNotesLabel:'Notes', docPrintBtnLabel:'🖨 Print',
+    docRecipientSignatureLabel:'Recipient Signature', docAccountantSignatureLabel:'Accountant Signature', docCompanyStampLabel:'Company Stamp',
+    docReceivedFromLabel:'Received from Mr./Mrs.:', docPaidToLabel:'Paid to Mr./Mrs.:',
+    docForLabel:'For', docChargedToAccountLabel:'Charged to account', docFromAccountLabel:'from account', docToAccountLabel:'to account',
+    enterCompanyNameHint:'Enter your company name from the Setup & Import page',
+    saveFailedToast:'⚠ Could not save your last change — check your browser has free storage space and try again.',
+    duplicateEntry:'Duplicate as a new entry', duplicateEntryNotFound:'Could not find the entry to duplicate',
+    currentPeriod:'Accumulated to date',
     tbCatAssets:'Assets', tbCatLiab:'Liabilities', tbCatEquity:'Equity', tbCatRevenue:'Revenue', tbCatExpenses:'Expenses & Cost of Sales',
     lastUpdate:'Last update', lastEntryDate:'Last entry date', lastEntryNo:'Last entry no.', totalEntries:'Total entries', accountsCount:'Accounts count',
     exportExcel:'Export Excel', printPdf:'Print / PDF',
@@ -2302,11 +2425,63 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// BUG FIX — a data row rendering ABOVE the sticky thead in short tables/
+// reports that fit entirely within the viewport (Liquidity, FX Revaluation,
+// and others with only a handful of rows), even though every geometry
+// check (getBoundingClientRect, computed `position: sticky`, DOM order —
+// COLGROUP,THEAD,TBODY, all correct) says the layout is fine. Confirmed via
+// direct paint testing (document.elementFromPoint at the exact pixel) that
+// this is a genuine Chromium compositor bug: it mis-paints `position:
+// sticky` headers whose SCROLLING CONTAINER never actually needs to scroll
+// (natural position already satisfies the `top` offset, sticky never
+// engages) — the layout geometry is correct but the painted frame isn't.
+// Long, genuinely-scrollable tables (Journal Entries, General Ledger, etc.)
+// were extensively tested and never show this — only short ones do.
+// Rather than chase the underlying engine bug, sidestep it: sticky only
+// matters once there's something to scroll past, so tables/containers that
+// don't need scrolling don't need `position:sticky` at all — swap it for
+// `static` in exactly (and only) those cases, which both fixes the mis-paint
+// and is a no-op behavior-wise (a header that was never going to move
+// doesn't need position:sticky to hold it in place).
+function fixShortTableStickyHeaders(){
+  document.querySelectorAll('table').forEach(table => {
+    const thead = table.querySelector('thead');
+    if(!thead) return;
+    const ths = thead.querySelectorAll('th');
+    if(!ths.length) return;
+    const wrap = table.closest('.table-wrap');
+    const nested = wrap && /max-height/.test(wrap.getAttribute('style')||'');
+    const needsSticky = nested
+      ? wrap.scrollHeight > wrap.clientHeight + 2
+      : document.documentElement.scrollHeight > window.innerHeight + 2;
+    ths.forEach(th => { th.style.position = needsSticky ? '' : 'static'; });
+  });
+}
+// Re-run on window resize too (debounced) — a page that didn't need
+// scrolling (and so had sticky disabled above) can start needing it if the
+// browser window gets shorter, and vice versa. Attached once globally
+// rather than per-render since it isn't tied to any element renderApp()
+// recreates.
+let __stickyFixResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(__stickyFixResizeTimer);
+  __stickyFixResizeTimer = setTimeout(fixShortTableStickyHeaders, 150);
+});
+
 function attachTableExportButtons(){
   const root = document.getElementById('viewRoot');
   if(!root) return;
   const usedNames = {};
   root.querySelectorAll('.table-wrap').forEach((wrap, tableIdx) => {
+    // Chart of Accounts' tree table lives inside a 2-column flex row
+    // (.coa-tree-flex: hierarchy panel + table-wrap) that this generic
+    // per-table toolbar isn't aware of — inserting a 3rd toolbar element
+    // between them broke that layout (a stray ~180px column wedged between
+    // the panel and the table instead of a proper row above either one).
+    // The Chart of Accounts page wires its own matching Export + Columns
+    // toolbar directly above the whole tree (see buildPage() / coaColsSlot),
+    // so it opts out here instead of getting a second, misplaced one.
+    if(wrap.dataset.noAutoToolbar) return;
     const tableEl = wrap.querySelector('table');
     if(!tableEl || !tableEl.rows.length) return; // nothing to export
     const card = wrap.closest('.card');
@@ -2577,6 +2752,12 @@ function attachColumnResizing(tableEl, tableKey){
     const handle = document.createElement('div');
     handle.className = 'col-resize-handle';
     handle.title = '';
+    // Table cells resolve height in a two-pass layout (row height depends on
+    // all cells' content), so a CSS-only `top:0;bottom:0` stretch on an
+    // absolutely-positioned child doesn't reliably get a definite height
+    // inside a <th> — it can render as a 0-height, undraggable sliver. Set
+    // the handle's height explicitly instead of relying on that stretch.
+    handle.style.height = th.getBoundingClientRect().height + 'px';
     th.appendChild(handle);
     let startX, startW, isRTL;
     handle.addEventListener('mousedown', e => {
@@ -3440,6 +3621,19 @@ function attachMultiSelectEvents(onChange){
    guidance given alongside this change for what that means in practice. */
 const LOCAL_STORAGE_PREFIX = 'mizan_erp_';
 const HAS_ARTIFACT_STORAGE = typeof window !== 'undefined' && !!window.storage;
+// Surfaces storage failures to the user instead of failing silently — see
+// code review: 79 call sites relied on storeSet()'s return value, but none
+// checked it, so a failed save (e.g. localStorage quota exceeded) was
+// invisible. Centralized here so every call site is covered automatically.
+// Throttled so a burst of failures (e.g. during a large import) shows one
+// toast, not dozens.
+let __lastSaveFailToastAt = 0;
+function notifySaveFailed(){
+  const now = Date.now();
+  if(now - __lastSaveFailToastAt < 5000) return;
+  __lastSaveFailToastAt = now;
+  try{ showToast(t('saveFailedToast'), 5000); }catch(e){ /* toast system itself unavailable */ }
+}
 async function storeGet(key){
   if(HAS_ARTIFACT_STORAGE){
     try{ const r = await window.storage.get(key, false); return r ? JSON.parse(r.value) : null; }
@@ -3451,14 +3645,14 @@ async function storeGet(key){
 async function storeSet(key, value){
   if(HAS_ARTIFACT_STORAGE){
     try{ return await window.storage.set(key, JSON.stringify(value), false); }
-    catch(e){ console.error('storage set failed', key, e); return null; }
+    catch(e){ console.error('storage set failed', key, e); notifySaveFailed(); return null; }
   }
   try{
     localStorage.setItem(LOCAL_STORAGE_PREFIX + key, JSON.stringify(value));
     scheduleDriveSync();
     return { key, value };
   }
-  catch(e){ console.error('storage set failed (localStorage may be full)', key, e); return null; }
+  catch(e){ console.error('storage set failed (localStorage may be full)', key, e); notifySaveFailed(); return null; }
 }
 async function storeList(prefix){
   if(HAS_ARTIFACT_STORAGE){
@@ -3682,7 +3876,7 @@ const STATE = {
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
-  settings: { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'' },
+  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', users:[], currentUserId:'' },
   ui: {
     view:'dashboard',
     filters: { start: '', end: '', years: [], months: [] }, // default = ALL periods; user narrows manually
@@ -3726,6 +3920,52 @@ function accName(code){
 }
 function groupDisplayName(g){
   return (STATE.settings.lang === 'en' && g.nameEn) ? g.nameEn : g.name;
+}
+// Company name shown across the topbar, printed documents, and vouchers.
+// Each language has its own dedicated field (set from Setup & Import) — the
+// name is never auto-translated. If the field for the current language is
+// empty, fall back to the other language's field rather than showing blank.
+function companyDisplayName(){
+  const s = STATE.settings;
+  return STATE.settings.lang === 'en'
+    ? (s.companyNameEn || s.companyName || '')
+    : (s.companyName || s.companyNameEn || '');
+}
+// Company address counterpart to companyDisplayName() — same per-language
+// field + cross-language fallback behavior, never auto-translated.
+function companyDisplayAddress(){
+  const s = STATE.settings;
+  return STATE.settings.lang === 'en'
+    ? (s.companyAddressEn || s.companyAddress || '')
+    : (s.companyAddress || s.companyAddressEn || '');
+}
+
+// --- Lightweight user attribution (Path 1 — see standing project note) ---
+// This is NOT real authentication: anyone using the browser can pick any
+// name from the list, and nothing here is enforced by a server. Its purpose
+// is bookkeeping/attribution (who did what, for the audit log) and a soft
+// UI nudge for roles (hiding a delete button for a "viewer"), not security.
+// A future hosted multi-tenant phase would replace this with real accounts.
+const USER_ROLES = ['admin','accountant','viewer'];
+function currentUser(){
+  const id = STATE.settings.currentUserId;
+  return (STATE.settings.users||[]).find(u=>u.id===id) || null;
+}
+function currentUserName(){
+  const u = currentUser();
+  return u ? u.name : t('auditNoUserLabel');
+}
+function currentUserRole(){
+  const u = currentUser();
+  return u ? u.role : 'admin'; // no users configured yet ⇒ behave as before (full access)
+}
+function isAdminUser(){ return currentUserRole() === 'admin'; }
+// "Viewer" is the only role with any UI restriction in this lightweight
+// model — it can't delete or manage users, everything else stays available
+// so the role stays genuinely useful without needing a big permission matrix.
+function canDeleteRecords(){ return currentUserRole() !== 'viewer'; }
+function userRoleLabel(role){
+  return { admin:t('userRoleAdmin'), accountant:t('userRoleAccountant'), viewer:t('userRoleViewer') }[role] || role;
 }
 // Requirement: accounts with zero posted transactions are pure noise in a
 // filter/tree picker — a real chart of accounts is almost always set up with
@@ -6021,10 +6261,11 @@ async function openEditAuditLogModal(){
       <h3>${t('editAuditLogTitle')}</h3>
       ${log.length ? `<div class="table-wrap" style="max-height:60vh;overflow:auto">
         <table><thead><tr>
-          <th>${t('auditDateTimeCol')}</th><th>${t('auditEntryCol')}</th><th>${t('auditActionCol')}</th><th>${t('auditBeforeLabel')}</th><th>${t('auditAfterLabel')}</th>
+          <th>${t('auditDateTimeCol')}</th><th>${t('auditUserCol')}</th><th>${t('auditEntryCol')}</th><th>${t('auditActionCol')}</th><th>${t('auditBeforeLabel')}</th><th>${t('auditAfterLabel')}</th>
         </tr></thead><tbody>
           ${log.map(a => `<tr>
             <td class="num" style="font-size:11px;white-space:nowrap">${fmtDateTime(a.at)}</td>
+            <td style="font-size:11px;white-space:nowrap">${escapeHtml(a.user || t('auditNoUserLabel'))}</td>
             <td class="num" style="font-size:11px">${escapeHtml(a.entry)}<br>${a.date}</td>
             <td><span class="pill ${a.action==='delete'?'pill-brick':'pill-gold'}">${a.action==='delete'?t('auditActionDelete'):(a.action==='create'?t('auditActionCreate'):t('auditActionEdit'))}</span></td>
             <td style="font-size:11px">${rowSnapshot(a.before)}</td>
@@ -6148,6 +6389,22 @@ function currencyWordNames(currencyCode){
   };
   return map[currencyCode] || [currencyCode || 'جنيه مصري', ''];
 }
+// English counterpart to currencyWordNames() — used on printed documents
+// when the interface language is English (see amountInWordsLocalized()).
+function currencyWordNamesEn(currencyCode){
+  const map = {
+    EGP: ['Egyptian Pounds', 'Piasters'],
+    USD: ['US Dollars', 'Cents'],
+    EUR: ['Euros', 'Cents'],
+    GBP: ['Pounds Sterling', 'Pence'],
+    SAR: ['Saudi Riyals', 'Halalas'],
+    AED: ['UAE Dirhams', 'Fils'],
+    KWD: ['Kuwaiti Dinars', 'Fils'],
+    QAR: ['Qatari Riyals', 'Dirhams'],
+    JOD: ['Jordanian Dinars', 'Piasters'],
+  };
+  return map[currencyCode] || [currencyCode || 'Egyptian Pounds', ''];
+}
 
 function numberToArabicWords(num, currencyMain, currencyMinor){
   currencyMain = currencyMain || 'جنيه مصري';
@@ -6199,6 +6456,67 @@ function numberToArabicWords(num, currencyMain, currencyMinor){
   if(fraction>0) text += ' و' + threeDigits(fraction, false) + ' ' + currencyMinor;
   text += ' لا غير';
   return text;
+}
+
+// English counterpart to numberToArabicWords() — same signature/behavior,
+// used on printed documents when the interface language is English.
+function numberToEnglishWords(num, currencyMain, currencyMinor){
+  currencyMain = currencyMain || 'Egyptian Pounds';
+  currencyMinor = currencyMinor || 'Piasters';
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine'];
+  const teens = ['Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function threeDigits(n){
+    if(n===0) return '';
+    const h = Math.floor(n/100), rem = n%100;
+    const parts = [];
+    if(h) parts.push(ones[h]+' Hundred');
+    if(rem>=10 && rem<20) parts.push(teens[rem-10]);
+    else {
+      const t = Math.floor(rem/10), o = rem%10;
+      if(t) parts.push(tens[t]);
+      if(o) parts.push(ones[o]);
+    }
+    return parts.join(' ');
+  }
+  const wholeNum = Math.floor(Math.abs(num));
+  const fraction = Math.round((Math.abs(num) - wholeNum) * 100);
+  const groups = [
+    { div: 1000000000, name:'Billion' },
+    { div: 1000000, name:'Million' },
+    { div: 1000, name:'Thousand' },
+  ];
+  let remaining = wholeNum;
+  const segments = [];
+  for(const g of groups){
+    const count = Math.floor(remaining / g.div);
+    if(count>0){ segments.push(threeDigits(count) + ' ' + g.name); remaining = remaining % g.div; }
+  }
+  if(remaining>0 || segments.length===0) segments.push(threeDigits(remaining));
+  let text = segments.filter(Boolean).join(' ') + ' ' + currencyMain;
+  if(fraction>0) text += ' and ' + threeDigits(fraction) + ' ' + currencyMinor;
+  text += ' Only';
+  return text;
+}
+// Language-aware wrapper — picks the Arabic or English number-to-words
+// converter (and matching currency name) based on the current UI language,
+// so printed documents (invoices/vouchers) speak the amount in the same
+// language as the rest of the document. See "print documents follow the
+// interface language" decision.
+function amountInWordsLocalized(num, currencyCode){
+  currencyCode = currencyCode || 'EGP';
+  if(STATE.settings.lang === 'en'){
+    const [main, minor] = currencyWordNamesEn(currencyCode);
+    return numberToEnglishWords(num, main, minor);
+  }
+  const [main, minor] = currencyWordNames(currencyCode);
+  return numberToArabicWords(num, main, minor);
+}
+// Just the [main, minor] currency name pair in the current UI language —
+// used where only the currency name is needed (e.g. next to a total), not
+// a full amount-in-words sentence.
+function currencyWordNamesLocalized(currencyCode){
+  return STATE.settings.lang === 'en' ? currencyWordNamesEn(currencyCode) : currencyWordNames(currencyCode);
 }
 
 function blankNewEntryLine(date, journalBook, ref){
@@ -6736,6 +7054,7 @@ async function commitEntryEdit(originalLines, newLines){
     action: !originalLines.length ? 'create' : (newLines.length ? 'edit' : 'delete'),
     before: originalLines.map(snapshot),
     after: newLines.map(snapshot),
+    user: currentUserName(), // lightweight attribution — see USER_ROLES note
   };
   const auditLog = (await storeGet('edit_audit_log')) || [];
   auditLog.unshift(auditEntry);
@@ -6834,7 +7153,7 @@ async function resetSystem(){
 // MutationObserver per overlay — wired up ONCE here at startup — adds all of
 // that generically by watching for the same style-display toggle they
 // already do.
-const MODAL_OVERLAY_IDS = ['confirmModalOverlay','editEntryModalOverlay','newEntryModalOverlay','auditLogModalOverlay','projectFormModalOverlay','projectTxModalOverlay'];
+const MODAL_OVERLAY_IDS = ['confirmModalOverlay','editEntryModalOverlay','newEntryModalOverlay','auditLogModalOverlay','projectFormModalOverlay','projectTxModalOverlay','userPickerModalOverlay'];
 function setupModalAccessibility(){
   MODAL_OVERLAY_IDS.forEach(id => {
     const overlay = document.getElementById(id);
@@ -6905,7 +7224,9 @@ async function initApp(){
   if(STATE.meta.journalSeqCounter == null) STATE.meta.journalSeqCounter = 0;
 
   let settings = await storeGet('settings');
-  STATE.settings = settings || { companyName:'', companyAddress:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold' };
+  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold', users:[], currentUserId:'' };
+  if(!Array.isArray(STATE.settings.users)) STATE.settings.users = [];
+  if(typeof STATE.settings.currentUserId !== 'string') STATE.settings.currentUserId = '';
   if(!STATE.settings.docSerialCounters) STATE.settings.docSerialCounters = {};
   STATE.ui.sidebarCollapsed = !!STATE.settings.sidebarCollapsed;
   if(!STATE.settings.theme) STATE.settings.theme = 'dark';
@@ -7002,6 +7323,41 @@ async function initApp(){
 
   try{ history.replaceState({ mizanView: STATE.ui.view }, '', '#'+STATE.ui.view); }catch(e){}
   renderApp();
+  // If users have been configured but nobody is picked for this session yet,
+  // ask before doing anything else so subsequent audit-log entries can be
+  // attributed. Runs after the first renderApp() so the app underneath isn't
+  // blank while the picker is up.
+  if((STATE.settings.users||[]).length && !currentUser()) openUserPickerModal(true);
+}
+
+// Shown either at boot (users configured, none picked yet) or when the
+// person clicks "Switch User". `isBoot` just changes the copy slightly —
+// same modal either way.
+function openUserPickerModal(){
+  const overlay = document.getElementById('userPickerModalOverlay');
+  if(!overlay) return;
+  const users = STATE.settings.users||[];
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:420px;width:92%">
+      <h3>${t('whoAreYouTitle')}</h3>
+      <p class="hint">${t('whoAreYouHint')}</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin:14px 0;max-height:50vh;overflow:auto">
+        ${users.map(u=>`<button class="btn btn-outline user-pick-btn" data-uid="${escapeHtml(u.id)}" style="text-align:${STATE.settings.lang==='en'?'left':'right'};display:flex;justify-content:space-between;align-items:center">
+          <span>${escapeHtml(u.name)}</span><span class="pill pill-gold" style="font-size:11px">${userRoleLabel(u.role)}</span>
+        </button>`).join('')}
+      </div>
+      <div class="modal-actions"><button class="btn btn-outline" id="userPickerCloseBtn">${t('done')}</button></div>
+    </div>
+  `;
+  overlay.style.display = 'flex';
+  overlay.querySelectorAll('.user-pick-btn').forEach(btn => btn.addEventListener('click', async () => {
+    STATE.settings.currentUserId = btn.dataset.uid;
+    await storeSet('settings', STATE.settings);
+    overlay.style.display = 'none'; overlay.innerHTML = '';
+    renderApp();
+  }));
+  const closeBtn = document.getElementById('userPickerCloseBtn');
+  if(closeBtn) closeBtn.addEventListener('click', () => { overlay.style.display = 'none'; overlay.innerHTML = ''; });
 }
 
 function showToast(msg, ms=3200){
@@ -7450,6 +7806,9 @@ function loadDemoData(){
 
   STATE.journal = lines;
   STATE.settings.companyName = 'شركة النموذج للتجارة والمقاولات (بيانات تجريبية)';
+  STATE.settings.companyNameEn = 'Model Trading & Contracting Co. (Demo Data)';
+  STATE.settings.companyAddress = 'القاهرة، جمهورية مصر العربية';
+  STATE.settings.companyAddressEn = 'Cairo, Egypt';
   STATE.settings.isDemoMode = true;
   STATE.meta.lastImportAt = new Date().toISOString();
   STATE.meta.lastEntry = lines[lines.length-1].entry;
@@ -7470,6 +7829,9 @@ function resetDemoData(){
       STATE.journal = []; STATE.accounts = []; STATE.groups = [];
       STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
       STATE.settings.companyName = '';
+      STATE.settings.companyNameEn = '';
+      STATE.settings.companyAddress = '';
+      STATE.settings.companyAddressEn = '';
       STATE.settings.isDemoMode = false;
       rebuildAccountIndex();
       STATE.ui.view = 'dashboard';
@@ -7499,7 +7861,7 @@ window.addEventListener('popstate', (e) => {
     __suppressHistoryPush = false;
   }
 });
-function setFilter(k,v){ STATE.ui.filters[k] = v; renderApp(); }
+function setFilter(k,v){ STATE.ui.filters[k] = v; STATE.ui.filters.allPeriodsExplicit = false; renderApp(); }
 function drillToAccount(code, partner){
   const acc = STATE.accountsByCode[code];
   STATE.ui.glAccounts = acc ? [`${acc.code} — ${accName(acc.code)}`] : [];
@@ -7626,16 +7988,18 @@ function renderApp(){
     <a href="#mainContent" class="skip-to-content">${t('skipToContent')}</a>
     <div class="sidebar-backdrop ${STATE.ui.sidebarOpen?'show':''}" id="sidebarBackdrop"></div>
     <div class="sidebar ${STATE.ui.sidebarOpen?'open':''} ${STATE.ui.sidebarCollapsed?'sidebar-collapsed':''}">
-      <div class="brand">
+      <div class="brand" style="${companyDisplayName() ? 'border-bottom:none' : ''}">
         ${ICONS.scale.replace('currentColor','var(--gold-light)')}
         <div class="brand-text">
           <div class="t1">${t('appName')}</div>
           <div class="t2">${t('appTagline')}</div>
         </div>
       </div>
-      <div class="company-field">
-        <input id="companyNameInput" type="text" placeholder="${t('companyNamePlaceholder')}" value="${escapeHtml(STATE.settings.companyName||'')}">
-      </div>
+      ${companyDisplayName() ? `<div class="brand-company-name" title="${escapeHtml(companyDisplayName())}">${escapeHtml(companyDisplayName())}</div>` : ''}
+      ${(STATE.settings.users||[]).length ? `<div class="brand-current-user" id="sidebarCurrentUserBtn" title="${t('switchUserBtn')}">
+        <span>${escapeHtml(currentUserName())}</span>
+        <span class="pill pill-gold" style="font-size:9.5px">${userRoleLabel(currentUserRole())}</span>
+      </div>` : ''}
       <div class="nav" role="navigation" aria-label="${t('mainNavigationLabel')}">
         ${(()=>{
           // Build accordion groups from the flat NAV array.
@@ -7679,8 +8043,12 @@ function renderApp(){
             <div class="nav-item ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}" style="padding:8px 12px 8px 20px">
               ${ICONS[n.icon]} <span>${navLabel(n)}</span>
             </div>`;
+          const navItemHtmlPrimary = n => `
+            <div class="nav-item nav-item-primary ${STATE.ui.view===n.id?'active':''}" data-nav="${n.id}">
+              ${ICONS[n.icon]} <span>${navLabel(n)}</span>
+            </div>`;
 
-          const standaloneHtml = standaloneItems.map(navItemHtml).join('');
+          const standaloneHtml = standaloneItems.map(navItemHtmlPrimary).join('');
           const groupsHtml = Object.keys(groups).map(key => {
             const g = groups[key];
             const isOpen = !!STATE.ui.navGroupsOpen[key];
@@ -7742,12 +8110,12 @@ function renderApp(){
           <button id="hamburgerBtn" title="${t('toggleSidebarLabel')}" aria-label="${t('toggleSidebarLabel')}">☰</button>
           <span class="drive-status-lamp ${driveStatusInfo().cls}" id="driveStatusLamp" title="${escapeHtml(t('driveStatusTitle') + ': ' + driveStatusInfo().label)}" role="button" aria-label="${escapeHtml(t('driveStatusTitle'))}"></span>
           <div class="nav-arrows">
-            <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">→</button>
-            <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">←</button>
+            <button id="navBackBtn" title="${t('navBackLabel')}" aria-label="${t('navBackLabel')}">${STATE.settings.lang==='en' ? '←' : '→'}</button>
+            <button id="navFwdBtn" title="${t('navFwdLabel')}" aria-label="${t('navFwdLabel')}">${STATE.settings.lang==='en' ? '→' : '←'}</button>
           </div>
           <div class="topbar-title-block">
             <h1>${navLabel(NAV.find(n=>n.id===STATE.ui.view)||{}) || ''}</h1>
-            <div class="sub">${escapeHtml(STATE.settings.companyName || t('enterCompanyNameHint'))}</div>
+            <div class="sub">${escapeHtml(companyDisplayName() || t('enterCompanyNameHint'))}</div>
           </div>
           <div class="mobile-quick-controls" id="mobileQuickControls"></div>
         </div>
@@ -7815,6 +8183,8 @@ function renderApp(){
       }
     });
   });
+  const sidebarUserBtn = document.getElementById('sidebarCurrentUserBtn');
+  if(sidebarUserBtn) sidebarUserBtn.addEventListener('click', () => openUserPickerModal());
   const hamburger = document.getElementById('hamburgerBtn');
   if(hamburger) hamburger.addEventListener('click', async () => {
     STATE.ui.sidebarOpen = !STATE.ui.sidebarOpen; // mobile off-canvas drawer
@@ -7928,13 +8298,6 @@ function renderApp(){
     if(DRIVE.pendingTimer){ clearTimeout(DRIVE.pendingTimer); DRIVE.pendingTimer = null; }
     scheduleDriveSyncNow();
   });
-  const cni = document.getElementById('companyNameInput');
-  cni.addEventListener('change', debounce(async (e) => {
-    STATE.settings.companyName = e.target.value;
-    await storeSet('settings', STATE.settings);
-    showToast('تم حفظ اسم الشركة');
-  }, 400));
-
   const root = document.getElementById('viewRoot');
   // Item 4.1 — page transitions: #viewRoot is a fresh DOM element on every
   // single renderApp() call (the whole shell is rebuilt from one innerHTML
@@ -7984,8 +8347,8 @@ function renderApp(){
   // listener. Topbar ids (filterYears/filterMonths) are handled here directly;
   // anything else is delegated to whatever the current view registered.
   attachMultiSelectEvents((id, values) => {
-    if(id === 'filterYears'){ STATE.ui.filters.years = values; renderApp(); return; }
-    if(id === 'filterMonths'){ STATE.ui.filters.months = values.map(v=>v.slice(0,2)); renderApp(); return; }
+    if(id === 'filterYears'){ STATE.ui.filters.years = values; STATE.ui.filters.allPeriodsExplicit = false; renderApp(); return; }
+    if(id === 'filterMonths'){ STATE.ui.filters.months = values.map(v=>v.slice(0,2)); STATE.ui.filters.allPeriodsExplicit = false; renderApp(); return; }
     if(STATE.ui.__msHandler) STATE.ui.__msHandler(id, values);
   });
   // Requirement: every table on every page — dashboard, financial
@@ -7996,6 +8359,7 @@ function renderApp(){
   // small export toolbar above every rendered `.table-wrap` generically,
   // reading the table exactly as displayed via SheetJS's table_to_sheet.
   attachTableExportButtons();
+  fixShortTableStickyHeaders();
   // Accessibility fix: dozens of interactive elements across the app (drill-
   // down cells, expand/collapse +/- toggles, edit/delete icons) are plain
   // <span>/<td> with onclick and, at best, a `title` tooltip — invisible to
@@ -8131,6 +8495,38 @@ function renderApp(){
   }
   // Build analytics dashboard charts after full DOM render (ratios view only)
   if(STATE.ui.view === 'ratios') buildRatiosDashCharts();
+  // Keep --topbar-h in sync with the (freshly re-created) topbar element so
+  // every table's sticky thead sticks just below it instead of overlapping —
+  // see setupTopbarHeightSync() and thead th's `top:var(--topbar-h)` rule.
+  setupTopbarHeightSync();
+}
+
+// Measures .topbar-title-row's real rendered height (which varies with
+// content length / wrapping / language / screen width) and publishes it as
+// the --topbar-h CSS custom property that every sticky table header (thead
+// th) uses for its `top` offset. Without this, a sticky thead pinned to a
+// hardcoded top:0 would scroll up underneath the also-sticky topbar and
+// disappear from view — which was the actual bug behind "column headers
+// vanish when I scroll down". Re-attaches on every renderApp() call since
+// the topbar element is destroyed and recreated each time (innerHTML
+// re-render), and also tracks live size changes (e.g. text wrapping to a
+// second line) via ResizeObserver.
+let __topbarHeightObserver = null;
+function setupTopbarHeightSync(){
+  const bar = document.querySelector('.topbar-title-row');
+  if(!bar) return;
+  const apply = () => {
+    const h = bar.getBoundingClientRect().height;
+    if(h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+  };
+  apply();
+  if(__topbarHeightObserver) __topbarHeightObserver.disconnect();
+  if(typeof ResizeObserver !== 'undefined'){
+    __topbarHeightObserver = new ResizeObserver(apply);
+    __topbarHeightObserver.observe(bar);
+  } else {
+    window.addEventListener('resize', apply);
+  }
 }
 
 function buildRatiosDashCharts(){
@@ -8366,12 +8762,21 @@ function attachFilterEvents(){
     if(r==='ytd'){ STATE.ui.filters.start = yearStartISO(); STATE.ui.filters.end = todayISO(); }
     if(r==='all'){ STATE.ui.filters.start = ''; STATE.ui.filters.end = ''; }
     STATE.ui.filters.years = []; STATE.ui.filters.months = [];
+    // Distinguishes "user explicitly asked for the entire history" from the
+    // untouched initial state — both otherwise look identical (empty
+    // start/end, no years/months), but they need different chart behavior:
+    // see renderRatiosView's chartMonths logic, which used to treat a
+    // deliberate "All Periods" click the same as "no filter set yet" and
+    // silently showed only a compact trailing 6-month window instead of the
+    // full data range the button promises.
+    STATE.ui.filters.allPeriodsExplicit = (r==='all');
     if(STATE.ui.msTouched){ delete STATE.ui.msTouched.filterYears; delete STATE.ui.msTouched.filterMonths; }
     renderApp();
   }));
   const clearYM = document.getElementById('clearYearMonthFilter');
   if(clearYM) clearYM.addEventListener('click', () => {
     STATE.ui.filters.years = []; STATE.ui.filters.months = [];
+    STATE.ui.filters.allPeriodsExplicit = false;
     if(STATE.ui.msTouched){ delete STATE.ui.msTouched.filterYears; delete STATE.ui.msTouched.filterMonths; }
     renderApp();
   });
@@ -8762,10 +9167,7 @@ function renderChartOfAccountsView(root){
   // ── state ──────────────────────────────────────────────────────────────────
   const uic = STATE.ui.__coa = STATE.ui.__coa || {};
   if(uic.search    === undefined) uic.search    = '';
-  if(uic.view      === undefined) uic.view      = 'list';
   if(uic.expanded  === undefined) uic.expanded  = {};
-  if(uic.filterCur === undefined) uic.filterCur = '';
-  if(uic.filterType=== undefined) uic.filterType= '';
   // Use system sort state
   const VIEW_KEY = 'coa';
   const sortState = getSortState(VIEW_KEY,'code','asc');
@@ -8829,7 +9231,7 @@ function renderChartOfAccountsView(root){
   function refreshTable(){
     const area = document.getElementById('coaTableArea');
     if(!area) return;
-    area.innerHTML = uic.view==='tree' ? buildTreeView() : buildListView();
+    area.innerHTML = buildTreeView();
     attachTableEvents();
   }
 
@@ -8883,79 +9285,145 @@ function renderChartOfAccountsView(root){
   }
 
   // ── TREE VIEW ──────────────────────────────────────────────────────────────
-  // ── TREE VIEW ──────────────────────────────────────────────────────────────
   // Reproduces the reference layout: the account table stays a normal,
-  // full-column table of postable ("leaf") accounts, in strict Account-Code
-  // order; a narrow hierarchy NAVIGATOR panel sits beside it (right side in
-  // RTL) showing only the header/group accounts — i.e. any account that is
-  // itself the parent of at least one other account, at any depth — built
-  // dynamically from buildCoaTree()'s real code-prefix parent/child
-  // relationships (never hardcoded, never assumes a fixed number of levels).
-  // Collapsing a header in the panel hides its descendant accounts from the
-  // table; nothing is duplicated — the panel and the table both read from
-  // the same STATE.accounts / buildCoaTree() output.
+  // full-column table of every account, in strict Account-Code order; a
+  // narrow hierarchy NAVIGATOR panel sits beside it (right side in RTL)
+  // built from STATE.groups — the app's own explicit, user-imported/edited
+  // "Account Group (account.group)" model (start/end code-prefix ranges with
+  // real Arabic/English names — see Setup & Import → مجموعات الحسابات).
+  // This is the real, explicitly-stored hierarchy (see codeInGroupRange() /
+  // buildAccountTree(), already used elsewhere in the app for reports), so
+  // unlike a naive code-prefix guess it works for any chart of accounts
+  // regardless of whether "header" accounts exist — including flat lists of
+  // purely postable accounts, which is why the previous prefix-guessing
+  // version showed "no groups" here. Collapsing a group in the panel hides
+  // its accounts (and its sub-groups' accounts) from the table; nothing is
+  // duplicated — panel and table both read the same STATE.groups /
+  // STATE.accounts.
   function buildTreeView(){
     const q = (uic.search||'').trim().toLowerCase();
-    const { children, parentOf } = buildCoaTree(STATE.accounts);
 
-    // A "header" account is any code that is itself a parent of at least one
-    // other account (buildCoaTree only creates a `children[code]` bucket
-    // when something maps to it as its nearest existing code-prefix).
-    const headerCodesAll = Object.keys(children).filter(c => c !== '__root__');
-    const isHeader = code => children[code] !== undefined;
+    // ── build the group tree from STATE.groups (explicit prefix ranges) ──
+    const groups = (STATE.groups||[]).slice().sort((a,b)=>a.start.length-b.start.length || a.start.localeCompare(b.start));
+    const gnodes = {};
+    groups.forEach(g => { gnodes[g.start] = { key:g.start, name:groupDisplayName(g), start:g.start, end:g.end, parentKey:null, children:[] }; });
+    const rootKeys = [];
+    groups.forEach(g => {
+      let bestParent = null;
+      groups.forEach(p => {
+        if(p.start.length < g.start.length && g.start.slice(0,p.start.length) >= p.start && g.start.slice(0,p.start.length) <= p.end){
+          if(!bestParent || p.start.length > bestParent.start.length) bestParent = p;
+        }
+      });
+      if(bestParent){ gnodes[bestParent.start].children.push(gnodes[g.start]); gnodes[g.start].parentKey = bestParent.start; }
+      else rootKeys.push(g.start);
+    });
+    Object.values(gnodes).forEach(n => n.children.sort((a,b)=>a.start.localeCompare(b.start,undefined,{numeric:true})));
+    rootKeys.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
 
+    // Map every account to the deepest (most specific) group whose range contains it.
+    const UNCLASSIFIED_KEY = '__unclassified__';
+    const accountGroupKey = {};
+    STATE.accounts.forEach(a => {
+      let best = null;
+      groups.forEach(g => { if(codeInGroupRange(a.code,g)){ if(!best || g.start.length > best.start.length) best = g; } });
+      accountGroupKey[a.code] = best ? best.start : null;
+    });
+    const hasUnclassified = STATE.accounts.some(a => accountGroupKey[a.code]===null);
+    if(hasUnclassified){
+      gnodes[UNCLASSIFIED_KEY] = { key:UNCLASSIFIED_KEY, name:(en?'Unclassified':'غير مصنف'), start:'', end:'', parentKey:null, children:[] };
+      rootKeys.push(UNCLASSIFIED_KEY);
+      STATE.accounts.forEach(a => { if(accountGroupKey[a.code]===null) accountGroupKey[a.code]=UNCLASSIFIED_KEY; });
+    }
+    function ancestorsOf(key){
+      const chain=[]; let k=key;
+      while(k){ chain.push(k); k = gnodes[k] ? gnodes[k].parentKey : null; }
+      return chain;
+    }
+    const allGroupKeys = Object.keys(gnodes);
+
+    // ── matching / filtering (applies to accounts; groups are pure navigation) ──
     const matchesQ = a => !q ||
       a.code.toLowerCase().includes(q) ||
       (a.name||'').toLowerCase().includes(q) ||
       (a.nameEn||'').toLowerCase().includes(q);
     const cf = (STATE.ui.colFilters)||{};
+    // Type/Nature filter values are checkbox lists built from the CURRENT
+    // language's translated display labels (filterableTh has no separate
+    // raw-value/display-label concept — see getColFilterValues()), so a
+    // selection saved while in Arabic literally stores Arabic strings and a
+    // selection saved in English stores English strings. Without accounting
+    // for that, switching the language after using either filter makes every
+    // row fail the check (stored label no longer matches the newly-
+    // translated one) and the whole table — and with it every group in the
+    // panel, since groups are only shown when they contain a visible
+    // account — silently goes empty. Matching against BOTH languages' label
+    // for these two columns keeps a saved filter working across a language
+    // switch instead of only in the language it was set in.
+    const typeBoth = a => [a.type, ACCOUNT_TYPE_TRANSLATIONS[a.type] || a.type];
+    const NATURE_BOTH = { debit:['مدين','Debit'], credit:['دائن','Credit'] };
+    const natureBoth = a => { const c=CLASS_MAP[a.type]; return c ? (NATURE_BOTH[c.normal]||[]) : []; };
     const matchesFilters = a => {
-      if(uic.filterCur && (a.currency||'EGP')!==uic.filterCur) return false;
-      if(uic.filterType && a.type!==uic.filterType) return false;
       if(cf['coa-code']?.length     && !cf['coa-code'].includes(a.code)) return false;
       if(cf['coa-name']?.length     && !cf['coa-name'].includes(a.name||'')) return false;
-      if(cf['coa-type']?.length     && !cf['coa-type'].includes(accountTypeDisplay(a.type)||'')) return false;
+      if(cf['coa-nameEn']?.length   && !cf['coa-nameEn'].includes(a.nameEn||'')) return false;
+      if(cf['coa-type']?.length     && !typeBoth(a).some(v=>cf['coa-type'].includes(v))) return false;
       if(cf['coa-currency']?.length && !cf['coa-currency'].includes(a.currency||'EGP')) return false;
-      if(cf['coa-nature']?.length   && !cf['coa-nature'].includes(natureLbl(a.type))) return false;
+      if(cf['coa-nature']?.length   && !natureBoth(a).some(v=>cf['coa-nature'].includes(v))) return false;
       return true;
     };
-    const activeCf = ['coa-code','coa-name','coa-type','coa-currency','coa-nature'].some(k=>cf[k]&&cf[k].length);
-    const hasActiveFilter = !!q || !!uic.filterCur || !!uic.filterType || activeCf;
+    const activeCf = ['coa-code','coa-name','coa-nameEn','coa-type','coa-currency','coa-nature'].some(k=>cf[k]&&cf[k].length);
+    const hasActiveFilter = !!q || activeCf;
 
-    // Table rows = leaf (postable) accounts only. Header/group accounts are
-    // navigated exclusively through the side panel (they're still editable
-    // there — see the code click handler below — nothing about them is lost).
-    const leaves = STATE.accounts.filter(a => !isHeader(a.code));
-    const eligibleLeaves = hasActiveFilter ? leaves.filter(a => matchesQ(a) && matchesFilters(a)) : leaves;
-    const eligibleSet = new Set(eligibleLeaves.map(a=>a.code));
+    const eligibleAccounts = hasActiveFilter ? STATE.accounts.filter(a => matchesQ(a) && matchesFilters(a)) : STATE.accounts;
+    const eligibleSet = new Set(eligibleAccounts.map(a=>a.code));
 
-    // When searching/filtering, force-reveal every ancestor header of every
-    // matching leaf so the match stays reachable with its parent context —
+    // When searching/filtering, force-reveal every ancestor group of every
+    // matching account so the match stays reachable with its parent context —
     // without permanently altering the user's own collapse choices.
     const forceSet = new Set();
     if(hasActiveFilter){
-      eligibleLeaves.forEach(a => getAncestors(a.code, parentOf).forEach(c => forceSet.add(c)));
+      eligibleAccounts.forEach(a => ancestorsOf(accountGroupKey[a.code]).forEach(k => forceSet.add(k)));
     }
-    const requiredHeaders = hasActiveFilter ? forceSet : null; // null = show the full header tree
+    const requiredGroups = hasActiveFilter ? forceSet : null; // null = show the full group tree
 
-    function isExpanded(code){
-      if(hasActiveFilter && forceSet.has(code)) return true;
-      return uic.expanded[code] !== false;
+    function isExpanded(key){
+      if(hasActiveFilter && forceSet.has(key)) return true;
+      return uic.expanded[key] !== false;
     }
-    function leafVisible(a){
+    function accountVisible(a){
       if(hasActiveFilter && !eligibleSet.has(a.code)) return false;
-      return getAncestors(a.code, parentOf).every(h => isExpanded(h));
+      return ancestorsOf(accountGroupKey[a.code]).every(k => isExpanded(k));
     }
 
-    const visibleLeaves = leaves.filter(leafVisible).sort(codeSort);
+    const visibleAccounts = STATE.accounts.filter(accountVisible);
+    // Excel-style sort: apply the active column/direction (from the header's
+    // sort click) to the currently-visible set. This only reorders rows
+    // within the table — it never changes which accounts are visible, so it
+    // can't disturb the hierarchy panel's grouping.
+    {
+      const { col, dir: sd } = sortState;
+      visibleAccounts.sort((a, b) => {
+        let va, vb;
+        if(col==='code')        { va=a.code;                         vb=b.code; }
+        else if(col==='name')   { va=a.name||'';                     vb=b.name||''; }
+        else if(col==='nameEn') { va=a.nameEn||'';                    vb=b.nameEn||''; }
+        else if(col==='type')   { va=accountTypeDisplay(a.type)||''; vb=accountTypeDisplay(b.type)||''; }
+        else if(col==='currency'){va=a.currency||'EGP';               vb=b.currency||'EGP'; }
+        else if(col==='nature') { va=natureLbl(a.type);               vb=natureLbl(b.type); }
+        else                    { va=a.code;                         vb=b.code; }
+        const cmp = col==='code' ? va.localeCompare(vb,undefined,{numeric:true}) : va.localeCompare(vb);
+        return sd==='asc' ? cmp : -cmp;
+      });
+    }
 
-    // ── account table (leaf rows, strict code order) ──
-    const rowsHtml = visibleLeaves.length ? visibleLeaves.map(a=>{
+    // ── account table (every account, strict code order) ──
+    const rowsHtml = visibleAccounts.length ? visibleAccounts.map(a=>{
       const cur = a.currency||'EGP';
       const isMatch = hasActiveFilter && q && matchesQ(a);
       const rowBg = isMatch?'background:rgba(184,144,46,.1);':'';
       return `<tr style="${rowBg}">
-        <td><code style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
+        <td><code class="coa-code-drill" data-coa-drill="${escapeHtml(a.code)}" title="${en?'Open journal entries for this account':'فتح كل القيود المربوطة بهذا الحساب'}" style="font-family:monospace;font-size:12px;color:var(--gold-light);font-weight:600">${hl(a.code,q)}</code></td>
         <td style="color:var(--ink);font-family:'Cairo',sans-serif">${hl(a.name||'',q)}</td>
         <td dir="ltr" style="color:var(--ink-soft);font-size:12px">${hl(a.nameEn||'—',q)}</td>
         <td style="text-align:center"><span class="pill pill-gold" style="font-size:10px;white-space:nowrap">${escapeHtml(accountTypeDisplay(a.type)||'')}</span></td>
@@ -8965,47 +9433,50 @@ function renderChartOfAccountsView(root){
       </tr>`;
     }).join('') : `<tr><td colspan="7" style="text-align:center;color:var(--ink-soft);padding:40px">${L.noAccounts}</td></tr>`;
 
+    const namesEn = uniq(STATE.accounts.map(a=>a.nameEn||'').filter(Boolean));
+    const namesAr = uniq(STATE.accounts.map(a=>a.name||'').filter(Boolean));
+    const typeVals = uniq(STATE.accounts.map(a=>accountTypeDisplay(a.type)||'').filter(Boolean));
+    const currencyVals = uniq(STATE.accounts.map(a=>a.currency||'EGP'));
+    const natureVals = [L.debit, L.credit];
+    const codeVals = uniq(STATE.accounts.map(a=>a.code));
     const tableHtml = `
-      <div class="table-wrap" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
+      <div class="table-wrap" data-no-auto-toolbar="1" style="max-height:calc(100vh - 210px);overflow-y:auto;overflow-x:auto">
         <table id="coaTreeTable" style="width:100%;min-width:640px" dir="${dir}">
           <thead><tr>
-            <th data-col-key="code">${L.colCode}</th>
-            <th data-col-key="name">${L.colNameAr}</th>
-            <th data-col-key="nameEn" dir="ltr">${L.colNameEn}</th>
-            <th data-col-key="type"  style="text-align:center">${L.colType}</th>
-            <th data-col-key="currency" style="text-align:center">${L.colCurrency}</th>
-            <th data-col-key="nature" style="text-align:center">${L.colNature}</th>
+            ${filterableTh(VIEW_KEY,'code',    L.colCode,    'coa-code',     codeVals)}
+            ${filterableTh(VIEW_KEY,'name',    L.colNameAr,  'coa-name',     namesAr)}
+            ${filterableTh(VIEW_KEY,'nameEn',L.colNameEn,'coa-nameEn',namesEn)}
+            ${filterableTh(VIEW_KEY,'type',    L.colType,    'coa-type',     typeVals,     {extraClass:'th-center'})}
+            ${filterableTh(VIEW_KEY,'currency',L.colCurrency,'coa-currency', currencyVals, {extraClass:'th-center'})}
+            ${filterableTh(VIEW_KEY,'nature',  L.colNature,  'coa-nature',   natureVals,   {extraClass:'th-center'})}
             <th data-col-key="actions" style="text-align:center">${L.colActions}</th>
           </tr></thead>
           <tbody>${rowsHtml}</tbody>
         </table>
       </div>`;
 
-    // ── hierarchy navigator panel (header/group accounts only) ──
-    function headerKids(code){
-      return (children[code]||[]).filter(a => isHeader(a.code)).sort(codeSort);
-    }
-    function panelNode(a, level){
-      const code = a.code;
-      if(requiredHeaders && !requiredHeaders.has(code)) return '';
-      const exp = isExpanded(code);
-      const active = hasActiveFilter && forceSet.has(code);
-      const kids = headerKids(code);
+    // ── hierarchy navigator panel (groups only — accounts never appear here) ──
+    function panelNode(node, level){
+      const key = node.key;
+      if(requiredGroups && !requiredGroups.has(key)) return '';
+      const exp = isExpanded(key);
+      const active = hasActiveFilter && forceSet.has(key);
       const pad = level*13;
       const row = `<div class="coa-hier-row" style="padding-${dir==='rtl'?'right':'left'}:${pad}px">
-          <button type="button" class="coa-hier-toggle" data-coa-toggle="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${exp?'▾':'▸'}</button>
-          <span class="coa-hier-code${active?' coa-hier-active':''}" data-coa-edit="${escapeHtml(code)}" title="${escapeHtml(a.name||'')}">${hl(code,q)}</span>
+          <button type="button" class="coa-hier-toggle" data-coa-toggle="${escapeHtml(key)}" title="${escapeHtml(node.name||'')}">${exp?'▾':'▸'}</button>
+          <span class="coa-hier-code${active?' coa-hier-active':''}" data-coa-toggle="${escapeHtml(key)}" title="${escapeHtml(node.name||'')}">${node.start?`${hl(node.start,q)} <span class="coa-hier-name">${hl(node.name,q)}</span>`:hl(node.name,q)}</span>
         </div>`;
       let childHtml = '';
-      if(exp && kids.length){
-        childHtml = `<div class="coa-hier-children">${kids.map(k=>panelNode(k,level+1)).join('')}</div>`;
+      if(exp && node.children.length){
+        childHtml = `<div class="coa-hier-children">${node.children.map(k=>panelNode(k,level+1)).join('')}</div>`;
       }
       return row+childHtml;
     }
-    const rootHeaders = (children['__root__']||[]).filter(a=>isHeader(a.code)).sort(codeSort);
-    const panelBody = rootHeaders.map(a=>panelNode(a,0)).join('') ||
-      `<div class="coa-hier-empty">${en?'No groups':'لا توجد مجموعات'}</div>`;
-    const allExpanded = headerCodesAll.length>0 && headerCodesAll.every(c=>uic.expanded[c]!==false);
+    const panelBody = rootKeys.map(k=>panelNode(gnodes[k],0)).join('') ||
+      `<div class="coa-hier-empty">${en
+        ? 'No account groups defined yet — import them from Setup & Import.'
+        : 'لا توجد مجموعات حسابات معرّفة بعد — استوردها من الإعداد والاستيراد.'}</div>`;
+    const allExpanded = allGroupKeys.length>0 && allGroupKeys.every(k=>uic.expanded[k]!==false);
     const panelHtml = `
       <div class="coa-hier-panel" dir="${dir}">
         <div class="coa-hier-all" data-coa-toggle-all="1" title="${en?'Expand/collapse all groups':'فتح/طي كل المجموعات'}">
@@ -9015,10 +9486,12 @@ function renderChartOfAccountsView(root){
         <div class="coa-hier-body">${panelBody}</div>
       </div>`;
 
-    // Panel stays on the right in both languages: first DOM child in RTL
-    // (rightmost in normal flow), last DOM child in LTR (also rightmost).
+    // Panel is always the first DOM child, so normal document flow puts it
+    // on the natural "start" side for the current direction — the right in
+    // RTL (Arabic), the left in LTR (English) — mirroring properly instead
+    // of staying pinned to the right in both languages.
     return `<div class="coa-tree-flex" dir="${dir}">
-        ${dir==='rtl' ? panelHtml+tableHtml : tableHtml+panelHtml}
+        ${panelHtml}${tableHtml}
       </div>`;
   }
 
@@ -9250,7 +9723,6 @@ function renderChartOfAccountsView(root){
   // ── PAGE HTML ──────────────────────────────────────────────────────────────
   function buildPage(){
     const total=STATE.accounts.length;
-    const isTree=uic.view==='tree';
     return `
       <div class="card" style="box-sizing:border-box" dir="${dir}">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
@@ -9259,25 +9731,14 @@ function renderChartOfAccountsView(root){
           <div style="flex:1;min-width:4px"></div>
           <input id="coaSearchInput" type="text" class="date-text-input" placeholder="${L.search}"
             value="${escapeHtml(uic.search||'')}" style="width:140px;padding:6px 10px;font-size:12px">
-          <select id="coaFilterCur" class="date-text-input" style="padding:6px 8px;font-size:12px">
-            <option value="">${en?'All Currencies':'كل العملات'}</option>
-            ${SUPPORTED_CURRENCIES.map(c=>`<option value="${c}" ${uic.filterCur===c?'selected':''}>${c}</option>`).join('')}
-          </select>
-          <select id="coaFilterType" class="date-text-input" style="padding:6px 8px;font-size:12px">
-            <option value="">${en?'All Types':'كل الطبائع'}</option>
-            ${allTypes.map(tp=>`<option value="${escapeHtml(tp)}" ${uic.filterType===tp?'selected':''}>${escapeHtml(accountTypeDisplay(tp))}</option>`).join('')}
-          </select>
-          <div style="display:flex;border:1px solid var(--border);border-radius:6px;overflow:hidden">
-            <button id="coaViewList" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${!isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.listView}</button>
-            <button id="coaViewTree" class="btn" style="border-radius:0;padding:5px 12px;font-size:12px;white-space:nowrap;${isTree?'background:var(--gold);color:#000;font-weight:700':'background:transparent;color:var(--ink)'}">${L.treeView}</button>
-          </div>
           <button id="coaNewBtn"    class="btn btn-primary" style="padding:6px 12px;font-size:12px;white-space:nowrap">${L.newAccount}</button>
           <button id="coaImportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.importCoa}</button>
           <button id="coaTplBtn"    class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.downloadTpl}</button>
           <button id="coaExportBtn" class="btn btn-outline" style="padding:6px 10px;font-size:12px;white-space:nowrap">${L.exportExcel}</button>
+          <span id="coaColsSlot" style="display:inline-block"></span>
         </div>
         <div id="coaTableArea">
-          ${isTree ? buildTreeView() : buildListView()}
+          ${buildTreeView()}
         </div>
       </div>`;
   }
@@ -9287,23 +9748,35 @@ function renderChartOfAccountsView(root){
     // system sort
     attachSortEvents();
     // system col-filter
-    bindColFilterHandler(['coa-code','coa-name','coa-type','coa-currency','coa-nature']);
+    bindColFilterHandler(['coa-code','coa-name','coa-nameEn','coa-type','coa-currency','coa-nature']);
     // col resize
-    const tbl=document.getElementById('coaListTable')||document.getElementById('coaTreeTable');
+    const tbl=document.getElementById('coaTreeTable');
     if(tbl) attachColumnResizing(tbl,'coa');
-    // toggle (tree)
+    // "الأعمدة" (show/hide columns) — same picker every other table on the
+    // dashboard gets automatically, wired in manually here since the Chart
+    // of Accounts tree table opts out of the generic per-table toolbar (see
+    // attachTableExportButtons()'s data-no-auto-toolbar check) to avoid it
+    // wedging a stray element into the panel+table flex layout.
+    const colsSlot=document.getElementById('coaColsSlot');
+    if(tbl && colsSlot){ colsSlot.innerHTML=''; attachColumnVisibilityToggle(tbl,colsSlot,'coa_tree'); }
+    // toggle (tree) + drill-to-ledger
     if(page._coaClickHandler) page.removeEventListener('click',page._coaClickHandler);
     page._coaClickHandler=e=>{
       const all=e.target.closest('[data-coa-toggle-all]');
       if(all){
-        const {children:ch}=buildCoaTree(STATE.accounts);
-        const headers=Object.keys(ch).filter(c=>c!=='__root__');
-        const isAllExp=headers.length>0 && headers.every(c=>uic.expanded[c]!==false);
-        headers.forEach(c=>{ uic.expanded[c]=!isAllExp; });
+        const groupKeys=(STATE.groups||[]).map(g=>g.start);
+        if(STATE.accounts.some(a=>{
+          const gs=(STATE.groups||[]);
+          return !gs.some(g=>codeInGroupRange(a.code,g));
+        })) groupKeys.push('__unclassified__');
+        const isAllExp=groupKeys.length>0 && groupKeys.every(k=>uic.expanded[k]!==false);
+        groupKeys.forEach(k=>{ uic.expanded[k]=!isAllExp; });
         refreshTable();return;
       }
       const tgt=e.target.closest('[data-coa-toggle]');
-      if(tgt){const c=tgt.dataset.coaToggle;uic.expanded[c]=!(uic.expanded[c]!==false);refreshTable();return;}
+      if(tgt){const k=tgt.dataset.coaToggle;uic.expanded[k]=!(uic.expanded[k]!==false);refreshTable();return;}
+      const drill=e.target.closest('[data-coa-drill]');
+      if(drill){drillToAccount(drill.dataset.coaDrill);return;}
       const ed=e.target.closest('[data-coa-edit]');
       if(ed){openAccountModal(STATE.accountsByCode[ed.dataset.coaEdit]);return;}
       const dup=e.target.closest('[data-coa-dup]');
@@ -9319,18 +9792,6 @@ function renderChartOfAccountsView(root){
     if(searchEl){
       let st; searchEl.addEventListener('input',e=>{clearTimeout(st);st=setTimeout(()=>{uic.search=e.target.value;refreshTable();},180);});
     }
-    const cf=document.getElementById('coaFilterCur');
-    if(cf) cf.addEventListener('change',e=>{uic.filterCur=e.target.value;refreshTable();});
-    const tf=document.getElementById('coaFilterType');
-    if(tf) tf.addEventListener('change',e=>{uic.filterType=e.target.value;refreshTable();});
-    const vl=document.getElementById('coaViewList');
-    const vt=document.getElementById('coaViewTree');
-    if(vl) vl.addEventListener('click',()=>{uic.view='list';refresh();});
-    if(vt) vt.addEventListener('click',()=>{uic.view='tree';refresh();});
-    const ea=document.getElementById('coaExpandAll');
-    const ca=document.getElementById('coaCollapseAll');
-    if(ea) ea.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=true;});refreshTable();});
-    if(ca) ca.addEventListener('click',()=>{STATE.accounts.forEach(a=>{uic.expanded[a.code]=false;});refreshTable();});
     const nb=document.getElementById('coaNewBtn');
     if(nb) nb.addEventListener('click',()=>openAccountModal(null));
     const ib=document.getElementById('coaImportBtn');
@@ -9375,8 +9836,17 @@ function renderImportView(root){
     <div class="card">
       <h2>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('companyDocInfoTitle')}</h2>
       <div class="desc">${t('companyDocInfoDesc')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+        <div><label class="lbl">${t('companyNameLabel')}</label><input id="cfgCompanyName" class="input" value="${escapeHtml(STATE.settings.companyName||'')}"></div>
+        <div><label class="lbl">${t('companyNameEnLabel')}</label><input id="cfgCompanyNameEn" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyNameEn||'')}"></div>
+      </div>
+      <div class="hint" style="margin:0 0 10px">${t('companyNameFieldHint')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+        <div><label class="lbl">${t('companyAddressLabel')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
+        <div><label class="lbl">${t('companyAddressEnLabel')}</label><input id="cfgCompanyAddressEn" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyAddressEn||'')}"></div>
+      </div>
+      <div class="hint" style="margin:0 0 10px">${t('companyAddressFieldHint')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div><label class="lbl">${t('custAddressCol')}</label><input id="cfgCompanyAddress" class="input" value="${escapeHtml(STATE.settings.companyAddress||'')}"></div>
         <div><label class="lbl">${t('custPhoneCol')}</label><input id="cfgCompanyPhone" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyPhone||'')}"></div>
         <div><label class="lbl">${t('custEmailCol')}</label><input id="cfgCompanyEmail" class="input" dir="ltr" value="${escapeHtml(STATE.settings.companyEmail||'')}"></div>
         <div><label class="lbl">${t('custTaxIdCol')}</label><input id="cfgCompanyTaxId" class="input" value="${escapeHtml(STATE.settings.companyTaxId||'')}"></div>
@@ -9392,6 +9862,33 @@ function renderImportView(root){
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <h2>${ICONS.users ? ICONS.users.replace('currentColor','var(--gold-dim)') : ''} ${t('usersManagementTitle')}</h2>
+      <div class="desc">${t('usersManagementHint')}</div>
+      <div class="table-wrap" style="margin:10px 0">
+        <table><thead><tr><th>${t('userNameLabel')}</th><th>${t('userRoleLabel')}</th><th></th></tr></thead><tbody>
+          ${(STATE.settings.users||[]).length ? STATE.settings.users.map(u=>`<tr>
+            <td>${escapeHtml(u.name)}${u.id===STATE.settings.currentUserId?` <span class="pill pill-gold" style="font-size:10px">${t('currentUserLabel')}</span>`:''}</td>
+            <td>
+              <select class="input user-role-select" data-uid="${escapeHtml(u.id)}" style="width:auto;display:inline-block">
+                ${USER_ROLES.map(r=>`<option value="${r}" ${u.role===r?'selected':''}>${userRoleLabel(r)}</option>`).join('')}
+              </select>
+            </td>
+            <td><button type="button" class="btn btn-outline user-delete-btn" data-uid="${escapeHtml(u.id)}" style="padding:4px 10px;font-size:11px">${t('deleteUserBtn')}</button></td>
+          </tr>`).join('') : `<tr><td colspan="3"><div class="empty" style="padding:14px 0">${t('noUsersYet')}</div></td></tr>`}
+        </tbody></table>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input id="newUserNameInput" class="input" style="max-width:220px" placeholder="${t('userNameLabel')}">
+        <select id="newUserRoleSelect" class="input" style="width:auto">
+          ${USER_ROLES.map(r=>`<option value="${r}">${userRoleLabel(r)}</option>`).join('')}
+        </select>
+        <button type="button" class="btn btn-primary" id="addUserBtn">${t('addUserBtn')}</button>
+        ${(STATE.settings.users||[]).length ? `<button type="button" class="btn btn-outline" id="switchUserBtn" style="margin-inline-start:auto">${t('switchUserBtn')}</button>` : ''}
+      </div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
         <h2>${ICONS.ledger.replace('currentColor','var(--gold-dim)')} ${t('importAccountsTitle')}</h2>
@@ -9447,9 +9944,9 @@ function renderImportView(root){
     downloadImportTemplate(btn.dataset.dlTemplate);
   }));
 
-  // Company info fields used on printed invoices/vouchers (address, phone,
-  // email, tax ID, logo). Saved with the same debounced-on-change pattern as
-  // companyNameInput above.
+  // Company info fields used on printed invoices/vouchers, and shown on the
+  // Home page / sidebar via companyDisplayName()/companyDisplayAddress().
+  // This is the only place these fields are editable (see Settings & Import).
   const bindCompanyField = (id, key) => {
     const el = document.getElementById(id);
     if(el) el.addEventListener('change', debounce(async (e) => {
@@ -9458,7 +9955,10 @@ function renderImportView(root){
       showToast(t('savedToast'));
     }, 400));
   };
+  bindCompanyField('cfgCompanyName', 'companyName');
+  bindCompanyField('cfgCompanyNameEn', 'companyNameEn');
   bindCompanyField('cfgCompanyAddress', 'companyAddress');
+  bindCompanyField('cfgCompanyAddressEn', 'companyAddressEn');
   bindCompanyField('cfgCompanyPhone', 'companyPhone');
   bindCompanyField('cfgCompanyEmail', 'companyEmail');
   bindCompanyField('cfgCompanyTaxId', 'companyTaxId');
@@ -9481,6 +9981,41 @@ function renderImportView(root){
     await storeSet('settings', STATE.settings);
     renderApp();
   });
+
+  // --- Lightweight user management (see USER_ROLES / currentUser() above) ---
+  const addUserBtn = document.getElementById('addUserBtn');
+  if(addUserBtn) addUserBtn.addEventListener('click', async () => {
+    const nameInput = document.getElementById('newUserNameInput');
+    const roleSelect = document.getElementById('newUserRoleSelect');
+    const name = (nameInput.value||'').trim();
+    if(!name){ showToast(t('userNameRequired')); return; }
+    const id = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    STATE.settings.users = STATE.settings.users || [];
+    STATE.settings.users.push({ id, name, role: roleSelect.value });
+    // First user added while nobody is picked yet ⇒ pick them automatically,
+    // so the person who just set this up isn't immediately asked "who are you".
+    if(!STATE.settings.currentUserId) STATE.settings.currentUserId = id;
+    await storeSet('settings', STATE.settings);
+    renderApp();
+    showToast(t('savedToast'));
+  });
+  document.querySelectorAll('.user-role-select').forEach(sel => sel.addEventListener('change', async (e) => {
+    const u = (STATE.settings.users||[]).find(x=>x.id===e.target.dataset.uid);
+    if(u){ u.role = e.target.value; await storeSet('settings', STATE.settings); }
+  }));
+  document.querySelectorAll('.user-delete-btn').forEach(btn => btn.addEventListener('click', () => {
+    const uid = btn.dataset.uid;
+    const u = (STATE.settings.users||[]).find(x=>x.id===uid);
+    if(!u) return;
+    showConfirmModal(t('deleteUserBtn'), tf('deleteUserConfirmMsg', {name:u.name}), async () => {
+      STATE.settings.users = (STATE.settings.users||[]).filter(x=>x.id!==uid);
+      if(STATE.settings.currentUserId === uid) STATE.settings.currentUserId = '';
+      await storeSet('settings', STATE.settings);
+      renderApp();
+    });
+  }));
+  const switchUserBtn = document.getElementById('switchUserBtn');
+  if(switchUserBtn) switchUserBtn.addEventListener('click', () => openUserPickerModal());
 
   const downloadBackupBtn = document.getElementById('downloadBackupBtn');
   if(downloadBackupBtn) downloadBackupBtn.addEventListener('click', downloadFullBackup);
@@ -12061,28 +12596,31 @@ function printInvoice(entryNo){
   const w = window.open('', '_blank');
   if(!w){ showToast(t('popupBlockedError')); return; }
   const esc = escapeHtml;
+  const lang = STATE.settings.lang === 'en' ? 'en' : 'ar';
+  const dir = lang === 'en' ? 'ltr' : 'rtl';
   const lineExtras = inv.lines.map((l,i)=> inv.lineExtras[i] || { qty:1, unitPrice:l.amount, discountPct:0 });
-  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(inv.invoiceNo)}</title>
+  const currencyMain = currencyWordNamesLocalized('EGP')[0];
+  const html = `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>${esc(inv.invoiceNo)}</title>
 ${DOC_PRINT_STYLE}
 </head><body>
   <div class="doc-page">
     ${docHeaderHtml()}
     <div class="doc-title-row">
-      <div class="doc-title">فاتورة مبيعات<div class="doc-title-en">Sales Invoice</div></div>
+      <div class="doc-title">${t('docSalesInvoiceTitle')}</div>
       <div class="doc-meta">
-        <div><b>رقم الفاتورة:</b> ${esc(inv.invoiceNo)}</div>
-        <div><b>التاريخ:</b> ${esc(inv.date)}</div>
-        ${inv.dueDate?`<div><b>تاريخ الاستحقاق:</b> ${esc(inv.dueDate)}</div>`:''}
+        <div><b>${t('invoiceNoLabel')}:</b> ${esc(inv.invoiceNo)}</div>
+        <div><b>${t('date')}:</b> ${esc(inv.date)}</div>
+        ${inv.dueDate?`<div><b>${t('invDueDateCol')}:</b> ${esc(inv.dueDate)}</div>`:''}
       </div>
     </div>
     <div class="doc-partner-box">
-      <div><b>السادة / </b>${esc(inv.customerName)}</div>
+      <div><b>${t('docBillToLabel')}</b>${esc(inv.customerName)}</div>
       ${cust.address?`<div>${esc(cust.address)}</div>`:''}
-      ${cust.phone?`<div>هاتف: ${esc(cust.phone)}</div>`:''}
-      ${cust.taxRegNo?`<div>الرقم الضريبي: ${esc(cust.taxRegNo)}</div>`:''}
+      ${cust.phone?`<div>${t('docPhoneLabel')}: ${esc(cust.phone)}</div>`:''}
+      ${cust.taxRegNo?`<div>${t('docTaxIdLabel')}: ${esc(cust.taxRegNo)}</div>`:''}
     </div>
     <table class="doc-table"><thead><tr>
-      <th>#</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الخصم %</th><th>الإجمالي</th>
+      <th>#</th><th>${t('itemCol')}</th><th>${t('invQtyCol')}</th><th>${t('invUnitPriceCol')}</th><th>${t('invDiscCol')}</th><th>${t('invLineTotalCol')}</th>
     </tr></thead><tbody>
       ${inv.lines.map((l,i)=>`<tr>
         <td>${i+1}</td><td>${esc(l.name)}</td>
@@ -12092,14 +12630,14 @@ ${DOC_PRINT_STYLE}
       </tr>`).join('')}
     </tbody></table>
     <div class="doc-totals">
-      <div><span>إجمالي الأصناف</span><span>${fmt(inv.lines.reduce((s,l)=>s+l.amount,0))}</span></div>
-      <div><span>الضريبة</span><span>${fmt(inv.taxTotal)}</span></div>
-      <div class="doc-total-final"><span>الإجمالي المستحق</span><span>${fmt(inv.grandTotal)} جنيه</span></div>
+      <div><span>${t('invSubtotalRow')}</span><span>${fmt(inv.lines.reduce((s,l)=>s+l.amount,0))}</span></div>
+      <div><span>${t('invTaxRow')}</span><span>${fmt(inv.taxTotal)}</span></div>
+      <div class="doc-total-final"><span>${t('invGrandTotalRow')}</span><span>${fmt(inv.grandTotal)} ${esc(currencyMain)}</span></div>
     </div>
-    <div class="doc-words">فقط وقدره: ${esc(numberToArabicWords(inv.grandTotal))}</div>
-    ${inv.notes?`<div class="doc-notes"><b>ملاحظات:</b> ${esc(inv.notes)}</div>`:''}
+    <div class="doc-words">${t('docAmountInWordsLabel')}: ${esc(amountInWordsLocalized(inv.grandTotal, 'EGP'))}</div>
+    ${inv.notes?`<div class="doc-notes"><b>${t('docNotesLabel')}:</b> ${esc(inv.notes)}</div>`:''}
     ${docSignatureBlockHtml()}
-    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+    <div class="doc-print-btn no-print"><button onclick="window.print()">${t('docPrintBtnLabel')}</button></div>
   </div>
 </body></html>`;
   w.document.open(); w.document.write(html); w.document.close();
@@ -12113,18 +12651,18 @@ function docHeaderHtml(){
   return `<div class="doc-header">
     ${s.companyLogo?`<img class="doc-logo" src="${s.companyLogo}">`:''}
     <div class="doc-company">
-      <div class="doc-company-name">${escapeHtml(s.companyName||'')}</div>
-      ${s.companyAddress?`<div class="doc-company-line">${escapeHtml(s.companyAddress)}</div>`:''}
-      <div class="doc-company-line">${[s.companyPhone?('هاتف: '+s.companyPhone):'', s.companyEmail?('بريد: '+s.companyEmail):''].filter(Boolean).join(' — ')}</div>
-      ${s.companyTaxId?`<div class="doc-company-line">الرقم الضريبي: ${escapeHtml(s.companyTaxId)}</div>`:''}
+      <div class="doc-company-name">${escapeHtml(companyDisplayName())}</div>
+      ${companyDisplayAddress()?`<div class="doc-company-line">${escapeHtml(companyDisplayAddress())}</div>`:''}
+      <div class="doc-company-line">${[s.companyPhone?(t('docPhoneLabel')+': '+s.companyPhone):'', s.companyEmail?(t('docEmailLabel')+': '+s.companyEmail):''].filter(Boolean).join(' — ')}</div>
+      ${s.companyTaxId?`<div class="doc-company-line">${t('docTaxIdLabel')}: ${escapeHtml(s.companyTaxId)}</div>`:''}
     </div>
   </div>`;
 }
 function docSignatureBlockHtml(){
   return `<div class="doc-sign-row">
-    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المستلم</div></div>
-    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>توقيع المحاسب</div></div>
-    <div class="doc-sign-box doc-stamp-box"><div>ختم الشركة</div></div>
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>${t('docRecipientSignatureLabel')}</div></div>
+    <div class="doc-sign-box"><div class="doc-sign-line"></div><div>${t('docAccountantSignatureLabel')}</div></div>
+    <div class="doc-sign-box doc-stamp-box"><div>${t('docCompanyStampLabel')}</div></div>
   </div>`;
 }
 const DOC_PRINT_STYLE = `<style>
@@ -12137,18 +12675,17 @@ const DOC_PRINT_STYLE = `<style>
   .doc-company-line{font-size:12px;color:#6B7680;margin-top:2px}
   .doc-title-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
   .doc-title{font-size:19px;font-weight:800;color:#1F2E3B}
-  .doc-title-en{font-size:11px;font-weight:400;color:#8B978D;direction:ltr}
-  .doc-meta{font-size:12px;color:#3a4552;text-align:left;direction:rtl}
+  .doc-meta{font-size:12px;color:#3a4552;text-align:start}
   .doc-meta div{margin-bottom:3px}
   .doc-partner-box{background:#F8F5EA;border:1px solid #ECE6D2;border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px}
   .doc-partner-box div{margin-bottom:3px}
   .doc-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
-  .doc-table th,.doc-table td{padding:8px 9px;border-bottom:1px solid #ECE6D2;text-align:right}
+  .doc-table th,.doc-table td{padding:8px 9px;border-bottom:1px solid #ECE6D2;text-align:start}
   .doc-table th{background:#1F2E3B;color:#F2EBD3;font-weight:600}
   .doc-table td.num,.doc-table th.num{direction:ltr;text-align:left}
-  .doc-totals{width:280px;margin-inline-start:auto;font-size:13px;margin-bottom:10px}
-  .doc-totals div{display:flex;justify-content:space-between;padding:4px 0}
-  .doc-total-final{border-top:2px solid #1F2E3B;font-weight:800;font-size:15px;padding-top:8px !important;margin-top:4px}
+  .doc-totals{width:340px;margin-inline-start:auto;font-size:13px;margin-bottom:10px}
+  .doc-totals div{display:flex;justify-content:space-between;padding:4px 0;gap:10px}
+  .doc-total-final{border-top:2px solid #1F2E3B;font-weight:800;font-size:14px;padding-top:8px !important;margin-top:4px;white-space:nowrap}
   .doc-words{font-size:13px;font-weight:600;background:#F3EEDD;border-radius:6px;padding:10px 12px;margin-bottom:16px}
   .doc-notes{font-size:12px;color:#3a4552;margin-bottom:16px}
   .doc-sign-row{display:flex;gap:16px;margin-top:50px}
@@ -12252,9 +12789,49 @@ async function autoAssignVoucherSerials(){
   showToast(tf('vouchersNumberedToast', {n: count}));
 }
 
+// Silent, synchronous twin of autoAssignVoucherSerials() — does the exact
+// same per-account/per-direction sequential numbering, but runs automatically
+// on every render of the Cash Vouchers view (no button, no toast) so the
+// user never has to remember to click "auto-number old vouchers" again: any
+// journal entry that becomes a treasury voucher (typed directly into the
+// General Journal, imported, etc.) gets numbered the moment the page opens,
+// and that numbering is written to voucherExtras/docSerialCounters exactly
+// like the manual flow, so it's permanent from then on.
+// Takes the already-computed voucher list (from getJournalVouchers()) so the
+// caller can just recompute it once more if this returns a non-zero count.
+function autoAssignVoucherSerialsSilent(list){
+  const unnumbered = list.filter(v=>!v.hasExtras);
+  if(!unnumbered.length) return 0;
+  STATE.settings.docSerialCounters = STATE.settings.docSerialCounters || {};
+  const groups = {};
+  unnumbered.forEach(v=>{ (groups[`${v.cashAccount}|${v.type}`] = groups[`${v.cashAccount}|${v.type}`] || []).push(v); });
+  let count = 0;
+  Object.keys(groups).forEach(key => {
+    const [accountCode, type] = key.split('|');
+    const group = groups[key].sort((a,b)=> a.date.localeCompare(b.date) || a.entryNo.localeCompare(b.entryNo));
+    group.forEach(v => {
+      const skey = `voucherSerial-${accountCode}-${type}`;
+      const next = (STATE.settings.docSerialCounters[skey] || 0) + 1;
+      STATE.settings.docSerialCounters[skey] = next;
+      const typeLabel = type==='receipt' ? 'سند قبض' : 'سند صرف';
+      const serial = `${typeLabel} - ${accName(accountCode)} رقم ${String(next).padStart(6,'0')}`;
+      STATE.voucherExtras.push({ entryNo: v.entryNo, serial, description: v.description });
+      count++;
+    });
+  });
+  if(count){
+    storeSet('settings', STATE.settings);
+    storeSet('voucherExtras', STATE.voucherExtras);
+  }
+  return count;
+}
+
 // ── VIEW: Treasury Cash Vouchers (سندات القبض والصرف) ─────────────────────────
 function renderCashVouchersView(root){
-  const allList = getJournalVouchers();
+  let allList = getJournalVouchers();
+  if(autoAssignVoucherSerialsSilent(allList) > 0){
+    allList = getJournalVouchers(); // refresh so the freshly-assigned serials show immediately
+  }
   const viewKey = 'cashvouchers';
   const colf = { serial:'colf_cv_serial', type:'colf_cv_type', date:'colf_cv_date', cashAccount:'colf_cv_cashaccount', partner:'colf_cv_partner', amount:'colf_cv_amount', description:'colf_cv_description', status:'colf_cv_status' };
   const typeLabelOf    = v => v.type==='receipt'?t('voucherTypeReceipt'):t('voucherTypePayment');
@@ -12494,7 +13071,9 @@ function printCashVoucher(entryNo){
   if(!w){ showToast(t('popupBlockedError')); return; }
   const esc = escapeHtml;
   const isReceipt = v.type==='receipt';
-  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(v.serial)}</title>
+  const lang = STATE.settings.lang === 'en' ? 'en' : 'ar';
+  const dir = lang === 'en' ? 'ltr' : 'rtl';
+  const html = `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head><meta charset="UTF-8"><title>${esc(v.serial)}</title>
 ${DOC_PRINT_STYLE}
 <style>
   .voucher-serial{font-size:15px;font-weight:800;color:${isReceipt?'#2E7D32':'#B03A2E'};border:2px solid ${isReceipt?'#2E7D32':'#B03A2E'};border-radius:8px;padding:8px 16px;display:inline-block}
@@ -12506,17 +13085,17 @@ ${DOC_PRINT_STYLE}
   <div class="doc-page">
     ${docHeaderHtml()}
     <div class="doc-title-row">
-      <div class="doc-title">${isReceipt?'سند قبض نقدية':'سند صرف نقدية'}<div class="doc-title-en">${isReceipt?'Cash Receipt Voucher':'Cash Payment Voucher'}</div></div>
+      <div class="doc-title">${isReceipt?t('docCashReceiptVoucherTitle'):t('docCashPaymentVoucherTitle')}</div>
       <div class="voucher-serial">${esc(v.serial)}</div>
     </div>
-    <div class="doc-meta" style="text-align:right;margin-bottom:10px"><b>التاريخ:</b> ${esc(v.date)}</div>
-    <div class="voucher-line"><b>${isReceipt?'استلمنا من السيد / السادة:':'صرفنا إلى السيد / السادة:'}</b> ${esc(v.partnerName)}</div>
-    <div class="voucher-amount-box">${fmt(v.amount)} ${esc(currencyWordNames(v.currency)[0])}</div>
-    <div class="voucher-line"><b>فقط وقدره:</b> ${esc(numberToArabicWords(v.amount, ...currencyWordNames(v.currency)))}</div>
-    <div class="voucher-line"><b>وذلك عن:</b> ${esc(v.description||'—')}</div>
-    <div class="voucher-line"><b>يُقيد على حساب:</b> ${esc(v.counterAccountLabel||accName(v.counterAccount))} — ${isReceipt?'من حساب':'إلى حساب'} ${esc(v.cashAccountLabel||accName(v.cashAccount))}</div>
+    <div class="doc-meta" style="margin-bottom:10px"><b>${t('date')}:</b> ${esc(v.date)}</div>
+    <div class="voucher-line"><b>${isReceipt?t('docReceivedFromLabel'):t('docPaidToLabel')}</b> ${esc(v.partnerName)}</div>
+    <div class="voucher-amount-box">${fmt(v.amount)} ${esc(currencyWordNamesLocalized(v.currency)[0])}</div>
+    <div class="voucher-line"><b>${t('docAmountInWordsLabel')}:</b> ${esc(amountInWordsLocalized(v.amount, v.currency))}</div>
+    <div class="voucher-line"><b>${t('docForLabel')}:</b> ${esc(v.description||'—')}</div>
+    <div class="voucher-line"><b>${t('docChargedToAccountLabel')}:</b> ${esc(v.counterAccountLabel||accName(v.counterAccount))} — ${isReceipt?t('docFromAccountLabel'):t('docToAccountLabel')} ${esc(v.cashAccountLabel||accName(v.cashAccount))}</div>
     ${docSignatureBlockHtml()}
-    <div class="doc-print-btn no-print"><button onclick="window.print()">🖨 طباعة</button></div>
+    <div class="doc-print-btn no-print"><button onclick="window.print()">${t('docPrintBtnLabel')}</button></div>
   </div>
 </body></html>`;
   w.document.open(); w.document.write(html); w.document.close();
@@ -12628,7 +13207,7 @@ function openAssetModal(assetId){
         <div><label class="lbl">${t('assetDepStartLabel')} *</label><input id="asStart" type="date" class="input" value="${d.startDate||''}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('originalCostLabel')} *</label><input id="asCost" type="number" step="0.01" class="input" value="${d.cost||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('residualValueLabel')}</label><input id="asResidualAbs" type="number" step="0.01" class="input" value="${d.residualAbs!=null?d.residualAbs:''}" placeholder="${model?'من النموذج ('+(parseFloat(d.cost||0)*(model.residualPct||0)/100).toFixed(2)+')':''}" style="width:100%"></div>
-        <div><label class="lbl">${t('accumDepLabel')} (${t('currentPeriod') || 'مُتراكم حتى الآن'})</label><input id="asAccumDep" type="number" step="0.01" class="input" value="${d.accumDep||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
+        <div><label class="lbl">${t('accumDepLabel')} (${t('currentPeriod')})</label><input id="asAccumDep" type="number" step="0.01" class="input" value="${d.accumDep||0}" style="width:100%" ${hasPosted?'disabled':''}></div>
         <div><label class="lbl">${t('supplierLabel')}</label><input id="asSupplier" class="input" value="${escapeHtml(d.supplier||'')}" style="width:100%"></div>
         <div><label class="lbl">${t('invoiceNoLabel')}</label><input id="asInvoice" class="input" value="${escapeHtml(d.invoiceNo||'')}" style="width:100%"></div>
         <div><label class="lbl">${t('locationLabel')}</label><input id="asLocation" class="input" value="${escapeHtml(d.location||'')}" style="width:100%"></div>
@@ -13527,7 +14106,10 @@ function renderRatiosView(root){
       const [yy,mm] = key.split('-').map(Number);
       addMonth(yy,mm,'','');
     });
-  } else if(_r.start || _r.end){
+  } else if(_r.start || _r.end || STATE.ui.filters.allPeriodsExplicit){
+    // "All Periods" was explicitly clicked (or a start/end range is set):
+    // span the actual full range of the data, not just a trailing window —
+    // fall back to today only if the journal is somehow empty.
     const rangeStart = _r.start || (STATE.journal.length ? STATE.journal.reduce((m,l)=>l.date<m?l.date:m, STATE.journal[0].date) : todayISO());
     const rangeEnd = _r.end || (STATE.journal.length ? STATE.journal.reduce((m,l)=>l.date>m?l.date:m, STATE.journal[0].date) : todayISO());
     const d0 = new Date(rangeStart+'T00:00:00Z');
