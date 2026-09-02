@@ -436,22 +436,34 @@ svg{ display:inline-block; vertical-align:middle; width:1em; height:1em; }
 table{ width:100%; border-collapse:collapse; font-size:12.5px; }
 thead th{
   text-align:center; padding:7px 10px; background:var(--ink-2); color:var(--gold-light);
-  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:sticky;
-  /* Sticks just below .topbar-title-row (also position:sticky, top:0)
-     instead of both pinning to top:0 and overlapping/hiding one another —
-     see --topbar-h and setupTopbarHeightSync(). */
-  top:var(--topbar-h, 64px); z-index:20;
+  font-family:'Cairo'; font-weight:700; font-size:11.2px; position:relative;
+  /* BUG: page-level sticky headers (this table just scrolls with the whole
+     page, not its own box) turned out to trigger a genuine Chromium paint
+     bug — confirmed via document.elementFromPoint() that the browser was
+     painting a tbody row ABOVE the header even though every layout
+     geometry check (getBoundingClientRect, DOM order) was correct, on
+     dozens of different report tables app-wide, regardless of whether the
+     page was actually scrolled. An earlier attempt tried to keep sticky
+     only where "needed" (page taller than viewport) via JS, but that
+     heuristic doesn't track this specific thead's own scroll need — most
+     pages have SOME scrollable content (KPI cards, other cards, footer)
+     even when this particular table's header never needs to re-stick, so
+     sticky stayed on and the bug kept showing. Simplest reliable fix: page-
+     level table headers just don't stick anymore (`position:relative`, not
+     `sticky`). `relative` (not `static`) is deliberate — the column-resize
+     handle is `position:absolute` and needs *some* ancestor to anchor to;
+     `relative` provides that positioning context without re-enabling stick.
+     Headers in a bounded/nested scroll box (`.table-wrap` with max-height —
+     Journal Entries, General Ledger, etc.) are unaffected and keep sticky,
+     see the `.table-wrap[style*="max-height"]` rule below. */
   border-bottom:2px solid var(--gold);
 }
 /* Tables that scroll INSIDE their own bounded box (a .table-wrap with an
    inline max-height, e.g. most data grids and the Chart of Accounts tree)
-   are a nested scroll container, not the page itself — their sticky header
-   must stick to the TOP OF THAT BOX (top:0), not offset by the topbar's
-   height, or the header ends up pinned 60-some px into the box and
-   overlapping the first row(s) instead of sitting flush above them. Only
-   tables with no such wrapper (rare — they scroll with the page) use the
-   topbar-relative offset above. */
-.table-wrap[style*="max-height"] thead th{ top:0; }
+   are the only ones that keep a sticky header — see the note above for why
+   page-level tables don't. z-index kept so it still sits above the rows it
+   scrolls past. */
+.table-wrap[style*="max-height"] thead th{ position:sticky; top:0; z-index:20; }
 /* Column drag-to-reorder (desktop only — see attachColumnReordering) */
 thead th.col-draggable{ cursor:grab; }
 thead th.col-dragging{ opacity:.4; cursor:grabbing; }
@@ -2423,49 +2435,6 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     el.click();
   }
-});
-
-// BUG FIX — a data row rendering ABOVE the sticky thead in short tables/
-// reports that fit entirely within the viewport (Liquidity, FX Revaluation,
-// and others with only a handful of rows), even though every geometry
-// check (getBoundingClientRect, computed `position: sticky`, DOM order —
-// COLGROUP,THEAD,TBODY, all correct) says the layout is fine. Confirmed via
-// direct paint testing (document.elementFromPoint at the exact pixel) that
-// this is a genuine Chromium compositor bug: it mis-paints `position:
-// sticky` headers whose SCROLLING CONTAINER never actually needs to scroll
-// (natural position already satisfies the `top` offset, sticky never
-// engages) — the layout geometry is correct but the painted frame isn't.
-// Long, genuinely-scrollable tables (Journal Entries, General Ledger, etc.)
-// were extensively tested and never show this — only short ones do.
-// Rather than chase the underlying engine bug, sidestep it: sticky only
-// matters once there's something to scroll past, so tables/containers that
-// don't need scrolling don't need `position:sticky` at all — swap it for
-// `static` in exactly (and only) those cases, which both fixes the mis-paint
-// and is a no-op behavior-wise (a header that was never going to move
-// doesn't need position:sticky to hold it in place).
-function fixShortTableStickyHeaders(){
-  document.querySelectorAll('table').forEach(table => {
-    const thead = table.querySelector('thead');
-    if(!thead) return;
-    const ths = thead.querySelectorAll('th');
-    if(!ths.length) return;
-    const wrap = table.closest('.table-wrap');
-    const nested = wrap && /max-height/.test(wrap.getAttribute('style')||'');
-    const needsSticky = nested
-      ? wrap.scrollHeight > wrap.clientHeight + 2
-      : document.documentElement.scrollHeight > window.innerHeight + 2;
-    ths.forEach(th => { th.style.position = needsSticky ? '' : 'static'; });
-  });
-}
-// Re-run on window resize too (debounced) — a page that didn't need
-// scrolling (and so had sticky disabled above) can start needing it if the
-// browser window gets shorter, and vice versa. Attached once globally
-// rather than per-render since it isn't tied to any element renderApp()
-// recreates.
-let __stickyFixResizeTimer = null;
-window.addEventListener('resize', () => {
-  clearTimeout(__stickyFixResizeTimer);
-  __stickyFixResizeTimer = setTimeout(fixShortTableStickyHeaders, 150);
 });
 
 function attachTableExportButtons(){
@@ -8359,7 +8328,6 @@ function renderApp(){
   // small export toolbar above every rendered `.table-wrap` generically,
   // reading the table exactly as displayed via SheetJS's table_to_sheet.
   attachTableExportButtons();
-  fixShortTableStickyHeaders();
   // Accessibility fix: dozens of interactive elements across the app (drill-
   // down cells, expand/collapse +/- toggles, edit/delete icons) are plain
   // <span>/<td> with onclick and, at best, a `title` tooltip — invisible to
