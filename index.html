@@ -2437,6 +2437,36 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// BUG FIX — sticky table headers on page-level-scrolling tables (Asset
+// Models, Assets Register, Depreciation Entries, Prepaid Expenses,
+// Products, Sales Invoices, Cash Vouchers, etc. — any `.table-wrap` that
+// scrolls with the whole page rather than in its own box) hit a confirmed
+// Chromium paint bug: `position:sticky` + `top:var(--topbar-h)` could paint
+// a tbody row above the header even though every layout measurement said
+// the geometry was correct (verified with document.elementFromPoint against
+// the actual painted pixel, not just getBoundingClientRect). A previous fix
+// disabled sticky entirely for these tables, which stopped the visual bug
+// but also lost the "header stays visible while scrolling" behavior the
+// person actually wants on the longer ones (Cash Vouchers, Invoices, etc).
+// Journal Entries / General Ledger never had this problem because they
+// already scroll in their OWN bounded box (`.table-wrap` with an inline
+// max-height) using `position:sticky; top:0` relative to that box — a
+// pattern that was extensively tested and never showed the bug. Rather
+// than re-chase the exact trigger condition for the page-level case, give
+// every remaining table-wrap that same proven bounded-scroll box (unless it
+// already has one, or explicitly opts out) — this fixes the paint bug AND
+// restores (in fact standardizes) the sticky-header-while-scrolling
+// behavior everywhere.
+function ensureBoundedTableScroll(){
+  document.querySelectorAll('.table-wrap').forEach(wrap => {
+    if(wrap.dataset.noBoundedScroll) return; // explicit opt-out, e.g. very small fixed layouts
+    const style = wrap.getAttribute('style') || '';
+    if(/max-height/.test(style)) return; // already a bounded box (Journal Entries, General Ledger, ...)
+    wrap.style.maxHeight = '600px';
+    wrap.style.overflowY = 'auto';
+  });
+}
+
 function attachTableExportButtons(){
   const root = document.getElementById('viewRoot');
   if(!root) return;
@@ -8327,6 +8357,7 @@ function renderApp(){
   // of missing one, or breaking an existing page while doing it), attach a
   // small export toolbar above every rendered `.table-wrap` generically,
   // reading the table exactly as displayed via SheetJS's table_to_sheet.
+  ensureBoundedTableScroll();
   attachTableExportButtons();
   // Accessibility fix: dozens of interactive elements across the app (drill-
   // down cells, expand/collapse +/- toggles, edit/delete icons) are plain
@@ -8529,6 +8560,26 @@ function buildRatiosDashCharts(){
   };
   const labels = d.labels || [];
   const labelSvg = (i,n,label) => `<text x="${xAt(i,n).toFixed(1)}" y="${H-15}" text-anchor="middle" class="rd-axis">${esc(label)}</text>`;
+  // BUG FIX — with "All Periods" now spanning the data's real full date
+  // range (could be years of monthly data) rather than a fixed trailing
+  // window, these x-axis labels used to be drawn one per month with no
+  // regard for how many there were — perfectly fine for 6 months, but 40-70+
+  // months crammed into this fixed-width chart just overlapped into an
+  // unreadable smear (see screenshot: years of "2020-..." labels stacked on
+  // top of each other). Thin them out here instead: show at most ~12 evenly-
+  // spaced labels, always including the first and last so the range is
+  // still clear, and skip the rest — used by every chart below instead of
+  // each looping over every label point itself.
+  const axisLabelsSvg = (n) => {
+    if(n<=0) return '';
+    const maxLabels = 12;
+    const step = Math.max(1, Math.ceil(n / maxLabels));
+    let out = '';
+    for(let i=0;i<n;i++){
+      if(i % step === 0 || i === n-1) out += labelSvg(i, n, labels[i]);
+    }
+    return out;
+  };
   const empty = msg => `<div class="rd-svg-empty">${esc(msg)}</div>`;
   const svgWrap = inner => `<svg class="rd-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('chart'))}">${inner}</svg>`;
   const legendHtml = items => `<div class="rd-chart-legend">${items.map(it=>`<span class="rd-chart-legend-item"><span class="${it.line?'rd-chart-legend-line':'rd-chart-legend-swatch'}" style="background:${it.color}"></span>${esc(t(it.key))}</span>`).join('')}</div>`;
@@ -8547,7 +8598,7 @@ function buildRatiosDashCharts(){
     const pts=(d.net||[]).map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).join(' ');
     if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#C4574B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
     (d.net||[]).forEach((v,i)=>{inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="#C4574B"><title>${esc(t('chartNetProfit'))}: ${esc(fmtN(v))}</title></circle>`;});
-    labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
+    inner += axisLabelsSvg(n);
     rev.parentElement.innerHTML=legendHtml([{key:'chartRevenue',color:'#B8902E'},{key:'chartGrossProfit',color:'#1F6D5A'},{key:'chartNetProfit',color:'#C4574B',line:true}])+svgWrap(inner);
   }
 
@@ -8577,7 +8628,7 @@ function buildRatiosDashCharts(){
     const rawMin=vals.length?Math.min(...vals,0):0, rawMax=vals.length?Math.max(...vals,0):0, pad=((rawMax-rawMin)||1)*.15, lo=rawMin-pad, hi=rawMax+pad, n=labels.length;
     let inner=grid(lo,hi,'%');
     const drawLine=(arr,color,key)=>{const pts=arr.map((v,i)=>v==null?'':`${xAt(i,n).toFixed(1)},${yAt(num(v),lo,hi).toFixed(1)}`).filter(Boolean).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`; arr.forEach((v,i)=>{if(v!=null)inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(num(v),lo,hi).toFixed(1)}" r="4" fill="${color}"><title>${esc(t(key))}: ${esc(fmtN(v))}%</title></circle>`;});};
-    drawLine(d.grossMargin||[],'#1F6D5A','chartGrossMargin'); drawLine(d.netMargin||[],'#B8902E','chartNetMargin'); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
+    drawLine(d.grossMargin||[],'#1F6D5A','chartGrossMargin'); drawLine(d.netMargin||[],'#B8902E','chartNetMargin'); inner += axisLabelsSvg(n);
     margin.parentElement.innerHTML=legendHtml([{key:'chartGrossMargin',color:'#1F6D5A',line:true},{key:'chartNetMargin',color:'#B8902E',line:true}])+svgWrap(inner);
   }
 
@@ -8591,7 +8642,7 @@ function buildRatiosDashCharts(){
     arrs.forEach((arr,k)=>arr.forEach((v,i)=>{const y=yAt(num(v),lo,hi),h=Math.abs(zero-y),yy=Math.min(zero,y),x=n<=1?L+PW/2-1.5*bw+k*bw*1.05:barX(i,n,bw*3)+k*bw*1.05; inner+=`<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="3" fill="${cols[k]}" opacity=".82"><title>${esc(t(keys[k]))}: ${esc(fmtN(v))}</title></rect>`;}));
     const nc=(d.ops||[]).map((o,i)=>num(o)+num((d.inv||[])[i])+num((d.fin||[])[i]));
     const pts=nc.map((v,i)=>`${xAt(i,n).toFixed(1)},${yAt(v,lo,hi).toFixed(1)}`).join(' '); if(pts) inner+=`<polyline points="${pts}" fill="none" stroke="#D9B45C" stroke-width="3" stroke-linecap="round"/>`;
-    nc.forEach((v,i)=>inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(v,lo,hi).toFixed(1)}" r="4" fill="#D9B45C"><title>${esc(t('chartNet'))}: ${esc(fmtN(v))}</title></circle>`); labels.forEach((x,i)=>inner+=labelSvg(i,n,x));
+    nc.forEach((v,i)=>inner+=`<circle cx="${xAt(i,n).toFixed(1)}" cy="${yAt(v,lo,hi).toFixed(1)}" r="4" fill="#D9B45C"><title>${esc(t('chartNet'))}: ${esc(fmtN(v))}</title></circle>`); inner += axisLabelsSvg(n);
     cash.parentElement.innerHTML=legendHtml([{key:'chartOperating',color:'#1F6D5A'},{key:'chartInvesting',color:'#A23B31'},{key:'chartFinancing',color:'#8A6E27'},{key:'chartNet',color:'#D9B45C',line:true}])+svgWrap(inner);
   }
 }
