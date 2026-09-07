@@ -1372,6 +1372,51 @@ const I18N = {
     switchUserBtn:'تبديل المستخدم', currentUserLabel:'المستخدم الحالي',
     auditNoUserLabel:'غير محدد', auditUserCol:'المستخدم',
     deleteRestrictedForViewer:'دورك "مراجع" — مفيش صلاحية حذف. غيّر المستخدم لو محتاج تحذف.',
+    usersAdminOnlyHint:'إدارة المستخدمين والأدوار متاحة للمدير فقط. تقدر تبدّل هويتك من زرار "تبديل المستخدم".',
+    periodLockTitle:'قفل الفترات المحاسبية', periodLockHint:'أي قيد بتاريخ يساوي أو قبل تاريخ القفل يبقى محميًا من الإضافة والتعديل والحذف — في كل صفحات النظام (اليومية، السندات، الفواتير، الأصول). لتصحيح حاجة في فترة مقفولة، رجّع تاريخ القفل مؤقتًا، اعمل التصحيح، وارجع اقفله تاني.',
+    lockDateLabel:'تاريخ القفل', setLockDateBtn:'حفظ تاريخ القفل', removeLockBtn:'إلغاء القفل', noLockSet:'مفيش قفل مفعّل حاليًا — كل الفترات مفتوحة للتعديل.',
+    lockDateRequired:'اختر تاريخ القفل أولاً.',
+    lockActiveNotice:'الفترات لغاية ${date} مقفولة حاليًا.',
+    periodLockedError:'التاريخ ${date} في فترة مقفولة — لازم المدير يرجّع تاريخ القفل الأول عشان تقدر تعدّل أو تحذف حركة فيه.',
+    periodLockAdminOnlyHint:'تغيير تاريخ القفل متاح للمدير فقط.',
+    bankReconTitle:'مطابقة كشف الحساب البنكي', bankReconHint:'اختر الحساب البنكي/النقدي وتاريخ كشف الحساب، وحدد المبلغ الموجود في الكشف الفعلي من البنك. علّم كل حركة ظهرت في كشف البنك بعلامة "مطابَق" — الرصيد المطابَق المفروض يساوي رصيد كشف البنك بالظبط لما تخلّص.',
+    selectAccountLabel:'اختر الحساب', statementDateLabel:'تاريخ كشف الحساب', statementBalanceLabel:'رصيد كشف الحساب (من البنك)',
+    bookBalanceLabel:'الرصيد الدفتري (حتى هذا التاريخ)', clearedBalanceLabel:'الرصيد المطابَق', outstandingBalanceLabel:'بنود معلّقة (لسه ما ظهرتش في الكشف)',
+    reconDifferenceLabel:'الفرق', reconClearedCol:'مطابَق', saveReconciliationBtn:'حفظ المطابقة',
+    reconHistoryTitle:'سجل المطابقات السابقة', reconPerfectMatch:'✓ الرصيد مطابق تمامًا', reconMismatch:'⚠ فيه فرق محتاج مراجعة',
+    noAccountSelectedHint:'اختر حساب بنكي أو نقدي عشان تبدأ المطابقة.', selectAccountPlaceholder:'— اختر حساب —',
+    reconSavedBy:'حفظها', reconStatementDateCol:'تاريخ الكشف', reconStatementBalanceCol:'رصيد الكشف', reconDiffCol:'الفرق عند الحفظ', noReconYet:'مفيش مطابقات محفوظة لهذا الحساب لسه.',
+    reconSaveConfirmMismatch:'فيه فرق ${diff} بين الرصيد المطابَق ورصيد كشف البنك. تحفظ المطابقة برضه؟',
+    purchaseInvoicesTitle:'فواتير المشتريات', purchaseInvoicesLinkedDesc:'الفواتير المعروضة هنا هي نفسها القيود المرحّلة تحت دفتر "فواتير الموردين" — سواء اتعملت من هنا أو من شاشة القيد العادية أو باستيراد إكسل.',
+    newPurchaseInvoiceBtn:'فاتورة مشتريات جديدة', noPurchaseInvoices:'لسه معملتش أي فواتير مشتريات.', editPurchaseInvoiceTitle:'تعديل فاتورة مشتريات',
+    invVendorCol:'المورد', apAccountLabel:'حساب المورد (دائن)', lineAccountCol:'الحساب',
+    purchTotalInvoicedKpi:'إجمالي فواتير المشتريات', purchTotalPaidKpi:'إجمالي المسدد', purchTotalOutstandingKpi:'إجمالي المتبقي',
+    vendorNameRequired:'اكتب اسم المورد أولاً.', apAccountRequired:'اختر حساب المورد.', purchInvLinesRequired:'أضف بند واحد على الأقل مع تحديد الحساب.',
+    vatRecoverableAccMissing:'الفاتورة فيها ضريبة، لكن حساب "ضريبة القيمة المضافة - مدينة" (114103) مش موجود في شجرة الحسابات. أضف الحساب أو احذف الضريبة من البنود، ثم حاول تاني.',
+    agingReportTitle:'تقرير أعمار الديون', agingReportHint:'يعرض المبالغ المستحقة على العملاء (أو للموردين) مقسّمة حسب عدد أيام التأخير عن تاريخ الاستحقاق، بناءً على فواتير المبيعات والمشتريات المرحّلة وغير المسددة بالكامل.',
+    agingArTab:'ديون العملاء', agingApTab:'ديون الموردين', agingAsOfLabel:'حتى تاريخ',
+    agingCurrentCol:'غير مستحق بعد', agingB1_30Col:'1-30 يوم', agingB31_60Col:'31-60 يوم', agingB61_90Col:'61-90 يوم', agingB90PlusCol:'أكثر من 90 يوم', agingTotalCol:'الإجمالي',
+    noAgingData:'لا يوجد أرصدة مستحقة حاليًا.',
+    vatReturnTitle:'إقرار ضريبة القيمة المضافة', vatReturnHint:'صافي الضريبة المستحقة للفترة = ضريبة المخرجات (على المبيعات) ناقص ضريبة المدخلات (على المشتريات القابلة للخصم)، بناءً على حركة حسابي الضريبة في اليومية خلال الفترة المحددة.',
+    vatAccountsMissingHint:'حساب "ضريبة القيمة المضافة الدائنة" (212102) أو "ضريبة القيمة المضافة المدينة" (114103) مش موجودين في شجرة الحسابات — أضفهم عشان يظهر الإقرار صحيح.',
+    vatPeriodStartLabel:'من تاريخ', vatPeriodEndLabel:'إلى تاريخ',
+    vatOutputLabel:'ضريبة المخرجات (على المبيعات)', vatInputLabel:'ضريبة المدخلات (على المشتريات)', vatNetDueLabel:'صافي الضريبة المستحقة', vatRefundLabel:'صافي مسترد',
+    vatOutputDetailTitle:'تفاصيل ضريبة المخرجات', vatInputDetailTitle:'تفاصيل ضريبة المدخلات', noVatMovementsHint:'لا توجد حركة ضريبية في هذه الفترة.',
+    makeRecurringBtn:'خليه متكرر', makeRecurringHint:'هيتحفظ شكل القيد ده (نفس الحسابات والمبالغ) كقالب تقدر تولّد منه قيد جديد كل فترة، بعد ما تراجعه وتأكده.',
+    recurringNameLabel:'اسم القالب', recurringFrequencyLabel:'دورية التكرار', recurringNameRequired:'اكتب اسم للقالب أولاً.',
+    freqMonthly:'شهري', freqQuarterly:'ربع سنوي', freqYearly:'سنوي',
+    recurringEntriesTitle:'القيود المتكررة', recurringEntriesHint:'قوالب لقيود بتتكرر بنفس الحسابات والمبالغ (زي الإيجار أو الاشتراكات الشهرية). لما يجي وقت القالب، تقدر تراجعه وتولّد قيد جديد منه بضغطة واحدة — مفيش أي قيد بيتسجل من غير ما تأكده بنفسك.',
+    noRecurringTemplates:'لسه معملتش أي قوالب متكررة. تقدر تعمل واحد من صفحة القيود اليومية بزرار 🔁 "خليه متكرر" جنب أي قيد.',
+    recurringLastGenLabel:'آخر توليد', recurringNextDueLabel:'الاستحقاق الجاي', recurringDueNow:'مستحق الآن', recurringNotDueYet:'لسه معاه وقت',
+    generateNowBtn:'ولّد الآن', deleteRecurringConfirm:'تحذف هذا القالب المتكرر؟',
+    prodTrackInvLabel:'تتبّع كمية هذا الصنف في المخزون', prodTrackInvHint:'لو مفعّل، هيظهر الصنف ده في صفحة "المخزون" وتقدر تربطه ببنود فواتير الشراء عشان تتبع الكمية والتكلفة تلقائيًا.',
+    prodOpeningQtyLabel:'الكمية الافتتاحية', prodOpeningCostLabel:'تكلفة الوحدة الافتتاحية', prodInvAccountLabel:'حساب المخزون (أصل)',
+    prodInvLinkCol:'الصنف بالمخزون',
+    inventoryTitle:'المخزون', inventoryHint:'كمية وتكلفة كل صنف متتبَّع، بطريقة المتوسط المرجّح — الوارد من فواتير المشتريات المربوطة بالصنف، والمنصرف من فواتير المبيعات. الصفحة دي لمتابعة الكمية والقيمة بس، ومفيهاش ترحيل تلقائي لقيد تكلفة البضاعة المباعة.',
+    inventoryTotalValueLabel:'إجمالي قيمة المخزون', noTrackedProducts:'لسه معملتش أي صنف متتبَّع في المخزون. فعّل "تتبّع الكمية" من صفحة المنتجات والخدمات.',
+    inventoryQtyCol:'الكمية', inventoryAvgCostCol:'متوسط التكلفة', inventoryValueCol:'القيمة',
+    viewDetailsBtn:'عرض الحركة', hideDetailsBtn:'إخفاء الحركة', stockMoveTypeCol:'نوع الحركة',
+    stockMoveIn:'وارد (شراء)', stockMoveOut:'منصرف (بيع)', stockMoveAdjustment:'تسوية', stockMoveOpening:'رصيد افتتاحي', noStockMoves:'لا توجد حركات على هذا الصنف بعد.',
     userNameRequired:'اكتب اسم المستخدم أولاً.', deleteUserConfirmMsg:'هل تريد حذف المستخدم "${name}"؟',
     docSalesInvoiceTitle:'فاتورة مبيعات', docCashReceiptVoucherTitle:'سند قبض نقدية', docCashPaymentVoucherTitle:'سند صرف نقدية',
     docBillToLabel:'السادة / ', docPhoneLabel:'هاتف', docTaxIdLabel:'الرقم الضريبي', docEmailLabel:'بريد',
@@ -1835,6 +1880,51 @@ const I18N = {
     switchUserBtn:'Switch User', currentUserLabel:'Current User',
     auditNoUserLabel:'Unspecified', auditUserCol:'User',
     deleteRestrictedForViewer:'Your role is "Viewer" — no delete permission. Switch users if you need to delete.',
+    usersAdminOnlyHint:'Managing users and roles is admin-only. You can switch your own identity with the "Switch User" button.',
+    periodLockTitle:'Period Lock', periodLockHint:'Any entry dated on or before the lock date is protected from being added, edited, or deleted — across the whole app (journal, vouchers, invoices, assets). To fix something in a locked period, move the lock date back temporarily, make the fix, then re-lock.',
+    lockDateLabel:'Lock Date', setLockDateBtn:'Save Lock Date', removeLockBtn:'Remove Lock', noLockSet:'No lock is currently active — all periods are open for editing.',
+    lockDateRequired:'Choose a lock date first.',
+    lockActiveNotice:'Periods up to and including ${date} are currently locked.',
+    periodLockedError:'${date} falls in a locked period — an admin needs to move the lock date back before you can add, edit, or delete an entry there.',
+    periodLockAdminOnlyHint:'Changing the lock date is admin-only.',
+    bankReconTitle:'Bank Reconciliation', bankReconHint:'Pick the bank/cash account and the statement date, then enter the actual balance shown on the bank statement. Tick off every transaction that appears on the statement — the cleared balance should exactly match the statement balance once done.',
+    selectAccountLabel:'Select Account', statementDateLabel:'Statement Date', statementBalanceLabel:'Statement Balance (from the bank)',
+    bookBalanceLabel:'Book Balance (as of this date)', clearedBalanceLabel:'Cleared Balance', outstandingBalanceLabel:'Outstanding Items (not yet on the statement)',
+    reconDifferenceLabel:'Difference', reconClearedCol:'Cleared', saveReconciliationBtn:'Save Reconciliation',
+    reconHistoryTitle:'Reconciliation History', reconPerfectMatch:'✓ Balances match exactly', reconMismatch:'⚠ There is a difference to review',
+    noAccountSelectedHint:'Choose a bank or cash account to start reconciling.', selectAccountPlaceholder:'— Select account —',
+    reconSavedBy:'Saved by', reconStatementDateCol:'Statement Date', reconStatementBalanceCol:'Statement Balance', reconDiffCol:'Difference at Save', noReconYet:'No saved reconciliations for this account yet.',
+    reconSaveConfirmMismatch:'There is a ${diff} difference between the cleared balance and the statement balance. Save the reconciliation anyway?',
+    purchaseInvoicesTitle:'Purchase Invoices', purchaseInvoicesLinkedDesc:'Invoices shown here are the same entries posted under the "Vendor Invoices" book — whether created from here, the regular journal entry screen, or an Excel import.',
+    newPurchaseInvoiceBtn:'New Purchase Invoice', noPurchaseInvoices:'No purchase invoices yet.', editPurchaseInvoiceTitle:'Edit Purchase Invoice',
+    invVendorCol:'Vendor', apAccountLabel:'Vendor Account (Credit)', lineAccountCol:'Account',
+    purchTotalInvoicedKpi:'Total Purchase Invoices', purchTotalPaidKpi:'Total Paid', purchTotalOutstandingKpi:'Total Outstanding',
+    vendorNameRequired:'Enter the vendor name first.', apAccountRequired:'Choose the vendor account.', purchInvLinesRequired:'Add at least one line with an account selected.',
+    vatRecoverableAccMissing:'This invoice includes tax, but the "VAT Recoverable" account (114103) isn\'t in the chart of accounts. Add the account, or remove the tax from the lines, then try again.',
+    agingReportTitle:'AR/AP Aging Report', agingReportHint:'Shows amounts owed by customers (or to vendors), split by how many days past the due date, based on posted, not-fully-settled sales and purchase invoices.',
+    agingArTab:'Customer Debts (AR)', agingApTab:'Vendor Debts (AP)', agingAsOfLabel:'As of',
+    agingCurrentCol:'Not Yet Due', agingB1_30Col:'1-30 Days', agingB31_60Col:'31-60 Days', agingB61_90Col:'61-90 Days', agingB90PlusCol:'Over 90 Days', agingTotalCol:'Total',
+    noAgingData:'No outstanding balances right now.',
+    vatReturnTitle:'VAT Return', vatReturnHint:'Net VAT due for the period = output tax (on sales) minus input tax (on deductible purchases), based on the movement of the VAT accounts in the journal during the chosen period.',
+    vatAccountsMissingHint:'The "VAT Payable" (212102) or "VAT Recoverable" (114103) account isn\'t in the chart of accounts — add them for the return to show correctly.',
+    vatPeriodStartLabel:'From', vatPeriodEndLabel:'To',
+    vatOutputLabel:'Output Tax (on Sales)', vatInputLabel:'Input Tax (on Purchases)', vatNetDueLabel:'Net VAT Due', vatRefundLabel:'Net Refundable',
+    vatOutputDetailTitle:'Output Tax Detail', vatInputDetailTitle:'Input Tax Detail', noVatMovementsHint:'No tax movement in this period.',
+    makeRecurringBtn:'Make Recurring', makeRecurringHint:'This entry\'s shape (same accounts and amounts) will be saved as a template you can generate a new entry from each period, after reviewing and confirming it.',
+    recurringNameLabel:'Template Name', recurringFrequencyLabel:'Repeat Frequency', recurringNameRequired:'Enter a name for the template first.',
+    freqMonthly:'Monthly', freqQuarterly:'Quarterly', freqYearly:'Yearly',
+    recurringEntriesTitle:'Recurring Entries', recurringEntriesHint:'Templates for entries that repeat with the same accounts and amounts (like rent or a monthly subscription). When a template comes due, review it and generate a new entry with one click — nothing ever posts without you confirming it.',
+    noRecurringTemplates:'No recurring templates yet. Create one from the Journal Entries page using the 🔁 "Make Recurring" button next to any entry.',
+    recurringLastGenLabel:'Last Generated', recurringNextDueLabel:'Next Due', recurringDueNow:'Due Now', recurringNotDueYet:'Not Due Yet',
+    generateNowBtn:'Generate Now', deleteRecurringConfirm:'Delete this recurring template?',
+    prodTrackInvLabel:'Track this item\'s inventory quantity', prodTrackInvHint:'When enabled, this item shows up on the Inventory page and you can link it to purchase invoice lines to auto-track quantity and cost.',
+    prodOpeningQtyLabel:'Opening Quantity', prodOpeningCostLabel:'Opening Unit Cost', prodInvAccountLabel:'Inventory Account (Asset)',
+    prodInvLinkCol:'Inventory Item',
+    inventoryTitle:'Inventory', inventoryHint:'Quantity and cost of every tracked item, using weighted-average costing — stock in comes from purchase invoice lines linked to the item, stock out from sales invoices. This page tracks quantity and value only; it does not auto-post a cost-of-goods-sold journal entry.',
+    inventoryTotalValueLabel:'Total Inventory Value', noTrackedProducts:'No tracked inventory items yet. Enable "Track Inventory" from the Products & Services page.',
+    inventoryQtyCol:'Quantity', inventoryAvgCostCol:'Avg. Cost', inventoryValueCol:'Value',
+    viewDetailsBtn:'View Movement', hideDetailsBtn:'Hide Movement', stockMoveTypeCol:'Move Type',
+    stockMoveIn:'In (Purchase)', stockMoveOut:'Out (Sale)', stockMoveAdjustment:'Adjustment', stockMoveOpening:'Opening Balance', noStockMoves:'No movements for this item yet.',
     userNameRequired:'Enter the user name first.', deleteUserConfirmMsg:'Delete user "${name}"?',
     docSalesInvoiceTitle:'Sales Invoice', docCashReceiptVoucherTitle:'Cash Receipt Voucher', docCashPaymentVoucherTitle:'Cash Payment Voucher',
     docBillToLabel:'Bill To: ', docPhoneLabel:'Phone', docTaxIdLabel:'Tax ID', docEmailLabel:'Email',
@@ -3871,11 +3961,17 @@ const STATE = {
   products: [],        // [{id,name,code,unit,price,revenueAccount,taxPct,notes,status}] — same idea: merged with distinctProductNames() from the journal.
   invoiceDrafts: [],   // [{id,date,dueDate,customerId,lines:[{productId,name,unit,qty,unitPrice,discountPct,taxPct,lineTotal}],notes}] — invoices not yet posted to the journal. Once posted they stop existing here and become a real journal entry (journal:'فواتير العملاء'); the Sales Invoices page is driven by scanning the journal for that book, not by a separate shadow list.
   invoiceExtras: [],   // [{entryNo, invoiceNo, dueDate, notes, lineExtras:[{code,qty,unitPrice,discountPct}]}] — print-only supplementary data for invoices that live in the journal (whether posted through this app or entered directly as a normal journal entry / imported from Excel), since the journal itself only stores net debit/credit amounts, not quantities or unit prices.
+  purchaseInvoiceDrafts: [], // same shape/lifecycle as invoiceDrafts, but for vendor bills: [{id,date,dueDate,vendorName,apAccount,lines:[{name,accountCode,qty,unitPrice,discountPct,taxPct,lineTotal}],notes}]. No separate "vendor master" — vendorName is free text (autocompletes from distinctPartnerNames()) and apAccount/line accountCodes are picked directly per invoice, since AP purchases route to many different expense/asset accounts rather than one fixed revenue account per "product".
+  purchaseInvoiceExtras: [], // same shape as invoiceExtras, for the 'فواتير الموردين' journal book
+  recurringTemplates: [], // [{id,name,lines:[{code,partner,desc,debit,credit}],frequency:'monthly'|'quarterly'|'yearly',startDate,lastGeneratedDate,active}] — a saved "recipe" for a journal entry that repeats (rent, subscriptions, ...). Generating from it never happens silently; see renderRecurringEntriesView / generateFromRecurringTemplate.
+  stockMoves: [], // [{id,date,productId,type:'in'|'out'|'adjustment',qty,unitCost,note,source}] — a dedicated quantity ledger for products with trackInventory=true, kept separate from the accounting journal. 'in' moves come from purchase invoice lines that name a tracked product; 'out' moves come from sales invoice lines for a tracked product, costed at the weighted-average cost in effect at the moment of sale (see computeStockPosition). This tracks quantity/value for reporting only — it does not post its own COGS journal entry.
   voucherExtras: [],   // [{entryNo, serial, description}] — print-only supplementary data (friendly serial number, wording) for receipt/payment vouchers that live in the journal under 'سند قبض'/'سند صرف'.
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
+  bankReconciliations: [], // [{id, account, statementDate, statementBalance, bookBalance, difference, createdAt, createdBy, note}] — a saved reconciliation snapshot; see renderBankReconView
+  clearedTxSeqs: {},     // {[journalLine.seq]: true} — persists which transactions have been ticked off against a bank statement (survives across reconciliation sessions until explicitly un-ticked)
   meta: { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[] },
-  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', users:[], currentUserId:'' },
+  settings: { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', users:[], currentUserId:'', lockDate:'' },
   ui: {
     view:'dashboard',
     filters: { start: '', end: '', years: [], months: [] }, // default = ALL periods; user narrows manually
@@ -3966,6 +4062,21 @@ function canDeleteRecords(){ return currentUserRole() !== 'viewer'; }
 function userRoleLabel(role){
   return { admin:t('userRoleAdmin'), accountant:t('userRoleAccountant'), viewer:t('userRoleViewer') }[role] || role;
 }
+
+// --- Period locking ---
+// A single cutoff date (STATE.settings.lockDate): any journal line dated ON
+// OR BEFORE it is protected from create/edit/delete, anywhere in the app,
+// via the single choke point commitEntryEdit() funnels through. Only an
+// admin can move the lock date (see the Setup & Import UI) — there is no
+// per-entry override, by design: to fix something in a locked period, an
+// admin moves the lock date back, makes the fix, then re-locks. ISO date
+// strings ('YYYY-MM-DD') compare correctly with plain string comparison.
+function isDateLocked(dateStr){
+  const lockDate = STATE.settings.lockDate;
+  if(!lockDate || !dateStr) return false;
+  return dateStr <= lockDate;
+}
+function periodLockActive(){ return !!STATE.settings.lockDate; }
 // Requirement: accounts with zero posted transactions are pure noise in a
 // filter/tree picker — a real chart of accounts is almost always set up with
 // far more accounts than actually get used. Hide them from account filters
@@ -6923,6 +7034,131 @@ function openDuplicateEntryModal(entryNo){
   window.__ne_prefill = null;
 }
 
+// ── Recurring Journal Entries ──────────────────────────────────────────────
+// A template is just a saved "recipe" of lines (account/partner/desc/amount)
+// plus a repeat frequency — created either from scratch on the Recurring
+// Entries page, or (more commonly) by clicking 🔁 on an existing, already-
+// balanced journal entry, which copies its lines verbatim. Generating a new
+// entry from a template NEVER happens silently: the person always lands on
+// a page that shows which templates are due and clicks "Generate Now"
+// themselves — same review-before-posting pattern as depreciation batches
+// and prepaid-expense amortization elsewhere in the app.
+function addMonthsToDate(dateStr, months){
+  const d = new Date(dateStr+'T00:00:00');
+  d.setMonth(d.getMonth()+months);
+  return d.toISOString().slice(0,10);
+}
+const RECUR_FREQ_MONTHS = { monthly:1, quarterly:3, yearly:12 };
+function recurringNextDue(tpl){
+  if(!tpl.lastGeneratedDate) return tpl.startDate;
+  return addMonthsToDate(tpl.lastGeneratedDate, RECUR_FREQ_MONTHS[tpl.frequency]||1);
+}
+function recurringIsDue(tpl){
+  return tpl.active!==false && recurringNextDue(tpl) <= todayISO();
+}
+
+function openMakeRecurringModal(entryNo){
+  const lines = STATE.journal.filter(l=>l.entry===entryNo);
+  if(!lines.length){ showToast(t('duplicateEntryNotFound')); return; }
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const defaultName = (lines[0].ref || lines.map(l=>l.name).filter(Boolean).join(' / ')).slice(0,60);
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:480px;width:96%">
+    <h3>${t('makeRecurringBtn')}</h3>
+    <div class="desc">${t('makeRecurringHint')}</div>
+    <div style="margin:12px 0">
+      <label class="lbl">${t('recurringNameLabel')}</label>
+      <input id="mrName" class="input" value="${escapeHtml(defaultName)}">
+    </div>
+    <div style="margin-bottom:12px">
+      <label class="lbl">${t('recurringFrequencyLabel')}</label>
+      <select id="mrFrequency" class="input">
+        <option value="monthly">${t('freqMonthly')}</option>
+        <option value="quarterly">${t('freqQuarterly')}</option>
+        <option value="yearly">${t('freqYearly')}</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="mrSaveBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#mrSaveBtn').onclick = async () => {
+    const name = overlay.querySelector('#mrName').value.trim();
+    if(!name){ showToast(t('recurringNameRequired')); return; }
+    const frequency = overlay.querySelector('#mrFrequency').value;
+    const rec = {
+      id: 'rt_' + Date.now(), name, frequency,
+      lines: lines.map(l=>({ code:l.code, partner:l.partner||'', desc:l.ref||'', debit:l.debit||0, credit:l.credit||0 })),
+      startDate: todayISO(), lastGeneratedDate: '', active: true,
+    };
+    STATE.recurringTemplates.push(rec);
+    await storeSet('recurringTemplates', STATE.recurringTemplates);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click', e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+async function generateFromRecurringTemplate(tplId){
+  const tpl = STATE.recurringTemplates.find(x=>x.id===tplId);
+  if(!tpl) return;
+  const date = todayISO();
+  if(isDateLocked(date)){ showToast(tf('periodLockedError',{date})); return; }
+  const lines = tpl.lines.map(l => ({
+    entry:'', date, code:l.code, name:accName(l.code), cur:'EGP', convFactor:1,
+    partner:l.partner||'', debit:l.debit||0, credit:l.credit||0, cc:'', ccAmt:(l.debit||0)-(l.credit||0),
+    product:'', journal:'', curAmt:(l.debit||0)-(l.credit||0), ref:l.desc||tpl.name, source:'recurring-template',
+  }));
+  await commitEntryEdit([], lines);
+  tpl.lastGeneratedDate = date;
+  await storeSet('recurringTemplates', STATE.recurringTemplates);
+  renderApp();
+  showToast(t('savedToast'));
+}
+
+async function deleteRecurringTemplate(id){
+  if(!canDeleteRecords()){ showToast(t('deleteRestrictedForViewer')); return; }
+  showConfirmModal(t('deleteBtn'), t('deleteRecurringConfirm'), async ()=>{
+    STATE.recurringTemplates = STATE.recurringTemplates.filter(x=>x.id!==id);
+    await storeSet('recurringTemplates', STATE.recurringTemplates);
+    renderApp();
+  });
+}
+
+function renderRecurringEntriesView(root){
+  const templates = STATE.recurringTemplates;
+  const freqLabel = f => ({monthly:t('freqMonthly'), quarterly:t('freqQuarterly'), yearly:t('freqYearly')}[f] || f);
+  root.innerHTML = `
+  <div class="card">
+    <h2>${ICONS.clock.replace('currentColor','var(--gold-dim)')} ${t('recurringEntriesTitle')}</h2>
+    <div class="desc">${t('recurringEntriesHint')}</div>
+    ${!templates.length ? `<div class="empty">${t('noRecurringTemplates')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('recurringNameLabel')}</th><th>${t('recurringFrequencyLabel')}</th><th>${t('recurringLastGenLabel')}</th><th>${t('recurringNextDueLabel')}</th><th>${t('assetStatusCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${templates.map(tpl=>{
+        const nextDue = recurringNextDue(tpl);
+        const due = recurringIsDue(tpl);
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(tpl.name)}</td>
+          <td>${freqLabel(tpl.frequency)}</td>
+          <td class="num">${tpl.lastGeneratedDate||'—'}</td>
+          <td class="num">${nextDue}</td>
+          <td>${due?`<span class="pill pill-gold">${t('recurringDueNow')}</span>`:`<span class="hint">${t('recurringNotDueYet')}</span>`}</td>
+          <td style="white-space:nowrap">
+            <button class="btn ${due?'':'btn-outline'}" style="padding:4px 10px;font-size:11px" onclick="generateFromRecurringTemplate('${tpl.id}')">${t('generateNowBtn')}</button>
+            ${canDeleteRecords() ? `<span class="drill" style="margin-right:6px" title="${t('deleteBtn')}" onclick="deleteRecurringTemplate('${tpl.id}')">✕</span>` : ''}
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>`}
+  </div>`;
+}
+
 function openEditJournalEntryModal(entry, date){
   const overlay = document.getElementById('editEntryModalOverlay');
   if(!overlay) return;
@@ -6976,7 +7212,7 @@ function openEditJournalEntryModal(entry, date){
         </div>
         ${!balanced ? `<div class="progress-note" style="color:var(--brick)">${t('entryUnbalanced')}</div>` : ''}
         <div class="modal-actions" style="justify-content:space-between">
-          <button type="button" class="btn" style="background:var(--brick);border-color:var(--brick)" id="eeDelete">${t('deleteEntry')}</button>
+          ${canDeleteRecords() ? `<button type="button" class="btn" style="background:var(--brick);border-color:var(--brick)" id="eeDelete">${t('deleteEntry')}</button>` : `<span class="hint" title="${t('deleteRestrictedForViewer')}">🔒 ${t('deleteRestrictedForViewer')}</span>`}
           <div style="display:flex;gap:10px">
             <button type="button" class="btn btn-outline" id="eeCancel">${t('cancelEdit')}</button>
             <button type="button" class="btn" id="eeSave" ${balanced?'':'disabled'}>${t('saveEntry')}</button>
@@ -7014,7 +7250,8 @@ function openEditJournalEntryModal(entry, date){
       renderModal();
     });
     document.getElementById('eeCancel').addEventListener('click', closeModal);
-    document.getElementById('eeDelete').addEventListener('click', () => {
+    const eeDeleteBtn = document.getElementById('eeDelete');
+    if(eeDeleteBtn) eeDeleteBtn.addEventListener('click', () => {
       showConfirmModal(t('deleteEntry'), t('deleteEntryConfirm'), async () => {
         await commitEntryEdit(originalLines, []);
         closeModal();
@@ -7038,6 +7275,16 @@ function openEditJournalEntryModal(entry, date){
 // delete) new set, and re-deriving every affected year's shard from the
 // in-memory journal so storage always matches STATE exactly.
 async function commitEntryEdit(originalLines, newLines){
+  // Period lock check — a single choke point covers every caller (journal
+  // entries, vouchers, invoices, assets, ...) since they all funnel through
+  // here. Blocks create/edit/delete of anything dated on or before the lock
+  // date; see isDateLocked()/periodLockActive() for the policy.
+  const allTouchedDates = [...originalLines, ...newLines].map(l=>l.date);
+  const lockedDate = allTouchedDates.find(isDateLocked);
+  if(lockedDate){
+    showToast(tf('periodLockedError', { date: lockedDate }));
+    return;
+  }
   const affectedYears = new Set();
   originalLines.forEach(l => affectedYears.add(l.date.slice(0,4)));
   newLines.forEach(l => affectedYears.add(l.date.slice(0,4)));
@@ -7223,7 +7470,8 @@ async function initApp(){
   if(STATE.meta.journalSeqCounter == null) STATE.meta.journalSeqCounter = 0;
 
   let settings = await storeGet('settings');
-  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold', users:[], currentUserId:'' };
+  STATE.settings = settings || { companyName:'', companyNameEn:'', companyAddress:'', companyAddressEn:'', companyPhone:'', companyEmail:'', companyTaxId:'', companyLogo:'', fxRates:{}, fxGainAccount:'', fxLossAccount:'', theme:'dark', lang:'ar', palette:'gold', users:[], currentUserId:'', lockDate:'' };
+  if(typeof STATE.settings.lockDate !== 'string') STATE.settings.lockDate = '';
   if(!Array.isArray(STATE.settings.users)) STATE.settings.users = [];
   if(typeof STATE.settings.currentUserId !== 'string') STATE.settings.currentUserId = '';
   if(!STATE.settings.docSerialCounters) STATE.settings.docSerialCounters = {};
@@ -7272,6 +7520,8 @@ async function initApp(){
   STATE.meta.totalLines = journal.length;
   STATE.projects = (await storeGet('projects')) || [];
   STATE.projectTx = (await storeGet('projectTx')) || [];
+  STATE.bankReconciliations = (await storeGet('bankReconciliations')) || [];
+  STATE.clearedTxSeqs = (await storeGet('clearedTxSeqs')) || {};
   STATE.assetModels = (await storeGet('assetModels')) || [];
   STATE.assets = (await storeGet('assets')) || [];
   STATE.depEntries = (await storeGet('depEntries')) || [];
@@ -7281,6 +7531,10 @@ async function initApp(){
   STATE.products = (await storeGet('products')) || [];
   STATE.invoiceDrafts = (await storeGet('invoiceDrafts')) || [];
   STATE.invoiceExtras = (await storeGet('invoiceExtras')) || [];
+  STATE.purchaseInvoiceDrafts = (await storeGet('purchaseInvoiceDrafts')) || [];
+  STATE.purchaseInvoiceExtras = (await storeGet('purchaseInvoiceExtras')) || [];
+  STATE.recurringTemplates = (await storeGet('recurringTemplates')) || [];
+  STATE.stockMoves = (await storeGet('stockMoves')) || [];
   STATE.voucherExtras = (await storeGet('voucherExtras')) || [];
   // One-time migration from the earlier standalone invoices/cashVouchers
   // arrays (now replaced by journal-derived lists + these lightweight
@@ -7413,6 +7667,8 @@ const ICONS = {
   filterFunnel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg>',
   palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2c2 0 4-2 4-4a10 10 0 0 0-9-9z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/><circle cx="17" cy="11" r="1"/></svg>',
   factory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V10l6 4v-4l6 4V8l6 4v9H3z"/><path d="M7 21v-4M12 21v-4M17 21v-4"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+  receipt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
 };
 
 /* =========================================================================
@@ -7424,7 +7680,10 @@ const NAV = [
   {section:'التقارير المحاسبية', sectionEn:'Accounting Reports'},
   {id:'accountstatement', label:'الأستاذ العام', labelEn:'General Ledger', icon:'ledger'},
   {id:'journalentries', label:'قيود اليومية', labelEn:'Journal Entries', icon:'ledger'},
+  {id:'recurringentries', label:'القيود المتكررة', labelEn:'Recurring Entries', icon:'clock'},
   {id:'partnerstatement', label:'كشف عميل / مورد', labelEn:'Customer / Vendor Statement', icon:'users'},
+  {id:'agingreport', label:'تقرير أعمار الديون', labelEn:'AR/AP Aging Report', icon:'clock'},
+  {id:'vatreturn', label:'إقرار ضريبة القيمة المضافة', labelEn:'VAT Return', icon:'receipt'},
   {id:'otherbalances', label:'أرصدة مدينة / دائنة أخرى', labelEn:'Other Debit / Credit Balances', icon:'users'},
   {id:'trialbalance', label:'ميزان المراجعة', labelEn:'Trial Balance', icon:'scale'},
   {id:'statements', label:'القوائم المالية', labelEn:'Financial Statements', icon:'statement'},
@@ -7446,9 +7705,13 @@ const NAV = [
   {section:'المبيعات والتحصيل', sectionEn:'Sales, Invoicing & Collections'},
   {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
   {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
+  {id:'inventory', label:'المخزون', labelEn:'Inventory', icon:'factory'},
   {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
+  {section:'المشتريات والموردين', sectionEn:'Purchases & Vendors'},
+  {id:'purchaseinvoices', label:'فواتير المشتريات', labelEn:'Purchase Invoices', icon:'statement'},
   {section:'الخزنة والسندات', sectionEn:'Treasury & Vouchers'},
   {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
+  {id:'bankrecon', label:'مطابقة كشف الحساب البنكي', labelEn:'Bank Reconciliation', icon:'exchange'},
   {section:'الإعداد', sectionEn:'Setup'},
   {id:'chartofaccounts', label:'شجرة الحسابات', labelEn:'Chart of Accounts', icon:'scale'},
   {id:'import', label:'الإعداد والاستيراد', labelEn:'Setup & Import', icon:'upload'},
@@ -8320,7 +8583,10 @@ function renderApp(){
     trialbalance: renderTrialBalanceView,
     accountstatement: renderAccountStatementView,
     journalentries: renderJournalEntriesView,
+    recurringentries: renderRecurringEntriesView,
     partnerstatement: renderPartnerStatementView,
+    agingreport: renderAgingReportView,
+    vatreturn: renderVatReturnView,
     otherbalances: renderOtherBalancesView,
     costcenters: renderCostCentersView,
     projects: renderProjectsView,
@@ -8334,8 +8600,11 @@ function renderApp(){
     prepaidexpenses: renderPrepaidExpensesView,
     customers: renderCustomersView,
     products: renderProductsView,
+    inventory: renderInventoryView,
     invoices: renderInvoicesView,
+    purchaseinvoices: renderPurchaseInvoicesView,
     cashvouchers: renderCashVouchersView,
+    bankrecon: renderBankReconView,
   };
   (renderers[STATE.ui.view] || renderDashboard)(root);
 
@@ -9885,27 +10154,43 @@ function renderImportView(root){
     <div class="card">
       <h2>${ICONS.users ? ICONS.users.replace('currentColor','var(--gold-dim)') : ''} ${t('usersManagementTitle')}</h2>
       <div class="desc">${t('usersManagementHint')}</div>
+      ${!isAdminUser() ? `<div class="hint">🔒 ${t('usersAdminOnlyHint')}</div>` : ''}
       <div class="table-wrap" style="margin:10px 0">
         <table><thead><tr><th>${t('userNameLabel')}</th><th>${t('userRoleLabel')}</th><th></th></tr></thead><tbody>
           ${(STATE.settings.users||[]).length ? STATE.settings.users.map(u=>`<tr>
             <td>${escapeHtml(u.name)}${u.id===STATE.settings.currentUserId?` <span class="pill pill-gold" style="font-size:10px">${t('currentUserLabel')}</span>`:''}</td>
             <td>
-              <select class="input user-role-select" data-uid="${escapeHtml(u.id)}" style="width:auto;display:inline-block">
+              <select class="input user-role-select" data-uid="${escapeHtml(u.id)}" style="width:auto;display:inline-block" ${isAdminUser()?'':'disabled'}>
                 ${USER_ROLES.map(r=>`<option value="${r}" ${u.role===r?'selected':''}>${userRoleLabel(r)}</option>`).join('')}
               </select>
             </td>
-            <td><button type="button" class="btn btn-outline user-delete-btn" data-uid="${escapeHtml(u.id)}" style="padding:4px 10px;font-size:11px">${t('deleteUserBtn')}</button></td>
+            <td>${isAdminUser() ? `<button type="button" class="btn btn-outline user-delete-btn" data-uid="${escapeHtml(u.id)}" style="padding:4px 10px;font-size:11px">${t('deleteUserBtn')}</button>` : ''}</td>
           </tr>`).join('') : `<tr><td colspan="3"><div class="empty" style="padding:14px 0">${t('noUsersYet')}</div></td></tr>`}
         </tbody></table>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${isAdminUser() ? `
         <input id="newUserNameInput" class="input" style="max-width:220px" placeholder="${t('userNameLabel')}">
         <select id="newUserRoleSelect" class="input" style="width:auto">
           ${USER_ROLES.map(r=>`<option value="${r}">${userRoleLabel(r)}</option>`).join('')}
         </select>
-        <button type="button" class="btn btn-primary" id="addUserBtn">${t('addUserBtn')}</button>
+        <button type="button" class="btn btn-primary" id="addUserBtn">${t('addUserBtn')}</button>` : ''}
         ${(STATE.settings.users||[]).length ? `<button type="button" class="btn btn-outline" id="switchUserBtn" style="margin-inline-start:auto">${t('switchUserBtn')}</button>` : ''}
       </div>
+    </div>
+
+    <div class="card">
+      <h2>${ICONS.lock ? ICONS.lock.replace('currentColor','var(--gold-dim)') : ''} ${t('periodLockTitle')}</h2>
+      <div class="desc">${t('periodLockHint')}</div>
+      ${!isAdminUser() ? `<div class="hint">🔒 ${t('periodLockAdminOnlyHint')}</div>` : ''}
+      ${periodLockActive() ? `<div class="hint" style="color:var(--brick);font-weight:700">${tf('lockActiveNotice',{date:STATE.settings.lockDate})}</div>` : `<div class="hint">${t('noLockSet')}</div>`}
+      ${isAdminUser() ? `
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+        <label class="lbl" style="margin:0">${t('lockDateLabel')}</label>
+        <input type="date" id="lockDateInput" class="input" style="width:auto" value="${escapeHtml(STATE.settings.lockDate||'')}">
+        <button type="button" class="btn btn-primary" id="setLockDateBtn">${t('setLockDateBtn')}</button>
+        ${periodLockActive() ? `<button type="button" class="btn btn-outline" id="removeLockBtn">${t('removeLockBtn')}</button>` : ''}
+      </div>` : ''}
     </div>
 
     <div class="grid-2">
@@ -10035,6 +10320,26 @@ function renderImportView(root){
   }));
   const switchUserBtn = document.getElementById('switchUserBtn');
   if(switchUserBtn) switchUserBtn.addEventListener('click', () => openUserPickerModal());
+
+  // --- Period lock (admin-only — see isDateLocked()/periodLockActive()) ---
+  const setLockDateBtn = document.getElementById('setLockDateBtn');
+  if(setLockDateBtn) setLockDateBtn.addEventListener('click', async () => {
+    if(!isAdminUser()) return; // defensive — button shouldn't render otherwise
+    const input = document.getElementById('lockDateInput');
+    const val = input.value;
+    if(!val){ showToast(t('lockDateRequired')); return; }
+    STATE.settings.lockDate = val;
+    await storeSet('settings', STATE.settings);
+    renderApp();
+    showToast(t('savedToast'));
+  });
+  const removeLockBtn = document.getElementById('removeLockBtn');
+  if(removeLockBtn) removeLockBtn.addEventListener('click', async () => {
+    if(!isAdminUser()) return;
+    STATE.settings.lockDate = '';
+    await storeSet('settings', STATE.settings);
+    renderApp();
+  });
 
   const downloadBackupBtn = document.getElementById('downloadBackupBtn');
   if(downloadBackupBtn) downloadBackupBtn.addEventListener('click', downloadFullBackup);
@@ -10855,6 +11160,7 @@ function renderAccountStatementView(root, alwaysCombined){
               <td class="num-cell" style="white-space:nowrap">
                 <span class="drill" title="${t('editEntry')}" onclick="openEditJournalEntryModal('${jsAttrEscape(r.entry)}','${r.date}')">✎</span>
                 <span class="drill" title="${t('duplicateEntry')}" onclick="openDuplicateEntryModal('${jsAttrEscape(r.entry)}')" style="margin-right:6px;opacity:.7">⧉</span>
+                <span class="drill" title="${t('makeRecurringBtn')}" onclick="openMakeRecurringModal('${jsAttrEscape(r.entry)}')" style="margin-right:6px;opacity:.7">🔁</span>
               </td>
             </tr>`;}).join('') : `<tr><td colspan="${colCount}" class="empty">${t('noMatchingFilterMovement')}</td></tr>`}
             ${displayRows.length ? `<tr class="total-row">
@@ -12201,11 +12507,65 @@ function renderProductsView(root){
   </div>`;
 }
 
+// ── Inventory / Stock levels page ───────────────────────────────────────────
+// One row per product with trackInventory=true, showing its current
+// quantity, weighted-average cost, and total value (see
+// computeStockPosition()) — plus a drill-down into every stock move that
+// built up that balance (opening balance, purchases in, sales out).
+function renderInventoryView(root){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  const asOf = STATE.ui.inventoryAsOf || todayISO();
+  const rows = tracked.map(p=>({ product:p, pos: computeStockPosition(p.id, asOf) }));
+  const totalValue = Math.round(rows.reduce((s,r)=>s+r.pos.value,0)*100)/100;
+  const openId = STATE.ui.inventoryOpenProduct;
+
+  root.innerHTML = `
+  <div class="card">
+    <h2>${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('inventoryTitle')}</h2>
+    <div class="desc">${t('inventoryHint')}</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0">
+      <div><label class="lbl">${t('agingAsOfLabel')}</label><input type="date" id="invAsOfInput" class="input" value="${asOf}"></div>
+      <div class="card" style="margin:0;padding:8px 16px"><div class="hint" style="margin:0">${t('inventoryTotalValueLabel')}</div><div style="font-weight:800;font-size:16px">${fmt(totalValue)}</div></div>
+    </div>
+    ${!tracked.length ? `<div class="empty">${t('noTrackedProducts')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('prodNameCol')}</th><th class="num">${t('inventoryQtyCol')}</th><th class="num">${t('inventoryAvgCostCol')}</th><th class="num">${t('inventoryValueCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td style="font-weight:600">${escapeHtml(r.product.name)} <span class="hint">(${escapeHtml(r.product.unit||'')})</span></td>
+        <td class="num" style="color:${r.pos.qty<0?'var(--brick)':'inherit'}">${fmt(r.pos.qty)}</td>
+        <td class="num">${fmt(r.pos.avgCost)}</td>
+        <td class="num" style="font-weight:700">${fmt(r.pos.value)}</td>
+        <td><span class="drill" onclick="toggleInventoryDetail(${r.product.id})">${openId===r.product.id?t('hideDetailsBtn'):t('viewDetailsBtn')}</span></td>
+      </tr>
+      ${openId===r.product.id ? `<tr><td colspan="5" style="background:rgba(0,0,0,.15);padding:10px">
+        ${(()=>{
+          const moves = STATE.stockMoves.filter(m=>m.productId===r.product.id && m.date<=asOf).sort((a,b)=>a.date.localeCompare(b.date)||(a.seq||0)-(b.seq||0));
+          const typeLabel = ty => ({in:t('stockMoveIn'), out:t('stockMoveOut'), adjustment:t('stockMoveAdjustment')}[ty]||ty);
+          return `<table style="width:100%"><thead><tr><th>${t('date')}</th><th>${t('stockMoveTypeCol')}</th><th class="num">${t('inventoryQtyCol')}</th><th class="num">${t('inventoryAvgCostCol')}</th><th>${t('voucherDescCol')}</th></tr></thead><tbody>
+            ${r.product.openingQty ? `<tr><td>—</td><td>${t('stockMoveOpening')}</td><td class="num">${fmt(r.product.openingQty)}</td><td class="num">${fmt(r.product.openingCost||0)}</td><td>—</td></tr>` : ''}
+            ${moves.length ? moves.map(m=>`<tr><td class="num">${m.date}</td><td>${typeLabel(m.type)}</td><td class="num">${m.type==='out'?'-':''}${fmt(m.qty)}</td><td class="num">${fmt(m.unitCost||0)}</td><td>${escapeHtml(m.note||'')}</td></tr>`).join('') : `<tr><td colspan="5"><div class="empty">${t('noStockMoves')}</div></td></tr>`}
+          </tbody></table>`;
+        })()}
+      </td></tr>` : ''}`).join('')}
+    </tbody></table></div>`}
+  </div>`;
+
+  const asOfInp = document.getElementById('invAsOfInput');
+  if(asOfInp) asOfInp.addEventListener('change', e=>{ STATE.ui.inventoryAsOf = e.target.value; renderApp(); });
+}
+function toggleInventoryDetail(productId){
+  STATE.ui.inventoryOpenProduct = STATE.ui.inventoryOpenProduct===productId ? null : productId;
+  renderApp();
+}
+
 function openProductModal(prodId, prefillName){
   const overlay = document.getElementById('newEntryModalOverlay');
   if(!overlay) return;
   const existing = prodId ? STATE.products.find(p=>p.id===prodId) : null;
   const revAccounts = STATE.accounts.filter(a=>a.type==='الدخل');
+  const invAccounts = STATE.accounts.filter(a=>a.type==='الأصول المتداولة');
+  const tracked = existing?.trackInventory || false;
   overlay.innerHTML = `
   <div class="modal-box" style="max-width:480px;width:97%">
     <h3>${existing ? t('editProductTitle') : t('newProductBtn')}</h3>
@@ -12221,6 +12581,23 @@ function openProductModal(prodId, prefillName){
           ${revAccounts.map(a=>`<option value="${a.code}" ${existing?.revenueAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
         </select>
       </div>
+      <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:2px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="prodTrackInv" ${tracked?'checked':''}>
+          <span>${t('prodTrackInvLabel')}</span>
+        </label>
+        <div class="hint" style="margin:4px 0 0">${t('prodTrackInvHint')}</div>
+      </div>
+      <div id="prodInvFields" style="grid-column:1/-1;display:${tracked?'grid':'none'};grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+        <div><label class="lbl">${t('prodOpeningQtyLabel')}</label><input id="prodOpeningQty" type="number" step="0.01" class="input" value="${existing?.openingQty||0}" ${existing?.trackInventory && (STATE.stockMoves||[]).some(m=>m.productId===existing?.id)?'disabled':''}></div>
+        <div><label class="lbl">${t('prodOpeningCostLabel')}</label><input id="prodOpeningCost" type="number" step="0.01" class="input" value="${existing?.openingCost||0}" ${existing?.trackInventory && (STATE.stockMoves||[]).some(m=>m.productId===existing?.id)?'disabled':''}></div>
+        <div style="grid-column:1/-1"><label class="lbl">${t('prodInvAccountLabel')}</label>
+          <select id="prodInvAccount" class="input">
+            <option value="">—</option>
+            ${invAccounts.map(a=>`<option value="${a.code}" ${existing?.inventoryAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+          </select>
+        </div>
+      </div>
       <div style="grid-column:1/-1"><label class="lbl">${t('notesLabel')}</label><textarea id="prodNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea></div>
     </div>
     <div class="modal-actions">
@@ -12229,6 +12606,9 @@ function openProductModal(prodId, prefillName){
     </div>
   </div>`;
   overlay.style.display='flex';
+  overlay.querySelector('#prodTrackInv').addEventListener('change', e=>{
+    overlay.querySelector('#prodInvFields').style.display = e.target.checked ? 'grid' : 'none';
+  });
   overlay.querySelector('#saveProdBtn').onclick = async () => {
     const name = overlay.querySelector('#prodName').value.trim();
     if(!name){ showToast(t('prodNameRequired')); return; }
@@ -12240,6 +12620,10 @@ function openProductModal(prodId, prefillName){
       price: parseFloat(overlay.querySelector('#prodPrice').value)||0,
       taxPct: parseFloat(overlay.querySelector('#prodTax').value)||0,
       revenueAccount: overlay.querySelector('#prodRevAccount').value,
+      trackInventory: overlay.querySelector('#prodTrackInv').checked,
+      openingQty: parseFloat(overlay.querySelector('#prodOpeningQty').value)||0,
+      openingCost: parseFloat(overlay.querySelector('#prodOpeningCost').value)||0,
+      inventoryAccount: overlay.querySelector('#prodInvAccount').value,
       notes: overlay.querySelector('#prodNotes').value.trim(),
       status: 'active'
     };
@@ -12251,6 +12635,39 @@ function openProductModal(prodId, prefillName){
     showToast(t('savedToast'));
   };
   overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Inventory quantity tracking (for products with trackInventory=true) ───
+// Weighted-average costing: every 'in' move (from a purchase) recalculates
+// the average cost across the new total quantity; every 'out' move (from a
+// sale) is costed at whatever the average was *at that moment*, then only
+// reduces quantity (never revalues the average). This is a separate ledger
+// from the accounting journal — it exists to answer "how much stock do we
+// have and what's it worth", not to auto-post a COGS/inventory journal
+// entry (which would need per-company judgment about timing and accounts).
+function computeStockPosition(productId, asOfDate){
+  const prod = STATE.products.find(p=>p.id===productId);
+  if(!prod) return { qty:0, avgCost:0, value:0 };
+  let qty = prod.openingQty||0;
+  let avgCost = prod.openingCost||0;
+  const moves = STATE.stockMoves.filter(m=>m.productId===productId && (!asOfDate || m.date<=asOfDate)).sort((a,b)=>a.date.localeCompare(b.date) || (a.seq||0)-(b.seq||0));
+  moves.forEach(m=>{
+    if(m.type==='in'){
+      const newQty = qty + m.qty;
+      avgCost = newQty>0 ? Math.round(((qty*avgCost) + (m.qty*m.unitCost)) / newQty * 10000)/10000 : avgCost;
+      qty = newQty;
+    } else if(m.type==='out'){
+      qty = Math.round((qty - m.qty)*10000)/10000;
+    } else if(m.type==='adjustment'){
+      qty = Math.round((qty + m.qty)*10000)/10000;
+      if(m.qty>0 && m.unitCost) avgCost = m.unitCost;
+    }
+  });
+  return { qty, avgCost, value: Math.round(qty*avgCost*100)/100 };
+}
+async function addStockMove(move){
+  STATE.stockMoves.push({ id:'sm_'+Date.now()+Math.random().toString(36).slice(2,6), ...move });
+  await storeSet('stockMoves', STATE.stockMoves);
 }
 
 // ── Invoice line-item math (used while composing a not-yet-posted draft) ─────
@@ -12313,6 +12730,16 @@ function journalReceiptsAgainst(entryNo, invoiceNo){
   if(!keys.length) return 0;
   const total = getJournalVouchers()
     .filter(v => v.type==='receipt' && keys.some(k=>(v.description||'').includes(k)))
+    .reduce((s,v)=>s+v.amount, 0);
+  return Math.round(total*100)/100;
+}
+// Same idea as journalReceiptsAgainst() but for what's been PAID toward a
+// vendor bill — sums payment vouchers that reference it.
+function journalPaymentsAgainst(entryNo, invoiceNo){
+  const keys = [entryNo, invoiceNo].filter(Boolean);
+  if(!keys.length) return 0;
+  const total = getJournalVouchers()
+    .filter(v => v.type==='payment' && keys.some(k=>(v.description||'').includes(k)))
     .reduce((s,v)=>s+v.amount, 0);
   return Math.round(total*100)/100;
 }
@@ -12527,14 +12954,18 @@ async function postInvoiceDraft(draft){
   let seq = (STATE.meta.journalSeqCounter||0);
   lines.push({ entry:entryNo, date:draft.date, code:arAcc, name:accName(arAcc), debit:totals.grandTotal, credit:0, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:totals.grandTotal, product:'', journal:'فواتير العملاء', curAmt:totals.grandTotal, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
   const lineExtras = [];
-  draft.lines.forEach(l=>{
+  for(const l of draft.lines){
     const prod = STATE.products.find(p=>p.id===l.productId);
     const revAcc = prod?.revenueAccount;
     const gross = l.qty*l.unitPrice;
     const net = Math.round((gross - gross*((l.discountPct||0)/100))*100)/100;
     if(revAcc) lines.push({ entry:entryNo, date:draft.date, code:revAcc, name:accName(revAcc), debit:0, credit:net, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:-net, product:l.name, journal:'فواتير العملاء', curAmt:-net, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
     lineExtras.push({ code:revAcc||'', qty:l.qty, unitPrice:l.unitPrice, discountPct:l.discountPct||0 });
-  });
+    if(prod?.trackInventory){
+      const pos = computeStockPosition(prod.id, draft.date);
+      await addStockMove({ date:draft.date, productId:prod.id, type:'out', qty:l.qty, unitCost:pos.avgCost, note:`فاتورة ${entryNo}`, source:'sales-invoice', seq });
+    }
+  }
   if(totals.taxTotal>0 && STATE.accountsByCode['212102']){
     lines.push({ entry:entryNo, date:draft.date, code:'212102', name:accName('212102'), debit:0, credit:totals.taxTotal, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:-totals.taxTotal, product:'', journal:'فواتير العملاء', curAmt:-totals.taxTotal, ref:`فاتورة ${entryNo}`, source:'invoice-auto', seq:++seq });
   }
@@ -12604,9 +13035,479 @@ function openInvoiceExtrasModal(entryNo){
   overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
 }
 
+// ── Purchase / Vendor Invoices ────────────────────────────────────────────
+// Mirrors the Sales Invoices module above (same draft→post lifecycle, same
+// "read straight out of the journal" philosophy) but for the AP side: the
+// vendor's account is CREDITED for the total instead of the customer's
+// being debited, and each line DEBITS an expense/asset account instead of
+// crediting a revenue account. No separate "vendor master" — vendor name is
+// free text (autocompletes from partners already used elsewhere) and the
+// AP/expense accounts are picked directly per invoice, since purchases
+// route to many different accounts rather than one fixed one per vendor.
+function getJournalPurchaseInvoices(){
+  const groups = {};
+  STATE.journal.forEach(l=>{
+    if(l.journal !== 'فواتير الموردين') return;
+    (groups[l.entry] = groups[l.entry] || []).push(l);
+  });
+  const taxAcc = '114103'; // VAT Recoverable (input VAT)
+  return Object.keys(groups).map(entryNo=>{
+    const gl = groups[entryNo];
+    const apLine = gl.find(l=>/^211/.test(l.code) && l.credit>0) || gl.find(l=>l.credit>0);
+    const taxLines = gl.filter(l=>l.code===taxAcc);
+    const expenseLines = gl.filter(l=>l!==apLine && !taxLines.includes(l) && l.debit>0);
+    const taxTotal = Math.round(taxLines.reduce((s,l)=>s+l.debit,0)*100)/100;
+    const grandTotal = Math.round((apLine ? apLine.credit : expenseLines.reduce((s,l)=>s+l.debit,0)+taxTotal)*100)/100;
+    const extras = STATE.purchaseInvoiceExtras.find(e=>e.entryNo===entryNo) || null;
+    const paidAmt = journalPaymentsAgainst(entryNo, extras?.invoiceNo);
+    return {
+      entryNo, date: gl.reduce((min,l)=> (!min||l.date<min)?l.date:min, ''),
+      invoiceNo: extras?.invoiceNo || entryNo,
+      vendorName: apLine?.partner || '—', apAccount: apLine?.code || '',
+      lines: expenseLines.map(l=>({ code:l.code, name:l.product||accName(l.code), amount:l.debit })),
+      taxTotal, grandTotal, paidAmt, dueDate: extras?.dueDate||'', notes: extras?.notes||'',
+      lineExtras: extras?.lineExtras || [], hasExtras: !!extras
+    };
+  }).sort((a,b)=> b.date.localeCompare(a.date) || b.entryNo.localeCompare(a.entryNo));
+}
+
+function renderPurchaseInvoicesView(root){
+  const posted = getJournalPurchaseInvoices();
+  const drafts = STATE.purchaseInvoiceDrafts;
+  const totalInvoiced = posted.reduce((s,i)=>s+i.grandTotal,0);
+  const totalPaid = posted.reduce((s,i)=>s+i.paidAmt,0);
+  root.innerHTML = `
+  <div class="grid-3" style="margin-bottom:16px">
+    <div class="kpi"><div class="lbl">${t('purchTotalInvoicedKpi')}</div><div class="val num-lg">${fmt(totalInvoiced)}</div></div>
+    <div class="kpi"><div class="lbl">${t('purchTotalPaidKpi')}</div><div class="val num-lg" style="color:var(--green)">${fmt(totalPaid)}</div></div>
+    <div class="kpi"><div class="lbl">${t('purchTotalOutstandingKpi')}</div><div class="val num-lg" style="color:var(--gold-dim)">${fmt(totalInvoiced-totalPaid)}</div></div>
+  </div>
+  <div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <span>${ICONS.statement.replace('currentColor','var(--gold-dim)')} ${t('purchaseInvoicesTitle')}</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openPurchaseInvoiceModal(null)">+ ${t('newPurchaseInvoiceBtn')}</button>
+    </h2>
+    <div class="desc">${t('purchaseInvoicesLinkedDesc')}</div>
+    ${!posted.length && !drafts.length ? `<div class="empty">${t('noPurchaseInvoices')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('invNoCol')}</th><th>${t('invDateCol')}</th><th>${t('invVendorCol')}</th>
+      <th class="num">${t('invTotalCol')}</th><th class="num">${t('invPaidCol')}</th><th class="num">${t('invRemainingCol')}</th>
+      <th>${t('assetStatusCol')}</th><th></th>
+    </tr></thead><tbody>
+      ${drafts.map(d=>{
+        const totals = computeInvoiceTotals(d.lines.map(l=>({...l})));
+        return `<tr>
+          <td style="font-weight:600;color:var(--gold-dim)">${t('draftStatus')}</td>
+          <td>${d.date||'—'}</td>
+          <td>${escapeHtml(d.vendorName||'—')}</td>
+          <td class="num">${fmt(totals.grandTotal)}</td>
+          <td class="num">0</td>
+          <td class="num">${fmt(totals.grandTotal)}</td>
+          <td><span style="color:var(--gold-dim)">${t('draftStatus')}</span></td>
+          <td><span class="drill" title="${t('viewBtn')}" onclick="openPurchaseInvoiceModal('${d.id}')">✎</span></td>
+        </tr>`;
+      }).join('')}
+      ${posted.map(inv=>{
+        const remaining = Math.round((inv.grandTotal-inv.paidAmt)*100)/100;
+        const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
+        const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(inv.invoiceNo)}</td>
+          <td>${inv.date||'—'}</td>
+          <td>${escapeHtml(inv.vendorName)}</td>
+          <td class="num">${fmt(inv.grandTotal)}</td>
+          <td class="num">${fmt(inv.paidAmt)}</td>
+          <td class="num">${fmt(remaining)}</td>
+          <td><span style="color:${statusColor}">${statusLabel}</span> ${!inv.hasExtras?`<span class="hint" style="font-size:10px">(${t('completeDataBtn')})</span>`:''}</td>
+          <td style="white-space:nowrap">
+            <span class="drill" title="${t('completeDataBtn')}" onclick="openPurchaseInvoiceExtrasModal('${inv.entryNo}')">✎</span>
+            <span class="drill" style="margin-right:6px;opacity:.7" title="${t('recordPaymentBtn')}" onclick="openCashVoucherModal(null, {type:'payment', invoiceEntryNo:'${inv.entryNo}', invoiceNo:'${inv.invoiceNo}', customerName:${JSON.stringify(inv.vendorName)}, apAccount:'${inv.apAccount}', suggestedAmount:${remaining}})">💰</span>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function openPurchaseInvoiceModal(draftId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = draftId ? STATE.purchaseInvoiceDrafts.find(d=>d.id==draftId) : null;
+  let draftLines = existing ? existing.lines.map(l=>({...l})) : [{accountCode:'',productId:'',name:'',qty:1,unitPrice:0,discountPct:0,taxPct:0,lineTotal:0}];
+  const today = new Date().toISOString().slice(0,10);
+  let invDate = existing?.date || today;
+  let invDueDate = existing?.dueDate || today;
+  let vendorName = existing?.vendorName || '';
+  let apAccount = existing?.apAccount || (STATE.accounts.find(a=>a.code==='211101')?.code) || '';
+  let invNotes = existing?.notes || '';
+  const apAccounts = STATE.accounts.filter(a=>a.type==='الدائن');
+  const lineAccounts = STATE.accounts.filter(a=>['النفقات','تكاليف الإيرادات','الأصول المتداولة'].includes(a.type));
+  const vendorNames = distinctPartnerNames();
+  const trackedProducts = STATE.products.filter(p=>p.trackInventory);
+
+  function renderModal(){
+    const totals = computeInvoiceTotals(draftLines);
+    overlay.innerHTML = `
+    <div class="modal-box" style="max-width:900px;width:98%">
+      <h3>${existing ? t('editPurchaseInvoiceTitle') : t('newPurchaseInvoiceBtn')}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div style="grid-column:span 2"><label class="lbl">${t('invVendorCol')}</label>
+          <input id="pinvVendorName" list="vendorDatalist" class="input" value="${escapeHtml(vendorName)}">
+          <datalist id="vendorDatalist">${vendorNames.map(n=>`<option value="${escapeHtml(n)}">`).join('')}</datalist>
+        </div>
+        <div><label class="lbl">${t('date')}</label><input id="pinvDate" type="date" class="input" value="${invDate}"></div>
+        <div><label class="lbl">${t('invDueDateCol')}</label><input id="pinvDueDate" type="date" class="input" value="${invDueDate}"></div>
+      </div>
+      <div style="margin-bottom:10px"><label class="lbl">${t('apAccountLabel')}</label>
+        <select id="pinvApAccount" class="input" style="max-width:400px">
+          ${apAccounts.map(a=>`<option value="${a.code}" ${apAccount===a.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      <div class="table-wrap"><table><thead><tr>
+        ${trackedProducts.length?`<th style="width:130px">${t('prodInvLinkCol')}</th>`:''}
+        <th>${t('lineAccountCol')}</th><th>${t('voucherDescCol')}</th><th class="num" style="width:75px">${t('invQtyCol')}</th>
+        <th class="num" style="width:100px">${t('invUnitPriceCol')}</th><th class="num" style="width:65px">${t('invDiscCol')}</th>
+        <th class="num" style="width:65px">${t('invTaxPctCol')}</th><th class="num" style="width:100px">${t('invLineTotalCol')}</th><th style="width:30px"></th>
+      </tr></thead><tbody id="pinvLinesBody">
+        ${draftLines.map((l,i)=>`<tr>
+          ${trackedProducts.length?`<td><select class="input pinv-line-field" data-i="${i}" data-f="productId" style="width:100%">
+            <option value="">—</option>
+            ${trackedProducts.map(p=>`<option value="${p.id}" ${l.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+          </select></td>`:''}
+          <td><select class="input pinv-line-field" data-i="${i}" data-f="accountCode" style="width:100%">
+            <option value="">—</option>
+            ${lineAccounts.map(a=>`<option value="${a.code}" ${l.accountCode===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+          </select></td>
+          <td><input class="input pinv-line-field" data-i="${i}" data-f="name" value="${escapeHtml(l.name)}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input pinv-line-field" data-i="${i}" data-f="qty" value="${l.qty}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input pinv-line-field" data-i="${i}" data-f="unitPrice" value="${l.unitPrice}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input pinv-line-field" data-i="${i}" data-f="discountPct" value="${l.discountPct||0}" style="width:100%"></td>
+          <td><input type="number" step="0.01" class="input pinv-line-field" data-i="${i}" data-f="taxPct" value="${l.taxPct||0}" style="width:100%"></td>
+          <td class="num">${fmt(l.lineTotal||0)}</td>
+          <td><span class="drill" onclick="__pinvRemoveLine(${i})">✕</span></td>
+        </tr>`).join('')}
+      </tbody></table></div>
+      <button class="btn btn-outline" style="margin-top:8px;padding:5px 12px;font-size:11px" onclick="__pinvAddLine()">+ ${t('invAddLineBtn')}</button>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <div style="width:280px;font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invSubtotalRow')}</span><span>${fmt(totals.subtotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invDiscountRow')}</span><span>-${fmt(totals.discountTotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:3px 0"><span>${t('invTaxRow')}</span><span>${fmt(totals.taxTotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);font-weight:700;font-size:15px"><span>${t('invGrandTotalRow')}</span><span>${fmt(totals.grandTotal)}</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px"><label class="lbl">${t('notesLabel')}</label><textarea id="pinvNotes" class="input" rows="2">${escapeHtml(invNotes)}</textarea></div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+        ${existing?`<button class="btn btn-outline" id="deleteDraftPinvBtn" style="color:var(--red);border-color:var(--red)">${t('deleteBtn')}</button>`:''}
+        <button class="btn btn-outline" id="saveDraftPinvBtn">${t('saveDraftBtn')}</button>
+        <button class="btn" id="postPinvBtn">${t('postAndPrintBtn')}</button>
+      </div>
+    </div>`;
+    overlay.style.display='flex';
+
+    overlay.querySelectorAll('.pinv-line-field').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const i = parseInt(e.target.dataset.i), f = e.target.dataset.f;
+        let v = e.target.value;
+        if(f==='qty'||f==='unitPrice'||f==='discountPct'||f==='taxPct'){ draftLines[i][f] = parseFloat(v)||0; }
+        else { draftLines[i][f] = v; }
+      });
+      inp.addEventListener('change', renderModal);
+    });
+    overlay.querySelector('#pinvVendorName').oninput = e=>{ vendorName = e.target.value; };
+    overlay.querySelector('#pinvApAccount').onchange = e=>{ apAccount = e.target.value; };
+    overlay.querySelector('#pinvDate').onchange = e=>{ invDate = e.target.value; };
+    overlay.querySelector('#pinvDueDate').onchange = e=>{ invDueDate = e.target.value; };
+    overlay.querySelector('#pinvNotes').oninput = e=>{ invNotes = e.target.value; };
+    overlay.querySelector('#saveDraftPinvBtn').onclick = ()=>saveDraft(false);
+    overlay.querySelector('#postPinvBtn').onclick = ()=>saveDraft(true);
+    const delBtn = overlay.querySelector('#deleteDraftPinvBtn');
+    if(delBtn) delBtn.onclick = async ()=>{
+      STATE.purchaseInvoiceDrafts = STATE.purchaseInvoiceDrafts.filter(d=>d.id!==existing.id);
+      await storeSet('purchaseInvoiceDrafts', STATE.purchaseInvoiceDrafts);
+      overlay.style.display='none'; overlay.innerHTML='';
+      renderApp();
+    };
+    overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+  }
+
+  window.__pinvAddLine = ()=>{ draftLines.push({accountCode:'',productId:'',name:'',qty:1,unitPrice:0,discountPct:0,taxPct:0,lineTotal:0}); renderModal(); };
+  window.__pinvRemoveLine = (i)=>{ if(draftLines.length>1){ draftLines.splice(i,1); renderModal(); } };
+
+  async function saveDraft(post){
+    if(!vendorName.trim()){ showToast(t('vendorNameRequired')); return; }
+    if(!apAccount){ showToast(t('apAccountRequired')); return; }
+    const validLines = draftLines.filter(l=>l.accountCode && l.qty>0);
+    if(!validLines.length){ showToast(t('purchInvLinesRequired')); return; }
+    const rec = { id: existing ? existing.id : 'pd'+assetNextId(STATE.purchaseInvoiceDrafts.map(d=>({id:parseInt(String(d.id).replace('pd',''))||0}))),
+      date: invDate, dueDate: invDueDate, vendorName: vendorName.trim(), apAccount, lines: validLines, notes: invNotes };
+    if(existing){ const idx=STATE.purchaseInvoiceDrafts.findIndex(d=>d.id===existing.id); STATE.purchaseInvoiceDrafts[idx]=rec; }
+    else STATE.purchaseInvoiceDrafts.push(rec);
+    await storeSet('purchaseInvoiceDrafts', STATE.purchaseInvoiceDrafts);
+    if(post){
+      const entryNo = await postPurchaseInvoiceDraft(rec);
+      if(entryNo){
+        STATE.purchaseInvoiceDrafts = STATE.purchaseInvoiceDrafts.filter(d=>d.id!==rec.id);
+        await storeSet('purchaseInvoiceDrafts', STATE.purchaseInvoiceDrafts);
+        overlay.style.display='none'; overlay.innerHTML='';
+        renderApp();
+        showToast(t('savedToast'));
+        return;
+      }
+    }
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  }
+
+  renderModal();
+}
+
+async function postPurchaseInvoiceDraft(draft){
+  const totals = computeInvoiceTotals(draft.lines.map(l=>({...l})));
+  // Guard against posting an unbalanced entry: if any line carries tax but
+  // the VAT-recoverable account isn't in this company's chart of accounts,
+  // silently dropping the tax line would still credit the vendor account
+  // for the FULL (tax-inclusive) total while only debiting the tax-exclusive
+  // expense amount — an entry that's short by exactly the tax amount.
+  if(totals.taxTotal > 0 && !STATE.accountsByCode['114103']){
+    showToast(t('vatRecoverableAccMissing'));
+    return null;
+  }
+  const entryNo = await reserveNextEntryNumber('فواتير الموردين', draft.date);
+  const lines = [];
+  let seq = (STATE.meta.journalSeqCounter||0);
+  const lineExtras = [];
+  for(const l of draft.lines){
+    const gross = l.qty*l.unitPrice;
+    const net = Math.round((gross - gross*((l.discountPct||0)/100))*100)/100;
+    if(l.accountCode) lines.push({ entry:entryNo, date:draft.date, code:l.accountCode, name:accName(l.accountCode), debit:net, credit:0, cur:'EGP', convFactor:1, partner:draft.vendorName, cc:'', ccAmt:net, product:l.name, journal:'فواتير الموردين', curAmt:net, ref:`فاتورة مورد ${entryNo}`, source:'purchase-invoice-auto', seq:++seq });
+    lineExtras.push({ code:l.accountCode||'', qty:l.qty, unitPrice:l.unitPrice, discountPct:l.discountPct||0 });
+    if(l.productId){
+      const unitCost = l.qty>0 ? Math.round((net/l.qty)*10000)/10000 : l.unitPrice;
+      await addStockMove({ date:draft.date, productId:l.productId, type:'in', qty:l.qty, unitCost, note:`فاتورة مورد ${entryNo}`, source:'purchase-invoice', seq });
+    }
+  }
+  if(totals.taxTotal>0){
+    lines.push({ entry:entryNo, date:draft.date, code:'114103', name:accName('114103'), debit:totals.taxTotal, credit:0, cur:'EGP', convFactor:1, partner:draft.vendorName, cc:'', ccAmt:totals.taxTotal, product:'', journal:'فواتير الموردين', curAmt:totals.taxTotal, ref:`فاتورة مورد ${entryNo}`, source:'purchase-invoice-auto', seq:++seq });
+  }
+  lines.push({ entry:entryNo, date:draft.date, code:draft.apAccount, name:accName(draft.apAccount), debit:0, credit:totals.grandTotal, cur:'EGP', convFactor:1, partner:draft.vendorName, cc:'', ccAmt:-totals.grandTotal, product:'', journal:'فواتير الموردين', curAmt:-totals.grandTotal, ref:`فاتورة مورد ${entryNo}`, source:'purchase-invoice-auto', seq:++seq });
+  await commitEntryEdit([], lines);
+  STATE.meta.journalSeqCounter = seq;
+  STATE.purchaseInvoiceExtras.push({ entryNo, invoiceNo: entryNo, dueDate: draft.dueDate, notes: draft.notes, lineExtras });
+  await storeSet('purchaseInvoiceExtras', STATE.purchaseInvoiceExtras);
+  return entryNo;
+}
+
+// Lets the user fill in (or fix) the print-only details for a vendor bill
+// that already lives in the journal — its due date, notes, and the per-line
+// quantity/unit price/discount — same purpose as openInvoiceExtrasModal()
+// but for the 'فواتير الموردين' book.
+function openPurchaseInvoiceExtrasModal(entryNo){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const inv = getJournalPurchaseInvoices().find(i=>i.entryNo===entryNo);
+  if(!inv) return;
+  const existingExtras = STATE.purchaseInvoiceExtras.find(e=>e.entryNo===entryNo);
+  const lineExtras = inv.lines.map((l,i)=> (existingExtras?.lineExtras||[])[i] || { code:l.code, qty:1, unitPrice:l.amount, discountPct:0 });
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:640px;width:98%">
+    <h3>${t('completeDataBtn')} — ${escapeHtml(inv.invoiceNo)}</h3>
+    <div class="desc">${t('invExtrasHint')}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div><label class="lbl">${t('invNoCol')}</label><input id="exPinvInvoiceNo" class="input" value="${escapeHtml(inv.invoiceNo)}"></div>
+      <div><label class="lbl">${t('invDueDateCol')}</label><input id="exPinvDueDate" type="date" class="input" value="${inv.dueDate||''}"></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('lineAccountCol')}</th><th class="num">${t('invQtyCol')}</th><th class="num">${t('invUnitPriceCol')}</th><th class="num">${t('invDiscCol')}</th><th class="num">${t('invLineTotalCol')}</th>
+    </tr></thead><tbody>
+      ${inv.lines.map((l,i)=>`<tr>
+        <td>${escapeHtml(l.name)}</td>
+        <td><input type="number" step="0.01" class="input expinv-line-field" data-i="${i}" data-f="qty" value="${lineExtras[i].qty}" style="width:80px"></td>
+        <td><input type="number" step="0.01" class="input expinv-line-field" data-i="${i}" data-f="unitPrice" value="${lineExtras[i].unitPrice}" style="width:100px"></td>
+        <td><input type="number" step="0.01" class="input expinv-line-field" data-i="${i}" data-f="discountPct" value="${lineExtras[i].discountPct}" style="width:70px"></td>
+        <td class="num">${fmt(l.amount)}</td>
+      </tr>`).join('')}
+    </tbody></table></div>
+    <div class="hint" style="margin:6px 0 0">${t('invExtrasAmountNote')}</div>
+    <div style="margin-top:10px"><label class="lbl">${t('notesLabel')}</label><textarea id="exPinvNotes" class="input" rows="2">${escapeHtml(inv.notes||'')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveExtrasPinvBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveExtrasPinvBtn').onclick = async () => {
+    const newLineExtras = inv.lines.map((l,i)=>{
+      const qty = parseFloat(overlay.querySelector(`.expinv-line-field[data-i="${i}"][data-f="qty"]`).value)||1;
+      const unitPrice = parseFloat(overlay.querySelector(`.expinv-line-field[data-i="${i}"][data-f="unitPrice"]`).value)||l.amount;
+      const discountPct = parseFloat(overlay.querySelector(`.expinv-line-field[data-i="${i}"][data-f="discountPct"]`).value)||0;
+      return { code:l.code, qty, unitPrice, discountPct };
+    });
+    const rec = { entryNo, invoiceNo: overlay.querySelector('#exPinvInvoiceNo').value.trim()||entryNo, dueDate: overlay.querySelector('#exPinvDueDate').value, notes: overlay.querySelector('#exPinvNotes').value.trim(), lineExtras: newLineExtras };
+    const idx = STATE.purchaseInvoiceExtras.findIndex(e=>e.entryNo===entryNo);
+    if(idx>=0) STATE.purchaseInvoiceExtras[idx]=rec; else STATE.purchaseInvoiceExtras.push(rec);
+    await storeSet('purchaseInvoiceExtras', STATE.purchaseInvoiceExtras);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── AR / AP Aging Report ──────────────────────────────────────────────────
+// Classic aging grid: one row per customer or vendor, one column per age
+// bucket (current / 1-30 / 31-60 / 61-90 / 90+ days past due), built from
+// the same posted Sales/Purchase Invoices this app already tracks — an
+// invoice's "as of" balance is grandTotal minus whatever's been collected
+// (journalReceiptsAgainst) or paid (journalPaymentsAgainst) against it.
+function computeAgingBuckets(invoices, partnerField, asOfDate){
+  const asOf = new Date(asOfDate);
+  const byPartner = {};
+  invoices.forEach(inv=>{
+    const remaining = Math.round((inv.grandTotal - inv.paidAmt)*100)/100;
+    if(remaining <= 0.01) return; // fully settled — not part of an aging report
+    const dueDate = inv.dueDate || inv.date;
+    const daysOverdue = Math.floor((asOf - new Date(dueDate)) / 86400000);
+    let bucket;
+    if(daysOverdue <= 0) bucket = 'current';
+    else if(daysOverdue <= 30) bucket = 'b1_30';
+    else if(daysOverdue <= 60) bucket = 'b31_60';
+    else if(daysOverdue <= 90) bucket = 'b61_90';
+    else bucket = 'b90plus';
+    const name = inv[partnerField] || '—';
+    if(!byPartner[name]) byPartner[name] = { name, current:0, b1_30:0, b31_60:0, b61_90:0, b90plus:0, total:0, invoices:[] };
+    byPartner[name][bucket] = Math.round((byPartner[name][bucket]+remaining)*100)/100;
+    byPartner[name].total = Math.round((byPartner[name].total+remaining)*100)/100;
+    byPartner[name].invoices.push({ invoiceNo:inv.invoiceNo, date:inv.date, dueDate, remaining, daysOverdue, bucket });
+  });
+  return Object.values(byPartner).sort((a,b)=>b.total-a.total);
+}
+
+function renderAgingReportView(root){
+  const kind = STATE.ui.agingKind || 'ar';
+  const asOfDate = STATE.ui.agingAsOf || todayISO();
+  const isAr = kind==='ar';
+  const invoices = isAr ? getJournalInvoices() : getJournalPurchaseInvoices();
+  const partnerField = isAr ? 'customerName' : 'vendorName';
+  const rows = computeAgingBuckets(invoices, partnerField, asOfDate);
+  const bucketKeys = ['current','b1_30','b31_60','b61_90','b90plus'];
+  const totals = bucketKeys.reduce((acc,k)=>{ acc[k] = Math.round(rows.reduce((s,r)=>s+r[k],0)*100)/100; return acc; }, {});
+  const grandTotal = Math.round(rows.reduce((s,r)=>s+r.total,0)*100)/100;
+
+  root.innerHTML = `
+  <div class="card">
+    <h2>${ICONS.clock.replace('currentColor','var(--gold-dim)')} ${t('agingReportTitle')}</h2>
+    <div class="desc">${t('agingReportHint')}</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0">
+      <div class="seg-toggle" style="display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden">
+        <button type="button" class="seg-btn ${isAr?'active':''}" id="agingArBtn" style="padding:7px 16px;border:none;cursor:pointer;background:${isAr?'var(--gold-light)':'transparent'};color:${isAr?'#1a1a1a':'inherit'};font-weight:700">${t('agingArTab')}</button>
+        <button type="button" class="seg-btn ${!isAr?'active':''}" id="agingApBtn" style="padding:7px 16px;border:none;cursor:pointer;background:${!isAr?'var(--gold-light)':'transparent'};color:${!isAr?'#1a1a1a':'inherit'};font-weight:700">${t('agingApTab')}</button>
+      </div>
+      <div><label class="lbl" style="margin:0 6px 0 0;display:inline">${t('agingAsOfLabel')}</label><input type="date" id="agingAsOfInput" class="input" style="width:auto;display:inline-block" value="${asOfDate}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">
+      <div class="card" style="margin:0;padding:10px 12px"><div class="hint" style="margin:0">${t('agingCurrentCol')}</div><div style="font-weight:800;font-size:15px">${fmt(totals.current)}</div></div>
+      <div class="card" style="margin:0;padding:10px 12px"><div class="hint" style="margin:0">${t('agingB1_30Col')}</div><div style="font-weight:800;font-size:15px">${fmt(totals.b1_30)}</div></div>
+      <div class="card" style="margin:0;padding:10px 12px"><div class="hint" style="margin:0">${t('agingB31_60Col')}</div><div style="font-weight:800;font-size:15px;color:var(--gold-dim)">${fmt(totals.b31_60)}</div></div>
+      <div class="card" style="margin:0;padding:10px 12px"><div class="hint" style="margin:0">${t('agingB61_90Col')}</div><div style="font-weight:800;font-size:15px;color:var(--brick)">${fmt(totals.b61_90)}</div></div>
+      <div class="card" style="margin:0;padding:10px 12px"><div class="hint" style="margin:0">${t('agingB90PlusCol')}</div><div style="font-weight:800;font-size:15px;color:var(--brick)">${fmt(totals.b90plus)}</div></div>
+    </div>
+    ${!rows.length ? `<div class="empty">${t('noAgingData')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${isAr?t('invCustomerCol')||t('invVendorCol'):t('invVendorCol')}</th>
+      <th class="num">${t('agingCurrentCol')}</th><th class="num">${t('agingB1_30Col')}</th><th class="num">${t('agingB31_60Col')}</th>
+      <th class="num">${t('agingB61_90Col')}</th><th class="num">${t('agingB90PlusCol')}</th><th class="num">${t('agingTotalCol')}</th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td style="font-weight:600">${escapeHtml(r.name)}</td>
+        <td class="num">${r.current?fmt(r.current):'—'}</td>
+        <td class="num">${r.b1_30?fmt(r.b1_30):'—'}</td>
+        <td class="num" style="color:${r.b31_60?'var(--gold-dim)':'inherit'}">${r.b31_60?fmt(r.b31_60):'—'}</td>
+        <td class="num" style="color:${r.b61_90?'var(--brick)':'inherit'}">${r.b61_90?fmt(r.b61_90):'—'}</td>
+        <td class="num" style="color:${r.b90plus?'var(--brick)':'inherit'}">${r.b90plus?fmt(r.b90plus):'—'}</td>
+        <td class="num" style="font-weight:700">${fmt(r.total)}</td>
+      </tr>`).join('')}
+      <tr style="border-top:2px solid var(--gold)"><td style="font-weight:800">${t('agingTotalCol')}</td>
+        <td class="num" style="font-weight:800">${fmt(totals.current)}</td><td class="num" style="font-weight:800">${fmt(totals.b1_30)}</td>
+        <td class="num" style="font-weight:800">${fmt(totals.b31_60)}</td><td class="num" style="font-weight:800">${fmt(totals.b61_90)}</td>
+        <td class="num" style="font-weight:800">${fmt(totals.b90plus)}</td><td class="num" style="font-weight:800">${fmt(grandTotal)}</td>
+      </tr>
+    </tbody></table></div>`}
+  </div>`;
+
+  const arBtn = document.getElementById('agingArBtn');
+  if(arBtn) arBtn.addEventListener('click', ()=>{ STATE.ui.agingKind='ar'; renderApp(); });
+  const apBtn = document.getElementById('agingApBtn');
+  if(apBtn) apBtn.addEventListener('click', ()=>{ STATE.ui.agingKind='ap'; renderApp(); });
+  const asOfInput = document.getElementById('agingAsOfInput');
+  if(asOfInput) asOfInput.addEventListener('change', e=>{ STATE.ui.agingAsOf = e.target.value; renderApp(); });
+}
+
+// ── VAT Return ─────────────────────────────────────────────────────────────
+// Net VAT due for a period = output tax (collected on sales, credited to
+// VAT Payable 212102) minus input tax (paid on purchases, debited to VAT
+// Recoverable 114103) — read straight from the journal for the chosen date
+// range, so it picks up VAT from ANY source (invoices posted through this
+// app, a manual journal entry, or an Excel import), not just this app's own
+// invoice modules.
+function computeVatReturn(startDate, endDate){
+  const outputLines = STATE.journal.filter(l=> l.code==='212102' && l.date>=startDate && l.date<=endDate && l.credit>0)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+  const inputLines = STATE.journal.filter(l=> l.code==='114103' && l.date>=startDate && l.date<=endDate && l.debit>0)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+  const outputVAT = Math.round(outputLines.reduce((s,l)=>s+l.credit,0)*100)/100;
+  const inputVAT = Math.round(inputLines.reduce((s,l)=>s+l.debit,0)*100)/100;
+  const netDue = Math.round((outputVAT-inputVAT)*100)/100;
+  return { outputVAT, inputVAT, netDue, outputLines, inputLines };
+}
+
+function renderVatReturnView(root){
+  const today = todayISO();
+  const start = STATE.ui.vatReturnStart || `${today.slice(0,7)}-01`;
+  const end = STATE.ui.vatReturnEnd || today;
+  const hasVatAccounts = !!(STATE.accountsByCode['212102'] && STATE.accountsByCode['114103']);
+  const r = hasVatAccounts ? computeVatReturn(start, end) : { outputVAT:0, inputVAT:0, netDue:0, outputLines:[], inputLines:[] };
+  const isDue = r.netDue > 0.01, isRefund = r.netDue < -0.01;
+
+  root.innerHTML = `
+  <div class="card">
+    <h2>${ICONS.receipt.replace('currentColor','var(--gold-dim)')} ${t('vatReturnTitle')}</h2>
+    <div class="desc">${t('vatReturnHint')}</div>
+    ${!hasVatAccounts ? `<div class="hint" style="color:var(--brick)">${t('vatAccountsMissingHint')}</div>` : ''}
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0">
+      <div><label class="lbl">${t('vatPeriodStartLabel')}</label><input type="date" id="vatStartInput" class="input" value="${start}"></div>
+      <div><label class="lbl">${t('vatPeriodEndLabel')}</label><input type="date" id="vatEndInput" class="input" value="${end}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${t('vatOutputLabel')}</div><div style="font-size:19px;font-weight:800">${fmt(r.outputVAT)}</div></div>
+      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${t('vatInputLabel')}</div><div style="font-size:19px;font-weight:800">${fmt(r.inputVAT)}</div></div>
+      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${isRefund?t('vatRefundLabel'):t('vatNetDueLabel')}</div><div style="font-size:19px;font-weight:800;color:${isDue?'var(--brick)':(isRefund?'var(--green)':'inherit')}">${fmt(Math.abs(r.netDue))}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <h3 style="font-size:13px;margin:0 0 8px">${t('vatOutputDetailTitle')}</h3>
+        <div class="table-wrap" style="max-height:340px"><table><thead><tr><th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th></tr></thead><tbody>
+          ${r.outputLines.length ? r.outputLines.map(l=>`<tr><td class="num">${l.date}</td><td>${escapeHtml(l.partner||l.ref||'')}</td><td class="num">${fmt(l.credit)}</td></tr>`).join('') : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
+        </tbody></table></div>
+      </div>
+      <div>
+        <h3 style="font-size:13px;margin:0 0 8px">${t('vatInputDetailTitle')}</h3>
+        <div class="table-wrap" style="max-height:340px"><table><thead><tr><th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th></tr></thead><tbody>
+          ${r.inputLines.length ? r.inputLines.map(l=>`<tr><td class="num">${l.date}</td><td>${escapeHtml(l.partner||l.ref||'')}</td><td class="num">${fmt(l.debit)}</td></tr>`).join('') : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>`;
+
+  const startInp = document.getElementById('vatStartInput');
+  if(startInp) startInp.addEventListener('change', e=>{ STATE.ui.vatReturnStart = e.target.value; renderApp(); });
+  const endInp = document.getElementById('vatEndInput');
+  if(endInp) endInp.addEventListener('change', e=>{ STATE.ui.vatReturnEnd = e.target.value; renderApp(); });
+}
 // Formal, printable invoice built entirely from the journal (customer,
-// lines, tax, total) plus whatever print-only extras have been filled in —
-// opens in a new tab with the company letterhead, a line-item table,
 // totals, the amount spelled out in Arabic words, and a signature/stamp area.
 function printInvoice(entryNo){
   const inv = getJournalInvoices().find(i=>i.entryNo===entryNo);
@@ -12922,6 +13823,137 @@ function renderCashVouchersView(root){
   if(autoBtn) autoBtn.addEventListener('click', autoAssignVoucherSerials);
 }
 
+// Bank Reconciliation — compares the system's book balance for a chosen
+// bank/cash account against the real balance on a bank statement. The
+// person ticks off every line that actually shows up on the statement
+// ("cleared"); the running sum of cleared lines (clearedBalance) is what
+// should match the statement balance exactly once every line that appears
+// on the statement has been ticked. Whatever's left unticked (outstanding
+// items — a check that hasn't cleared yet, a deposit in transit, etc.) is
+// the explanation for any gap between the book balance and the bank's.
+// Cleared status (STATE.clearedTxSeqs, keyed by the line's stable .seq — see
+// the migration in initApp that backfills .seq onto every line, imported or
+// not) persists permanently once ticked, the same way a real reconciliation
+// tool remembers what you've already cleared in a prior session.
+function renderBankReconView(root){
+  const bankAccounts = STATE.accounts.filter(a => a.type === 'البنك والنقد').sort((a,b)=>a.code.localeCompare(b.code));
+  if(!STATE.ui.bankReconAccount && bankAccounts.length) STATE.ui.bankReconAccount = bankAccounts[0].code;
+  const selectedCode = STATE.ui.bankReconAccount || '';
+  const statementDate = STATE.ui.bankReconDate || todayISO();
+  const statementBalanceRaw = STATE.ui.bankReconStatementBalance;
+  const hasStatementBalance = statementBalanceRaw != null && statementBalanceRaw !== '';
+  const stmtBal = hasStatementBalance ? (parseFloat(statementBalanceRaw) || 0) : 0;
+
+  let bodyHtml = '';
+  let lines = [];
+  if(!selectedCode){
+    bodyHtml = `<div class="empty">${t('noAccountSelectedHint')}</div>`;
+  } else {
+    lines = STATE.journal.filter(l => l.code === selectedCode && l.date <= statementDate)
+      .sort((a,b)=> a.date.localeCompare(b.date) || (a.seq||0)-(b.seq||0));
+    const bal = computeBalances(STATE.journal, statementDate, null);
+    const bookBalance = (bal[selectedCode] || {closing:0}).closing;
+    const clearedBalance = lines.filter(l => STATE.clearedTxSeqs[l.seq]).reduce((s,l)=> s + (l.debit - l.credit), 0);
+    const outstandingBalance = bookBalance - clearedBalance;
+    const difference = stmtBal - clearedBalance;
+    const isMatched = hasStatementBalance && Math.abs(difference) < 0.01;
+
+    bodyHtml = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0">
+      <div class="card" style="margin:0;padding:12px 14px"><div class="hint" style="margin:0 0 4px">${t('bookBalanceLabel')}</div><div style="font-size:18px;font-weight:800">${fmt(bookBalance)}</div></div>
+      <div class="card" style="margin:0;padding:12px 14px"><div class="hint" style="margin:0 0 4px">${t('clearedBalanceLabel')}</div><div style="font-size:18px;font-weight:800;color:var(--gold-light)">${fmt(clearedBalance)}</div></div>
+      <div class="card" style="margin:0;padding:12px 14px"><div class="hint" style="margin:0 0 4px">${t('outstandingBalanceLabel')}</div><div style="font-size:18px;font-weight:800">${fmt(outstandingBalance)}</div></div>
+      <div class="card" style="margin:0;padding:12px 14px"><div class="hint" style="margin:0 0 4px">${t('reconDifferenceLabel')}</div><div style="font-size:18px;font-weight:800;color:${!hasStatementBalance?'inherit':(isMatched?'var(--green)':'var(--brick)')}">${hasStatementBalance?fmt(difference):'—'}</div></div>
+    </div>
+    ${hasStatementBalance ? `<div class="hint" style="color:${isMatched?'var(--green)':'var(--brick)'};font-weight:700;margin-bottom:12px">${isMatched?t('reconPerfectMatch'):t('reconMismatch')}</div>` : ''}
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>${t('date')}</th><th>${t('voucherDescCol')}</th><th>${t('debit')}</th><th>${t('credit')}</th><th>${t('reconClearedCol')}</th>
+      </tr></thead><tbody>
+      ${lines.length ? lines.map(l => `<tr>
+        <td class="num">${l.date}</td>
+        <td>${escapeHtml(l.ref||l.name||'')}</td>
+        <td class="num">${l.debit?fmt(l.debit):'—'}</td>
+        <td class="num">${l.credit?fmt(l.credit):'—'}</td>
+        <td style="text-align:center"><input type="checkbox" class="recon-clear-checkbox" data-seq="${l.seq}" ${STATE.clearedTxSeqs[l.seq]?'checked':''}></td>
+      </tr>`).join('') : `<tr><td colspan="5"><div class="empty">${t('noCashVouchers')}</div></td></tr>`}
+      </tbody></table>
+    </div>
+    <div style="margin-top:14px"><button class="btn btn-primary" id="saveReconciliationBtn">${t('saveReconciliationBtn')}</button></div>
+    `;
+  }
+
+  const historyRows = (STATE.bankReconciliations||[]).filter(r=>r.account===selectedCode).sort((a,b)=> b.statementDate.localeCompare(a.statementDate));
+
+  root.innerHTML = `
+  <div class="card">
+    <h2>${ICONS.exchange.replace('currentColor','var(--gold-dim)')} ${t('bankReconTitle')}</h2>
+    <div class="desc">${t('bankReconHint')}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin:14px 0">
+      <div><label class="lbl">${t('selectAccountLabel')}</label>
+        <select id="bankReconAccountSelect" class="input" style="width:auto">
+          ${bankAccounts.length ? bankAccounts.map(a=>`<option value="${a.code}" ${a.code===selectedCode?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('') : `<option value="">${t('selectAccountPlaceholder')}</option>`}
+        </select>
+      </div>
+      <div><label class="lbl">${t('statementDateLabel')}</label><input type="date" id="bankReconDateInput" class="input" value="${statementDate}"></div>
+      <div><label class="lbl">${t('statementBalanceLabel')}</label><input type="number" step="0.01" id="bankReconStatementInput" class="input" value="${hasStatementBalance?escapeHtml(String(statementBalanceRaw)):''}"></div>
+    </div>
+    ${bodyHtml}
+  </div>
+  <div class="card">
+    <h2>${ICONS.clock.replace('currentColor','var(--gold-dim)')} ${t('reconHistoryTitle')}</h2>
+    ${historyRows.length ? `<div class="table-wrap"><table><thead><tr>
+      <th>${t('reconStatementDateCol')}</th><th>${t('reconStatementBalanceCol')}</th><th>${t('reconDiffCol')}</th><th>${t('reconSavedBy')}</th>
+    </tr></thead><tbody>
+      ${historyRows.map(r=>`<tr>
+        <td class="num">${r.statementDate}</td><td class="num">${fmt(r.statementBalance)}</td>
+        <td class="num" style="color:${Math.abs(r.difference)<0.01?'var(--green)':'var(--brick)'}">${fmt(r.difference)}</td>
+        <td>${escapeHtml(r.createdBy||'')}</td>
+      </tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty">${t('noReconYet')}</div>`}
+  </div>
+  `;
+
+  const accSel = document.getElementById('bankReconAccountSelect');
+  if(accSel) accSel.addEventListener('change', e => { STATE.ui.bankReconAccount = e.target.value; renderApp(); });
+  const dateInp = document.getElementById('bankReconDateInput');
+  if(dateInp) dateInp.addEventListener('change', e => { STATE.ui.bankReconDate = e.target.value; renderApp(); });
+  const stmtInp = document.getElementById('bankReconStatementInput');
+  if(stmtInp) stmtInp.addEventListener('change', e => { STATE.ui.bankReconStatementBalance = e.target.value; renderApp(); });
+
+  document.querySelectorAll('.recon-clear-checkbox').forEach(cb => cb.addEventListener('change', async (e) => {
+    const seq = e.target.dataset.seq;
+    if(e.target.checked) STATE.clearedTxSeqs[seq] = true; else delete STATE.clearedTxSeqs[seq];
+    await storeSet('clearedTxSeqs', STATE.clearedTxSeqs);
+    renderApp();
+  }));
+
+  const saveBtn = document.getElementById('saveReconciliationBtn');
+  if(saveBtn) saveBtn.addEventListener('click', async () => {
+    const clearedBalance = lines.filter(l => STATE.clearedTxSeqs[l.seq]).reduce((s,l)=> s + (l.debit - l.credit), 0);
+    const difference = stmtBal - clearedBalance;
+    const doSave = async () => {
+      const bal = computeBalances(STATE.journal, statementDate, null);
+      const record = {
+        id: 'recon_' + Date.now(),
+        account: selectedCode, statementDate, statementBalance: stmtBal,
+        bookBalance: (bal[selectedCode]||{closing:0}).closing, difference,
+        createdAt: new Date().toISOString(), createdBy: currentUserName(),
+      };
+      STATE.bankReconciliations = STATE.bankReconciliations || [];
+      STATE.bankReconciliations.push(record);
+      await storeSet('bankReconciliations', STATE.bankReconciliations);
+      renderApp();
+      showToast(t('savedToast'));
+    };
+    if(Math.abs(difference) >= 0.01){
+      showConfirmModal(t('saveReconciliationBtn'), tf('reconSaveConfirmMismatch', {diff:fmt(difference)}), doSave);
+    } else {
+      await doSave();
+    }
+  });
+}
+
 // Navigate from a voucher row to its journal entry: switch to قيود اليومية
 // and pre-fill the voucher search box with the base entry number so the user
 // lands directly on that entry without having to search manually.
@@ -12970,11 +14002,11 @@ function openCashVoucherModal(_unused, prefill){
               ${STATE.accounts.filter(a=>['المدين','الدخل'].includes(a.type)).map(a=>`<option value="${a.code}" ${prefill?.arAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
             </select>`
           : `<select id="vCounterAccount" class="input">
-              ${STATE.accounts.filter(a=>['النفقات','تكاليف الإيرادات','الدائن','الالتزامات الجارية','الالتزامات غير الجارية'].includes(a.type)).map(a=>`<option value="${a.code}">${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+              ${STATE.accounts.filter(a=>['النفقات','تكاليف الإيرادات','الدائن','الالتزامات الجارية','الالتزامات غير الجارية'].includes(a.type)).map(a=>`<option value="${a.code}" ${prefill?.apAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
             </select>`}
       </div>
       <div style="grid-column:1/-1"><label class="lbl">${t('voucherDescLabel')}</label>
-        <textarea id="vDesc" class="input" rows="2">${escapeHtml(prefill?.invoiceEntryNo?`تحصيل فاتورة ${prefill.invoiceNo||prefill.invoiceEntryNo}`:'')}</textarea>
+        <textarea id="vDesc" class="input" rows="2">${escapeHtml(prefill?.invoiceEntryNo?(voucherType==='receipt'?`تحصيل فاتورة ${prefill.invoiceNo||prefill.invoiceEntryNo}`:`سداد فاتورة ${prefill.invoiceNo||prefill.invoiceEntryNo}`):'')}</textarea>
       </div>
     </div>
     <div class="modal-actions">
@@ -13866,6 +14898,7 @@ function openPrepaidScheduleModal(peId){
 }
 
 async function deleteAssetModel(id){
+  if(!canDeleteRecords()){ showToast(t('deleteRestrictedForViewer')); return; }
   showConfirmModal(t('deleteModelConfirm'),'',async()=>{
     STATE.assetModels=STATE.assetModels.filter(m=>m.id!==id);
     await storeSet('assetModels',STATE.assetModels);
