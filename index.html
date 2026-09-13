@@ -1644,7 +1644,9 @@ const I18N = {
     inventoryTurnoverLabel:'معدل دوران المخزون', inventoryTurnoverNote:'تكلفة الإيرادات ÷ رصيد المخزون', inventoryDaysLabel:'متوسط أيام بقاء المخزون',
     // Asset module keys (AR)
     assetModelsTitle:'نماذج الأصول', assetsTitle:'الأصول الثابتة', depEntriesTitle:'قيود الإهلاك', assetReportTitle:'سجل الأصول', prepaidExpensesTitle:'المصروفات المدفوعة مقدماً',
-    assetModelNameCol:'اسم النموذج', assetModelMethodCol:'طريقة الإهلاك', assetModelLifeCol:'المدة', assetModelAssetAccCol:'حساب الأصل', assetModelAccumAccCol:'حساب مجمع الإهلاك', assetModelExpAccCol:'حساب مصروف الإهلاك',
+    assetModelNameCol:'اسم النموذج', assetModelMethodCol:'طريقة الإهلاك', assetModelLifeCol:'المدة', assetModelAssetAccCol:'حساب الأصل', assetModelAccumAccCol:'حساب مجمع الإهلاك', assetModelExpAccCol:'حساب مصروف الإهلاك', assetModelAssetsCountCol:'الأصول',
+    assetReportTotalCostHint:'إجمالي تكلفة الأصول', assetReportTotalAccumHint:'إجمالي مجمع الإهلاك', assetReportTotalNbvHint:'صافي القيمة الدفترية',
+    assetUsefulLifeCol:'المدة الإنتاجية', assetRemainingLifeCol:'المتبقي',
     assetNameCol:'اسم الأصل', assetCodeCol:'الرمز', assetModelCol:'نموذج الأصل', assetCostCol:'التكلفة الأصلية', assetAccumDepCol:'مجمع الإهلاك', assetNBVCol:'القيمة الدفترية', assetStatusCol:'الحالة',
     straightLine:'خط مستقيم', months:'شهر', years:'سنة', residualPctLabel:'نسبة القيمة المتبقية %',
     assetAccountLabel:'حساب الأصل الثابت', accumDepAccountLabel:'حساب مجمع الإهلاك', depExpenseAccountLabel:'حساب مصروف الإهلاك', depJournalLabel:'دفتر الإهلاك',
@@ -1656,7 +1658,7 @@ const I18N = {
     newAssetModelBtn:'نموذج أصل جديد', newAssetBtn:'أصل جديد', newPrepaidBtn:'مصروف مدفوع مقدماً جديد',
     generateDepBtn:'توليد قيود الإهلاك', approveDepBtn:'اعتماد وترحيل', viewScheduleBtn:'عرض الجدول',
     depPeriodCol:'الفترة', depDateCol:'التاريخ', depAssetsCol:'عدد الأصول', depTotalCol:'إجمالي الإهلاك', depEntryNoCol:'رقم القيد',
-    prepaidNameCol:'الاسم', prepaidTotalCol:'المبلغ الإجمالي', prepaidAllocatedCol:'المُوزَّع', prepaidRemainingCol:'المتبقي', prepaidStartCol:'تاريخ البدء', prepaidEndCol:'تاريخ الانتهاء',
+    prepaidNameCol:'الاسم', prepaidTotalCol:'المبلغ الإجمالي', prepaidAllocatedCol:'المُوزَّع', prepaidRemainingCol:'المتبقي', prepaidStartCol:'تاريخ البدء', prepaidEndCol:'تاريخ الانتهاء', prepaidPeriodsCol:'الفترات', activeStatus:'نشط',
     assetSavedToast:'تم حفظ الأصل بنجاح', assetModelSavedToast:'تم حفظ نموذج الأصل بنجاح', depGeneratedToast:'تم توليد قيود الإهلاك بنجاح', depPostedToast:'تم ترحيل قيود الإهلاك بنجاح', prepaidSavedToast:'تم حفظ المصروف المدفوع مقدماً',
     assetModelRequiredName:'اسم النموذج مطلوب', assetRequiredName:'اسم الأصل مطلوب', assetRequiredCost:'التكلفة الأصلية مطلوبة', assetRequiredModel:'نموذج الأصل مطلوب', assetRequiredStartDate:'تاريخ بداية الإهلاك مطلوب',
     fullyDepreciated:'مستهلك بالكامل', alreadyGeneratedToast:'قيود هذه الفترة موجودة بالفعل',
@@ -2014,7 +2016,9 @@ const I18N = {
     inventoryTurnoverLabel:'Inventory Turnover', inventoryTurnoverNote:'Cost of sales ÷ inventory balance', inventoryDaysLabel:'Average Inventory Days',
     // Asset module keys (EN)
     assetModelsTitle:'Asset Models', assetsTitle:'Fixed Assets', depEntriesTitle:'Depreciation Entries', assetReportTitle:'Asset Register', prepaidExpensesTitle:'Prepaid Expenses',
-    assetModelNameCol:'Model Name', assetModelMethodCol:'Method', assetModelLifeCol:'Life', assetModelAssetAccCol:'Asset Account', assetModelAccumAccCol:'Accum. Dep. Account', assetModelExpAccCol:'Dep. Expense Account',
+    assetModelNameCol:'Model Name', assetModelMethodCol:'Method', assetModelLifeCol:'Life', assetModelAssetAccCol:'Asset Account', assetModelAccumAccCol:'Accum. Dep. Account', assetModelExpAccCol:'Dep. Expense Account', assetModelAssetsCountCol:'Assets',
+    assetReportTotalCostHint:'Total asset cost', assetReportTotalAccumHint:'Total accumulated depreciation', assetReportTotalNbvHint:'Net book value',
+    assetUsefulLifeCol:'Useful Life', assetRemainingLifeCol:'Remaining',
     assetNameCol:'Asset Name', assetCodeCol:'Code', assetModelCol:'Asset Model', assetCostCol:'Original Cost', assetAccumDepCol:'Accum. Depreciation', assetNBVCol:'Net Book Value', assetStatusCol:'Status',
     straightLine:'Straight Line', months:'Months', years:'Years', residualPctLabel:'Residual Value %',
     assetAccountLabel:'Asset Account', accumDepAccountLabel:'Accumulated Depreciation Account', depExpenseAccountLabel:'Depreciation Expense Account', depJournalLabel:'Depreciation Journal',
@@ -2026,7 +2030,7 @@ const I18N = {
     newAssetModelBtn:'New Asset Model', newAssetBtn:'New Asset', newPrepaidBtn:'New Prepaid Expense',
     generateDepBtn:'Generate Depreciation Entries', approveDepBtn:'Approve & Post', viewScheduleBtn:'View Schedule',
     depPeriodCol:'Period', depDateCol:'Date', depAssetsCol:'Assets', depTotalCol:'Total Depreciation', depEntryNoCol:'Entry No.',
-    prepaidNameCol:'Name', prepaidTotalCol:'Total Amount', prepaidAllocatedCol:'Allocated', prepaidRemainingCol:'Remaining', prepaidStartCol:'Start Date', prepaidEndCol:'End Date',
+    prepaidNameCol:'Name', prepaidTotalCol:'Total Amount', prepaidAllocatedCol:'Allocated', prepaidRemainingCol:'Remaining', prepaidStartCol:'Start Date', prepaidEndCol:'End Date', prepaidPeriodsCol:'Periods', activeStatus:'Active',
     assetSavedToast:'Asset saved successfully', assetModelSavedToast:'Asset model saved successfully', depGeneratedToast:'Depreciation entries generated successfully', depPostedToast:'Depreciation entries posted successfully', prepaidSavedToast:'Prepaid expense saved',
     assetModelRequiredName:'Asset model name is required', assetRequiredName:'Asset name is required', assetRequiredCost:'Original cost is required', assetRequiredModel:'Asset model is required', assetRequiredStartDate:'Depreciation start date is required',
     fullyDepreciated:'Fully Depreciated', alreadyGeneratedToast:'Depreciation for this period already exists',
@@ -7359,7 +7363,7 @@ async function resetSystem(){
       // full. These modules each already have (or don't need) their own
       // scoped reset for day-to-day use — this just makes sure NOTHING is
       // left behind when the person explicitly asks to reset everything.
-      const auxKeys = ['assetModels','assets','depEntries','prepaidExpenses','projects','projectTx',
+      const auxKeys = ['assetModels','assets','depEntries','prepaidExpenses','prepaidDepEntries','projects','projectTx',
         'customers','products','invoiceDrafts','invoiceExtras','purchaseInvoiceDrafts','purchaseInvoiceExtras',
         'recurringTemplates','stockMoves','bankReconciliations','clearedTxSeqs'];
       for(const k of auxKeys){ try{ await storeSet(k, Array.isArray(STATE[k]) ? [] : {}); }catch(e){} }
@@ -7397,7 +7401,7 @@ async function resetSystem(){
     // didn't take effect" bugs caused by any reload/reinitialization race.
     STATE.journal = []; STATE.accounts = []; STATE.groups = [];
     STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
-    STATE.assetModels = []; STATE.assets = []; STATE.depEntries = []; STATE.prepaidExpenses = [];
+    STATE.assetModels = []; STATE.assets = []; STATE.depEntries = []; STATE.prepaidExpenses = []; STATE.prepaidDepEntries = [];
     STATE.projects = []; STATE.projectTx = [];
     STATE.customers = []; STATE.products = [];
     STATE.invoiceDrafts = []; STATE.invoiceExtras = [];
@@ -7709,10 +7713,40 @@ const ICONS = {
 
 const NAV = [
   {id:'dashboard', label:'لوحة التحكم', labelEn:'Dashboard', icon:'dashboard'},
-  {section:'التقارير المحاسبية', sectionEn:'Accounting Reports'},
-  {id:'accountstatement', label:'الأستاذ العام', labelEn:'General Ledger', icon:'ledger'},
+
+  // Daily data-entry tasks — journal + vouchers, grouped together since
+  // this is what gets used most often, day to day.
+  {section:'القيود والسندات', sectionEn:'Entries & Vouchers'},
   {id:'journalentries', label:'قيود اليومية', labelEn:'Journal Entries', icon:'ledger'},
   {id:'recurringentries', label:'القيود المتكررة', labelEn:'Recurring Entries', icon:'clock'},
+  {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
+
+  // Sales cycle: quote → invoice → collect, plus what's selling.
+  {section:'المبيعات والعملاء', sectionEn:'Sales & Customers'},
+  {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
+  {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
+  {id:'salesbyproduct', label:'تحليل المبيعات حسب المنتج', labelEn:'Sales by Product', icon:'target'},
+  {id:'inventory', label:'المخزون', labelEn:'Inventory', icon:'factory'},
+  {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
+
+  // Purchase cycle: bill → pay.
+  {section:'المشتريات والموردين', sectionEn:'Purchases & Vendors'},
+  {id:'purchaseinvoices', label:'فواتير المشتريات', labelEn:'Purchase Invoices', icon:'statement'},
+
+  // Cash/bank side of both cycles above.
+  {section:'الخزينة والبنوك', sectionEn:'Treasury & Banking'},
+  {id:'bankrecon', label:'مطابقة كشف الحساب البنكي', labelEn:'Bank Reconciliation', icon:'exchange'},
+
+  {section:'الأصول والإهلاك', sectionEn:'Assets & Depreciation'},
+  {id:'assetmodels', label:'نماذج الأصول', labelEn:'Asset Models', icon:'factory'},
+  {id:'assets', label:'الأصول الثابتة', labelEn:'Fixed Assets', icon:'statement'},
+  {id:'depentries', label:'قيود الإهلاك', labelEn:'Depreciation Entries', icon:'cashflow'},
+  {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
+  {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
+
+  // Pure reporting — everything here reads existing data, never creates it.
+  {section:'التقارير المحاسبية', sectionEn:'Accounting Reports'},
+  {id:'accountstatement', label:'الأستاذ العام', labelEn:'General Ledger', icon:'ledger'},
   {id:'partnerstatement', label:'كشف عميل / مورد', labelEn:'Customer / Vendor Statement', icon:'users'},
   {id:'agingreport', label:'تقرير أعمار الديون', labelEn:'AR/AP Aging Report', icon:'clock'},
   {id:'vatreturn', label:'إقرار ضريبة القيمة المضافة', labelEn:'VAT Return', icon:'receipt'},
@@ -7721,6 +7755,7 @@ const NAV = [
   {id:'statements', label:'القوائم المالية', labelEn:'Financial Statements', icon:'statement'},
   {id:'manufacturing', label:'تكلفة الإنتاج (تصنيع)', labelEn:'Manufacturing Cost', icon:'factory'},
   {id:'cashflow', label:'التدفقات النقدية', labelEn:'Cash Flow Statement', icon:'cashflow'},
+
   {section:'التحليل والمتابعة', sectionEn:'Analysis & Follow-up'},
   {id:'costcenters', label:'مراكز التكلفة', labelEn:'Cost Centers', icon:'target'},
   {id:'liquidity', label:'السيولة', labelEn:'Liquidity', icon:'droplet'},
@@ -7728,23 +7763,7 @@ const NAV = [
   {id:'ratios', label:'التحليل المالي والنسب', labelEn:'Financial Analysis & Ratios', icon:'ratio'},
   {id:'notes', label:'الإيضاحات والتحليل', labelEn:'Notes & Analysis', icon:'notes'},
   {id:'aichat', label:'المساعد الذكي', labelEn:'AI Assistant', icon:'chat'},
-  {section:'الأصول والإهلاك', sectionEn:'Assets & Depreciation'},
-  {id:'assetmodels', label:'نماذج الأصول', labelEn:'Asset Models', icon:'factory'},
-  {id:'assets', label:'الأصول الثابتة', labelEn:'Fixed Assets', icon:'statement'},
-  {id:'depentries', label:'قيود الإهلاك', labelEn:'Depreciation Entries', icon:'cashflow'},
-  {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
-  {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
-  {section:'المبيعات والتحصيل', sectionEn:'Sales, Invoicing & Collections'},
-  {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
-  {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
-  {id:'salesbyproduct', label:'تحليل المبيعات حسب المنتج', labelEn:'Sales by Product', icon:'target'},
-  {id:'inventory', label:'المخزون', labelEn:'Inventory', icon:'factory'},
-  {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
-  {section:'المشتريات والموردين', sectionEn:'Purchases & Vendors'},
-  {id:'purchaseinvoices', label:'فواتير المشتريات', labelEn:'Purchase Invoices', icon:'statement'},
-  {section:'الخزنة والسندات', sectionEn:'Treasury & Vouchers'},
-  {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
-  {id:'bankrecon', label:'مطابقة كشف الحساب البنكي', labelEn:'Bank Reconciliation', icon:'exchange'},
+
   {section:'الإعداد', sectionEn:'Setup'},
   {id:'chartofaccounts', label:'شجرة الحسابات', labelEn:'Chart of Accounts', icon:'scale'},
   {id:'import', label:'الإعداد والاستيراد', labelEn:'Setup & Import', icon:'upload'},
@@ -12605,6 +12624,17 @@ function renderProductsView(root){
   rows.forEach(r=>{ r.complete = !!(r.id!=null && r.revenueAccount); });
   rows.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
 
+  const viewKey = 'products';
+  const colf = { name:'colf_pr_name', code:'colf_pr_code', unit:'colf_pr_unit', price:'colf_pr_price', tax:'colf_pr_tax', revAcc:'colf_pr_revAcc', status:'colf_pr_status' };
+  const rowsF = rows.filter(p=>
+    passesColFilter(colf.name, p.name) && passesColFilter(colf.code, p.code||'') && passesColFilter(colf.unit, p.unit||'') &&
+    passesColFilter(colf.price, p.price||0) && passesColFilter(colf.tax, p.taxPct||0) && passesColFilter(colf.revAcc, p.revenueAccount||'') &&
+    passesColFilter(colf.status, p.complete?t('dataCompleteLabel'):t('dataIncompleteLabel')));
+  const sortedRows = applySort(viewKey, rowsF, (p,col)=>{
+    if(col==='status') return p.complete?1:0;
+    return p[col];
+  });
+
   root.innerHTML = `
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -12618,11 +12648,16 @@ function renderProductsView(root){
     <div class="hint" style="margin-top:6px">${t('productsImportHint')}</div>
     ${!rows.length ? `<div class="empty">${t('noProducts')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th><th>${t('prodUnitCol')}</th>
-      <th class="num">${t('prodPriceCol')}</th><th class="num">${t('prodTaxCol')}</th><th>${t('prodRevAccCol')}</th>
-      <th>${t('assetStatusCol')}</th><th></th>
+      ${filterableTh(viewKey,'name',t('prodNameCol'),colf.name,rows.map(p=>p.name))}
+      ${filterableTh(viewKey,'code',t('prodCodeCol'),colf.code,rows.map(p=>p.code||''))}
+      ${filterableTh(viewKey,'unit',t('prodUnitCol'),colf.unit,rows.map(p=>p.unit||''))}
+      ${filterableTh(viewKey,'price',t('prodPriceCol'),colf.price,rows.map(p=>p.price||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'taxPct',t('prodTaxCol'),colf.tax,rows.map(p=>p.taxPct||0),{extraClass:'num-cell',displayLabel:v=>v+'%'})}
+      ${filterableTh(viewKey,'revenueAccount',t('prodRevAccCol'),colf.revAcc,rows.map(p=>p.revenueAccount||''))}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,rows.map(p=>p.complete?t('dataCompleteLabel'):t('dataIncompleteLabel')))}
+      <th></th>
     </tr></thead><tbody>
-      ${rows.map(p=>`<tr>
+      ${sortedRows.map(p=>`<tr>
         <td style="font-weight:600">${escapeHtml(p.name)}</td>
         <td>${escapeHtml(p.code||'—')}</td>
         <td>${escapeHtml(p.unit||'—')}</td>
@@ -12636,6 +12671,8 @@ function renderProductsView(root){
       </tr>`).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
 }
 
 // ── Inventory / Stock levels page ───────────────────────────────────────────
@@ -12903,6 +12940,23 @@ function renderInvoicesView(root){
   const drafts = STATE.invoiceDrafts;
   const totalInvoiced = posted.reduce((s,i)=>s+i.grandTotal,0);
   const totalPaid = posted.reduce((s,i)=>s+i.paidAmt,0);
+  const viewKey = 'invoices';
+  const colf = { no:'colf_inv_no', date:'colf_inv_date', customer:'colf_inv_customer', total:'colf_inv_total', paid:'colf_inv_paid', remaining:'colf_inv_remaining', status:'colf_inv_status' };
+  const allRows = posted.map(inv=>({ inv, remaining: Math.round((inv.grandTotal-inv.paidAmt)*100)/100 }));
+  const rowsF = allRows.filter(({inv,remaining})=>
+    passesColFilter(colf.no, inv.invoiceNo) && passesColFilter(colf.date, inv.date||'') && passesColFilter(colf.customer, inv.customerName) &&
+    passesColFilter(colf.total, inv.grandTotal) && passesColFilter(colf.paid, inv.paidAmt) && passesColFilter(colf.remaining, remaining) &&
+    passesColFilter(colf.status, remaining<=0?t('invStatusPaid'):t('invStatusOutstanding')));
+  const rows = applySort(viewKey, rowsF, ({inv,remaining},col)=>{
+    if(col==='no') return inv.invoiceNo;
+    if(col==='date') return inv.date||'';
+    if(col==='customer') return inv.customerName;
+    if(col==='total') return inv.grandTotal;
+    if(col==='paid') return inv.paidAmt;
+    if(col==='remaining') return remaining;
+    if(col==='status') return remaining<=0?1:0;
+    return inv[col];
+  }, 'date', 'desc');
   root.innerHTML = `
   <div class="grid-3" style="margin-bottom:16px">
     <div class="kpi"><div class="lbl">${t('invTotalInvoicedKpi')}</div><div class="val num-lg">${fmt(totalInvoiced)}</div></div>
@@ -12917,9 +12971,14 @@ function renderInvoicesView(root){
     <div class="desc">${t('invoicesLinkedDesc')}</div>
     ${!posted.length && !drafts.length ? `<div class="empty">${t('noInvoices')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('invNoCol')}</th><th>${t('invDateCol')}</th><th>${t('invCustomerCol')}</th>
-      <th class="num">${t('invTotalCol')}</th><th class="num">${t('invPaidCol')}</th><th class="num">${t('invRemainingCol')}</th>
-      <th>${t('assetStatusCol')}</th><th></th>
+      ${filterableTh(viewKey,'no',t('invNoCol'),colf.no,posted.map(i=>i.invoiceNo))}
+      ${filterableTh(viewKey,'date',t('invDateCol'),colf.date,posted.map(i=>i.date||''))}
+      ${filterableTh(viewKey,'customer',t('invCustomerCol'),colf.customer,posted.map(i=>i.customerName))}
+      ${filterableTh(viewKey,'total',t('invTotalCol'),colf.total,posted.map(i=>i.grandTotal),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'paid',t('invPaidCol'),colf.paid,posted.map(i=>i.paidAmt),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'remaining',t('invRemainingCol'),colf.remaining,allRows.map(({remaining})=>remaining),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allRows.map(({remaining})=>remaining<=0?t('invStatusPaid'):t('invStatusOutstanding')))}
+      <th></th>
     </tr></thead><tbody>
       ${drafts.map(d=>{
         const cust = STATE.customers.find(c=>c.id===d.customerId);
@@ -12935,8 +12994,7 @@ function renderInvoicesView(root){
           <td><span class="drill" title="${t('viewBtn')}" onclick="openInvoiceModal('${d.id}')">✎</span></td>
         </tr>`;
       }).join('')}
-      ${posted.map(inv=>{
-        const remaining = Math.round((inv.grandTotal-inv.paidAmt)*100)/100;
+      ${rows.map(({inv,remaining})=>{
         const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
         const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
         return `<tr>
@@ -12956,6 +13014,8 @@ function renderInvoicesView(root){
       }).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
 }
 
 // Draft composer: builds a full invoice with product/qty/price line items,
@@ -13229,6 +13289,23 @@ function renderPurchaseInvoicesView(root){
   const drafts = STATE.purchaseInvoiceDrafts;
   const totalInvoiced = posted.reduce((s,i)=>s+i.grandTotal,0);
   const totalPaid = posted.reduce((s,i)=>s+i.paidAmt,0);
+  const viewKey = 'purchaseinvoices';
+  const colf = { no:'colf_pinv_no', date:'colf_pinv_date', vendor:'colf_pinv_vendor', total:'colf_pinv_total', paid:'colf_pinv_paid', remaining:'colf_pinv_remaining', status:'colf_pinv_status' };
+  const allRows = posted.map(inv=>({ inv, remaining: Math.round((inv.grandTotal-inv.paidAmt)*100)/100 }));
+  const rowsF = allRows.filter(({inv,remaining})=>
+    passesColFilter(colf.no, inv.invoiceNo) && passesColFilter(colf.date, inv.date||'') && passesColFilter(colf.vendor, inv.vendorName) &&
+    passesColFilter(colf.total, inv.grandTotal) && passesColFilter(colf.paid, inv.paidAmt) && passesColFilter(colf.remaining, remaining) &&
+    passesColFilter(colf.status, remaining<=0?t('invStatusPaid'):t('invStatusOutstanding')));
+  const rows = applySort(viewKey, rowsF, ({inv,remaining},col)=>{
+    if(col==='no') return inv.invoiceNo;
+    if(col==='date') return inv.date||'';
+    if(col==='vendor') return inv.vendorName;
+    if(col==='total') return inv.grandTotal;
+    if(col==='paid') return inv.paidAmt;
+    if(col==='remaining') return remaining;
+    if(col==='status') return remaining<=0?1:0;
+    return inv[col];
+  }, 'date', 'desc');
   root.innerHTML = `
   <div class="grid-3" style="margin-bottom:16px">
     <div class="kpi"><div class="lbl">${t('purchTotalInvoicedKpi')}</div><div class="val num-lg">${fmt(totalInvoiced)}</div></div>
@@ -13243,9 +13320,14 @@ function renderPurchaseInvoicesView(root){
     <div class="desc">${t('purchaseInvoicesLinkedDesc')}</div>
     ${!posted.length && !drafts.length ? `<div class="empty">${t('noPurchaseInvoices')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('invNoCol')}</th><th>${t('invDateCol')}</th><th>${t('invVendorCol')}</th>
-      <th class="num">${t('invTotalCol')}</th><th class="num">${t('invPaidCol')}</th><th class="num">${t('invRemainingCol')}</th>
-      <th>${t('assetStatusCol')}</th><th></th>
+      ${filterableTh(viewKey,'no',t('invNoCol'),colf.no,posted.map(i=>i.invoiceNo))}
+      ${filterableTh(viewKey,'date',t('invDateCol'),colf.date,posted.map(i=>i.date||''))}
+      ${filterableTh(viewKey,'vendor',t('invVendorCol'),colf.vendor,posted.map(i=>i.vendorName))}
+      ${filterableTh(viewKey,'total',t('invTotalCol'),colf.total,posted.map(i=>i.grandTotal),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'paid',t('invPaidCol'),colf.paid,posted.map(i=>i.paidAmt),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'remaining',t('invRemainingCol'),colf.remaining,allRows.map(({remaining})=>remaining),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allRows.map(({remaining})=>remaining<=0?t('invStatusPaid'):t('invStatusOutstanding')))}
+      <th></th>
     </tr></thead><tbody>
       ${drafts.map(d=>{
         const totals = computeInvoiceTotals(d.lines.map(l=>({...l})));
@@ -13260,8 +13342,7 @@ function renderPurchaseInvoicesView(root){
           <td><span class="drill" title="${t('viewBtn')}" onclick="openPurchaseInvoiceModal('${d.id}')">✎</span></td>
         </tr>`;
       }).join('')}
-      ${posted.map(inv=>{
-        const remaining = Math.round((inv.grandTotal-inv.paidAmt)*100)/100;
+      ${rows.map(({inv,remaining})=>{
         const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
         const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
         return `<tr>
@@ -13280,6 +13361,8 @@ function renderPurchaseInvoicesView(root){
       }).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
 }
 
 function openPurchaseInvoiceModal(draftId){
@@ -14751,7 +14834,22 @@ function mountAssetImportStrip(idPrefix, kind, importFn, resultKey){
 }
 
 function renderAssetModelsView(root){
-  const models = STATE.assetModels;
+  const allModels = STATE.assetModels;
+  const viewKey = 'assetModels';
+  const colf = { name:'colf_am_name', method:'colf_am_method', life:'colf_am_life', assetAcc:'colf_am_assetAcc', accumAcc:'colf_am_accumAcc', expAcc:'colf_am_expAcc', count:'colf_am_count' };
+  const accName2=code=>(STATE.accountsByCode[code]||{}).name||code||'—';
+  const modelsF = allModels.filter(m => {
+    const assetCount = STATE.assets.filter(a=>a.modelId===m.id).length;
+    return passesColFilter(colf.name, m.name) && passesColFilter(colf.method, t('straightLine')) &&
+      passesColFilter(colf.life, `${m.life} ${m.lifeUnit==='years'?t('years'):t('months')}`) &&
+      passesColFilter(colf.assetAcc, m.assetAcc?accName2(m.assetAcc):'') && passesColFilter(colf.accumAcc, m.accumAcc?accName2(m.accumAcc):'') &&
+      passesColFilter(colf.expAcc, m.expenseAcc?accName2(m.expenseAcc):'') && passesColFilter(colf.count, assetCount);
+  });
+  const models = applySort(viewKey, modelsF, (m,col)=>{
+    if(col==='count') return STATE.assets.filter(a=>a.modelId===m.id).length;
+    if(col==='life') return m.life;
+    return m[col];
+  });
   root.innerHTML = `
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -14761,21 +14859,20 @@ function renderAssetModelsView(root){
         <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openAssetModelModal(null)">+ ${t('newAssetModelBtn')}</button>
       </div>
     </h2>
-    ${!models.length ? `<div class="empty">${t('noAssetModels')}</div>` : `
+    ${!allModels.length ? `<div class="empty">${t('noAssetModels')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('assetModelNameCol')}</th>
-      <th>${t('assetModelMethodCol')}</th>
-      <th>${t('assetModelLifeCol')}</th>
-      <th>${t('assetModelAssetAccCol')}</th>
-      <th>${t('assetModelAccumAccCol')}</th>
-      <th>${t('assetModelExpAccCol')}</th>
-      <th>الأصول</th>
+      ${filterableTh(viewKey,'name',t('assetModelNameCol'),colf.name,allModels.map(m=>m.name))}
+      ${filterableTh(viewKey,'method',t('assetModelMethodCol'),colf.method,allModels.map(()=>t('straightLine')))}
+      ${filterableTh(viewKey,'life',t('assetModelLifeCol'),colf.life,allModels.map(m=>`${m.life} ${m.lifeUnit==='years'?t('years'):t('months')}`))}
+      ${filterableTh(viewKey,'assetAcc',t('assetModelAssetAccCol'),colf.assetAcc,allModels.map(m=>m.assetAcc?accName2(m.assetAcc):''))}
+      ${filterableTh(viewKey,'accumAcc',t('assetModelAccumAccCol'),colf.accumAcc,allModels.map(m=>m.accumAcc?accName2(m.accumAcc):''))}
+      ${filterableTh(viewKey,'expAcc',t('assetModelExpAccCol'),colf.expAcc,allModels.map(m=>m.expenseAcc?accName2(m.expenseAcc):''))}
+      ${filterableTh(viewKey,'count',t('assetModelAssetsCountCol'),colf.count,allModels.map(m=>STATE.assets.filter(a=>a.modelId===m.id).length))}
       <th></th>
     </tr></thead><tbody>
       ${models.map(m=>{
         const assetCount=STATE.assets.filter(a=>a.modelId===m.id).length;
         const lifeStr=`${m.life} ${m.lifeUnit==='years'?t('years'):t('months')}`;
-        const accName2=code=>(STATE.accountsByCode[code]||{}).name||code||'—';
         return `<tr>
           <td style="font-weight:600">${escapeHtml(m.name)}</td>
           <td>${t('straightLine')}</td>
@@ -14790,12 +14887,31 @@ function renderAssetModelsView(root){
         </tr>`;}).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
   mountAssetImportStrip('am', 'assetModels', importAssetModelsFile, 'assetModelsImportResult');
 }
 
 // ── VIEW: Assets List ─────────────────────────────────────────────────────────
 function renderAssetsView(root){
-  const assets = STATE.assets;
+  const allAssets = STATE.assets;
+  const viewKey = 'assets';
+  const colf = { name:'colf_as_name', code:'colf_as_code', model:'colf_as_model', acqDate:'colf_as_acqDate', cost:'colf_as_cost', accumDep:'colf_as_accumDep', nbv:'colf_as_nbv', status:'colf_as_status', nextDate:'colf_as_nextDate' };
+  const enrich = a => ({ a, model: STATE.assetModels.find(m=>m.id===a.modelId), st: assetStatus(a), nextDate: assetNextDepDate(a) });
+  const allRows = allAssets.map(enrich);
+  const rowsF = allRows.filter(({a,model,st,nextDate}) =>
+    passesColFilter(colf.name, a.name) && passesColFilter(colf.code, a.code||'') && passesColFilter(colf.model, model?model.name:'') &&
+    passesColFilter(colf.acqDate, a.acquireDate||'') && passesColFilter(colf.cost, a.cost||0) && passesColFilter(colf.accumDep, a.accumDep||0) &&
+    passesColFilter(colf.nbv, assetNBV(a)) && passesColFilter(colf.status, assetStatusLabel(st)) && passesColFilter(colf.nextDate, nextDate?nextDate.slice(0,7):''));
+  const rows = applySort(viewKey, rowsF, ({a,model,st,nextDate},col)=>{
+    if(col==='model') return model?model.name:'';
+    if(col==='status') return assetStatusLabel(st);
+    if(col==='nbv') return assetNBV(a);
+    if(col==='nextDate') return nextDate||'';
+    if(col==='code') return a.code||'';
+    if(col==='acqDate') return a.acquireDate||'';
+    return a[col];
+  });
   root.innerHTML = `
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -14807,23 +14923,20 @@ function renderAssetsView(root){
         <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openAssetModal(null)">+ ${t('newAssetBtn')}</button>
       </div>
     </h2>
-    ${!assets.length ? `<div class="empty">${t('noAssets')}</div>` : `
+    ${!allAssets.length ? `<div class="empty">${t('noAssets')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('assetNameCol')}</th>
-      <th>${t('assetCodeCol')}</th>
-      <th>${t('assetModelCol')}</th>
-      <th>${t('assetAcquireDateLabel')}</th>
-      <th class="num">${t('originalCostLabel')}</th>
-      <th class="num">${t('accumDepLabel')}</th>
-      <th class="num">${t('nbvLabel')}</th>
-      <th>${t('assetStatusCol')}</th>
-      <th>${t('nextDepDateLabel')}</th>
+      ${filterableTh(viewKey,'name',t('assetNameCol'),colf.name,allAssets.map(a=>a.name))}
+      ${filterableTh(viewKey,'code',t('assetCodeCol'),colf.code,allAssets.map(a=>a.code||''))}
+      ${filterableTh(viewKey,'model',t('assetModelCol'),colf.model,allRows.map(({model})=>model?model.name:''))}
+      ${filterableTh(viewKey,'acqDate',t('assetAcquireDateLabel'),colf.acqDate,allAssets.map(a=>a.acquireDate||''))}
+      ${filterableTh(viewKey,'cost',t('originalCostLabel'),colf.cost,allAssets.map(a=>a.cost||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'accumDep',t('accumDepLabel'),colf.accumDep,allAssets.map(a=>a.accumDep||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'nbv',t('nbvLabel'),colf.nbv,allAssets.map(a=>assetNBV(a)),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allRows.map(({st})=>assetStatusLabel(st)))}
+      ${filterableTh(viewKey,'nextDate',t('nextDepDateLabel'),colf.nextDate,allRows.map(({nextDate})=>nextDate?nextDate.slice(0,7):''))}
       <th></th>
     </tr></thead><tbody>
-      ${assets.map(a=>{
-        const model=STATE.assetModels.find(m=>m.id===a.modelId);
-        const st=assetStatus(a);
-        const nextDate=assetNextDepDate(a);
+      ${rows.map(({a,model,st,nextDate})=>{
         return `<tr>
           <td style="font-weight:600">${escapeHtml(a.name)}</td>
           <td>${escapeHtml(a.code||'')}</td>
@@ -14841,6 +14954,8 @@ function renderAssetsView(root){
         </tr>`;}).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
   mountAssetImportStrip('as', 'assets', importAssetsFile, 'assetsImportResult');
   // Full reset of the "Assets & Depreciation" section only: wipes
   // STATE.assetModels + STATE.assets + STATE.depEntries + STATE.prepaidExpenses
@@ -14871,21 +14986,34 @@ function renderAssetsView(root){
 
 // ── VIEW: Depreciation Entries ────────────────────────────────────────────────
 function renderDepEntriesView(root){
-  const entries = STATE.depEntries.slice().reverse();
+  const allEntries = STATE.depEntries.slice().reverse();
+  const viewKey = 'depEntries';
+  const colf = { period:'colf_de_period', date:'colf_de_date', assetsCount:'colf_de_assets', total:'colf_de_total', status:'colf_de_status', entryNo:'colf_de_entryNo' };
+  const entriesF = allEntries.filter(e=>
+    passesColFilter(colf.period, isoYMLabel(e.ym)) && passesColFilter(colf.date, e.date) && passesColFilter(colf.assetsCount, e.assetRows.length) &&
+    passesColFilter(colf.total, e.totalAmt) && passesColFilter(colf.status, e.status==='posted'?t('postedStatus'):t('draftStatus')) && passesColFilter(colf.entryNo, e.entryNo||''));
+  const entries = applySort(viewKey, entriesF, (e,col)=>{
+    if(col==='period') return e.ym;
+    if(col==='assetsCount') return e.assetRows.length;
+    if(col==='total') return e.totalAmt;
+    if(col==='status') return e.status;
+    if(col==='entryNo') return e.entryNo||'';
+    return e[col];
+  });
   root.innerHTML = `
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <span>${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('depEntriesTitle')}</span>
       <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="openGenerateDepModal()">⚙ ${t('generateDepBtn')}</button>
     </h2>
-    ${!entries.length ? `<div class="empty">${t('noDepEntries')}</div>` : `
+    ${!allEntries.length ? `<div class="empty">${t('noDepEntries')}</div>` : `
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('depPeriodCol')}</th>
-      <th>${t('depDateCol')}</th>
-      <th>${t('depAssetsCol')}</th>
-      <th class="num">${t('depTotalCol')}</th>
-      <th>${t('entryStatusCol')}</th>
-      <th>${t('depEntryNoCol')}</th>
+      ${filterableTh(viewKey,'period',t('depPeriodCol'),colf.period,allEntries.map(e=>isoYMLabel(e.ym)))}
+      ${filterableTh(viewKey,'date',t('depDateCol'),colf.date,allEntries.map(e=>e.date))}
+      ${filterableTh(viewKey,'assetsCount',t('depAssetsCol'),colf.assetsCount,allEntries.map(e=>e.assetRows.length))}
+      ${filterableTh(viewKey,'total',t('depTotalCol'),colf.total,allEntries.map(e=>e.totalAmt),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'status',t('entryStatusCol'),colf.status,allEntries.map(e=>e.status==='posted'?t('postedStatus'):t('draftStatus')))}
+      ${filterableTh(viewKey,'entryNo',t('depEntryNoCol'),colf.entryNo,allEntries.map(e=>e.entryNo||''))}
       <th></th>
     </tr></thead><tbody>
       ${entries.map(e=>`<tr>
@@ -14903,6 +15031,8 @@ function renderDepEntriesView(root){
       </tr>`).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
   document.querySelectorAll('[onclick^="postDepEntry"]').forEach(btn=>{
     btn.addEventListener('click',(e)=>{ e.preventDefault(); const id=parseInt(btn.getAttribute('onclick').match(/\d+/)[0]); postDepEntry(id); });
   });
@@ -14932,38 +15062,58 @@ function showDepEntryDetail(entryId){
 
 // ── VIEW: Asset Register Report ───────────────────────────────────────────────
 function renderAssetReportView(root){
-  const assets=STATE.assets;
-  const totalCost=assets.reduce((s,a)=>s+(a.cost||0),0);
-  const totalAccum=assets.reduce((s,a)=>s+(a.accumDep||0),0);
-  const totalNBV=assets.reduce((s,a)=>s+assetNBV(a),0);
+  const allAssets=STATE.assets;
+  const totalCost=allAssets.reduce((s,a)=>s+(a.cost||0),0);
+  const totalAccum=allAssets.reduce((s,a)=>s+(a.accumDep||0),0);
+  const totalNBV=allAssets.reduce((s,a)=>s+assetNBV(a),0);
+  const viewKey = 'assetReport';
+  const colf = { name:'colf_ar_name', code:'colf_ar_code', model:'colf_ar_model', acqDate:'colf_ar_acqDate', cost:'colf_ar_cost', accumDep:'colf_ar_accumDep', nbv:'colf_ar_nbv', lifeM:'colf_ar_lifeM', remaining:'colf_ar_remaining', status:'colf_ar_status' };
+  const enrich = a => {
+    const model=STATE.assetModels.find(m=>m.id===a.modelId);
+    const lifeM=model?assetLifeMonths({...a,life:a.life||model.life,lifeUnit:a.lifeUnit||model.lifeUnit}):assetLifeMonths(a);
+    const dep=assetDepreciable(a);
+    const periodicMo=lifeM>0?dep/lifeM:0;
+    const remaining=periodicMo>0?Math.ceil(Math.max(0,dep-(a.accumDep||0))/periodicMo):0;
+    const st=assetStatus(a);
+    return { a, model, lifeM, remaining, st };
+  };
+  const allRows = allAssets.map(enrich);
+  const rowsF = allRows.filter(({a,model,lifeM,remaining,st})=>
+    passesColFilter(colf.name, a.name) && passesColFilter(colf.code, a.code||'') && passesColFilter(colf.model, model?model.name:'') &&
+    passesColFilter(colf.acqDate, a.acquireDate||'') && passesColFilter(colf.cost, a.cost||0) && passesColFilter(colf.accumDep, a.accumDep||0) &&
+    passesColFilter(colf.nbv, assetNBV(a)) && passesColFilter(colf.lifeM, lifeM) && passesColFilter(colf.remaining, remaining) && passesColFilter(colf.status, assetStatusLabel(st)));
+  const rows = applySort(viewKey, rowsF, ({a,model,lifeM,remaining,st},col)=>{
+    if(col==='model') return model?model.name:'';
+    if(col==='lifeM') return lifeM;
+    if(col==='remaining') return remaining;
+    if(col==='nbv') return assetNBV(a);
+    if(col==='status') return assetStatusLabel(st);
+    if(col==='code') return a.code||'';
+    if(col==='acqDate') return a.acquireDate||'';
+    return a[col];
+  });
   root.innerHTML=`
   <div class="card">
     <h2>${ICONS.scale.replace('currentColor','var(--gold-dim)')} ${t('assetReportTitle')}</h2>
     <div class="grid-3" style="margin-bottom:16px">
-      ${kpi(t('originalCostLabel'),fmt(totalCost),'','إجمالي تكلفة الأصول')}
-      ${kpi(t('accumDepLabel'),fmt(totalAccum),'','إجمالي مجمع الإهلاك')}
-      ${kpi(t('nbvLabel'),fmt(totalNBV),'','صافي القيمة الدفترية')}
+      ${kpi(t('originalCostLabel'),fmt(totalCost),'',t('assetReportTotalCostHint'))}
+      ${kpi(t('accumDepLabel'),fmt(totalAccum),'',t('assetReportTotalAccumHint'))}
+      ${kpi(t('nbvLabel'),fmt(totalNBV),'',t('assetReportTotalNbvHint'))}
     </div>
-    ${!assets.length?`<div class="empty">${t('noAssets')}</div>`:`
+    ${!allAssets.length?`<div class="empty">${t('noAssets')}</div>`:`
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('assetNameCol')}</th>
-      <th>${t('assetCodeCol')}</th>
-      <th>${t('assetModelCol')}</th>
-      <th>${t('assetAcquireDateLabel')}</th>
-      <th class="num">${t('originalCostLabel')}</th>
-      <th class="num">${t('accumDepLabel')}</th>
-      <th class="num">${t('nbvLabel')}</th>
-      <th>المدة الإنتاجية</th>
-      <th>المتبقي</th>
-      <th>${t('assetStatusCol')}</th>
+      ${filterableTh(viewKey,'name',t('assetNameCol'),colf.name,allAssets.map(a=>a.name))}
+      ${filterableTh(viewKey,'code',t('assetCodeCol'),colf.code,allAssets.map(a=>a.code||''))}
+      ${filterableTh(viewKey,'model',t('assetModelCol'),colf.model,allRows.map(({model})=>model?model.name:''))}
+      ${filterableTh(viewKey,'acqDate',t('assetAcquireDateLabel'),colf.acqDate,allAssets.map(a=>a.acquireDate||''))}
+      ${filterableTh(viewKey,'cost',t('originalCostLabel'),colf.cost,allAssets.map(a=>a.cost||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'accumDep',t('accumDepLabel'),colf.accumDep,allAssets.map(a=>a.accumDep||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'nbv',t('nbvLabel'),colf.nbv,allAssets.map(a=>assetNBV(a)),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'lifeM',t('assetUsefulLifeCol'),colf.lifeM,allRows.map(({lifeM})=>lifeM))}
+      ${filterableTh(viewKey,'remaining',t('assetRemainingLifeCol'),colf.remaining,allRows.map(({remaining})=>remaining))}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allRows.map(({st})=>assetStatusLabel(st)))}
     </tr></thead><tbody>
-      ${assets.map(a=>{
-        const model=STATE.assetModels.find(m=>m.id===a.modelId);
-        const lifeM=model?assetLifeMonths({...a,life:a.life||model.life,lifeUnit:a.lifeUnit||model.lifeUnit}):assetLifeMonths(a);
-        const dep=assetDepreciable(a);
-        const periodicMo=lifeM>0?dep/lifeM:0;
-        const remaining=periodicMo>0?Math.ceil(Math.max(0,dep-(a.accumDep||0))/periodicMo):0;
-        const st=assetStatus(a);
+      ${rows.map(({a,model,lifeM,remaining,st})=>{
         return `<tr>
           <td style="font-weight:600">${escapeHtml(a.name)}</td>
           <td>${escapeHtml(a.code||'')}</td>
@@ -14977,7 +15127,7 @@ function renderAssetReportView(root){
           <td><span style="color:${assetStatusColor(st)}">${assetStatusLabel(st)}</span></td>
         </tr>`;}).join('')}
       <tr class="total-row">
-        <td colspan="4">الإجمالي</td>
+        <td colspan="4">${t('agingTotalCol')}</td>
         <td class="num">${fmt(totalCost)}</td>
         <td class="num">${fmt(totalAccum)}</td>
         <td class="num">${fmt(totalNBV)}</td>
@@ -14985,12 +15135,51 @@ function renderAssetReportView(root){
       </tr>
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler(Object.values(colf));
 }
 
 // ── VIEW: Prepaid Expenses ────────────────────────────────────────────────────
 function renderPrepaidExpensesView(root){
-  const list=STATE.prepaidExpenses;
-  const depEntries=(STATE.prepaidDepEntries||[]).slice().reverse();
+  const allList=STATE.prepaidExpenses;
+  const allDepEntries=(STATE.prepaidDepEntries||[]).slice().reverse();
+  const viewKey = 'prepaid';
+  const colf = { name:'colf_pe_name', total:'colf_pe_total', alloc:'colf_pe_alloc', remaining:'colf_pe_remaining', start:'colf_pe_start', end:'colf_pe_end', periods:'colf_pe_periods', status:'colf_pe_status' };
+  const enrich = pe => {
+    const endDate=addMonthsISO(pe.startDate,pe.periods-1);
+    const remaining=Math.round(((pe.total||0)-(pe.allocatedAmt||0))*100)/100;
+    return { pe, endDate, remaining };
+  };
+  const allRows = allList.map(enrich);
+  const rowsF = allRows.filter(({pe,endDate,remaining})=>
+    passesColFilter(colf.name, pe.name) && passesColFilter(colf.total, pe.total||0) && passesColFilter(colf.alloc, pe.allocatedAmt||0) &&
+    passesColFilter(colf.remaining, remaining) && passesColFilter(colf.start, pe.startDate||'') && passesColFilter(colf.end, endDate) &&
+    passesColFilter(colf.periods, pe.periods) && passesColFilter(colf.status, remaining<=0?t('statusFullyDep'):t('activeStatus')));
+  const rows = applySort(viewKey, rowsF, ({pe,endDate,remaining},col)=>{
+    if(col==='remaining') return remaining;
+    if(col==='end') return endDate;
+    if(col==='status') return remaining<=0?1:0;
+    if(col==='total') return pe.total||0;
+    if(col==='alloc') return pe.allocatedAmt||0;
+    if(col==='start') return pe.startDate||'';
+    if(col==='periods') return pe.periods;
+    return pe[col];
+  });
+
+  const viewKey2 = 'prepaidDepEntries';
+  const colf2 = { period:'colf_pde_period', date:'colf_pde_date', count:'colf_pde_count', total:'colf_pde_total', status:'colf_pde_status', entryNo:'colf_pde_entryNo' };
+  const depEntriesF = allDepEntries.filter(e=>
+    passesColFilter(colf2.period, isoYMLabel(e.ym)) && passesColFilter(colf2.date, e.date) && passesColFilter(colf2.count, e.peRows.length) &&
+    passesColFilter(colf2.total, e.totalAmt) && passesColFilter(colf2.status, e.status==='posted'?t('postedStatus'):t('draftStatus')) && passesColFilter(colf2.entryNo, e.entryNo||''));
+  const depEntries = applySort(viewKey2, depEntriesF, (e,col)=>{
+    if(col==='period') return e.ym;
+    if(col==='count') return e.peRows.length;
+    if(col==='total') return e.totalAmt;
+    if(col==='status') return e.status;
+    if(col==='entryNo') return e.entryNo||'';
+    return e[col];
+  });
+
   root.innerHTML=`
   <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -15001,21 +15190,19 @@ function renderPrepaidExpensesView(root){
         <button class="btn" style="padding:5px 14px;font-size:11px" onclick="openPrepaidModal(null)">+ ${t('newPrepaidBtn')}</button>
       </div>
     </h2>
-    ${!list.length?`<div class="empty">${t('noPrepaidExpenses')}</div>`:`
+    ${!allList.length?`<div class="empty">${t('noPrepaidExpenses')}</div>`:`
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('prepaidNameCol')}</th>
-      <th class="num">${t('prepaidTotalCol')}</th>
-      <th class="num">${t('prepaidAllocatedCol')}</th>
-      <th class="num">${t('prepaidRemainingCol')}</th>
-      <th>${t('prepaidStartCol')}</th>
-      <th>${t('prepaidEndCol')}</th>
-      <th>الفترات</th>
-      <th>${t('assetStatusCol')}</th>
+      ${filterableTh(viewKey,'name',t('prepaidNameCol'),colf.name,allList.map(pe=>pe.name))}
+      ${filterableTh(viewKey,'total',t('prepaidTotalCol'),colf.total,allList.map(pe=>pe.total||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'alloc',t('prepaidAllocatedCol'),colf.alloc,allList.map(pe=>pe.allocatedAmt||0),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'remaining',t('prepaidRemainingCol'),colf.remaining,allRows.map(({remaining})=>remaining),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey,'start',t('prepaidStartCol'),colf.start,allList.map(pe=>pe.startDate||''))}
+      ${filterableTh(viewKey,'end',t('prepaidEndCol'),colf.end,allRows.map(({endDate})=>endDate))}
+      ${filterableTh(viewKey,'periods',t('prepaidPeriodsCol'),colf.periods,allList.map(pe=>pe.periods))}
+      ${filterableTh(viewKey,'status',t('assetStatusCol'),colf.status,allRows.map(({remaining})=>remaining<=0?t('statusFullyDep'):t('activeStatus')))}
       <th></th>
     </tr></thead><tbody>
-      ${list.map(pe=>{
-        const endDate=addMonthsISO(pe.startDate,pe.periods-1);
-        const remaining=Math.round(((pe.total||0)-(pe.allocatedAmt||0))*100)/100;
+      ${rows.map(({pe,endDate,remaining})=>{
         const pct=pe.total?Math.round((pe.allocatedAmt||0)/pe.total*100):0;
         return `<tr>
           <td style="font-weight:600">${escapeHtml(pe.name)}</td>
@@ -15024,8 +15211,8 @@ function renderPrepaidExpensesView(root){
           <td class="num">${fmt(remaining)}</td>
           <td>${pe.startDate||'—'}</td>
           <td>${endDate}</td>
-          <td>${pe.periods} شهر</td>
-          <td><span style="color:${remaining<=0?'var(--gold-dim)':'var(--green)'};">${remaining<=0?t('statusFullyDep'):'نشط'}</span></td>
+          <td>${pe.periods} ${t('months')}</td>
+          <td><span style="color:${remaining<=0?'var(--gold-dim)':'var(--green)'};">${remaining<=0?t('statusFullyDep'):t('activeStatus')}</span></td>
           <td style="white-space:nowrap">
             <span class="drill" onclick="openPrepaidModal(${pe.id})">✎</span>
             <span class="drill" style="margin-right:6px;opacity:.7" onclick="openPrepaidScheduleModal(${pe.id})">📋</span>
@@ -15035,14 +15222,14 @@ function renderPrepaidExpensesView(root){
   </div>
   <div class="card" style="margin-top:16px">
     <h2>${ICONS.cashflow.replace('currentColor','var(--gold-dim)')} ${t('prepaidDepEntriesTitle')}</h2>
-    ${!depEntries.length?`<div class="empty">${t('noPrepaidDepEntries')}</div>`:`
+    ${!allDepEntries.length?`<div class="empty">${t('noPrepaidDepEntries')}</div>`:`
     <div class="table-wrap"><table><thead><tr>
-      <th>${t('depPeriodCol')}</th>
-      <th>${t('depDateCol')}</th>
-      <th>${t('depPrepaidCol')}</th>
-      <th class="num">${t('depTotalCol')}</th>
-      <th>${t('entryStatusCol')}</th>
-      <th>${t('depEntryNoCol')}</th>
+      ${filterableTh(viewKey2,'period',t('depPeriodCol'),colf2.period,allDepEntries.map(e=>isoYMLabel(e.ym)))}
+      ${filterableTh(viewKey2,'date',t('depDateCol'),colf2.date,allDepEntries.map(e=>e.date))}
+      ${filterableTh(viewKey2,'count',t('depPrepaidCol'),colf2.count,allDepEntries.map(e=>e.peRows.length))}
+      ${filterableTh(viewKey2,'total',t('depTotalCol'),colf2.total,allDepEntries.map(e=>e.totalAmt),{extraClass:'num-cell',displayLabel:fmt})}
+      ${filterableTh(viewKey2,'status',t('entryStatusCol'),colf2.status,allDepEntries.map(e=>e.status==='posted'?t('postedStatus'):t('draftStatus')))}
+      ${filterableTh(viewKey2,'entryNo',t('depEntryNoCol'),colf2.entryNo,allDepEntries.map(e=>e.entryNo||''))}
       <th></th>
     </tr></thead><tbody>
       ${depEntries.map(e=>`<tr>
@@ -15060,6 +15247,8 @@ function renderPrepaidExpensesView(root){
       </tr>`).join('')}
     </tbody></table></div>`}
   </div>`;
+  attachSortEvents();
+  bindColFilterHandler([...Object.values(colf), ...Object.values(colf2)]);
   mountAssetImportStrip('pp', 'prepaidExpenses', importPrepaidExpensesFile, 'prepaidImportResult');
   document.querySelectorAll('[onclick^="postPrepaidDepEntry"]').forEach(btn=>{
     btn.addEventListener('click',(e)=>{ e.preventDefault(); const id=parseInt(btn.getAttribute('onclick').match(/\d+/)[0]); postPrepaidDepEntry(id); });
