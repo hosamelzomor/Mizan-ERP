@@ -1423,6 +1423,163 @@ const I18N = {
     inventoryQtyCol:'الكمية', inventoryAvgCostCol:'متوسط التكلفة', inventoryValueCol:'القيمة',
     viewDetailsBtn:'عرض الحركة', hideDetailsBtn:'إخفاء الحركة', stockMoveTypeCol:'نوع الحركة',
     stockMoveIn:'وارد (شراء)', stockMoveOut:'منصرف (بيع)', stockMoveAdjustment:'تسوية', stockMoveOpening:'رصيد افتتاحي', noStockMoves:'لا توجد حركات على هذا الصنف بعد.',
+    // ── Enhanced Inventory v2 i18n (Arabic) ──────────────────────────────────
+    invV2Title:'المخزون — دفتر الحركات',
+    invV2Hint:'نظام جرد مستمر بطريقة المتوسط المرجّح المتحرك — كل حركة مرحّلة تُحدّث الكمية والتكلفة فوراً، ومرتبطة بقيد محاسبي حيث ينطبق.',
+    invV2NewTxBtn:'حركة مخزون جديدة',
+    invV2StockCardTitle:'بطاقة الصنف',
+    invV2ValuationTitle:'تقييم المخزون',
+    invV2ReconTitle:'مطابقة المخزون مع الأستاذ العام',
+    invV2SettingsTitle:'إعدادات المخزون',
+    invV2SettingsBtn:'⚙ إعدادات',
+    invV2AllowNegativeLabel:'السماح بالمخزون السالب',
+    invV2AllowNegativeHint:'لو معطّل، الحركات الصادرة (بيع، صرف) هتترفض لو الكمية المتاحة أقل من الكمية المطلوبة.',
+    invV2AutoPostCOGSLabel:'ترحيل قيد التكلفة تلقائياً عند البيع',
+    invV2AutoPostCOGSHint:'لو مفعّل، كل عملية بيع بتولّد قيد يحيح مدين: تكلفة البضاعة المباعة / دائن: المخزون.',
+    invV2COGSAccountLabel:'حساب تكلفة البضاعة المباعة (الافتراضي)',
+    invV2AdjAccountLabel:'حساب فروق الجرد',
+    invV2TxTypeLabel:'نوع الحركة',
+    invV2TxTypeOpening:'رصيد افتتاحي',
+    invV2TxTypePurchase:'استلام مشتريات',
+    invV2TxTypePurchaseReturn:'مرتجع مشتريات',
+    invV2TxTypeSale:'صرف مبيعات',
+    invV2TxTypeSaleReturn:'مرتجع مبيعات',
+    invV2TxTypeAdjustment:'تسوية جرد',
+    invV2TxTypeIssue:'صرف داخلي',
+    invV2TxTypeReceipt:'استلام داخلي',
+    invV2DocNoLabel:'رقم المستند',
+    invV2UnitLabel:'وحدة الحركة',
+    invV2BaseUnitLabel:'الوحدة الأساسية',
+    invV2PurchaseUnitLabel:'وحدة الشراء',
+    invV2SaleUnitLabel:'وحدة البيع',
+    invV2ConvFactorLabel:'معامل التحويل',
+    invV2ConvFactorHint:'عدد الوحدات الأساسية في الوحدة الكبيرة (مثلاً: كرتونة = 12 قطعة)',
+    invV2QtyLabel:'الكمية',
+    invV2BaseQtyLabel:'الكمية بالوحدة الأساسية',
+    invV2UnitCostLabel:'التكلفة للوحدة الأساسية',
+    invV2TotalCostLabel:'إجمالي التكلفة',
+    invV2InQtyCol:'وارد',
+    invV2OutQtyCol:'صادر',
+    invV2BalanceQtyCol:'الرصيد',
+    invV2AvgCostAfterCol:'متوسط التكلفة',
+    invV2ValueAfterCol:'القيمة',
+    invV2StatusLabel:'الحالة',
+    invV2StatusDraft:'مسودة',
+    invV2StatusPosted:'مرحّل',
+    invV2StatusCancelled:'ملغى',
+    invV2PostBtn:'ترحيل',
+    invV2CancelBtn:'إلغاء',
+    invV2CancelReasonLabel:'سبب الإلغاء',
+    invV2CancelReasonRequired:'اكتب سبب الإلغاء',
+    invV2PostConfirm:'هل تريد ترحيل هذه الحركة؟ لن تتمكن من تعديلها بعد الترحيل.',
+    invV2CancelConfirm:'هل تريد إلغاء هذه الحركة؟ سيتم إنشاء قيد عكسي.',
+    invV2JournalLinkLabel:'القيد المرتبط',
+    invV2ReasonLabel:'السبب / الملاحظات',
+    invV2SystemQtyLabel:'الكمية بالنظام',
+    invV2PhysicalQtyLabel:'الكمية الفعلية',
+    invV2DiffQtyLabel:'الفرق',
+    invV2ValuationItemCode:'الكود',
+    invV2ValuationItemName:'الصنف',
+    invV2ValuationQty:'الكمية',
+    invV2ValuationAvgCost:'متوسط التكلفة',
+    invV2ValuationValue:'القيمة',
+    invV2ValuationTotal:'إجمالي قيمة المخزون',
+    invV2ReconInvValue:'قيمة المخزون (دفتر الحركات)',
+    invV2ReconGLValue:'رصيد حساب المخزون (الأستاذ العام)',
+    invV2ReconDiff:'الفرق',
+    invV2ReconOK:'✓ مطابقة',
+    invV2ReconMismatch:'⚠ يوجد فرق',
+    invV2NegativeStockError:'الكمية غير كافية — المتوفر: ${available} — المطلوب: ${requested}. فعّل \"السماح بالمخزون السالب\" لتجاوز هذا القيد.',
+    invV2ZeroConvError:'معامل التحويل يجب أن يكون أكبر من صفر.',
+    invV2ProductRequired:'اختر الصنف أولاً.',
+    invV2QtyRequired:'الكمية يجب أن تكون أكبر من صفر.',
+    invV2CostRequired:'التكلفة يجب أن تكون أكبر من أو تساوي صفر.',
+    invV2OpeningAlreadyExists:'يوجد بالفعل رصيد افتتاحي لهذا الصنف.',
+    invV2PostedCantEdit:'الحركات المرحّلة لا يمكن تعديلها.',
+    invV2RecalcBtn:'إعادة حساب',
+    invV2RecalcTitle:'إعادة حساب أرصدة المخزون',
+    invV2RecalcDesc:'يقارن الأرصدة المحسوبة من دفتر الحركات بالأرصدة المخزّنة. أي فرق يُعرض هنا للمراجعة.',
+    invV2NoDiscrepancy:'كل الأرصدة متطابقة.',
+    invV2DiscrepancyFound:'تحذير: توجد أرصدة غير متطابقة (${count} صنف)',
+    invV2StockCardOpeningQty:'الكمية الافتتاحية',
+    invV2StockCardTotalIn:'إجمالي الوارد',
+    invV2StockCardTotalOut:'إجمالي الصادر',
+    invV2StockCardClosingQty:'الكمية الختامية',
+    invV2StockCardOpeningValue:'القيمة الافتتاحية',
+    invV2StockCardClosingValue:'القيمة الختامية',
+    invV2StockCardCurrentAvgCost:'متوسط التكلفة الحالي',
+    invV2StockCardCurrentValue:'القيمة الحالية',
+    invV2FilterFromDate:'من تاريخ',
+    invV2FilterToDate:'إلى تاريخ',
+    invV2FilterTxType:'نوع الحركة',
+    invV2FilterAll:'الكل',
+    invV2NoLedgerEntries:'لا توجد قيود في دفتر الحركات لهذا الصنف.',
+    invV2SavedToast:'تم الحفظ',
+    invV2PostedToast:'تم الترحيل',
+    invV2CancelledToast:'تم الإلغاء',
+    invV2TabLedger:'دفتر الحركات',
+    invV2TabValuation:'تقييم المخزون',
+    invV2TabRecon:'المطابقة',
+    invV2TabStocktake:'الجرد الفعلي',
+    invV2TabSettings:'الإعدادات',
+    // ── Stocktake i18n (Arabic) ───────────────────────────────────────────────
+    stNewSession:'جلسة جرد جديدة',
+    stSessionTitle:'جلسات الجرد',
+    stSessionName:'اسم الجلسة',
+    stSessionDate:'تاريخ الجرد',
+    stSessionNotes:'ملاحظات',
+    stSessionStatus:'الحالة',
+    stStatusDraft:'مسودة',
+    stStatusCounted:'تم العد',
+    stStatusPosted:'مرحّل',
+    stStatusCancelled:'ملغى',
+    stEditSession:'تعديل',
+    stOpenSession:'فتح',
+    stPostSession:'ترحيل الفروق',
+    stCancelSession:'إلغاء',
+    stPostConfirm:'هل تريد ترحيل الفروق؟ سيتم إنشاء تسويات جرد لكل الأصناف التي يوجد بها فرق.',
+    stCancelConfirm:'هل تريد إلغاء جلسة الجرد؟ لن يتأثر المخزون.',
+    stSessionLines:'أصناف الجرد',
+    stAddAllProducts:'إضافة كل الأصناف',
+    stAddProduct:'إضافة صنف',
+    stSystemQty:'كمية النظام',
+    stCountedQty:'الكمية الفعلية',
+    stDiff:'الفرق',
+    stDiffValue:'قيمة الفرق',
+    stReason:'السبب',
+    stReasonRequired:'اكتب سبب الفرق',
+    stNoSessions:'لا توجد جلسات جرد بعد. أنشئ جلسة جديدة لبدء عملية الجرد.',
+    stNoLines:'لم تُضف أي أصناف لهذه الجلسة بعد.',
+    stSummary:'ملخص الجرد',
+    stTotalItems:'عدد الأصناف',
+    stItemsWithDiff:'أصناف بها فرق',
+    stTotalDiffValue:'إجمالي قيمة الفروق',
+    stPostSuccess:'تم ترحيل ${count} تسوية جرد بنجاح.',
+    stZeroDiff:'لا توجد فروق — كل الكميات متطابقة.',
+    stSessionSaved:'تم حفظ الجلسة.',
+    stDeleteLine:'حذف',
+    stCountedQtyHint:'أدخل الكمية الفعلية الموجودة في المخزن',
+    stLastCountDate:'آخر جرد',
+    stNeverCounted:'لم يُجرد بعد',
+    stPrintSheet:'طباعة ورقة الجرد',
+    stExportSheet:'تصدير',
+    stSessionNameRequired:'اكتب اسم الجلسة.',
+    stPostedBy:'رحّلها',
+    stPostedAt:'وقت الترحيل',
+    stDiffQtyPos:'زيادة',
+    stDiffQtyNeg:'نقص',
+    invV2NewTxTitle:'حركة مخزون جديدة',
+    invV2ProductLabel:'الصنف',
+    invV2CreatedByLabel:'أنشأها',
+    invV2PostedByLabel:'رحّلها',
+    invV2CancelledByLabel:'ألغاها',
+    invV2ViewJournalEntry:'عرض القيد',
+    invV2UomSectionTitle:'وحدات القياس والتحويل',
+    invV2PurchaseConvLabel:'تحويل وحدة الشراء',
+    invV2SaleConvLabel:'تحويل وحدة البيع',
+    invV2UomExampleHint:'مثال: إذا كانت الوحدة الأساسية لتر ووحدة الشراء كرتونة، أدخل 12 (1 كرتونة = 12 لتر)',
+    invV2COGSAccountLabel:'حساب ت.ب.م للصنف',
+    invV2COGSAccountHint:'يُستخدم عند ترحيل قيود تكلفة البضاعة المباعة — الأولوية لحساب الصنف، ثم الإعداد العام',
     userNameRequired:'اكتب اسم المستخدم أولاً.', deleteUserConfirmMsg:'هل تريد حذف المستخدم "${name}"؟',
     docSalesInvoiceTitle:'فاتورة مبيعات', docCashReceiptVoucherTitle:'سند قبض نقدية', docCashPaymentVoucherTitle:'سند صرف نقدية',
     docBillToLabel:'السادة / ', docPhoneLabel:'هاتف', docTaxIdLabel:'الرقم الضريبي', docEmailLabel:'بريد',
@@ -1527,7 +1684,7 @@ const I18N = {
     backupDownloaded:'تم تنزيل النسخة الاحتياطية', backupDownloadError:'تعذّر إنشاء النسخة الاحتياطية', backupRestored:'تمت الاستعادة بنجاح — تم تحديث النظام',
     backupRestoreError:'تعذّرت الاستعادة — تأكد أن الملف نسخة احتياطية صحيحة من هذا النظام', restoreConfirmTitle:'استعادة نسخة احتياطية',
     restoreConfirmMsg:'هذا الإجراء سيستبدل كل البيانات الحالية (شجرة الحسابات، المجموعات، القيود، الإعدادات) بمحتوى الملف المُختار. لا يمكن التراجع عن هذا الإجراء إلا برفع نسخة احتياطية أخرى. هل أنت متأكد؟',
-    backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، المجموعات، القيود، الإعدادات) في ملف واحد يمكن الاحتفاظ به في مكان آمن، أو استخدمه لاستعادة النظام على جهاز آخر أو بعد أي مشكلة.',
+    backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، القيود، المخزون، الجرد، الإعدادات) في ملف JSON واحد. عند الاستعادة على جهاز آخر، كل الأرقام هتكون نفس اللي في النسخة الأصلية بالظبط.',
     glPageIndicator:'صفحة ${page} من ${total} — إجمالي ${count} حركة (الإجماليات والتصدير يشملان كل الحركات المطابقة للفلاتر، مش الصفحة الحالية بس)',
     glPagePrev:'◀ السابق', glPageNext:'التالي ▶',
     projectsPageTitle:'متابعة المشاريع والتحصيل', projectsPageDesc:'دفتر منفصل لمتابعة قيمة كل مشروع والدفعات المحصّلة منه فعليًا — بغض النظر عن توقيت تسجيل الإيراد محاسبيًا. لو اسم المشروع مطابق لاسم شريك في القيود، هيظهرلك رصيد العميل/المورد في حساباته الدفترية جنب الباقي الحقيقي للمقارنة.',
@@ -1939,6 +2096,163 @@ const I18N = {
     inventoryQtyCol:'Quantity', inventoryAvgCostCol:'Avg. Cost', inventoryValueCol:'Value',
     viewDetailsBtn:'View Movement', hideDetailsBtn:'Hide Movement', stockMoveTypeCol:'Move Type',
     stockMoveIn:'In (Purchase)', stockMoveOut:'Out (Sale)', stockMoveAdjustment:'Adjustment', stockMoveOpening:'Opening Balance', noStockMoves:'No movements for this item yet.',
+    // ── Enhanced Inventory v2 i18n (English) ─────────────────────────────────
+    invV2Title:'Inventory — Stock Ledger',
+    invV2Hint:'Perpetual inventory system with Moving Weighted Average Cost — every posted transaction immediately updates stock quantity and valuation, and is linked to a journal entry where applicable.',
+    invV2NewTxBtn:'New Stock Transaction',
+    invV2StockCardTitle:'Stock Card',
+    invV2ValuationTitle:'Inventory Valuation',
+    invV2ReconTitle:'Inventory vs GL Reconciliation',
+    invV2SettingsTitle:'Inventory Settings',
+    invV2SettingsBtn:'⚙ Settings',
+    invV2AllowNegativeLabel:'Allow Negative Stock',
+    invV2AllowNegativeHint:'If disabled, outgoing transactions (sales, issues) will be rejected if available quantity is less than requested.',
+    invV2AutoPostCOGSLabel:'Auto-post COGS journal entry on sale',
+    invV2AutoPostCOGSHint:'If enabled, every sale generates a journal entry: Dr COGS / Cr Inventory.',
+    invV2COGSAccountLabel:'Default COGS Account',
+    invV2AdjAccountLabel:'Inventory Adjustment Account',
+    invV2TxTypeLabel:'Transaction Type',
+    invV2TxTypeOpening:'Opening Balance',
+    invV2TxTypePurchase:'Purchase Receipt',
+    invV2TxTypePurchaseReturn:'Purchase Return',
+    invV2TxTypeSale:'Sales Delivery',
+    invV2TxTypeSaleReturn:'Sales Return',
+    invV2TxTypeAdjustment:'Inventory Adjustment',
+    invV2TxTypeIssue:'Stock Issue',
+    invV2TxTypeReceipt:'Stock Receipt',
+    invV2DocNoLabel:'Document No.',
+    invV2UnitLabel:'Transaction Unit',
+    invV2BaseUnitLabel:'Base Unit',
+    invV2PurchaseUnitLabel:'Purchase Unit',
+    invV2SaleUnitLabel:'Issue / Sale Unit',
+    invV2ConvFactorLabel:'Conversion Factor',
+    invV2ConvFactorHint:'Number of base units per transaction unit (e.g. 1 Carton = 12 Liters → enter 12)',
+    invV2QtyLabel:'Quantity',
+    invV2BaseQtyLabel:'Quantity in Base Unit',
+    invV2UnitCostLabel:'Unit Cost (per Base Unit)',
+    invV2TotalCostLabel:'Total Cost',
+    invV2InQtyCol:'IN',
+    invV2OutQtyCol:'OUT',
+    invV2BalanceQtyCol:'Balance',
+    invV2AvgCostAfterCol:'Avg Cost',
+    invV2ValueAfterCol:'Value',
+    invV2StatusLabel:'Status',
+    invV2StatusDraft:'Draft',
+    invV2StatusPosted:'Posted',
+    invV2StatusCancelled:'Cancelled',
+    invV2PostBtn:'Post',
+    invV2CancelBtn:'Cancel Tx',
+    invV2CancelReasonLabel:'Cancellation Reason',
+    invV2CancelReasonRequired:'Enter cancellation reason.',
+    invV2PostConfirm:'Post this transaction? It cannot be edited after posting.',
+    invV2CancelConfirm:'Cancel this transaction? A reversal entry will be created.',
+    invV2JournalLinkLabel:'Journal Entry',
+    invV2ReasonLabel:'Reason / Notes',
+    invV2SystemQtyLabel:'System Qty',
+    invV2PhysicalQtyLabel:'Physical Count',
+    invV2DiffQtyLabel:'Difference',
+    invV2ValuationItemCode:'Code',
+    invV2ValuationItemName:'Item',
+    invV2ValuationQty:'Quantity',
+    invV2ValuationAvgCost:'Avg Cost',
+    invV2ValuationValue:'Value',
+    invV2ValuationTotal:'Total Inventory Value',
+    invV2ReconInvValue:'Inventory Value (Stock Ledger)',
+    invV2ReconGLValue:'Inventory GL Account Balance',
+    invV2ReconDiff:'Difference',
+    invV2ReconOK:'✓ Reconciled',
+    invV2ReconMismatch:'⚠ Difference Found',
+    invV2NegativeStockError:'Insufficient stock — Available: ${available} — Requested: ${requested}. Enable "Allow Negative Stock" to bypass.',
+    invV2ZeroConvError:'Conversion factor must be greater than zero.',
+    invV2ProductRequired:'Select a product first.',
+    invV2QtyRequired:'Quantity must be greater than zero.',
+    invV2CostRequired:'Cost must be zero or greater.',
+    invV2OpeningAlreadyExists:'An opening balance already exists for this item.',
+    invV2PostedCantEdit:'Posted transactions cannot be edited.',
+    invV2RecalcBtn:'Recalculate',
+    invV2RecalcTitle:'Recalculate Inventory Balances',
+    invV2RecalcDesc:'Compares ledger-computed balances against stored product balances. Any discrepancy is shown here for review.',
+    invV2NoDiscrepancy:'All balances match.',
+    invV2DiscrepancyFound:'Warning: discrepancies found for ${count} item(s)',
+    invV2StockCardOpeningQty:'Opening Quantity',
+    invV2StockCardTotalIn:'Total IN',
+    invV2StockCardTotalOut:'Total OUT',
+    invV2StockCardClosingQty:'Closing Quantity',
+    invV2StockCardOpeningValue:'Opening Value',
+    invV2StockCardClosingValue:'Closing Value',
+    invV2StockCardCurrentAvgCost:'Current Avg Cost',
+    invV2StockCardCurrentValue:'Current Value',
+    invV2FilterFromDate:'From Date',
+    invV2FilterToDate:'To Date',
+    invV2FilterTxType:'Tx Type',
+    invV2FilterAll:'All',
+    invV2NoLedgerEntries:'No ledger entries for this item.',
+    invV2SavedToast:'Saved',
+    invV2PostedToast:'Posted',
+    invV2CancelledToast:'Cancelled',
+    invV2TabLedger:'Stock Ledger',
+    invV2TabValuation:'Valuation',
+    invV2TabRecon:'Reconciliation',
+    invV2TabStocktake:'Physical Count',
+    invV2TabSettings:'Settings',
+    // ── Stocktake i18n (English) ──────────────────────────────────────────────
+    stNewSession:'New Count Session',
+    stSessionTitle:'Physical Count Sessions',
+    stSessionName:'Session Name',
+    stSessionDate:'Count Date',
+    stSessionNotes:'Notes',
+    stSessionStatus:'Status',
+    stStatusDraft:'Draft',
+    stStatusCounted:'Counted',
+    stStatusPosted:'Posted',
+    stStatusCancelled:'Cancelled',
+    stEditSession:'Edit',
+    stOpenSession:'Open',
+    stPostSession:'Post Adjustments',
+    stCancelSession:'Cancel',
+    stPostConfirm:'Post all differences as inventory adjustments? A stocktake adjustment entry will be created for every item with a variance.',
+    stCancelConfirm:'Cancel this count session? Stock will not be affected.',
+    stSessionLines:'Count Lines',
+    stAddAllProducts:'Add All Products',
+    stAddProduct:'Add Item',
+    stSystemQty:'System Qty',
+    stCountedQty:'Physical Count',
+    stDiff:'Variance',
+    stDiffValue:'Variance Value',
+    stReason:'Reason',
+    stReasonRequired:'Enter variance reason',
+    stNoSessions:'No count sessions yet. Create a new session to start a physical inventory count.',
+    stNoLines:'No items added to this session yet.',
+    stSummary:'Count Summary',
+    stTotalItems:'Total Items',
+    stItemsWithDiff:'Items with Variance',
+    stTotalDiffValue:'Total Variance Value',
+    stPostSuccess:'${count} inventory adjustment(s) posted successfully.',
+    stZeroDiff:'No variances — all quantities match.',
+    stSessionSaved:'Session saved.',
+    stDeleteLine:'Remove',
+    stCountedQtyHint:'Enter the physical quantity found in the warehouse',
+    stLastCountDate:'Last Count',
+    stNeverCounted:'Never counted',
+    stPrintSheet:'Print Count Sheet',
+    stExportSheet:'Export',
+    stSessionNameRequired:'Enter a session name.',
+    stPostedBy:'Posted By',
+    stPostedAt:'Posted At',
+    stDiffQtyPos:'Surplus',
+    stDiffQtyNeg:'Shortage',
+    invV2NewTxTitle:'New Stock Transaction',
+    invV2ProductLabel:'Product',
+    invV2CreatedByLabel:'Created By',
+    invV2PostedByLabel:'Posted By',
+    invV2CancelledByLabel:'Cancelled By',
+    invV2ViewJournalEntry:'View Journal Entry',
+    invV2UomSectionTitle:'Units of Measure & Conversion',
+    invV2PurchaseConvLabel:'Purchase Unit Conversion',
+    invV2SaleConvLabel:'Issue/Sale Unit Conversion',
+    invV2UomExampleHint:'Example: if Base Unit = Liter and Purchase Unit = Carton, enter 12 (1 Carton = 12 Liters)',
+    invV2COGSAccountLabel:'Item COGS Account',
+    invV2COGSAccountHint:'Used when posting COGS entries — item account takes priority over the global default',
     userNameRequired:'Enter the user name first.', deleteUserConfirmMsg:'Delete user "${name}"?',
     docSalesInvoiceTitle:'Sales Invoice', docCashReceiptVoucherTitle:'Cash Receipt Voucher', docCashPaymentVoucherTitle:'Cash Payment Voucher',
     docBillToLabel:'Bill To: ', docPhoneLabel:'Phone', docTaxIdLabel:'Tax ID', docEmailLabel:'Email',
@@ -3853,46 +4167,139 @@ async function driveUploadFile(fileId, dataObj){
   return await res.json();
 }
 async function collectAllLocalData(){
-  const keys = await storeList('');
-  const out = {};
-  for(const k of keys) out[k] = await storeGet(k);
+  // Collect every persisted key from storage.
+  // IMPORTANT: we also explicitly include the keys we KNOW must exist so they
+  // are never silently omitted if the storage listing misses them.
+  const keysFromStorage = await storeList('');
+  const mustHaveKeys = [
+    'accounts','groups','meta','settings',
+    'projects','projectTx',
+    'bankReconciliations','clearedTxSeqs',
+    'assetModels','assets','depEntries',
+    'prepaidExpenses','prepaidDepEntries',
+    'customers','products',
+    'invoiceDrafts','invoiceExtras',
+    'purchaseInvoiceDrafts','purchaseInvoiceExtras',
+    'recurringTemplates','voucherExtras',
+    'stockMoves','stockLedger','stocktakeSessions','invSettings',
+  ];
+  // Journal shards: journal:YYYY — collect from both sources
+  const journalShardKeys = keysFromStorage.filter(k=>k.startsWith('journal:'));
+  // Merge: union of storage keys + known required keys + journal shards
+  const allKeys = [...new Set([...mustHaveKeys, ...journalShardKeys, ...keysFromStorage])];
+
+  const out = { __mizanBackupVersion: 3, __createdAt: new Date().toISOString(),
+                __system: 'Mizan ERP', __journalShardKeys: journalShardKeys };
+  for(const k of allKeys){
+    const v = await storeGet(k);
+    if(v !== null && v !== undefined) out[k] = v;
+  }
+
+  // Sanity: embed journal line count so restore can verify
+  let lineCount = 0;
+  for(const k of journalShardKeys){ const s = out[k]; if(Array.isArray(s)) lineCount += s.length; }
+  out.__journalLineCount = lineCount;
+  out.__inventoryLedgerCount = Array.isArray(out.stockLedger) ? out.stockLedger.length : 0;
+  out.__stocktakeSessionCount = Array.isArray(out.stocktakeSessions) ? out.stocktakeSessions.length : 0;
   return out;
 }
+
 async function applyRemoteDataToLocal(dataObj){
+  if(!dataObj || typeof dataObj !== 'object' || Array.isArray(dataObj))
+    throw new Error('ملف النسخة الاحتياطية غير صالح');
+
   DRIVE.applyingRemote = true;
-  try{ for(const k of Object.keys(dataObj||{})) await storeSet(k, dataObj[k]); }
-  finally{ DRIVE.applyingRemote = false; }
+  try{
+    // 1. Write every key in the backup — including all journal:YYYY shards
+    for(const k of Object.keys(dataObj)){
+      if(k.startsWith('__')) continue; // skip metadata keys
+      await storeSet(k, dataObj[k]);
+    }
+
+    // 2. Safety: if the backup has __journalShardKeys, delete any LOCAL shard
+    //    that is NOT in the backup (e.g. old data from a different year that
+    //    would corrupt the restored journal if left behind).
+    const backupShardKeys = dataObj.__journalShardKeys || [];
+    const localShardKeys  = await storeList('journal:');
+    for(const k of localShardKeys){
+      if(!backupShardKeys.includes(k)){
+        await storeDelete(k);
+      }
+    }
+
+    // 3. Similarly clear inventory keys that exist locally but not in backup
+    //    (e.g. stocktakeSessions added after the backup was made)
+    const inventoryKeys = ['stockLedger','stocktakeSessions','invSettings','stockMoves'];
+    for(const k of inventoryKeys){
+      if(!(k in dataObj)){
+        // Key missing from backup means it didn't exist at backup time — clear local
+        await storeSet(k, Array.isArray(STATE[k]) ? [] : {});
+      }
+    }
+  }finally{
+    DRIVE.applyingRemote = false;
+  }
 }
+
 // Full backup/restore: a single downloadable JSON file with everything the
-// system stores (chart of accounts, groups, every year's journal shard,
-// meta, settings, audit log) — independent of Google Drive, for a manual
-// safety copy or moving to a fresh browser/device by hand.
+// system stores — chart of accounts, groups, every year's journal shard,
+// meta, settings, inventory ledger, stocktake sessions, all module data.
 async function downloadFullBackup(){
   try{
     const data = await collectAllLocalData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
+    const json = JSON.stringify(data, null, 2);
+
+    // Integrity summary shown in toast
+    const shardCount  = (data.__journalShardKeys||[]).length;
+    const lineCount   = data.__journalLineCount||0;
+    const invCount    = data.__inventoryLedgerCount||0;
+
+    const blob = new Blob([json], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
     a.download = `mizan_backup_${todayISO()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast(t('backupDownloaded'));
+
+    showToast(`${t('backupDownloaded')} — ${lineCount} قيد، ${invCount} حركة مخزون، ${shardCount} سنة`, 5000);
   }catch(e){ showToast(t('backupDownloadError') + ': ' + e.message, 5000); }
 }
+
 async function restoreFromBackupFile(file){
   try{
     const text = await file.text();
-    const data = JSON.parse(text);
-    if(!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('invalid file');
+    let data;
+    try{ data = JSON.parse(text); }
+    catch(e){ throw new Error('ملف تالف — لا يمكن قراءة JSON'); }
+
+    if(!data || typeof data !== 'object' || Array.isArray(data))
+      throw new Error('ملف غير صالح — ليس نسخة احتياطية من ميزان');
+
+    // Warn the user about what they're restoring
+    const lineCount  = data.__journalLineCount  || '؟';
+    const invCount   = data.__inventoryLedgerCount || '؟';
+    const stCount    = data.__stocktakeSessionCount || '؟';
+    const backupDate = data.__createdAt ? data.__createdAt.slice(0,16).replace('T',' ') : '؟';
+
+    // Apply to local storage
     await applyRemoteDataToLocal(data);
-    showToast(t('backupRestored'));
-    await initApp(); // reload STATE fresh from the newly-restored local storage
-    scheduleDriveSync(); // if signed in to Drive, push the restored data up too
-  }catch(e){ showToast(t('backupRestoreError') + ': ' + e.message, 5000); }
+
+    // Reload STATE completely from the freshly-written storage
+    await initApp();
+
+    // Push to Drive if connected
+    try{ scheduleDriveSync(); }catch(e){}
+
+    showToast(
+      `${t('backupRestored')} — ${lineCount} قيد — ${invCount} حركة مخزون — ${stCount} جلسة جرد — تاريخ النسخة: ${backupDate}`,
+      6000
+    );
+  }catch(e){ showToast(t('backupRestoreError') + ': ' + e.message, 6000); }
 }
+
 // Runs once right after sign-in: Drive is treated as the source of truth for
 // cross-device use, so if a file already exists there it OVERWRITES whatever
 // is in this browser's local storage; if this is the very first device to
@@ -3981,6 +4388,62 @@ const STATE = {
   purchaseInvoiceExtras: [], // same shape as invoiceExtras, for the 'فواتير الموردين' journal book
   recurringTemplates: [], // [{id,name,lines:[{code,partner,desc,debit,credit}],frequency:'monthly'|'quarterly'|'yearly',startDate,lastGeneratedDate,active}] — a saved "recipe" for a journal entry that repeats (rent, subscriptions, ...). Generating from it never happens silently; see renderRecurringEntriesView / generateFromRecurringTemplate.
   stockMoves: [], // [{id,date,productId,type:'in'|'out'|'adjustment',qty,unitCost,note,source}] — a dedicated quantity ledger for products with trackInventory=true, kept separate from the accounting journal. 'in' moves come from purchase invoice lines that name a tracked product; 'out' moves come from sales invoice lines for a tracked product, costed at the weighted-average cost in effect at the moment of sale (see computeStockPosition). This tracks quantity/value for reporting only — it does not post its own COGS journal entry.
+  // ── Enhanced Inventory v2 ─────────────────────────────────────────────────
+  // stockLedger: full perpetual inventory ledger with audit trail.
+  // Each entry is IMMUTABLE once status='posted'. Cancellations create a
+  // reversal entry (type same, qty negated) instead of deleting the original.
+  // Schema: {
+  //   id          : 'sl_...' unique
+  //   date        : 'YYYY-MM-DD'
+  //   docNo       : document number (e.g. 'GRN-0001', 'SI-0001', 'ADJ-0001')
+  //   productId   : links to STATE.products[].id
+  //   txType      : 'opening'|'purchase'|'purchase-return'|'sale'|'sale-return'|'adjustment'|'issue'|'receipt'
+  //   unit        : the unit used for this transaction (may differ from base unit)
+  //   qty         : quantity IN THE TRANSACTION UNIT (raw entry, for display)
+  //   baseQty     : quantity converted to base unit (used for all calculations)
+  //   inQty       : qty entering stock in base units (0 for outgoing)
+  //   outQty      : qty leaving stock in base units (0 for incoming)
+  //   unitCost    : cost per BASE UNIT
+  //   totalCost   : inQty or outQty * unitCost
+  //   qtyBefore   : base qty before this move
+  //   qtyAfter    : base qty after this move
+  //   avgCostBefore: weighted avg cost before
+  //   avgCostAfter : weighted avg cost after
+  //   valueBefore  : qtyBefore * avgCostBefore
+  //   valueAfter   : qtyAfter * avgCostAfter
+  //   status      : 'draft'|'posted'|'cancelled'
+  //   journalEntry: entry number in journal (if accounting effect was posted)
+  //   relatedSlId : for reversals/cancellations: points to original sl id
+  //   reason      : free-text reason (for adjustments / cancellations)
+  //   source      : 'manual'|'invoice-auto'|'purchase-invoice-auto'|'cancellation'
+  //   createdBy   : user name
+  //   createdAt   : ISO timestamp
+  //   postedBy    : user name
+  //   postedAt    : ISO timestamp
+  //   cancelledBy : user name
+  //   cancelledAt : ISO timestamp
+  // }
+  stockLedger: [],
+  // stocktakeSessions: physical inventory count sessions
+  // Each session has a list of lines (one per product) with system qty,
+  // counted qty, and variance. Posting a session creates stockLedger
+  // adjustment entries for every line with a non-zero variance.
+  // Schema: {
+  //   id        : 'st_...'
+  //   name      : display name (e.g. 'جرد يناير 2026')
+  //   date      : 'YYYY-MM-DD'
+  //   notes     : free text
+  //   status    : 'draft' | 'counted' | 'posted' | 'cancelled'
+  //   lines     : [{ productId, systemQty, countedQty, diff, reason, avgCost, diffValue }]
+  //   createdBy / createdAt / postedBy / postedAt / cancelledBy / cancelledAt
+  // }
+  stocktakeSessions: [],
+  // invSettings: inventory-wide configuration
+  // allowNegativeStock: false = block issue if qty would go negative
+  // autoPostCOGS: true = auto-create COGS journal entry on sales
+  // cogsAccount: default COGS account code (can be overridden per product)
+  // adjustmentAccount: default inventory adjustment / variance account code
+  invSettings: { allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'' },
   voucherExtras: [],   // [{entryNo, serial, description}] — print-only supplementary data (friendly serial number, wording) for receipt/payment vouchers that live in the journal under 'سند قبض'/'سند صرف'.
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
@@ -7365,8 +7828,8 @@ async function resetSystem(){
       // left behind when the person explicitly asks to reset everything.
       const auxKeys = ['assetModels','assets','depEntries','prepaidExpenses','prepaidDepEntries','projects','projectTx',
         'customers','products','invoiceDrafts','invoiceExtras','purchaseInvoiceDrafts','purchaseInvoiceExtras',
-        'recurringTemplates','stockMoves','bankReconciliations','clearedTxSeqs'];
-      for(const k of auxKeys){ try{ await storeSet(k, Array.isArray(STATE[k]) ? [] : {}); }catch(e){} }
+        'recurringTemplates','stockMoves','stockLedger','stocktakeSessions','invSettings','bankReconciliations','clearedTxSeqs'];
+      for(const k of auxKeys){ try{ await storeSet(k, Array.isArray(STATE[k]) ? [] : (typeof STATE[k]==='object'&&STATE[k]!==null ? {} : [])); }catch(e){} }
 
       // Chart of Accounts / Account Groups: explicitly SET to an empty array
       // (not deleted). This file ships with this company's real chart of
@@ -7571,6 +8034,10 @@ async function initApp(){
   STATE.purchaseInvoiceExtras = (await storeGet('purchaseInvoiceExtras')) || [];
   STATE.recurringTemplates = (await storeGet('recurringTemplates')) || [];
   STATE.stockMoves = (await storeGet('stockMoves')) || [];
+  STATE.stockLedger = (await storeGet('stockLedger')) || [];
+  STATE.stocktakeSessions = (await storeGet('stocktakeSessions')) || [];
+  const savedInvSettings = (await storeGet('invSettings')) || {};
+  STATE.invSettings = Object.assign({ allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'' }, savedInvSettings);
   STATE.voucherExtras = (await storeGet('voucherExtras')) || [];
   // One-time migration from the earlier standalone invoices/cashVouchers
   // arrays (now replaced by journal-derived lists + these lightweight
@@ -7714,14 +8181,10 @@ const ICONS = {
 const NAV = [
   {id:'dashboard', label:'لوحة التحكم', labelEn:'Dashboard', icon:'dashboard'},
 
-  // Daily data-entry tasks — journal + vouchers, grouped together since
-  // this is what gets used most often, day to day.
   {section:'القيود والسندات', sectionEn:'Entries & Vouchers'},
   {id:'journalentries', label:'قيود اليومية', labelEn:'Journal Entries', icon:'ledger'},
   {id:'recurringentries', label:'القيود المتكررة', labelEn:'Recurring Entries', icon:'clock'},
-  {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
 
-  // Sales cycle: quote → invoice → collect, plus what's selling.
   {section:'المبيعات والعملاء', sectionEn:'Sales & Customers'},
   {id:'invoices', label:'فواتير المبيعات', labelEn:'Sales Invoices', icon:'statement'},
   {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
@@ -7729,12 +8192,11 @@ const NAV = [
   {id:'inventory', label:'المخزون', labelEn:'Inventory', icon:'factory'},
   {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
 
-  // Purchase cycle: bill → pay.
   {section:'المشتريات والموردين', sectionEn:'Purchases & Vendors'},
   {id:'purchaseinvoices', label:'فواتير المشتريات', labelEn:'Purchase Invoices', icon:'statement'},
 
-  // Cash/bank side of both cycles above.
   {section:'الخزينة والبنوك', sectionEn:'Treasury & Banking'},
+  {id:'cashvouchers', label:'سندات القبض والصرف', labelEn:'Receipt & Payment Vouchers', icon:'cashflow'},
   {id:'bankrecon', label:'مطابقة كشف الحساب البنكي', labelEn:'Bank Reconciliation', icon:'exchange'},
 
   {section:'الأصول والإهلاك', sectionEn:'Assets & Depreciation'},
@@ -7744,17 +8206,16 @@ const NAV = [
   {id:'assetreport', label:'سجل الأصول', labelEn:'Asset Register', icon:'scale'},
   {id:'prepaidexpenses', label:'المصروفات المدفوعة مقدماً', labelEn:'Prepaid Expenses', icon:'notes'},
 
-  // Pure reporting — everything here reads existing data, never creates it.
   {section:'التقارير المحاسبية', sectionEn:'Accounting Reports'},
   {id:'accountstatement', label:'الأستاذ العام', labelEn:'General Ledger', icon:'ledger'},
   {id:'partnerstatement', label:'كشف عميل / مورد', labelEn:'Customer / Vendor Statement', icon:'users'},
   {id:'agingreport', label:'تقرير أعمار الديون', labelEn:'AR/AP Aging Report', icon:'clock'},
-  {id:'vatreturn', label:'إقرار ضريبة القيمة المضافة', labelEn:'VAT Return', icon:'receipt'},
   {id:'otherbalances', label:'أرصدة مدينة / دائنة أخرى', labelEn:'Other Debit / Credit Balances', icon:'users'},
+  {id:'vatreturn', label:'إقرار ضريبة القيمة المضافة', labelEn:'VAT Return', icon:'receipt'},
   {id:'trialbalance', label:'ميزان المراجعة', labelEn:'Trial Balance', icon:'scale'},
   {id:'statements', label:'القوائم المالية', labelEn:'Financial Statements', icon:'statement'},
-  {id:'manufacturing', label:'تكلفة الإنتاج (تصنيع)', labelEn:'Manufacturing Cost', icon:'factory'},
   {id:'cashflow', label:'التدفقات النقدية', labelEn:'Cash Flow Statement', icon:'cashflow'},
+  {id:'manufacturing', label:'تكلفة الإنتاج (تصنيع)', labelEn:'Manufacturing Cost', icon:'factory'},
 
   {section:'التحليل والمتابعة', sectionEn:'Analysis & Follow-up'},
   {id:'costcenters', label:'مراكز التكلفة', labelEn:'Cost Centers', icon:'target'},
@@ -7774,16 +8235,17 @@ function navSectionLabel(n){ return (STATE.settings.lang==='en' && n.sectionEn) 
 let __suppressHistoryPush = false;
 // ── Demo Data ────────────────────────────────────────────────────────────────
 // A realistic, self-consistent sample dataset for a fictional Egyptian trading
-// & contracting company — enough data to make every page, report, chart, and
-// calculation visibly functional when the system is otherwise empty.
+// & contracting company. Populates EVERY page in the system so the user can
+// explore the full feature set with real-looking numbers.
 // Called ONLY when the user explicitly clicks "Try Demo Data".
 // Real user data is NEVER touched — this only runs when STATE.journal is empty.
-function loadDemoData(){
+async function loadDemoData(){
   if(STATE.journal.length){
     showToast('يوجد بيانات فعلية — لا يمكن تحميل البيانات التجريبية.');
     return;
   }
-  // ── Accounts ──────────────────────────────────────────────────────────────
+
+  // ── Chart of Accounts ────────────────────────────────────────────────────
   STATE.accounts = [
     // Cash & Bank
     {code:'111101',name:'خزينة رئيسية',nameEn:'Main Cash',type:'البنك والنقد',currency:'EGP'},
@@ -7795,10 +8257,14 @@ function loadDemoData(){
     {code:'112103',name:'دفعات مقدمة لموردين',nameEn:'Supplier Advances',type:'المدين',currency:'EGP'},
     // Inventory
     {code:'113101',name:'مخزون بضاعة',nameEn:'Merchandise Inventory',type:'الأصول المتداولة',currency:'EGP'},
+    {code:'113102',name:'مخزون خامات',nameEn:'Raw Materials Inventory',type:'مخزون خامات',currency:'EGP'},
+    {code:'113103',name:'مخزون تحت التشغيل',nameEn:'Work-in-Process',type:'مخزون تحت التشغيل',currency:'EGP'},
+    {code:'113104',name:'مخزون تام الصنع',nameEn:'Finished Goods',type:'مخزون تام الصنع',currency:'EGP'},
     // Fixed Assets
     {code:'121101',name:'سيارات',nameEn:'Vehicles',type:'أصول ثابتة',currency:'EGP'},
     {code:'121102',name:'أثاث ومعدات مكتبية',nameEn:'Furniture & Equipment',type:'أصول ثابتة',currency:'EGP'},
     {code:'121103',name:'مجمع إهلاك - سيارات',nameEn:'Acc. Dep. - Vehicles',type:'أصول ثابتة',currency:'EGP'},
+    {code:'121104',name:'مجمع إهلاك - أثاث',nameEn:'Acc. Dep. - Furniture',type:'أصول ثابتة',currency:'EGP'},
     // Payables
     {code:'211101',name:'موردون محليون',nameEn:'Local Suppliers',type:'الدائن',currency:'EGP'},
     {code:'211102',name:'موردون أجانب',nameEn:'Foreign Suppliers',type:'الدائن',currency:'USD'},
@@ -7815,6 +8281,7 @@ function loadDemoData(){
     // COGS
     {code:'511101',name:'تكلفة البضاعة المباعة',nameEn:'Cost of Goods Sold',type:'تكاليف الإيرادات',currency:'EGP'},
     {code:'511102',name:'تكلفة تنفيذ المشاريع',nameEn:'Project Direct Costs',type:'تكاليف الإيرادات',currency:'EGP'},
+    {code:'521101',name:'أجور مباشرة وتكاليف مصنع',nameEn:'Direct Labor & Factory Overhead',type:'تكاليف التصنيع',currency:'EGP'},
     // Expenses
     {code:'611101',name:'رواتب وأجور',nameEn:'Salaries & Wages',type:'النفقات',currency:'EGP'},
     {code:'611102',name:'إيجارات',nameEn:'Rent',type:'النفقات',currency:'EGP'},
@@ -7822,14 +8289,12 @@ function loadDemoData(){
     {code:'611104',name:'مصروفات بنكية',nameEn:'Bank Charges',type:'النفقات',currency:'EGP'},
     {code:'611105',name:'دعاية وإعلان',nameEn:'Advertising',type:'النفقات',currency:'EGP'},
     {code:'611106',name:'مصروفات نقل وشحن',nameEn:'Freight & Shipping',type:'النفقات',currency:'EGP'},
+    {code:'611107',name:'مصروفات صيانة',nameEn:'Maintenance',type:'النفقات',currency:'EGP'},
     // Depreciation
     {code:'711101',name:'إهلاك سيارات',nameEn:'Depreciation - Vehicles',type:'إهلاك',currency:'EGP'},
-    // Manufacturing accounts (for demo of manufacturing report)
-    {code:'113102',name:'مخزون خامات',nameEn:'Raw Materials Inventory',type:'مخزون خامات',currency:'EGP'},
-    {code:'113103',name:'مخزون تحت التشغيل',nameEn:'Work-in-Process',type:'مخزون تحت التشغيل',currency:'EGP'},
-    {code:'113104',name:'مخزون تام الصنع',nameEn:'Finished Goods',type:'مخزون تام الصنع',currency:'EGP'},
-    {code:'521101',name:'أجور مباشرة وتكاليف مصنع',nameEn:'Direct Labor & Factory Overhead',type:'تكاليف التصنيع',currency:'EGP'},
+    {code:'711102',name:'إهلاك أثاث ومعدات',nameEn:'Depreciation - Furniture',type:'إهلاك',currency:'EGP'},
   ];
+
   STATE.groups = [
     {start:'1',end:'1',name:'الأصول',nameEn:'Assets'},
     {start:'2',end:'2',name:'الالتزامات',nameEn:'Liabilities'},
@@ -7848,10 +8313,108 @@ function loadDemoData(){
     {start:'121',end:'121',name:'الأصول الثابتة (تفصيلي)',nameEn:'Fixed Assets (detail)'},
     {start:'211',end:'211',name:'الموردون والدائنون',nameEn:'Payables'},
     {start:'212',end:'212',name:'الالتزامات المتداولة الأخرى',nameEn:'Other Current Liabilities'},
-    {start:'113',end:'113',name:'المخزون',nameEn:'Inventory'},
     {start:'521',end:'521',name:'تكاليف التصنيع',nameEn:'Manufacturing Costs'},
   ];
   rebuildAccountIndex();
+
+  // ── Customers ─────────────────────────────────────────────────────────────
+  STATE.customers = [
+    {id:1,name:'شركة الأمل للتجارة',code:'C001',phone:'01001000001',email:'amal@demo.eg',address:'القاهرة',taxRegNo:'100-000-001',arAccount:'112101',notes:'',status:'active'},
+    {id:2,name:'مجموعة دلتا للمقاولات',code:'C002',phone:'01002000002',email:'delta@demo.eg',address:'الإسكندرية',taxRegNo:'100-000-002',arAccount:'112101',notes:'',status:'active'},
+    {id:3,name:'مؤسسة النور',code:'C003',phone:'01003000003',email:'nour@demo.eg',address:'الجيزة',taxRegNo:'100-000-003',arAccount:'112101',notes:'',status:'active'},
+    {id:4,name:'Global Trading LLC',code:'C004',phone:'+1555000004',email:'global@demo.com',address:'Dubai, UAE',taxRegNo:'',arAccount:'112102',notes:'عميل صادرات',status:'active'},
+    {id:5,name:'شركة الفجر للصناعة',code:'C005',phone:'01005000005',email:'fajr@demo.eg',address:'العاشر من رمضان',taxRegNo:'100-000-005',arAccount:'112101',notes:'',status:'active'},
+  ];
+
+  // ── Products & Services ───────────────────────────────────────────────────
+  STATE.products = [
+    {id:1,name:'منتج أ - بضاعة',code:'P001',unit:'قطعة',purchaseUnit:'كرتونة',purchaseConvFactor:12,saleUnit:'',saleConvFactor:1,price:2500,taxPct:14,revenueAccount:'411101',cogsAccount:'511101',notes:'',status:'active',trackInventory:true,openingQty:100,openingCost:100,costAccount:'511101',inventoryAccount:'113101',purchaseAccount:'511101'},
+    {id:2,name:'منتج ب - بضاعة',code:'P002',unit:'لتر',purchaseUnit:'كرتونة',purchaseConvFactor:12,saleUnit:'لتر',saleConvFactor:1,price:1800,taxPct:14,revenueAccount:'411101',cogsAccount:'511101',notes:'مثال: 1 كرتونة = 12 لتر',status:'active',trackInventory:true,openingQty:0,openingCost:0,costAccount:'511101',inventoryAccount:'113101',purchaseAccount:'511101'},
+    {id:3,name:'خدمة تنفيذ مشروع',code:'S001',unit:'مشروع',purchaseUnit:'',purchaseConvFactor:1,saleUnit:'',saleConvFactor:1,price:50000,taxPct:14,revenueAccount:'411103',cogsAccount:'',notes:'',status:'active',trackInventory:false,openingQty:0,openingCost:0,costAccount:'511102',inventoryAccount:'',purchaseAccount:'511102'},
+    {id:4,name:'خدمة صيانة دورية',code:'S002',unit:'زيارة',purchaseUnit:'',purchaseConvFactor:1,saleUnit:'',saleConvFactor:1,price:3500,taxPct:14,revenueAccount:'411103',cogsAccount:'',notes:'',status:'active',trackInventory:false,openingQty:0,openingCost:0,costAccount:'511102',inventoryAccount:'',purchaseAccount:'511102'},
+    {id:5,name:'منتج ج - تصدير',code:'P003',unit:'طن',purchaseUnit:'',purchaseConvFactor:1,saleUnit:'',saleConvFactor:1,price:800,taxPct:0,revenueAccount:'411102',cogsAccount:'511101',notes:'صادرات معفاة',status:'active',trackInventory:true,openingQty:50,openingCost:500,costAccount:'511101',inventoryAccount:'113101',purchaseAccount:'511101'},
+  ];
+
+  // ── Projects ──────────────────────────────────────────────────────────────
+  STATE.projects = [
+    {id:'EGP-001',name:'مشروع تطوير مبنى الأمل',currency:'EGP',amount:1200000,seller:'أحمد محمود',startDate:'2026-01-15'},
+    {id:'EGP-002',name:'مشروع توريد وتركيب دلتا',currency:'EGP',amount:850000,seller:'سارة خالد',startDate:'2026-02-01'},
+    {id:'EGP-003',name:'مشروع صيانة مؤسسة النور',currency:'EGP',amount:420000,seller:'محمد علي',startDate:'2026-03-10'},
+    {id:'EGP-004',name:'مشروع الفجر الصناعي',currency:'EGP',amount:680000,seller:'أحمد محمود',startDate:'2026-04-01'},
+    {id:'USD-001',name:'Global Export Contract Q1',currency:'USD',amount:120000,seller:'سارة خالد',startDate:'2026-01-20'},
+  ];
+
+  // ── Asset Models ──────────────────────────────────────────────────────────
+  STATE.assetModels = [
+    {id:1,name:'نموذج سيارات',method:'straight',life:5,lifeUnit:'years',residualPct:10,
+     assetAcc:'121101',accumAcc:'121103',expenseAcc:'711101',journal:'اهلاك الاصول',notes:'إهلاك سنوي 20%',status:'active'},
+    {id:2,name:'نموذج أثاث ومعدات',method:'straight',life:10,lifeUnit:'years',residualPct:5,
+     assetAcc:'121102',accumAcc:'121104',expenseAcc:'711102',journal:'اهلاك الاصول',notes:'إهلاك سنوي 10%',status:'active'},
+  ];
+
+  // ── Fixed Assets ──────────────────────────────────────────────────────────
+  STATE.assets = [
+    {id:1,name:'سيارة نقل - بيجو بوكسر 2023',code:'VH-001',modelId:1,cost:450000,residualAbs:null,residualPct:10,
+     accumDep:30000,startDate:'2025-01-01',acquireDate:'2024-12-15',supplier:'مورد السيارات الأول',
+     invoiceNo:'INV-2024-789',location:'المقر الرئيسي',custodian:'محمد أمين',notes:'',
+     postedPeriods:['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06',
+                    '2025-07','2025-08','2025-09','2025-10','2025-11','2025-12'],
+     lastDepYM:'2025-12',status:'active'},
+    {id:2,name:'سيارة سواحب - رنج روفر 2024',code:'VH-002',modelId:1,cost:1200000,residualAbs:null,residualPct:10,
+     accumDep:60000,startDate:'2025-01-01',acquireDate:'2024-11-01',supplier:'مورد السيارات الأول',
+     invoiceNo:'INV-2024-900',location:'المقر الرئيسي',custodian:'سعيد حسن',notes:'',
+     postedPeriods:['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06',
+                    '2025-07','2025-08','2025-09','2025-10','2025-11','2025-12'],
+     lastDepYM:'2025-12',status:'active'},
+    {id:3,name:'أثاث مكتبي - مكاتب وكراسي',code:'FF-001',modelId:2,cost:85000,residualAbs:null,residualPct:5,
+     accumDep:8500,startDate:'2025-01-01',acquireDate:'2024-12-01',supplier:'شركة الأثاث الحديث',
+     invoiceNo:'INV-2024-555',location:'مكتب الإدارة',custodian:'إدارة المكتب',notes:'',
+     postedPeriods:['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06',
+                    '2025-07','2025-08','2025-09','2025-10','2025-11','2025-12'],
+     lastDepYM:'2025-12',status:'active'},
+    {id:4,name:'معدات حاسوبية - سيرفرات وشبكة',code:'IT-001',modelId:2,cost:120000,residualAbs:null,residualPct:5,
+     accumDep:12000,startDate:'2025-01-01',acquireDate:'2024-10-15',supplier:'شركة تقنية المعلومات',
+     invoiceNo:'INV-2024-321',location:'غرفة السيرفر',custodian:'قسم تقنية المعلومات',notes:'',
+     postedPeriods:['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06',
+                    '2025-07','2025-08','2025-09','2025-10','2025-11','2025-12'],
+     lastDepYM:'2025-12',status:'active'},
+  ];
+
+  // ── Recurring Templates ───────────────────────────────────────────────────
+  STATE.recurringTemplates = [
+    {id:'rt_demo_1',name:'إيجار المقر الشهري',frequency:'monthly',
+     lines:[
+       {code:'611102',partner:'مؤسسة الأهرام العقارية',desc:'إيجار شهري - مكاتب الشركة',debit:18000,credit:0},
+       {code:'111102',partner:'',desc:'إيجار شهري - مكاتب الشركة',debit:0,credit:18000},
+     ],
+     startDate:'2026-01-01',lastGeneratedDate:'2026-09-01',active:true},
+    {id:'rt_demo_2',name:'اشتراك خدمات سحابية',frequency:'monthly',
+     lines:[
+       {code:'611103',partner:'AWS / Google',desc:'اشتراك خدمات سحابية شهري',debit:4500,credit:0},
+       {code:'111102',partner:'',desc:'اشتراك خدمات سحابية شهري',debit:0,credit:4500},
+     ],
+     startDate:'2026-01-01',lastGeneratedDate:'2026-09-01',active:true},
+    {id:'rt_demo_3',name:'قسط تأمين السيارات',frequency:'quarterly',
+     lines:[
+       {code:'611107',partner:'شركة التأمين الأهلية',desc:'قسط تأمين سيارات ربع سنوي',debit:12000,credit:0},
+       {code:'111102',partner:'',desc:'قسط تأمين سيارات ربع سنوي',debit:0,credit:12000},
+     ],
+     startDate:'2026-01-01',lastGeneratedDate:'2026-07-01',active:true},
+  ];
+
+  // ── Prepaid Expenses ──────────────────────────────────────────────────────
+  STATE.prepaidExpenses = [
+    {id:1,name:'تأمين المقر السنوي',cost:36000,startDate:'2026-01-01',months:12,
+     prepaidAccount:'112103',expenseAccount:'611107',journal:'عمليات متنوعة',notes:'',
+     postedPeriods:['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06',
+                    '2026-07','2026-08','2026-09'],
+     lastDepYM:'2026-09',status:'active'},
+    {id:2,name:'اشتراك برامج سنوي',cost:24000,startDate:'2026-01-01',months:12,
+     prepaidAccount:'112103',expenseAccount:'611103',journal:'عمليات متنوعة',notes:'',
+     postedPeriods:['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06',
+                    '2026-07','2026-08','2026-09'],
+     lastDepYM:'2026-09',status:'active'},
+  ];
 
   // ── Journal Lines ─────────────────────────────────────────────────────────
   const lines = [];
@@ -7866,274 +8429,644 @@ function loadDemoData(){
     });
   }
 
-  // Jan 2026 — Opening balances
+  // ── Opening Balances Jan 1 ────────────────────────────────────────────────
   je('OBJ-2026-01-0001','2026-01-01','القيد الافتتاحي',[
-    ['111102',450000,0,'','','EGP',1,'','أرصدة أول المدة'],
-    ['111101',35000,0,'','','EGP',1,'','أرصدة أول المدة'],
-    ['112101',120000,0,'','','EGP',1,'','أرصدة أول المدة'],
-    ['113101',85000,0,'','','EGP',1,'','أرصدة أول المدة'],
-    ['121101',200000,0,'','','EGP',1,'','أرصدة أول المدة'],
-    ['211101',0,95000,'','','EGP',1,'','أرصدة أول المدة'],
-    ['311101',0,750000,'','','EGP',1,'','أرصدة أول المدة'],
-    ['312101',0,45000,'','','EGP',1,'','أرصدة أول المدة'],
-  ]);
-  // Jan — purchase inventory
-  je('PUR-2026-01-0001','2026-01-08','فواتير المورد',[
-    ['113101',180000,0,'مورد الدلتا','مشروع أ','EGP',1,'بضاعة أ','شراء بضاعة'],
-    ['211101',0,180000,'مورد الدلتا','','EGP',1,'','شراء بضاعة'],
-  ]);
-  // Jan — sales
-  je('INV-2026-01-0001','2026-01-12','فواتير العملاء',[
-    ['112101',250000,0,'شركة الأمل','مشروع أ','EGP',1,'منتج 1','فاتورة مبيعات'],
-    ['411101',0,250000,'شركة الأمل','مشروع أ','EGP',1,'منتج 1','فاتورة مبيعات'],
-  ]);
-  je('INV-2026-01-0002','2026-01-15','فواتير العملاء',[
-    ['112101',85000,0,'مؤسسة النور','','EGP',1,'منتج 2','فاتورة مبيعات'],
-    ['411101',0,85000,'مؤسسة النور','','EGP',1,'منتج 2','فاتورة مبيعات'],
-  ]);
-  // Jan — COGS
-  je('MISC-2026-01-0001','2026-01-15','عمليات متنوعة',[
-    ['511101',175000,0,'','مشروع أ','EGP',1,'','تكلفة المبيعات يناير'],
-    ['113101',0,175000,'','','EGP',1,'','تكلفة المبيعات يناير'],
-  ]);
-  // Jan — salaries
-  je('MISC-2026-01-0002','2026-01-31','عمليات متنوعة',[
-    ['611101',55000,0,'','إدارة','EGP',1,'','رواتب يناير'],
-    ['111102',0,55000,'','','EGP',1,'','رواتب يناير'],
-  ]);
-  // Jan — rent + utilities
-  je('MISC-2026-01-0003','2026-01-31','عمليات متنوعة',[
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار يناير'],
-    ['611103',3500,0,'','إدارة','EGP',1,'','كهرباء يناير'],
-    ['111101',0,15500,'','','EGP',1,'','مصروفات ثابتة يناير'],
-  ]);
-  // Feb — collection from Amal
-  je('MISC-2026-02-0001','2026-02-05','عمليات متنوعة',[
-    ['111102',250000,0,'شركة الأمل','','EGP',1,'','تحصيل فاتورة'],
-    ['112101',0,250000,'شركة الأمل','','EGP',1,'','تحصيل فاتورة'],
-  ]);
-  // Feb — new purchase + sales
-  je('PUR-2026-02-0001','2026-02-10','فواتير المورد',[
-    ['113101',220000,0,'مورد الشرق','مشروع ب','EGP',1,'بضاعة ب','شراء بضاعة'],
-    ['211101',0,220000,'مورد الشرق','','EGP',1,'','شراء بضاعة'],
-  ]);
-  je('INV-2026-02-0001','2026-02-14','فواتير العملاء',[
-    ['112101',310000,0,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 1','فاتورة مبيعات'],
-    ['411101',0,310000,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 1','فاتورة مبيعات'],
-  ]);
-  je('INV-2026-02-0002','2026-02-20','فواتير العملاء',[
-    ['112101',140000,0,'شركة الأمل','','EGP',1,'منتج 2','فاتورة مبيعات'],
-    ['411101',0,140000,'شركة الأمل','','EGP',1,'منتج 2','فاتورة مبيعات'],
-  ]);
-  je('MISC-2026-02-0002','2026-02-20','عمليات متنوعة',[
-    ['511101',195000,0,'','مشروع ب','EGP',1,'','تكلفة المبيعات فبراير'],
-    ['113101',0,195000,'','','EGP',1,'','تكلفة المبيعات فبراير'],
-  ]);
-  // Feb — project revenue (contracting)
-  je('INV-2026-02-0003','2026-02-25','فواتير العملاء',[
-    ['112101',180000,0,'مؤسسة النور','مشروع ج','EGP',1,'','فاتورة مشروع'],
-    ['411103',0,180000,'مؤسسة النور','مشروع ج','EGP',1,'','إيراد مشروع'],
-  ]);
-  je('MISC-2026-02-0003','2026-02-25','عمليات متنوعة',[
-    ['511102',110000,0,'','مشروع ج','EGP',1,'','تكلفة المشروع'],
-    ['211101',0,110000,'','','EGP',1,'','مستحقات مورد المشروع'],
-  ]);
-  je('MISC-2026-02-0004','2026-02-28','عمليات متنوعة',[
-    ['611101',55000,0,'','إدارة','EGP',1,'','رواتب فبراير'],
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار فبراير'],
-    ['611103',3800,0,'','إدارة','EGP',1,'','كهرباء فبراير'],
-    ['111102',0,70800,'','','EGP',1,'','مصروفات فبراير'],
-  ]);
-  // Mar — USD export sale
-  je('INV-2026-03-0001','2026-03-05','فواتير العملاء',[
-    ['112102',25000,0,'Global Trading LLC','تصدير','USD',49.5,'منتج 1','صادرات'],
-    ['411102',0,25000,'Global Trading LLC','تصدير','USD',49.5,'منتج 1','صادرات'],
-  ]);
-  // Mar — payment to suppliers
-  je('MISC-2026-03-0001','2026-03-08','عمليات متنوعة',[
-    ['211101',305000,0,'','','EGP',1,'','سداد مستحقات الموردين'],
-    ['111102',0,305000,'','','EGP',1,'','سداد مستحقات الموردين'],
-  ]);
-  // Mar — more sales
-  je('INV-2026-03-0001','2026-03-12','فواتير العملاء',[
-    ['112101',290000,0,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 2','فاتورة مبيعات'],
-    ['411101',0,290000,'مجموعة دلتا','مشروع ب','EGP',1,'منتج 2','فاتورة مبيعات'],
-  ]);
-  je('MISC-2026-03-0002','2026-03-12','عمليات متنوعة',[
-    ['511101',220000,0,'','مشروع ب','EGP',1,'','تكلفة المبيعات مارس'],
-    ['113101',0,220000,'','','EGP',1,'','تكلفة المبيعات مارس'],
-  ]);
-  je('MISC-2026-03-0003','2026-03-31','عمليات متنوعة',[
-    ['611101',58000,0,'','إدارة','EGP',1,'','رواتب مارس'],
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار مارس'],
-    ['611103',4200,0,'','إدارة','EGP',1,'','كهرباء مارس'],
-    ['611105',8000,0,'','','EGP',1,'','دعاية وإعلان'],
-    ['111102',0,82200,'','','EGP',1,'','مصروفات مارس'],
-  ]);
-  // Mar — depreciation Q1
-  je('FIX-A-2026-03-0001','2026-03-31','اهلاك الاصول',[
-    ['711101',5000,0,'','','EGP',1,'','إهلاك ربع سنوي - سيارات'],
-    ['121103',0,5000,'','','EGP',1,'','مجمع إهلاك سيارات'],
-  ]);
-  // Apr — Q2 starts
-  je('INV-2026-04-0001','2026-04-08','فواتير العملاء',[
-    ['112101',380000,0,'شركة الأمل','مشروع د','EGP',1,'منتج 1','فاتورة مبيعات'],
-    ['411101',0,380000,'شركة الأمل','مشروع د','EGP',1,'منتج 1','فاتورة مبيعات'],
-  ]);
-  je('MISC-2026-04-0001','2026-04-08','عمليات متنوعة',[
-    ['511101',260000,0,'','مشروع د','EGP',1,'','تكلفة أبريل'],
-    ['113101',0,260000,'','','EGP',1,'','تكلفة أبريل'],
-  ]);
-  je('MISC-2026-04-0002','2026-04-30','عمليات متنوعة',[
-    ['611101',60000,0,'','إدارة','EGP',1,'','رواتب أبريل'],
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار أبريل'],
-    ['611103',4000,0,'','إدارة','EGP',1,'','كهرباء أبريل'],
-    ['111102',0,76000,'','','EGP',1,'','مصروفات أبريل'],
-  ]);
-  // May
-  je('PUR-2026-05-0001','2026-05-05','فواتير المورد',[
-    ['113101',300000,0,'مورد الدلتا','','EGP',1,'بضاعة ج','شراء بضاعة مايو'],
-    ['211101',0,300000,'مورد الدلتا','','EGP',1,'','شراء بضاعة مايو'],
-  ]);
-  je('INV-2026-05-0001','2026-05-12','فواتير العملاء',[
-    ['112101',420000,0,'مجموعة دلتا','مشروع د','EGP',1,'منتج 2','فاتورة مبيعات'],
-    ['411101',0,420000,'مجموعة دلتا','مشروع د','EGP',1,'منتج 2','فاتورة مبيعات'],
-  ]);
-  je('MISC-2026-05-0001','2026-05-12','عمليات متنوعة',[
-    ['511101',290000,0,'','مشروع د','EGP',1,'','تكلفة مايو'],
-    ['113101',0,290000,'','','EGP',1,'','تكلفة مايو'],
-  ]);
-  je('MISC-2026-05-0002','2026-05-31','عمليات متنوعة',[
-    ['611101',62000,0,'','إدارة','EGP',1,'','رواتب مايو'],
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار مايو'],
-    ['611103',4500,0,'','إدارة','EGP',1,'','كهرباء مايو'],
-    ['111102',0,78500,'','','EGP',1,'','مصروفات مايو'],
-  ]);
-  // June — FX gain
-  je('EXCH-2026-06-0001','2026-06-01','الفرق في سعر الصرف',[
-    ['111103',12250,0,'','','USD',50.5,'','تسوية فرق سعر الصرف'],
-    ['421101',0,12250,'','','EGP',1,'','إيرادات فروق عملة'],
-  ]);
-  je('INV-2026-06-0001','2026-06-15','فواتير العملاء',[
-    ['112101',350000,0,'شركة الأمل','مشروع ه','EGP',1,'منتج 1','فاتورة مبيعات'],
-    ['411101',0,350000,'شركة الأمل','مشروع ه','EGP',1,'منتج 1','فاتورة مبيعات'],
-  ]);
-  je('MISC-2026-06-0001','2026-06-15','عمليات متنوعة',[
-    ['511101',240000,0,'','مشروع ه','EGP',1,'','تكلفة يونيو'],
-    ['113101',0,240000,'','','EGP',1,'','تكلفة يونيو'],
-  ]);
-  je('MISC-2026-06-0002','2026-06-30','عمليات متنوعة',[
-    ['611101',62000,0,'','إدارة','EGP',1,'','رواتب يونيو'],
-    ['611102',12000,0,'','إدارة','EGP',1,'','إيجار يونيو'],
-    ['611103',4800,0,'','إدارة','EGP',1,'','كهرباء يونيو'],
-    ['611104',2200,0,'','','EGP',1,'','رسوم بنكية'],
-    ['611106',6500,0,'','','EGP',1,'','نقل وشحن'],
-    ['111102',0,87500,'','','EGP',1,'','مصروفات يونيو'],
-  ]);
-  je('FIX-A-2026-06-0001','2026-06-30','اهلاك الاصول',[
-    ['711101',5000,0,'','','EGP',1,'','إهلاك ربع سنوي Q2 - سيارات'],
-    ['121103',0,5000,'','','EGP',1,'','مجمع إهلاك سيارات'],
-  ]);
-  // Collections — Q1+Q2
-  je('MISC-2026-06-0003','2026-06-30','عمليات متنوعة',[
-    ['111102',700000,0,'','','EGP',1,'','تحصيل مستحقات عملاء'],
-    ['112101',0,700000,'','','EGP',1,'','تحصيل مستحقات عملاء'],
-  ]);
-  // ── Manufacturing entries (Q1) — for the manufacturing report ────────────
-  // Opening raw materials inventory
-  je('OBJ-2026-01-0002','2026-01-01','القيد الافتتاحي',[
-    ['113102',40000,0,'','','EGP',1,'','رصيد خامات أول المدة'],
-    ['113103',18000,0,'','','EGP',1,'','رصيد تحت التشغيل أول المدة'],
-    ['113104',25000,0,'','','EGP',1,'','رصيد تام الصنع أول المدة'],
-    ['311101',0,83000,'','','EGP',1,'','مقابل أرصدة المخزون الافتتاحي'],
-  ]);
-  // Raw material purchases
-  je('PUR-2026-01-0002','2026-01-10','فواتير المورد',[
-    ['113102',95000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات يناير'],
-    ['211101',0,95000,'مورد الخامات الأول','','EGP',1,'','شراء خامات يناير'],
-  ]);
-  // Direct labor + overhead
-  je('MISC-2026-01-0004','2026-01-31','عمليات متنوعة',[
-    ['521101',68000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يناير'],
-    ['111102',0,68000,'','','EGP',1,'','دفع تكاليف إنتاج يناير'],
-  ]);
-  // Feb raw materials purchase
-  je('PUR-2026-02-0002','2026-02-08','فواتير المورد',[
-    ['113102',110000,0,'مورد الخامات الثاني','خط إنتاج أ','EGP',1,'خامة ب','شراء خامات فبراير'],
-    ['211101',0,110000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات فبراير'],
-  ]);
-  // Feb manufacturing costs
-  je('MISC-2026-02-0005','2026-02-28','عمليات متنوعة',[
-    ['521101',72000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع فبراير'],
-    ['111102',0,72000,'','','EGP',1,'','دفع تكاليف إنتاج فبراير'],
-  ]);
-  // Mar raw materials + manufacturing
-  je('PUR-2026-03-0001','2026-03-06','فواتير المورد',[
-    ['113102',80000,0,'مورد الخامات الأول','خط إنتاج ب','EGP',1,'خامة أ','شراء خامات مارس'],
-    ['211101',0,80000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مارس'],
-  ]);
-  je('MISC-2026-03-0004','2026-03-31','عمليات متنوعة',[
-    ['521101',65000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع مارس'],
-    ['111102',0,65000,'','','EGP',1,'','دفع تكاليف إنتاج مارس'],
-  ]);
-  // Closing raw materials inventory (end Q1) — raw materials consumed = opening + purchases - closing
-  // Closing RM = 40k + 95k + 110k + 80k - 230k used = 95k
-  je('MISC-2026-03-0005','2026-03-31','عمليات متنوعة',[
-    ['113103',230000,0,'','','EGP',1,'','تحويل خامات لتحت التشغيل'],
-    ['113102',0,230000,'','','EGP',1,'','خامات مستخدمة Q1'],
-  ]);
-  // Transfer WIP to finished goods
-  je('MISC-2026-03-0006','2026-03-31','عمليات متنوعة',[
-    ['113104',280000,0,'','','EGP',1,'','تام الصنع من الإنتاج'],
-    ['113103',0,280000,'','','EGP',1,'','تحويل من تحت التشغيل'],
-  ]);
-  // Q2 manufacturing
-  je('PUR-2026-04-0001','2026-04-12','فواتير المورد',[
-    ['113102',130000,0,'مورد الخامات الثاني','خط إنتاج ب','EGP',1,'خامة ب','شراء خامات أبريل'],
-    ['211101',0,130000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات أبريل'],
-  ]);
-  je('MISC-2026-04-0003','2026-04-30','عمليات متنوعة',[
-    ['521101',78000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع أبريل'],
-    ['111102',0,78000,'','','EGP',1,'','دفع تكاليف إنتاج أبريل'],
-  ]);
-  je('PUR-2026-05-0002','2026-05-10','فواتير المورد',[
-    ['113102',115000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات مايو'],
-    ['211101',0,115000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مايو'],
-  ]);
-  je('MISC-2026-05-0003','2026-05-31','عمليات متنوعة',[
-    ['521101',82000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع مايو'],
-    ['111102',0,82000,'','','EGP',1,'','دفع تكاليف إنتاج مايو'],
-  ]);
-  je('MISC-2026-06-0004','2026-06-30','عمليات متنوعة',[
-    ['521101',76000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يونيو'],
-    ['111102',0,76000,'','','EGP',1,'','دفع تكاليف إنتاج يونيو'],
-  ]);
-  // Q2 raw materials consumed → WIP → FG
-  je('MISC-2026-06-0005','2026-06-30','عمليات متنوعة',[
-    ['113103',290000,0,'','','EGP',1,'','تحويل خامات Q2 لتحت التشغيل'],
-    ['113102',0,290000,'','','EGP',1,'','خامات مستخدمة Q2'],
-  ]);
-  je('MISC-2026-06-0006','2026-06-30','عمليات متنوعة',[
-    ['113104',340000,0,'','','EGP',1,'','تام الصنع Q2 من الإنتاج'],
-    ['113103',0,340000,'','','EGP',1,'','تحويل من تحت التشغيل Q2'],
+    ['111102',650000,0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['111101',45000, 0,'','','EGP',1,'','أرصدة أول المدة'],
+    ['111103',50000, 0,'','USD',1.00,50,'','أرصدة أول المدة'],
+    ['112101',180000,0,'','','EGP',1,'','أرصدة أول المدة - عملاء'],
+    ['113101',120000,0,'','','EGP',1,'','أرصدة أول المدة - مخزون'],
+    ['113102',55000, 0,'','','EGP',1,'','أرصدة أول المدة - خامات'],
+    ['113103',22000, 0,'','','EGP',1,'','أرصدة أول المدة - تحت التشغيل'],
+    ['113104',38000, 0,'','','EGP',1,'','أرصدة أول المدة - تام الصنع'],
+    ['121101',1650000,0,'','','EGP',1,'','أرصدة أول المدة - سيارات'],
+    ['121102',205000,0,'','','EGP',1,'','أرصدة أول المدة - أثاث'],
+    ['112103',60000, 0,'','','EGP',1,'','دفعات مقدمة للموردين'],
+    ['211101',0,145000,'','','EGP',1,'','أرصدة أول المدة - موردون'],
+    ['211102',0,30000,'','USD',1.00,50,'','أرصدة أول المدة - موردون أجانب'],
+    ['121103',0,90000,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['121104',0,20500,'','','EGP',1,'','مجمع إهلاك أثاث'],
+    ['311101',0,1500000,'','','EGP',1,'','رأس المال'],
+    ['312101',0,1289500,'','','EGP',1,'','أرباح مرحّلة'],
   ]);
 
+  // ═══════ JANUARY 2026 ═══════════════════════════════════════════════════
+  // Jan — شراء مخزون
+  je('PUR-2026-01-0001','2026-01-08','فواتير المورد',[
+    ['113101',220000,0,'مورد الدلتا','','EGP',1,'منتج أ - بضاعة','شراء بضاعة يناير'],
+    ['212102',30800,0,'مورد الدلتا','','EGP',1,'','ضريبة قيمة مضافة'],
+    ['211101',0,250800,'مورد الدلتا','','EGP',1,'','شراء بضاعة يناير'],
+  ]);
+  // Jan — فاتورة مبيعات 1
+  je('INV-2026-01-0001','2026-01-12','فواتير العملاء',[
+    ['112101',285000,0,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,250000,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,35000,'شركة الأمل للتجارة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-01-0001','2026-01-12','عمليات متنوعة',[
+    ['511101',155000,0,'','مشروع تطوير مبنى الأمل','EGP',1,'','تكلفة المبيعات يناير'],
+    ['113101',0,155000,'','','EGP',1,'','تكلفة المبيعات يناير'],
+  ]);
+  // Jan — فاتورة مبيعات 2
+  je('INV-2026-01-0002','2026-01-18','فواتير العملاء',[
+    ['112101',102600,0,'مؤسسة النور','','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['411101',0,90000,'مؤسسة النور','','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['212102',0,12600,'مؤسسة النور','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-01-0002','2026-01-18','عمليات متنوعة',[
+    ['511101',62000,0,'','','EGP',1,'','تكلفة المبيعات'],
+    ['113101',0,62000,'','','EGP',1,'','تكلفة المبيعات'],
+  ]);
+  // Jan — فاتورة مشروع
+  je('INV-2026-01-0003','2026-01-25','فواتير العملاء',[
+    ['112101',228000,0,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['411103',0,200000,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['212102',0,28000,'مجموعة دلتا للمقاولات','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-01-0003','2026-01-25','عمليات متنوعة',[
+    ['511102',130000,0,'','مشروع توريد وتركيب دلتا','EGP',1,'','تكلفة تنفيذ المشروع'],
+    ['211101',0,130000,'مورد الشرق','','EGP',1,'','مستحقات مورد المشروع'],
+  ]);
+  // Jan — رواتب ومصروفات
+  je('MISC-2026-01-0004','2026-01-31','عمليات متنوعة',[
+    ['611101',72000,0,'','إدارة','EGP',1,'','رواتب يناير'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار يناير'],
+    ['611103',5200,0,'','إدارة','EGP',1,'','كهرباء ومياه يناير'],
+    ['611105',9500,0,'','','EGP',1,'','دعاية وإعلان يناير'],
+    ['111102',0,104700,'','','EGP',1,'','مصروفات يناير'],
+  ]);
+  // Jan — إهلاك Q4 (عربون للإهلاك الشهري)
+  je('DEP-2026-01-0001','2026-01-31','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات يناير'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث يناير'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  // Jan — تصنيع
+  je('PUR-2026-01-0002','2026-01-10','فواتير المورد',[
+    ['113102',110000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات يناير'],
+    ['211101',0,110000,'مورد الخامات الأول','','EGP',1,'','شراء خامات يناير'],
+  ]);
+  je('MISC-2026-01-0005','2026-01-31','عمليات متنوعة',[
+    ['521101',78000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يناير'],
+    ['111102',0,78000,'','','EGP',1,'','دفع تكاليف إنتاج يناير'],
+  ]);
+
+  // ═══════ FEBRUARY 2026 ══════════════════════════════════════════════════
+  // Feb — تحصيل من الأمل
+  je('RCPT-2026-02-0001','2026-02-05','سند قبض',[
+    ['111102',285000,0,'شركة الأمل للتجارة','','EGP',1,'','تحصيل فاتورة INV-2026-01-0001'],
+    ['112101',0,285000,'شركة الأمل للتجارة','','EGP',1,'','تحصيل فاتورة INV-2026-01-0001'],
+  ]);
+  // Feb — شراء
+  je('PUR-2026-02-0001','2026-02-10','فواتير المورد',[
+    ['113101',260000,0,'مورد الشرق','','EGP',1,'منتج ب - بضاعة','شراء بضاعة فبراير'],
+    ['212102',36400,0,'مورد الشرق','','EGP',1,'','ضريبة قيمة مضافة'],
+    ['211101',0,296400,'مورد الشرق','','EGP',1,'','شراء بضاعة فبراير'],
+  ]);
+  // Feb — مبيعات
+  je('INV-2026-02-0001','2026-02-14','فواتير العملاء',[
+    ['112101',356400,0,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,312632,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,43768,'مجموعة دلتا للمقاولات','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-02-0001','2026-02-14','عمليات متنوعة',[
+    ['511101',215000,0,'','مشروع توريد وتركيب دلتا','EGP',1,'','تكلفة المبيعات فبراير'],
+    ['113101',0,215000,'','','EGP',1,'','تكلفة المبيعات فبراير'],
+  ]);
+  je('INV-2026-02-0002','2026-02-20','فواتير العملاء',[
+    ['112101',159600,0,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['411101',0,140000,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['212102',0,19600,'شركة الأمل للتجارة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-02-0002','2026-02-20','عمليات متنوعة',[
+    ['511101',95000,0,'','مشروع تطوير مبنى الأمل','EGP',1,'','تكلفة المبيعات'],
+    ['113101',0,95000,'','','EGP',1,'','تكلفة المبيعات'],
+  ]);
+  // Feb — مشروع
+  je('INV-2026-02-0003','2026-02-25','فواتير العملاء',[
+    ['112101',205200,0,'مؤسسة النور','مشروع صيانة مؤسسة النور','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['411103',0,180000,'مؤسسة النور','مشروع صيانة مؤسسة النور','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['212102',0,25200,'مؤسسة النور','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-02-0003','2026-02-25','عمليات متنوعة',[
+    ['511102',118000,0,'','مشروع صيانة مؤسسة النور','EGP',1,'','تكلفة تنفيذ المشروع'],
+    ['211101',0,118000,'','','EGP',1,'','مستحقات مورد المشروع'],
+  ]);
+  // Feb — سند صرف للمورد
+  je('PAY-2026-02-0001','2026-02-22','سند صرف',[
+    ['211101',248000,0,'مورد الدلتا','','EGP',1,'','سداد فاتورة PUR-2026-01-0001'],
+    ['111102',0,248000,'مورد الدلتا','','EGP',1,'','سداد فاتورة PUR-2026-01-0001'],
+  ]);
+  je('MISC-2026-02-0004','2026-02-28','عمليات متنوعة',[
+    ['611101',74000,0,'','إدارة','EGP',1,'','رواتب فبراير'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار فبراير'],
+    ['611103',5800,0,'','إدارة','EGP',1,'','كهرباء ومياه فبراير'],
+    ['611106',7200,0,'','','EGP',1,'','مصروفات نقل وشحن فبراير'],
+    ['111102',0,105000,'','','EGP',1,'','مصروفات فبراير'],
+  ]);
+  je('DEP-2026-02-0001','2026-02-28','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات فبراير'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث فبراير'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  je('PUR-2026-02-0002','2026-02-08','فواتير المورد',[
+    ['113102',125000,0,'مورد الخامات الثاني','خط إنتاج أ','EGP',1,'خامة ب','شراء خامات فبراير'],
+    ['211101',0,125000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات فبراير'],
+  ]);
+  je('MISC-2026-02-0005','2026-02-28','عمليات متنوعة',[
+    ['521101',82000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع فبراير'],
+    ['111102',0,82000,'','','EGP',1,'','دفع تكاليف إنتاج فبراير'],
+  ]);
+
+  // ═══════ MARCH 2026 ════════════════════════════════════════════════════
+  // Mar — صادرات USD
+  je('INV-2026-03-0001','2026-03-05','فواتير العملاء',[
+    ['112102',30000,0,'Global Trading LLC','USD-001','USD',50.5,'منتج ج - تصدير','صادرات Q1'],
+    ['411102',0,30000,'Global Trading LLC','USD-001','USD',50.5,'منتج ج - تصدير','صادرات Q1'],
+  ]);
+  je('MISC-2026-03-0001','2026-03-05','عمليات متنوعة',[
+    ['511101',950000,0,'','USD-001','EGP',1,'','تكلفة الصادرات - مستلزمات إنتاج'],
+    ['113101',0,950000,'','','EGP',1,'','تكلفة الصادرات'],
+  ]);
+  // Mar — تحصيل مستحقات
+  je('RCPT-2026-03-0001','2026-03-08','سند قبض',[
+    ['111102',560000,0,'','','EGP',1,'','تحصيل مستحقات عملاء يناير-فبراير'],
+    ['112101',0,560000,'','','EGP',1,'','تحصيل مستحقات عملاء'],
+  ]);
+  // Mar — مبيعات محلية
+  je('INV-2026-03-0002','2026-03-12','فواتير العملاء',[
+    ['112101',330900,0,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,290263,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,40637,'مجموعة دلتا للمقاولات','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-03-0002','2026-03-12','عمليات متنوعة',[
+    ['511101',200000,0,'','مشروع توريد وتركيب دلتا','EGP',1,'','تكلفة المبيعات مارس'],
+    ['113101',0,200000,'','','EGP',1,'','تكلفة المبيعات مارس'],
+  ]);
+  // Mar — سداد موردين
+  je('PAY-2026-03-0001','2026-03-15','سند صرف',[
+    ['211101',373400,0,'مورد الشرق','','EGP',1,'','سداد مستحقات مورد الشرق'],
+    ['111102',0,373400,'مورد الشرق','','EGP',1,'','سداد مستحقات مورد الشرق'],
+  ]);
+  je('MISC-2026-03-0003','2026-03-31','عمليات متنوعة',[
+    ['611101',76000,0,'','إدارة','EGP',1,'','رواتب مارس'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار مارس'],
+    ['611103',6100,0,'','إدارة','EGP',1,'','كهرباء ومياه مارس'],
+    ['611105',12000,0,'','','EGP',1,'','دعاية وإعلان مارس'],
+    ['611104',3200,0,'','','EGP',1,'','مصروفات بنكية'],
+    ['111102',0,115300,'','','EGP',1,'','مصروفات مارس'],
+  ]);
+  je('DEP-2026-03-0001','2026-03-31','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات مارس'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث مارس'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  // Mar — تصنيع
+  je('PUR-2026-03-0001','2026-03-06','فواتير المورد',[
+    ['113102',95000,0,'مورد الخامات الأول','خط إنتاج ب','EGP',1,'خامة أ','شراء خامات مارس'],
+    ['211101',0,95000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مارس'],
+  ]);
+  je('MISC-2026-03-0004','2026-03-31','عمليات متنوعة',[
+    ['521101',74000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع مارس'],
+    ['111102',0,74000,'','','EGP',1,'','دفع تكاليف إنتاج مارس'],
+  ]);
+  je('MISC-2026-03-0005','2026-03-31','عمليات متنوعة',[
+    ['113103',260000,0,'','','EGP',1,'','تحويل خامات Q1 لتحت التشغيل'],
+    ['113102',0,260000,'','','EGP',1,'','خامات مستخدمة Q1'],
+  ]);
+  je('MISC-2026-03-0006','2026-03-31','عمليات متنوعة',[
+    ['113104',316000,0,'','','EGP',1,'','تام الصنع Q1'],
+    ['113103',0,316000,'','','EGP',1,'','تحويل من تحت التشغيل Q1'],
+  ]);
+
+  // ═══════ APRIL 2026 ════════════════════════════════════════════════════
+  je('INV-2026-04-0001','2026-04-08','فواتير العملاء',[
+    ['112101',432600,0,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,380000,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,53200,'شركة الفجر للصناعة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-04-0001','2026-04-08','عمليات متنوعة',[
+    ['511101',260000,0,'','مشروع الفجر الصناعي','EGP',1,'','تكلفة المبيعات أبريل'],
+    ['113101',0,260000,'','','EGP',1,'','تكلفة المبيعات أبريل'],
+  ]);
+  // Apr — تحصيل
+  je('RCPT-2026-04-0001','2026-04-10','سند قبض',[
+    ['111102',330900,0,'مجموعة دلتا للمقاولات','','EGP',1,'','تحصيل فاتورة مارس'],
+    ['112101',0,330900,'مجموعة دلتا للمقاولات','','EGP',1,'','تحصيل فاتورة مارس'],
+  ]);
+  je('INV-2026-04-0002','2026-04-20','فواتير العملاء',[
+    ['112101',114000,0,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'خدمة صيانة دورية','خدمة صيانة'],
+    ['411103',0,100000,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'خدمة صيانة دورية','خدمة صيانة'],
+    ['212102',0,14000,'شركة الأمل للتجارة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-04-0002','2026-04-30','عمليات متنوعة',[
+    ['611101',78000,0,'','إدارة','EGP',1,'','رواتب أبريل'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار أبريل'],
+    ['611103',5500,0,'','إدارة','EGP',1,'','كهرباء ومياه أبريل'],
+    ['111102',0,101500,'','','EGP',1,'','مصروفات أبريل'],
+  ]);
+  je('DEP-2026-04-0001','2026-04-30','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات أبريل'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث أبريل'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  je('PUR-2026-04-0001','2026-04-12','فواتير المورد',[
+    ['113102',145000,0,'مورد الخامات الثاني','خط إنتاج ب','EGP',1,'خامة ب','شراء خامات أبريل'],
+    ['211101',0,145000,'مورد الخامات الثاني','','EGP',1,'','شراء خامات أبريل'],
+  ]);
+  je('MISC-2026-04-0003','2026-04-30','عمليات متنوعة',[
+    ['521101',88000,0,'','خط إنتاج ب','EGP',1,'','أجور مباشرة وتكاليف مصنع أبريل'],
+    ['111102',0,88000,'','','EGP',1,'','دفع تكاليف إنتاج أبريل'],
+  ]);
+
+  // ═══════ MAY 2026 ══════════════════════════════════════════════════════
+  je('PUR-2026-05-0001','2026-05-05','فواتير المورد',[
+    ['113101',340000,0,'مورد الدلتا','','EGP',1,'منتج أ - بضاعة','شراء بضاعة مايو'],
+    ['212102',47600,0,'مورد الدلتا','','EGP',1,'','ضريبة قيمة مضافة'],
+    ['211101',0,387600,'مورد الدلتا','','EGP',1,'','شراء بضاعة مايو'],
+  ]);
+  je('INV-2026-05-0001','2026-05-12','فواتير العملاء',[
+    ['112101',478800,0,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,420000,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,58800,'مجموعة دلتا للمقاولات','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-05-0001','2026-05-12','عمليات متنوعة',[
+    ['511101',288000,0,'','مشروع توريد وتركيب دلتا','EGP',1,'','تكلفة المبيعات مايو'],
+    ['113101',0,288000,'','','EGP',1,'','تكلفة المبيعات مايو'],
+  ]);
+  je('RCPT-2026-05-0001','2026-05-15','سند قبض',[
+    ['111102',432600,0,'شركة الفجر للصناعة','','EGP',1,'','تحصيل فاتورة أبريل'],
+    ['112101',0,432600,'شركة الفجر للصناعة','','EGP',1,'','تحصيل فاتورة أبريل'],
+  ]);
+  je('MISC-2026-05-0002','2026-05-31','عمليات متنوعة',[
+    ['611101',80000,0,'','إدارة','EGP',1,'','رواتب مايو'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار مايو'],
+    ['611103',6200,0,'','إدارة','EGP',1,'','كهرباء ومياه مايو'],
+    ['611106',8500,0,'','','EGP',1,'','مصروفات نقل وشحن مايو'],
+    ['111102',0,112700,'','','EGP',1,'','مصروفات مايو'],
+  ]);
+  je('DEP-2026-05-0001','2026-05-31','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات مايو'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث مايو'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  je('PUR-2026-05-0002','2026-05-10','فواتير المورد',[
+    ['113102',128000,0,'مورد الخامات الأول','خط إنتاج أ','EGP',1,'خامة أ','شراء خامات مايو'],
+    ['211101',0,128000,'مورد الخامات الأول','','EGP',1,'','شراء خامات مايو'],
+  ]);
+  je('MISC-2026-05-0003','2026-05-31','عمليات متنوعة',[
+    ['521101',92000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع مايو'],
+    ['111102',0,92000,'','','EGP',1,'','دفع تكاليف إنتاج مايو'],
+  ]);
+
+  // ═══════ JUNE 2026 ════════════════════════════════════════════════════
+  // Jun — تسوية فروق عملة
+  je('EXCH-2026-06-0001','2026-06-01','الفرق في سعر الصرف',[
+    ['111103',15250,0,'','','USD',51,'','تسوية فرق سعر الصرف - دولار'],
+    ['421101',0,15250,'','','EGP',1,'','إيرادات فروق عملة يونيو'],
+  ]);
+  // Jun — مبيعات
+  je('INV-2026-06-0001','2026-06-10','فواتير العملاء',[
+    ['112101',399000,0,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['411101',0,350000,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['212102',0,49000,'شركة الأمل للتجارة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-06-0001','2026-06-10','عمليات متنوعة',[
+    ['511101',238000,0,'','مشروع تطوير مبنى الأمل','EGP',1,'','تكلفة المبيعات يونيو'],
+    ['113101',0,238000,'','','EGP',1,'','تكلفة المبيعات يونيو'],
+  ]);
+  // Jun — مشروع جديد - الفجر
+  je('INV-2026-06-0002','2026-06-20','فواتير العملاء',[
+    ['112101',342000,0,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['411103',0,300000,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'خدمة تنفيذ مشروع','فاتورة مشروع'],
+    ['212102',0,42000,'شركة الفجر للصناعة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-06-0002','2026-06-20','عمليات متنوعة',[
+    ['511102',195000,0,'','مشروع الفجر الصناعي','EGP',1,'','تكلفة تنفيذ المشروع'],
+    ['211101',0,195000,'','','EGP',1,'','مستحقات مورد المشروع'],
+  ]);
+  // Jun — تحصيل كبير
+  je('RCPT-2026-06-0001','2026-06-25','سند قبض',[
+    ['111102',820000,0,'','','EGP',1,'','تحصيل مستحقات عملاء H1'],
+    ['112101',0,820000,'','','EGP',1,'','تحصيل مستحقات عملاء H1'],
+  ]);
+  // Jun — سداد موردين
+  je('PAY-2026-06-0001','2026-06-28','سند صرف',[
+    ['211101',520000,0,'','','EGP',1,'','سداد مستحقات موردين H1'],
+    ['111102',0,520000,'','','EGP',1,'','سداد مستحقات موردين H1'],
+  ]);
+  je('MISC-2026-06-0003','2026-06-30','عمليات متنوعة',[
+    ['611101',82000,0,'','إدارة','EGP',1,'','رواتب يونيو'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار يونيو'],
+    ['611103',6800,0,'','إدارة','EGP',1,'','كهرباء ومياه يونيو'],
+    ['611104',4100,0,'','','EGP',1,'','مصروفات بنكية يونيو'],
+    ['611106',9200,0,'','','EGP',1,'','مصروفات نقل وشحن يونيو'],
+    ['111102',0,120100,'','','EGP',1,'','مصروفات يونيو'],
+  ]);
+  je('DEP-2026-06-0001','2026-06-30','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات يونيو'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث يونيو'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+  je('MISC-2026-06-0004','2026-06-30','عمليات متنوعة',[
+    ['521101',85000,0,'','خط إنتاج أ','EGP',1,'','أجور مباشرة وتكاليف مصنع يونيو'],
+    ['111102',0,85000,'','','EGP',1,'','دفع تكاليف إنتاج يونيو'],
+  ]);
+  je('MISC-2026-06-0005','2026-06-30','عمليات متنوعة',[
+    ['113103',328000,0,'','','EGP',1,'','تحويل خامات Q2 لتحت التشغيل'],
+    ['113102',0,328000,'','','EGP',1,'','خامات مستخدمة Q2'],
+  ]);
+  je('MISC-2026-06-0006','2026-06-30','عمليات متنوعة',[
+    ['113104',388000,0,'','','EGP',1,'','تام الصنع Q2'],
+    ['113103',0,388000,'','','EGP',1,'','تحويل من تحت التشغيل Q2'],
+  ]);
+
+  // ═══════ JULY 2026 ════════════════════════════════════════════════════
+  je('INV-2026-07-0001','2026-07-08','فواتير العملاء',[
+    ['112101',513000,0,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,450000,'شركة الأمل للتجارة','مشروع تطوير مبنى الأمل','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,63000,'شركة الأمل للتجارة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-07-0001','2026-07-08','عمليات متنوعة',[
+    ['511101',308000,0,'','مشروع تطوير مبنى الأمل','EGP',1,'','تكلفة المبيعات يوليو'],
+    ['113101',0,308000,'','','EGP',1,'','تكلفة المبيعات يوليو'],
+  ]);
+  je('PUR-2026-07-0001','2026-07-12','فواتير المورد',[
+    ['113101',380000,0,'مورد الشرق','','EGP',1,'منتج ب - بضاعة','شراء بضاعة يوليو'],
+    ['212102',53200,0,'مورد الشرق','','EGP',1,'','ضريبة قيمة مضافة'],
+    ['211101',0,433200,'مورد الشرق','','EGP',1,'','شراء بضاعة يوليو'],
+  ]);
+  je('RCPT-2026-07-0001','2026-07-15','سند قبض',[
+    ['111102',741000,0,'','','EGP',1,'','تحصيل مستحقات يونيو'],
+    ['112101',0,741000,'','','EGP',1,'','تحصيل مستحقات يونيو'],
+  ]);
+  je('MISC-2026-07-0002','2026-07-31','عمليات متنوعة',[
+    ['611101',84000,0,'','إدارة','EGP',1,'','رواتب يوليو'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار يوليو'],
+    ['611103',7500,0,'','إدارة','EGP',1,'','كهرباء ومياه يوليو'],
+    ['111102',0,109500,'','','EGP',1,'','مصروفات يوليو'],
+  ]);
+  je('DEP-2026-07-0001','2026-07-31','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات يوليو'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث يوليو'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+
+  // ═══════ AUGUST 2026 ══════════════════════════════════════════════════
+  je('INV-2026-08-0001','2026-08-10','فواتير العملاء',[
+    ['112101',399000,0,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['411101',0,350000,'مجموعة دلتا للمقاولات','مشروع توريد وتركيب دلتا','EGP',1,'منتج ب - بضاعة','فاتورة مبيعات'],
+    ['212102',0,49000,'مجموعة دلتا للمقاولات','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-08-0001','2026-08-10','عمليات متنوعة',[
+    ['511101',240000,0,'','مشروع توريد وتركيب دلتا','EGP',1,'','تكلفة المبيعات أغسطس'],
+    ['113101',0,240000,'','','EGP',1,'','تكلفة المبيعات أغسطس'],
+  ]);
+  // Aug — صادرات جديدة
+  je('INV-2026-08-0002','2026-08-20','فواتير العملاء',[
+    ['112102',40000,0,'Global Trading LLC','USD-001','USD',51,'منتج ج - تصدير','صادرات Q3'],
+    ['411102',0,40000,'Global Trading LLC','USD-001','USD',51,'منتج ج - تصدير','صادرات Q3'],
+  ]);
+  je('PAY-2026-08-0001','2026-08-22','سند صرف',[
+    ['211101',433200,0,'مورد الشرق','','EGP',1,'','سداد فاتورة شراء يوليو'],
+    ['111102',0,433200,'مورد الشرق','','EGP',1,'','سداد فاتورة شراء يوليو'],
+  ]);
+  je('MISC-2026-08-0002','2026-08-31','عمليات متنوعة',[
+    ['611101',86000,0,'','إدارة','EGP',1,'','رواتب أغسطس'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار أغسطس'],
+    ['611103',8200,0,'','إدارة','EGP',1,'','كهرباء ومياه أغسطس'],
+    ['611107',15000,0,'','','EGP',1,'','مصروفات صيانة أغسطس'],
+    ['111102',0,127200,'','','EGP',1,'','مصروفات أغسطس'],
+  ]);
+  je('DEP-2026-08-0001','2026-08-31','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات أغسطس'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث أغسطس'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+
+  // ═══════ SEPTEMBER 2026 ════════════════════════════════════════════════
+  je('INV-2026-09-0001','2026-09-05','فواتير العملاء',[
+    ['112101',570000,0,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['411101',0,500000,'شركة الفجر للصناعة','مشروع الفجر الصناعي','EGP',1,'منتج أ - بضاعة','فاتورة مبيعات'],
+    ['212102',0,70000,'شركة الفجر للصناعة','','EGP',1,'','ضريبة قيمة مضافة'],
+  ]);
+  je('MISC-2026-09-0001','2026-09-05','عمليات متنوعة',[
+    ['511101',342000,0,'','مشروع الفجر الصناعي','EGP',1,'','تكلفة المبيعات سبتمبر'],
+    ['113101',0,342000,'','','EGP',1,'','تكلفة المبيعات سبتمبر'],
+  ]);
+  je('RCPT-2026-09-0001','2026-09-10','سند قبض',[
+    ['111102',912000,0,'','','EGP',1,'','تحصيل مستحقات يوليو-أغسطس'],
+    ['112101',0,912000,'','','EGP',1,'','تحصيل مستحقات'],
+  ]);
+  je('MISC-2026-09-0002','2026-09-15','عمليات متنوعة',[
+    ['611105',18000,0,'','','EGP',1,'','حملة دعاية وإعلان Q3'],
+    ['111102',0,18000,'','','EGP',1,'','حملة دعاية وإعلان Q3'],
+  ]);
+  je('MISC-2026-09-0003','2026-09-30','عمليات متنوعة',[
+    ['611101',88000,0,'','إدارة','EGP',1,'','رواتب سبتمبر'],
+    ['611102',18000,0,'','إدارة','EGP',1,'','إيجار سبتمبر'],
+    ['611103',7100,0,'','إدارة','EGP',1,'','كهرباء ومياه سبتمبر'],
+    ['111102',0,113100,'','','EGP',1,'','مصروفات سبتمبر'],
+  ]);
+  je('DEP-2026-09-0001','2026-09-30','اهلاك الاصول',[
+    ['711101',18750,0,'','','EGP',1,'','إهلاك سيارات سبتمبر'],
+    ['121103',0,18750,'','','EGP',1,'','مجمع إهلاك سيارات'],
+    ['711102',1743.75,0,'','','EGP',1,'','إهلاك أثاث سبتمبر'],
+    ['121104',0,1743.75,'','','EGP',1,'','مجمع إهلاك أثاث'],
+  ]);
+
+  // ── Voucher Extras (serial numbers for سندات القبض والصرف) ───────────────
+  STATE.voucherExtras = [
+    {entryNo:'RCPT-2026-02-0001',serial:'سند قبض - خزينة رئيسية رقم 000001',description:'تحصيل فاتورة INV-2026-01-0001 - شركة الأمل'},
+    {entryNo:'PAY-2026-02-0001', serial:'سند صرف - بنك أهلي مصر - جاري رقم 000001',description:'سداد فاتورة PUR-2026-01-0001 - مورد الدلتا'},
+    {entryNo:'RCPT-2026-03-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000001',description:'تحصيل مستحقات يناير-فبراير'},
+    {entryNo:'PAY-2026-03-0001', serial:'سند صرف - بنك أهلي مصر - جاري رقم 000002',description:'سداد مستحقات مورد الشرق'},
+    {entryNo:'RCPT-2026-04-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000002',description:'تحصيل فاتورة مارس - دلتا'},
+    {entryNo:'RCPT-2026-05-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000003',description:'تحصيل فاتورة أبريل - الفجر'},
+    {entryNo:'RCPT-2026-06-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000004',description:'تحصيل مستحقات H1'},
+    {entryNo:'PAY-2026-06-0001', serial:'سند صرف - بنك أهلي مصر - جاري رقم 000003',description:'سداد مستحقات موردين H1'},
+    {entryNo:'RCPT-2026-07-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000005',description:'تحصيل مستحقات يونيو'},
+    {entryNo:'PAY-2026-08-0001', serial:'سند صرف - بنك أهلي مصر - جاري رقم 000004',description:'سداد فاتورة شراء يوليو'},
+    {entryNo:'RCPT-2026-09-0001',serial:'سند قبض - بنك أهلي مصر - جاري رقم 000006',description:'تحصيل مستحقات يوليو-أغسطس'},
+  ];
+
+  // ── Invoice Drafts (فواتير منتظرة - draft state) ─────────────────────────
+  STATE.invoiceDrafts = [
+    {id:'d1',date:'2026-09-15',dueDate:'2026-10-15',customerId:2,notes:'فاتورة تحت الإعداد',
+     lines:[{productId:1,name:'منتج أ - بضاعة',unit:'قطعة',qty:50,unitPrice:2500,discountPct:0,taxPct:14,lineTotal:142500}]},
+    {id:'d2',date:'2026-09-18',dueDate:'2026-10-18',customerId:5,notes:'عرض سعر تحت المراجعة',
+     lines:[{productId:3,name:'خدمة تنفيذ مشروع',unit:'مشروع',qty:1,unitPrice:80000,discountPct:5,taxPct:14,lineTotal:86640}]},
+  ];
+
+  // ── Invoice Extras (تفاصيل طباعة الفواتير المرحّلة) ─────────────────────
+  STATE.invoiceExtras = [
+    {entryNo:'INV-2026-01-0001',invoiceNo:'INV-2026-01-0001',dueDate:'2026-02-12',notes:'شكراً لتعاملكم',
+     lineExtras:[{code:'411101',qty:100,unitPrice:2500,discountPct:0}]},
+    {entryNo:'INV-2026-01-0002',invoiceNo:'INV-2026-01-0002',dueDate:'2026-02-18',notes:'',
+     lineExtras:[{code:'411101',qty:50,unitPrice:1800,discountPct:0}]},
+    {entryNo:'INV-2026-01-0003',invoiceNo:'INV-2026-01-0003',dueDate:'2026-02-25',notes:'شامل تكاليف التنفيذ',
+     lineExtras:[{code:'411103',qty:4,unitPrice:50000,discountPct:0}]},
+    {entryNo:'INV-2026-02-0001',invoiceNo:'INV-2026-02-0001',dueDate:'2026-03-14',notes:'',
+     lineExtras:[{code:'411101',qty:125,unitPrice:2500,discountPct:0}]},
+    {entryNo:'INV-2026-02-0002',invoiceNo:'INV-2026-02-0002',dueDate:'2026-03-20',notes:'',
+     lineExtras:[{code:'411101',qty:78,unitPrice:1800,discountPct:0}]},
+    {entryNo:'INV-2026-02-0003',invoiceNo:'INV-2026-02-0003',dueDate:'2026-03-25',notes:'',
+     lineExtras:[{code:'411103',qty:1,unitPrice:180000,discountPct:0}]},
+    {entryNo:'INV-2026-03-0001',invoiceNo:'INV-2026-03-0001',dueDate:'2026-04-05',notes:'Export - USD',
+     lineExtras:[{code:'411102',qty:30000,unitPrice:1,discountPct:0}]},
+    {entryNo:'INV-2026-03-0002',invoiceNo:'INV-2026-03-0002',dueDate:'2026-04-12',notes:'',
+     lineExtras:[{code:'411101',qty:132,unitPrice:2500,discountPct:2}]},
+    {entryNo:'INV-2026-04-0001',invoiceNo:'INV-2026-04-0001',dueDate:'2026-05-08',notes:'',
+     lineExtras:[{code:'411101',qty:152,unitPrice:2500,discountPct:0}]},
+    {entryNo:'INV-2026-04-0002',invoiceNo:'INV-2026-04-0002',dueDate:'2026-05-20',notes:'',
+     lineExtras:[{code:'411103',qty:1,unitPrice:100000,discountPct:0}]},
+    {entryNo:'INV-2026-05-0001',invoiceNo:'INV-2026-05-0001',dueDate:'2026-06-12',notes:'',
+     lineExtras:[{code:'411101',qty:168,unitPrice:2500,discountPct:0}]},
+    {entryNo:'INV-2026-06-0001',invoiceNo:'INV-2026-06-0001',dueDate:'2026-07-10',notes:'',
+     lineExtras:[{code:'411101',qty:194,unitPrice:1800,discountPct:0}]},
+    {entryNo:'INV-2026-06-0002',invoiceNo:'INV-2026-06-0002',dueDate:'2026-07-20',notes:'',
+     lineExtras:[{code:'411103',qty:6,unitPrice:50000,discountPct:0}]},
+    {entryNo:'INV-2026-07-0001',invoiceNo:'INV-2026-07-0001',dueDate:'2026-08-08',notes:'',
+     lineExtras:[{code:'411101',qty:180,unitPrice:2500,discountPct:0}]},
+    {entryNo:'INV-2026-08-0001',invoiceNo:'INV-2026-08-0001',dueDate:'2026-09-10',notes:'',
+     lineExtras:[{code:'411101',qty:194,unitPrice:1800,discountPct:0}]},
+    {entryNo:'INV-2026-08-0002',invoiceNo:'INV-2026-08-0002',dueDate:'2026-09-20',notes:'Export Q3',
+     lineExtras:[{code:'411102',qty:40000,unitPrice:1,discountPct:0}]},
+    {entryNo:'INV-2026-09-0001',invoiceNo:'INV-2026-09-0001',dueDate:'2026-10-05',notes:'',
+     lineExtras:[{code:'411101',qty:200,unitPrice:2500,discountPct:0}]},
+  ];
+
+  // ── Purchase Invoice Drafts ────────────────────────────────────────────────
+  STATE.purchaseInvoiceDrafts = [
+    {id:'pd1',date:'2026-09-17',dueDate:'2026-10-17',vendorName:'مورد الدلتا',vendorAccount:'211101',
+     notes:'تحت المراجعة',
+     lines:[{name:'منتج أ - بضاعة',unit:'قطعة',qty:100,unitPrice:1400,discountPct:0,taxPct:14,lineTotal:159600}]},
+  ];
+  STATE.purchaseInvoiceExtras = [];
+
+  // ── Stock Moves (legacy — kept for backward-compat with old invoice posting) ─
+  STATE.stockMoves = [
+    {id:'sm_d001',date:'2026-01-01',productId:1,type:'in', qty:100,unitCost:100,   note:'رصيد افتتاحي OPN-0001',source:'opening',seq:1},
+    {id:'sm_d002',date:'2026-01-08',productId:1,type:'in', qty:50, unitCost:120,   note:'استلام مشتريات GRN-0001',source:'purchase',seq:2},
+    {id:'sm_d003',date:'2026-01-15',productId:1,type:'out',qty:20, unitCost:106.6667,note:'صرف مبيعات DLV-0001',source:'sales-invoice',seq:3},
+    {id:'sm_d004',date:'2026-02-01',productId:1,type:'in', qty:100,unitCost:150,   note:'استلام مشتريات GRN-0002',source:'purchase',seq:4},
+    {id:'sm_d005',date:'2026-02-10',productId:1,type:'adjustment',qty:-3,unitCost:0,note:'تسوية جرد ADJ-0001',source:'adjustment',seq:5},
+    {id:'sm_d006',date:'2026-01-01',productId:5,type:'in', qty:50, unitCost:500,   note:'رصيد افتتاحي OPN-0002',source:'opening',seq:6},
+    {id:'sm_d007',date:'2026-01-05',productId:2,type:'in', qty:120,unitCost:8.3333,note:'استلام 10 كرتونة = 120 لتر GRN-0003',source:'purchase',seq:7},
+    {id:'sm_d008',date:'2026-01-10',productId:2,type:'out',qty:5,  unitCost:8.3333,note:'صرف مبيعات DLV-0002',source:'sales-invoice',seq:8},
+  ];
+
+  // ── Stock Ledger (Enhanced Inventory v2 — Perpetual / Moving Weighted Avg) ─
+  // Test data covering §28 scenarios: opening balance, purchase, issue,
+  // additional purchase, adjustment, UOM conversion demo.
+  const _u8 = '2026-01-01T00:00:00.000Z';
+  const _sy = 'النظام';
+  STATE.stockLedger = [
+    // Product 1 (منتج أ - قطعة): Opening 100 @ 100
+    {id:'sl_d001',date:'2026-01-01',docNo:'OPN-0001',productId:1,txType:'opening',
+     unit:'قطعة',qty:100,baseQty:100,inQty:100,outQty:0,unitCost:100,totalCost:10000,
+     qtyBefore:0,qtyAfter:100,avgCostBefore:0,avgCostAfter:100,valueBefore:0,valueAfter:10000,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'رصيد افتتاحي',source:'manual',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 1: Purchase 50 @ 120 → avg=(100×100+50×120)/150=106.6667
+    {id:'sl_d002',date:'2026-01-08',docNo:'GRN-0001',productId:1,txType:'purchase',
+     unit:'قطعة',qty:50,baseQty:50,inQty:50,outQty:0,unitCost:120,totalCost:6000,
+     qtyBefore:100,qtyAfter:150,avgCostBefore:100,avgCostAfter:106.6667,
+     valueBefore:10000,valueAfter:16000.005,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'شراء من المورد الأول',source:'manual',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 1: Issue 20 @ avg 106.6667 (avg unchanged)
+    {id:'sl_d003',date:'2026-01-15',docNo:'DLV-0001',productId:1,txType:'sale',
+     unit:'قطعة',qty:20,baseQty:20,inQty:0,outQty:20,unitCost:106.6667,totalCost:2133.334,
+     qtyBefore:150,qtyAfter:130,avgCostBefore:106.6667,avgCostAfter:106.6667,
+     valueBefore:16000.005,valueAfter:13866.671,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'فاتورة مبيعات',source:'invoice-auto',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 1: Purchase 100 @ 150 → avg=(130×106.6667+100×150)/230=130.7246
+    {id:'sl_d004',date:'2026-02-01',docNo:'GRN-0002',productId:1,txType:'purchase',
+     unit:'قطعة',qty:100,baseQty:100,inQty:100,outQty:0,unitCost:150,totalCost:15000,
+     qtyBefore:130,qtyAfter:230,avgCostBefore:106.6667,avgCostAfter:130.7246,
+     valueBefore:13866.671,valueAfter:30066.658,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'شراء من المورد الثاني',source:'manual',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 1: Adjustment −3 (physical 230→227, avg unchanged)
+    {id:'sl_d005',date:'2026-02-10',docNo:'ADJ-0001',productId:1,txType:'adjustment',
+     unit:'قطعة',qty:3,baseQty:-3,inQty:0,outQty:3,unitCost:130.7246,totalCost:392.174,
+     qtyBefore:230,qtyAfter:227,avgCostBefore:130.7246,avgCostAfter:130.7246,
+     valueBefore:30066.658,valueAfter:29674.484,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'فرق جرد فعلي — تالف',source:'manual',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 5 (منتج ج - طن): Opening 50 @ 500
+    {id:'sl_d006',date:'2026-01-01',docNo:'OPN-0002',productId:5,txType:'opening',
+     unit:'طن',qty:50,baseQty:50,inQty:50,outQty:0,unitCost:500,totalCost:25000,
+     qtyBefore:0,qtyAfter:50,avgCostBefore:0,avgCostAfter:500,valueBefore:0,valueAfter:25000,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'رصيد افتتاحي',source:'manual',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 2 (منتج ب - لتر): UOM demo — receive 10 cartons=120 liters @ 8.3333/liter
+    {id:'sl_d007',date:'2026-01-05',docNo:'GRN-0003',productId:2,txType:'purchase',
+     unit:'كرتونة',qty:10,baseQty:120,inQty:120,outQty:0,unitCost:8.3333,totalCost:1000,
+     qtyBefore:0,qtyAfter:120,avgCostBefore:0,avgCostAfter:8.3333,valueBefore:0,valueAfter:1000,
+     status:'posted',journalEntry:'',relatedSlId:'',
+     reason:'استلام 10 كرتونة × 12 = 120 لتر — وحدة الشراء: كرتونة، الوحدة الأساسية: لتر',
+     source:'manual',createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+    // Product 2: Issue 5 liters
+    {id:'sl_d008',date:'2026-01-10',docNo:'DLV-0002',productId:2,txType:'sale',
+     unit:'لتر',qty:5,baseQty:5,inQty:0,outQty:5,unitCost:8.3333,totalCost:41.667,
+     qtyBefore:120,qtyAfter:115,avgCostBefore:8.3333,avgCostAfter:8.3333,
+     valueBefore:1000,valueAfter:958.33,
+     status:'posted',journalEntry:'',relatedSlId:'',reason:'صرف مبيعات',source:'invoice-auto',
+     createdBy:_sy,createdAt:_u8,postedBy:_sy,postedAt:_u8,cancelledBy:'',cancelledAt:''},
+  ];
+
+  // ── Inventory Settings ────────────────────────────────────────────────────
+  STATE.invSettings = { allowNegativeStock:false, autoPostCOGS:false, cogsAccount:'511101', adjustmentAccount:'511101' };
+
+  // ── Bank Reconciliations ──────────────────────────────────────────────────
+  STATE.bankReconciliations = [
+    {id:'rec_001',account:'111102',statementDate:'2026-03-31',statementBalance:582300,
+     clearedSeqs:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],note:'مطابقة Q1 مكتملة',status:'complete'},
+    {id:'rec_002',account:'111102',statementDate:'2026-06-30',statementBalance:845200,
+     clearedSeqs:[],note:'مطابقة H1 - قيد التنفيذ',status:'draft'},
+  ];
+  STATE.clearedTxSeqs = {};
+
+  // ── Finalize ──────────────────────────────────────────────────────────────
   STATE.journal = lines;
-  STATE.settings.companyName = 'شركة النموذج للتجارة والمقاولات (بيانات تجريبية)';
-  STATE.settings.companyNameEn = 'Model Trading & Contracting Co. (Demo Data)';
-  STATE.settings.companyAddress = 'القاهرة، جمهورية مصر العربية';
+  STATE.settings.companyName    = 'شركة النموذج للتجارة والمقاولات (بيانات تجريبية)';
+  STATE.settings.companyNameEn  = 'Model Trading & Contracting Co. (Demo Data)';
+  STATE.settings.companyAddress = 'القاهرة - مصر';
   STATE.settings.companyAddressEn = 'Cairo, Egypt';
   STATE.settings.isDemoMode = true;
-  STATE.meta.lastImportAt = new Date().toISOString();
-  STATE.meta.lastEntry = lines[lines.length-1].entry;
-  STATE.meta.lastEntryDate = '2026-06-30';
-  STATE.meta.totalLines = lines.length;
+  STATE.settings.docSerialCounters = {
+    'voucherSerial-111102-receipt': 6,
+    'voucherSerial-111102-payment': 4,
+    'voucherSerial-111101-receipt': 1,
+  };
+  STATE.meta.lastImportAt  = new Date().toISOString();
+  STATE.meta.lastEntry     = lines[lines.length-1].entry;
+  STATE.meta.lastEntryDate = '2026-09-30';
+  STATE.meta.totalLines    = lines.length;
   STATE.meta.journalSeqCounter = seq;
-  STATE.ui.view = 'dashboard';
-  STATE.ui.filters = { start:'2026-01-01', end:'2026-06-30', years:[], months:[] };
+  STATE.ui.view    = 'dashboard';
+  STATE.ui.filters = { start:'2026-01-01', end:'2026-09-30', years:[], months:[] };
+  // Persist enhanced inventory to IndexedDB so it survives a page reload
+  try {
+    await storeSet('stockLedger', STATE.stockLedger);
+    await storeSet('stocktakeSessions', STATE.stocktakeSessions || []);
+    await storeSet('invSettings', STATE.invSettings);
+  } catch(e){ /* non-fatal */ }
   renderApp();
-  showToast('تم تحميل البيانات التجريبية — ' + lines.length + ' قيد جاهز للاستكشاف');
+  showToast('تم تحميل البيانات التجريبية — ' + lines.length + ' قيد، 5 عملاء، 5 منتجات، 4 أصول، 3 مشاريع متكررة');
 }
+
 
 function resetDemoData(){
   showConfirmModal(
@@ -8142,6 +9075,8 @@ function resetDemoData(){
     () => {
       STATE.journal = []; STATE.accounts = []; STATE.groups = [];
       STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
+      STATE.stockMoves = []; STATE.stockLedger = []; STATE.stocktakeSessions = [];
+      STATE.invSettings = { allowNegativeStock:false, autoPostCOGS:false, cogsAccount:'', adjustmentAccount:'' };
       STATE.settings.companyName = '';
       STATE.settings.companyNameEn = '';
       STATE.settings.companyAddress = '';
@@ -8151,6 +9086,9 @@ function resetDemoData(){
       STATE.ui.view = 'dashboard';
       STATE.ui.filters = { start:'', end:'', years:[], months:[] };
       STATE.ui.glAccounts = []; STATE.ui.glPartners = []; STATE.ui.glJournals = []; STATE.ui.glCostCenters = [];
+      storeSet('stockLedger',[]).catch(()=>{});
+      storeSet('stocktakeSessions',[]).catch(()=>{});
+      storeSet('invSettings',{}).catch(()=>{});
       renderApp();
       showToast('تم حذف البيانات التجريبية بنجاح.');
     }
@@ -8969,7 +9907,7 @@ function buildRatiosDashCharts(){
   }
 }
 function needsFilters(view){
-  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport'].includes(view);
+  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport','cashvouchers','invoices','salesbyproduct','inventory','projects','purchaseinvoices','agingreport','vatreturn'].includes(view);
 }
 
 function renderCurrencyBar(){
@@ -12680,48 +13618,8 @@ function renderProductsView(root){
 // quantity, weighted-average cost, and total value (see
 // computeStockPosition()) — plus a drill-down into every stock move that
 // built up that balance (opening balance, purchases in, sales out).
-function renderInventoryView(root){
-  const tracked = STATE.products.filter(p=>p.trackInventory);
-  const asOf = STATE.ui.inventoryAsOf || todayISO();
-  const rows = tracked.map(p=>({ product:p, pos: computeStockPosition(p.id, asOf) }));
-  const totalValue = Math.round(rows.reduce((s,r)=>s+r.pos.value,0)*100)/100;
-  const openId = STATE.ui.inventoryOpenProduct;
+// (renderInventoryView is defined below in the Enhanced Inventory v2 section)
 
-  root.innerHTML = `
-  <div class="card">
-    <h2>${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('inventoryTitle')}</h2>
-    <div class="desc">${t('inventoryHint')}</div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0">
-      <div><label class="lbl">${t('agingAsOfLabel')}</label><input type="date" id="invAsOfInput" class="input" value="${asOf}"></div>
-      <div class="card" style="margin:0;padding:8px 16px"><div class="hint" style="margin:0">${t('inventoryTotalValueLabel')}</div><div style="font-weight:800;font-size:16px">${fmt(totalValue)}</div></div>
-    </div>
-    ${!tracked.length ? `<div class="empty">${t('noTrackedProducts')}</div>` : `
-    <div class="table-wrap"><table><thead><tr>
-      <th>${t('prodNameCol')}</th><th class="num">${t('inventoryQtyCol')}</th><th class="num">${t('inventoryAvgCostCol')}</th><th class="num">${t('inventoryValueCol')}</th><th></th>
-    </tr></thead><tbody>
-      ${rows.map(r=>`<tr>
-        <td style="font-weight:600">${escapeHtml(r.product.name)} <span class="hint">(${escapeHtml(r.product.unit||'')})</span></td>
-        <td class="num" style="color:${r.pos.qty<0?'var(--brick)':'inherit'}">${fmt(r.pos.qty)}</td>
-        <td class="num">${fmt(r.pos.avgCost)}</td>
-        <td class="num" style="font-weight:700">${fmt(r.pos.value)}</td>
-        <td><span class="drill" onclick="toggleInventoryDetail(${r.product.id})">${openId===r.product.id?t('hideDetailsBtn'):t('viewDetailsBtn')}</span></td>
-      </tr>
-      ${openId===r.product.id ? `<tr><td colspan="5" style="background:rgba(0,0,0,.15);padding:10px">
-        ${(()=>{
-          const moves = STATE.stockMoves.filter(m=>m.productId===r.product.id && m.date<=asOf).sort((a,b)=>a.date.localeCompare(b.date)||(a.seq||0)-(b.seq||0));
-          const typeLabel = ty => ({in:t('stockMoveIn'), out:t('stockMoveOut'), adjustment:t('stockMoveAdjustment')}[ty]||ty);
-          return `<table style="width:100%"><thead><tr><th>${t('date')}</th><th>${t('stockMoveTypeCol')}</th><th class="num">${t('inventoryQtyCol')}</th><th class="num">${t('inventoryAvgCostCol')}</th><th>${t('voucherDescCol')}</th></tr></thead><tbody>
-            ${r.product.openingQty ? `<tr><td>—</td><td>${t('stockMoveOpening')}</td><td class="num">${fmt(r.product.openingQty)}</td><td class="num">${fmt(r.product.openingCost||0)}</td><td>—</td></tr>` : ''}
-            ${moves.length ? moves.map(m=>`<tr><td class="num">${m.date}</td><td>${typeLabel(m.type)}</td><td class="num">${m.type==='out'?'-':''}${fmt(m.qty)}</td><td class="num">${fmt(m.unitCost||0)}</td><td>${escapeHtml(m.note||'')}</td></tr>`).join('') : `<tr><td colspan="5"><div class="empty">${t('noStockMoves')}</div></td></tr>`}
-          </tbody></table>`;
-        })()}
-      </td></tr>` : ''}`).join('')}
-    </tbody></table></div>`}
-  </div>`;
-
-  const asOfInp = document.getElementById('invAsOfInput');
-  if(asOfInp) asOfInp.addEventListener('change', e=>{ STATE.ui.inventoryAsOf = e.target.value; renderApp(); });
-}
 function toggleInventoryDetail(productId){
   STATE.ui.inventoryOpenProduct = STATE.ui.inventoryOpenProduct===productId ? null : productId;
   renderApp();
@@ -12733,14 +13631,15 @@ function openProductModal(prodId, prefillName){
   const existing = prodId ? STATE.products.find(p=>p.id===prodId) : null;
   const revAccounts = STATE.accounts.filter(a=>a.type==='الدخل');
   const invAccounts = STATE.accounts.filter(a=>a.type==='الأصول المتداولة');
+  const expAccounts = STATE.accounts.filter(a=>a.type==='المصروفات'||a.type==='تكلفة المبيعات');
   const tracked = existing?.trackInventory || false;
+  const hasLedger = tracked && (STATE.stockLedger||[]).some(sl=>sl.productId===existing?.id && sl.status==='posted');
   overlay.innerHTML = `
-  <div class="modal-box" style="max-width:480px;width:97%">
+  <div class="modal-box" style="max-width:560px;width:97%;max-height:90vh;overflow-y:auto">
     <h3>${existing ? t('editProductTitle') : t('newProductBtn')}</h3>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
       <div style="grid-column:1/-1"><label class="lbl">${t('prodNameCol')}</label><input id="prodName" class="input" value="${escapeHtml(existing?.name||prefillName||'')}" ${prefillName?'readonly':''}></div>
       <div><label class="lbl">${t('prodCodeCol')}</label><input id="prodCode" class="input" value="${escapeHtml(existing?.code||'')}"></div>
-      <div><label class="lbl">${t('prodUnitCol')}</label><input id="prodUnit" class="input" value="${escapeHtml(existing?.unit||'قطعة')}"></div>
       <div><label class="lbl">${t('prodPriceCol')}</label><input id="prodPrice" type="number" step="0.01" class="input" value="${existing?.price||0}"></div>
       <div><label class="lbl">${t('prodTaxCol')}</label><input id="prodTax" type="number" step="0.01" class="input" value="${existing?.taxPct||0}"></div>
       <div style="grid-column:1/-1"><label class="lbl">${t('prodRevAccCol')}</label>
@@ -12757,14 +13656,35 @@ function openProductModal(prodId, prefillName){
         <div class="hint" style="margin:4px 0 0">${t('prodTrackInvHint')}</div>
       </div>
       <div id="prodInvFields" style="grid-column:1/-1;display:${tracked?'grid':'none'};grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
-        <div><label class="lbl">${t('prodOpeningQtyLabel')}</label><input id="prodOpeningQty" type="number" step="0.01" class="input" value="${existing?.openingQty||0}" ${existing?.trackInventory && (STATE.stockMoves||[]).some(m=>m.productId===existing?.id)?'disabled':''}></div>
-        <div><label class="lbl">${t('prodOpeningCostLabel')}</label><input id="prodOpeningCost" type="number" step="0.01" class="input" value="${existing?.openingCost||0}" ${existing?.trackInventory && (STATE.stockMoves||[]).some(m=>m.productId===existing?.id)?'disabled':''}></div>
+        <!-- Opening balance — locked once ledger entries exist -->
+        <div><label class="lbl">${t('prodOpeningQtyLabel')}</label><input id="prodOpeningQty" type="number" step="0.01" class="input" value="${existing?.openingQty||0}" ${hasLedger?'disabled':''}></div>
+        <div><label class="lbl">${t('prodOpeningCostLabel')}</label><input id="prodOpeningCost" type="number" step="0.01" class="input" value="${existing?.openingCost||0}" ${hasLedger?'disabled':''}></div>
+        <!-- Inventory GL account -->
         <div style="grid-column:1/-1"><label class="lbl">${t('prodInvAccountLabel')}</label>
           <select id="prodInvAccount" class="input">
             <option value="">—</option>
             ${invAccounts.map(a=>`<option value="${a.code}" ${existing?.inventoryAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
           </select>
         </div>
+        <!-- COGS account for this item -->
+        <div style="grid-column:1/-1"><label class="lbl">${t('invV2COGSAccountLabel')}</label>
+          <div class="hint" style="margin:2px 0 6px">${t('invV2COGSAccountHint')}</div>
+          <select id="prodCOGSAccount" class="input">
+            <option value="">— ${t('invV2FilterAll')} —</option>
+            ${expAccounts.map(a=>`<option value="${a.code}" ${existing?.cogsAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+          </select>
+        </div>
+        <!-- UOM section -->
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
+          <div style="font-weight:600;margin-bottom:8px">${t('invV2UomSectionTitle')}</div>
+          <div class="hint" style="margin-bottom:8px">${t('invV2UomExampleHint')}</div>
+        </div>
+        <div><label class="lbl">${t('invV2BaseUnitLabel')}</label><input id="prodUnit" class="input" value="${escapeHtml(existing?.unit||'قطعة')}"></div>
+        <div></div>
+        <div><label class="lbl">${t('invV2PurchaseUnitLabel')}</label><input id="prodPurchaseUnit" class="input" value="${escapeHtml(existing?.purchaseUnit||'')}"></div>
+        <div><label class="lbl">${t('invV2ConvFactorLabel')} ${t('invV2PurchaseConvLabel')}</label><input id="prodPurchaseConv" type="number" step="0.000001" min="0.000001" class="input" value="${existing?.purchaseConvFactor||1}"></div>
+        <div><label class="lbl">${t('invV2SaleUnitLabel')}</label><input id="prodSaleUnit" class="input" value="${escapeHtml(existing?.saleUnit||'')}"></div>
+        <div><label class="lbl">${t('invV2ConvFactorLabel')} ${t('invV2SaleConvLabel')}</label><input id="prodSaleConv" type="number" step="0.000001" min="0.000001" class="input" value="${existing?.saleConvFactor||1}"></div>
       </div>
       <div style="grid-column:1/-1"><label class="lbl">${t('notesLabel')}</label><textarea id="prodNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea></div>
     </div>
@@ -12780,11 +13700,18 @@ function openProductModal(prodId, prefillName){
   overlay.querySelector('#saveProdBtn').onclick = async () => {
     const name = overlay.querySelector('#prodName').value.trim();
     if(!name){ showToast(t('prodNameRequired')); return; }
+    const purchaseConv = parseFloat(overlay.querySelector('#prodPurchaseConv').value)||1;
+    const saleConv = parseFloat(overlay.querySelector('#prodSaleConv').value)||1;
+    if(purchaseConv<=0||saleConv<=0){ showToast(t('invV2ZeroConvError')); return; }
     const rec = {
       id: existing ? existing.id : assetNextId(STATE.products),
       name,
       code: overlay.querySelector('#prodCode').value.trim(),
       unit: overlay.querySelector('#prodUnit').value.trim() || 'قطعة',
+      purchaseUnit: overlay.querySelector('#prodPurchaseUnit').value.trim(),
+      purchaseConvFactor: purchaseConv,
+      saleUnit: overlay.querySelector('#prodSaleUnit').value.trim(),
+      saleConvFactor: saleConv,
       price: parseFloat(overlay.querySelector('#prodPrice').value)||0,
       taxPct: parseFloat(overlay.querySelector('#prodTax').value)||0,
       revenueAccount: overlay.querySelector('#prodRevAccount').value,
@@ -12792,33 +13719,19 @@ function openProductModal(prodId, prefillName){
       openingQty: parseFloat(overlay.querySelector('#prodOpeningQty').value)||0,
       openingCost: parseFloat(overlay.querySelector('#prodOpeningCost').value)||0,
       inventoryAccount: overlay.querySelector('#prodInvAccount').value,
+      cogsAccount: overlay.querySelector('#prodCOGSAccount').value,
       notes: overlay.querySelector('#prodNotes').value.trim(),
       status: 'active'
     };
     if(existing){
       const idx=STATE.products.findIndex(p=>p.id===existing.id); STATE.products[idx]=rec;
-      // BUG FIX: products are matched to journal lines by NAME (there's no
-      // stable product-id stored on a journal line), so renaming a product
-      // used to silently break that link — already-posted entries kept
-      // showing the OLD name (a "ghost" row that never went away, since
-      // distinctProductNames() still found it), while the new name looked
-      // unused. Cascade the rename into every journal line that referenced
-      // the old name so posted entries and the Products page stay in sync.
+      // cascade rename into journal lines
       if(existing.name !== rec.name){
-        const affectedYears = new Set();
-        let renamed = false;
-        STATE.journal.forEach(l=>{
-          if(l.product === existing.name){ l.product = rec.name; affectedYears.add(l.date.slice(0,4)); renamed = true; }
-        });
-        if(renamed){
-          for(const y of affectedYears){
-            const shard = STATE.journal.filter(l=>l.date.slice(0,4)===y);
-            await storeSet('journal:'+y, shard);
-          }
-        }
+        const affectedYears = new Set(); let renamed = false;
+        STATE.journal.forEach(l=>{ if(l.product===existing.name){ l.product=rec.name; affectedYears.add(l.date.slice(0,4)); renamed=true; } });
+        if(renamed){ for(const y of affectedYears){ const shard=STATE.journal.filter(l=>l.date.slice(0,4)===y); await storeSet('journal:'+y,shard); } }
       }
-    }
-    else STATE.products.push(rec);
+    } else STATE.products.push(rec);
     await storeSet('products', STATE.products);
     overlay.style.display='none'; overlay.innerHTML='';
     renderApp();
@@ -12827,40 +13740,1510 @@ function openProductModal(prodId, prefillName){
   overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
 }
 
-// ── Inventory quantity tracking (for products with trackInventory=true) ───
-// Weighted-average costing: every 'in' move (from a purchase) recalculates
-// the average cost across the new total quantity; every 'out' move (from a
-// sale) is costed at whatever the average was *at that moment*, then only
-// reduces quantity (never revalues the average). This is a separate ledger
-// from the accounting journal — it exists to answer "how much stock do we
-// have and what's it worth", not to auto-post a COGS/inventory journal
-// entry (which would need per-company judgment about timing and accounts).
-function computeStockPosition(productId, asOfDate){
+/* ==========================================================================
+   ██╗███╗   ██╗██╗   ██╗    ██╗   ██╗██████╗
+   ██║████╗  ██║██║   ██║    ██║   ██║╚════██╗
+   ██║██╔██╗ ██║██║   ██║    ██║   ██║ █████╔╝
+   ██║██║╚██╗██║╚██╗ ██╔╝    ╚██╗ ██╔╝██╔═══╝
+   ██║██║ ╚████║ ╚████╔╝      ╚████╔╝ ███████╗
+   ╚═╝╚═╝  ╚═══╝  ╚═══╝        ╚═══╝  ╚══════╝
+   Enhanced Inventory Module — Perpetual / Moving Weighted Average
+   =========================================================================
+   DESIGN RULES (preserved from existing system):
+   • stockMoves[] (legacy) is kept for backward-compat with existing purchase
+     and sales invoice auto-posting. It is NOT removed.
+   • All new perpetual inventory accounting goes through stockLedger[].
+   • computeStockPosition() is kept as a compatibility shim — it now reads
+     from stockLedger for items that have ledger entries, falling back to
+     the legacy stockMoves[] approach for items that don't yet have a
+     stockLedger entry, so no existing data is broken.
+   • Journal entries use commitEntryEdit() / reserveNextEntryNumber() from
+     the existing accounting engine — zero duplicate accounting code.
+   ========================================================================= */
+
+// ── Unit-of-Measure helpers ──────────────────────────────────────────────────
+// Convert a quantity in a given unit to the product's base unit.
+// unitType: 'purchase' | 'sale' | 'base'
+function toBaseQty(product, qty, unitType){
+  if(!product || !qty) return qty||0;
+  if(unitType==='purchase'){
+    const conv = (product.purchaseConvFactor||1);
+    if(conv<=0){ throw new Error(t('invV2ZeroConvError')); }
+    return qty * conv;
+  }
+  if(unitType==='sale'){
+    const conv = (product.saleConvFactor||1);
+    if(conv<=0){ throw new Error(t('invV2ZeroConvError')); }
+    return qty * conv;
+  }
+  return qty; // already base
+}
+// The display unit label for a given unitType
+function unitLabel(product, unitType){
+  if(!product) return '';
+  if(unitType==='purchase' && product.purchaseUnit) return product.purchaseUnit;
+  if(unitType==='sale' && product.saleUnit) return product.saleUnit;
+  return product.unit || '';
+}
+
+// ── Perpetual stock position (v2) — reads stockLedger ───────────────────────
+// This replaces computeStockPosition() for items tracked in stockLedger.
+// Falls back gracefully to legacy stockMoves for items not yet migrated.
+function computeStockPositionV2(productId, asOfDate){
   const prod = STATE.products.find(p=>p.id===productId);
   if(!prod) return { qty:0, avgCost:0, value:0 };
+
+  // Check whether this item has any posted ledger entries
+  const ledger = (STATE.stockLedger||[])
+    .filter(sl=>sl.productId===productId && sl.status==='posted' && (!asOfDate||sl.date<=asOfDate))
+    .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
+
+  if(ledger.length>0){
+    const last = ledger[ledger.length-1];
+    return { qty: last.qtyAfter, avgCost: last.avgCostAfter, value: last.valueAfter };
+  }
+
+  // Fallback: legacy weighted-average from stockMoves + openingQty
   let qty = prod.openingQty||0;
   let avgCost = prod.openingCost||0;
-  const moves = STATE.stockMoves.filter(m=>m.productId===productId && (!asOfDate || m.date<=asOfDate)).sort((a,b)=>a.date.localeCompare(b.date) || (a.seq||0)-(b.seq||0));
+  const moves = (STATE.stockMoves||[])
+    .filter(m=>m.productId===productId && (!asOfDate||m.date<=asOfDate))
+    .sort((a,b)=>a.date.localeCompare(b.date)||(a.seq||0)-(b.seq||0));
   moves.forEach(m=>{
     if(m.type==='in'){
-      const newQty = qty + m.qty;
-      avgCost = newQty>0 ? Math.round(((qty*avgCost) + (m.qty*m.unitCost)) / newQty * 10000)/10000 : avgCost;
-      qty = newQty;
+      const nq = qty+m.qty;
+      avgCost = nq>0 ? (qty*avgCost+m.qty*m.unitCost)/nq : avgCost;
+      qty = nq;
     } else if(m.type==='out'){
-      qty = Math.round((qty - m.qty)*10000)/10000;
+      qty -= m.qty;
     } else if(m.type==='adjustment'){
-      qty = Math.round((qty + m.qty)*10000)/10000;
-      if(m.qty>0 && m.unitCost) avgCost = m.unitCost;
+      qty += m.qty;
+      if(m.qty>0&&m.unitCost) avgCost=m.unitCost;
     }
+    qty = Math.round(qty*10000)/10000;
+    avgCost = Math.round(avgCost*10000)/10000;
   });
   return { qty, avgCost, value: Math.round(qty*avgCost*100)/100 };
 }
+
+// Keep legacy shim so existing invoice posting code still works unchanged
+function computeStockPosition(productId, asOfDate){
+  return computeStockPositionV2(productId, asOfDate);
+}
+
+// Legacy addStockMove kept for backward-compat with postInvoiceDraft / postPurchaseInvoiceDraft
 async function addStockMove(move){
   STATE.stockMoves.push({ id:'sm_'+Date.now()+Math.random().toString(36).slice(2,6), ...move });
   await storeSet('stockMoves', STATE.stockMoves);
 }
 
-// ── Invoice line-item math (used while composing a not-yet-posted draft) ─────
+// ── Stock Ledger Core Engine ─────────────────────────────────────────────────
+// Generates the NEXT auto doc number for a given prefix ('GRN','ADJ', etc.)
+function nextInvDocNo(prefix){
+  const existing = (STATE.stockLedger||[])
+    .map(sl=>sl.docNo||'')
+    .filter(d=>d.startsWith(prefix+'-'))
+    .map(d=>parseInt(d.split('-')[1])||0);
+  const max = existing.length>0 ? Math.max(...existing) : 0;
+  return `${prefix}-${String(max+1).padStart(4,'0')}`;
+}
+
+// Doc number prefixes per transaction type
+const INV_DOC_PREFIXES = {
+  'opening':'OPN','purchase':'GRN','purchase-return':'PRN','sale':'DLV',
+  'sale-return':'SRN','adjustment':'ADJ','issue':'ISS','receipt':'RCP'
+};
+
+// Current logged-in user (from existing auth system)
+function currentUserName(){
+  const u = STATE.settings?.users?.find(u=>u.id===STATE.settings?.currentUserId);
+  return u?.name || 'System';
+}
+
+// ── Post a new perpetual inventory transaction ────────────────────────────────
+// This is the ATOMIC core: reads current position, calculates new position,
+// writes to stockLedger, optionally creates journal entry, persists atomically.
+// Returns the created stockLedger entry (or throws on validation failure).
+async function postInventoryTransaction(params){
+  // params: { productId, txType, date, docNo?, qty, unitType, unitCost, reason, source, refEntryNo? }
+  const { productId, txType, date, qty, unitType='base', unitCost=0, reason='', source='manual', refEntryNo='' } = params;
+  let { docNo } = params;
+
+  // --- Validation ---
+  const prod = STATE.products.find(p=>p.id===productId);
+  if(!prod) throw new Error(t('invV2ProductRequired'));
+  if(!qty||qty<=0) throw new Error(t('invV2QtyRequired'));
+  if(unitCost<0) throw new Error(t('invV2CostRequired'));
+
+  const conv = unitType==='purchase'?(prod.purchaseConvFactor||1): unitType==='sale'?(prod.saleConvFactor||1):1;
+  if(conv<=0) throw new Error(t('invV2ZeroConvError'));
+  const baseQty = Math.round(qty*conv*10000)/10000;
+
+  // Determine if this is incoming or outgoing
+  const INCOMING = ['opening','purchase','sale-return','receipt'];
+  const OUTGOING = ['sale','purchase-return','issue'];
+  const isIn  = INCOMING.includes(txType);
+  const isOut = OUTGOING.includes(txType) || txType==='adjustment'; // adjustment can be ± handled below
+
+  // Get current position (before this move)
+  const posBefore = computeStockPositionV2(productId, null); // as of NOW (ignore future-dating for now)
+  const qtyBefore = Math.round(posBefore.qty*10000)/10000;
+  const avgBefore = Math.round(posBefore.avgCost*10000)/10000;
+  const valBefore = Math.round(qtyBefore*avgBefore*100)/100;
+
+  // Negative stock check (for outgoing transactions)
+  const netOut = OUTGOING.includes(txType) ? baseQty : 0;
+  if(netOut>0 && !STATE.invSettings?.allowNegativeStock){
+    if(qtyBefore<netOut){
+      const msg = t('invV2NegativeStockError')
+        .replace('${available}',fmt(qtyBefore))
+        .replace('${requested}',fmt(netOut));
+      throw new Error(msg);
+    }
+  }
+
+  // Opening balance: only one allowed per product
+  if(txType==='opening'){
+    const hasOpening = (STATE.stockLedger||[]).some(sl=>sl.productId===productId&&sl.txType==='opening'&&sl.status==='posted');
+    if(hasOpening) throw new Error(t('invV2OpeningAlreadyExists'));
+  }
+
+  // --- Weighted Average Calculation ---
+  let qtyAfter, avgCostAfter, inQty=0, outQty=0;
+
+  if(txType==='adjustment'){
+    // adjustment: qty is the DIFFERENCE (can be negative)
+    // We pass signed qty for adjustments; the caller passes positive qty + sign in adjustedQty
+    // For simplicity: if isIn style, add; if isOut style, subtract
+    // The UI will pass positive qty and store the sign in txType or a separate param.
+    // Here we handle: params.adjustedBaseQty (signed) overrides
+    const signedBase = params.adjustedBaseQty !== undefined ? params.adjustedBaseQty : baseQty;
+    qtyAfter = Math.round((qtyBefore + signedBase)*10000)/10000;
+    avgCostAfter = avgBefore; // avg cost unchanged on adjustment (no cost input for negative adj)
+    if(signedBase>0 && unitCost>0){
+      // If adding stock with a cost, recalculate avg
+      const newTotalVal = qtyBefore*avgBefore + signedBase*unitCost;
+      avgCostAfter = qtyAfter>0 ? Math.round(newTotalVal/qtyAfter*10000)/10000 : avgBefore;
+    }
+    inQty  = signedBase>0 ? signedBase : 0;
+    outQty = signedBase<0 ? Math.abs(signedBase) : 0;
+  } else if(isIn){
+    inQty = baseQty;
+    outQty = 0;
+    const newTotalQty = qtyBefore + baseQty;
+    if(newTotalQty>0){
+      const newTotalVal = qtyBefore*avgBefore + baseQty*unitCost;
+      avgCostAfter = Math.round(newTotalVal/newTotalQty*10000)/10000;
+    } else {
+      avgCostAfter = unitCost; // edge case: no prior stock
+    }
+    qtyAfter = Math.round(newTotalQty*10000)/10000;
+  } else {
+    // outgoing: avg cost does NOT change
+    outQty = baseQty;
+    inQty  = 0;
+    qtyAfter = Math.round((qtyBefore - baseQty)*10000)/10000;
+    avgCostAfter = avgBefore;
+  }
+
+  const totalCost = isIn ? Math.round(inQty*unitCost*100)/100
+                   : outQty>0 ? Math.round(outQty*avgCostAfter*100)/100
+                   : 0;
+  const valAfter = Math.round(qtyAfter*avgCostAfter*100)/100;
+
+  // --- Generate doc number if not provided ---
+  if(!docNo) docNo = nextInvDocNo(INV_DOC_PREFIXES[txType]||'INV');
+
+  const now = new Date().toISOString();
+  const user = currentUserName();
+
+  // --- Create the ledger entry ---
+  const entry = {
+    id: 'sl_'+Date.now()+Math.random().toString(36).slice(2,8),
+    date, docNo, productId, txType,
+    unit: unitLabel(prod, unitType) || prod.unit,
+    qty, baseQty: txType==='adjustment'?(params.adjustedBaseQty||baseQty):baseQty,
+    inQty, outQty, unitCost,
+    totalCost: isIn ? totalCost : Math.round((outQty||Math.abs(params.adjustedBaseQty||0))*avgCostAfter*100)/100,
+    qtyBefore, qtyAfter, avgCostBefore: avgBefore, avgCostAfter, valueBefore: valBefore, valueAfter: valAfter,
+    status: 'posted', journalEntry: '', relatedSlId: refEntryNo||'',
+    reason, source, createdBy: user, createdAt: now, postedBy: user, postedAt: now,
+    cancelledBy:'', cancelledAt:''
+  };
+
+  // --- Auto-post COGS journal entry if configured ---
+  let jeEntryNo = '';
+  if((txType==='sale'||txType==='issue') && STATE.invSettings?.autoPostCOGS){
+    const invAcc = prod.inventoryAccount;
+    const cogsAcc = prod.cogsAccount || STATE.invSettings?.cogsAccount;
+    if(invAcc && cogsAcc && outQty>0){
+      const cogsAmt = Math.round(outQty*avgCostAfter*100)/100;
+      if(cogsAmt>0){
+        jeEntryNo = await reserveNextEntryNumber('مخزون', date);
+        let seq = STATE.meta.journalSeqCounter||0;
+        const jeLines = [
+          { entry:jeEntryNo, date, code:cogsAcc, name:accName(cogsAcc), debit:cogsAmt, credit:0, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:cogsAmt, product:prod.name, journal:'مخزون', curAmt:cogsAmt, ref:`${docNo} — ${prod.name}`, source:'inventory-auto', seq:++seq },
+          { entry:jeEntryNo, date, code:invAcc,  name:accName(invAcc),  debit:0, credit:cogsAmt, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:-cogsAmt, product:prod.name, journal:'مخزون', curAmt:-cogsAmt, ref:`${docNo} — ${prod.name}`, source:'inventory-auto', seq:++seq }
+        ];
+        await commitEntryEdit([], jeLines);
+        STATE.meta.journalSeqCounter = seq;
+        entry.journalEntry = jeEntryNo;
+      }
+    }
+  }
+
+  // For purchase receipts with an inventory account: post Inv / AP if invAcc configured
+  // (only when invoked from the manual inventory transaction form, not from invoice auto-posting
+  //  which handles its own accounting)
+  if((txType==='purchase'||txType==='receipt') && source==='manual' && STATE.invSettings?.autoPostCOGS){
+    const invAcc = prod.inventoryAccount;
+    if(invAcc && inQty>0){
+      const invAmt = Math.round(inQty*unitCost*100)/100;
+      if(invAmt>0){
+        jeEntryNo = await reserveNextEntryNumber('مخزون', date);
+        let seq = STATE.meta.journalSeqCounter||0;
+        const jeLines = [
+          { entry:jeEntryNo, date, code:invAcc, name:accName(invAcc), debit:invAmt, credit:0, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:invAmt, product:prod.name, journal:'مخزون', curAmt:invAmt, ref:`${docNo} — ${prod.name}`, source:'inventory-auto', seq:++seq }
+        ];
+        await commitEntryEdit([], jeLines);
+        STATE.meta.journalSeqCounter = seq;
+        entry.journalEntry = jeEntryNo;
+      }
+    }
+  }
+
+  // For adjustment transactions: post to adjustment variance account if configured
+  if(txType==='adjustment' && STATE.invSettings?.autoPostCOGS){
+    const invAcc = prod.inventoryAccount;
+    const adjAcc = STATE.invSettings?.adjustmentAccount;
+    const signedBase = params.adjustedBaseQty !== undefined ? params.adjustedBaseQty : baseQty;
+    const adjAmt = Math.round(Math.abs(signedBase)*avgCostAfter*100)/100;
+    if(invAcc && adjAcc && adjAmt>0){
+      jeEntryNo = await reserveNextEntryNumber('مخزون', date);
+      let seq = STATE.meta.journalSeqCounter||0;
+      const jeLines = signedBase>0 ? [
+        { entry:jeEntryNo, date, code:invAcc, name:accName(invAcc), debit:adjAmt, credit:0, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:adjAmt, product:prod.name, journal:'مخزون', curAmt:adjAmt, ref:`${docNo}`, source:'inventory-auto', seq:++seq },
+        { entry:jeEntryNo, date, code:adjAcc, name:accName(adjAcc), debit:0, credit:adjAmt, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:-adjAmt, product:prod.name, journal:'مخزون', curAmt:-adjAmt, ref:`${docNo}`, source:'inventory-auto', seq:++seq }
+      ] : [
+        { entry:jeEntryNo, date, code:adjAcc, name:accName(adjAcc), debit:adjAmt, credit:0, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:adjAmt, product:prod.name, journal:'مخزون', curAmt:adjAmt, ref:`${docNo}`, source:'inventory-auto', seq:++seq },
+        { entry:jeEntryNo, date, code:invAcc, name:accName(invAcc), debit:0, credit:adjAmt, cur:'EGP', convFactor:1, partner:'', cc:'', ccAmt:-adjAmt, product:prod.name, journal:'مخزون', curAmt:-adjAmt, ref:`${docNo}`, source:'inventory-auto', seq:++seq }
+      ];
+      await commitEntryEdit([], jeLines);
+      STATE.meta.journalSeqCounter = seq;
+      entry.journalEntry = jeEntryNo;
+    }
+  }
+
+  if(jeEntryNo) entry.journalEntry = jeEntryNo;
+
+  // --- Persist ---
+  if(!STATE.stockLedger) STATE.stockLedger=[];
+  STATE.stockLedger.push(entry);
+  await storeSet('stockLedger', STATE.stockLedger);
+
+  // Also push a legacy stockMove for backward compat with existing views
+  const legacyType = isIn ? 'in' : (txType==='adjustment'?'adjustment':'out');
+  const legacyQty = txType==='adjustment' ? (params.adjustedBaseQty||baseQty) : (isIn?inQty:outQty);
+  await addStockMove({ date, productId, type:legacyType, qty:Math.abs(legacyQty), unitCost: isIn?unitCost:avgCostAfter, note:`${docNo}${reason?' — '+reason:''}`, source:source, seq:Date.now() });
+
+  return entry;
+}
+
+// ── Cancel (reverse) a posted stock ledger entry ─────────────────────────────
+async function cancelInventoryTransaction(slId, reason){
+  if(!reason||!reason.trim()){ throw new Error(t('invV2CancelReasonRequired')); }
+  const orig = (STATE.stockLedger||[]).find(sl=>sl.id===slId);
+  if(!orig) throw new Error('Stock ledger entry not found: '+slId);
+  if(orig.status!=='posted') throw new Error(t('invV2PostedCantEdit'));
+
+  const now = new Date().toISOString();
+  const user = currentUserName();
+
+  // Mark original as cancelled
+  orig.status='cancelled';
+  orig.cancelledBy=user;
+  orig.cancelledAt=now;
+  orig.reason=(orig.reason||'')+' | Cancellation: '+reason;
+
+  // Create a reversal entry: swap inQty/outQty, negate effect
+  const prod = STATE.products.find(p=>p.id===orig.productId);
+  const posBefore = computeStockPositionV2(orig.productId, null);
+
+  const isIn = orig.inQty>0;
+  const reverseQty = isIn ? orig.inQty : orig.outQty;
+  const reversalType = isIn ? 'purchase-return' : 'sale-return'; // generic reversal type
+
+  // Build reversal entry manually (don't call postInventoryTransaction to avoid double-accounting)
+  const revDocNo = 'REV-'+orig.docNo;
+  const qtyBefore = Math.round(posBefore.qty*10000)/10000;
+  const avgBefore  = Math.round(posBefore.avgCost*10000)/10000;
+  let qtyAfter, avgCostAfter, revInQty=0, revOutQty=0;
+
+  if(isIn){
+    // Reversing an incoming: remove the stock
+    revOutQty = reverseQty;
+    qtyAfter = Math.round((qtyBefore-reverseQty)*10000)/10000;
+    avgCostAfter = avgBefore;
+  } else {
+    // Reversing an outgoing: add stock back at original cost
+    revInQty = reverseQty;
+    const newTotalQty = qtyBefore+reverseQty;
+    const newTotalVal = qtyBefore*avgBefore + reverseQty*orig.unitCost;
+    avgCostAfter = newTotalQty>0 ? Math.round(newTotalVal/newTotalQty*10000)/10000 : avgBefore;
+    qtyAfter = Math.round(newTotalQty*10000)/10000;
+  }
+
+  const reversal = {
+    id: 'sl_rev_'+Date.now()+Math.random().toString(36).slice(2,8),
+    date: todayISO(), docNo: revDocNo, productId: orig.productId, txType: reversalType,
+    unit: orig.unit, qty: reverseQty, baseQty: reverseQty,
+    inQty: revInQty, outQty: revOutQty, unitCost: orig.unitCost,
+    totalCost: Math.round(reverseQty*orig.unitCost*100)/100,
+    qtyBefore, qtyAfter, avgCostBefore: avgBefore, avgCostAfter,
+    valueBefore: Math.round(qtyBefore*avgBefore*100)/100,
+    valueAfter: Math.round(qtyAfter*avgCostAfter*100)/100,
+    status:'posted', journalEntry:'', relatedSlId:orig.id,
+    reason:'Reversal of '+orig.docNo+'. '+reason,
+    source:'cancellation', createdBy:user, createdAt:now, postedBy:user, postedAt:now,
+    cancelledBy:'', cancelledAt:''
+  };
+
+  // Reverse journal entry if one exists
+  if(orig.journalEntry){
+    const origJeLines = STATE.journal.filter(l=>l.entry===orig.journalEntry);
+    if(origJeLines.length>0){
+      const revJeNo = await reserveNextEntryNumber('مخزون', todayISO());
+      let seq = STATE.meta.journalSeqCounter||0;
+      const revJeLines = origJeLines.map(l=>({
+        ...l, entry:revJeNo, date:todayISO(),
+        debit: l.credit, credit: l.debit, ccAmt:-l.ccAmt, curAmt:-l.curAmt,
+        ref:`إلغاء: ${orig.journalEntry} — ${l.ref||''}`,
+        source:'inventory-reversal', seq:++seq
+      }));
+      await commitEntryEdit([], revJeLines);
+      STATE.meta.journalSeqCounter = seq;
+      reversal.journalEntry = revJeNo;
+    }
+  }
+
+  STATE.stockLedger.push(reversal);
+  await storeSet('stockLedger', STATE.stockLedger);
+
+  // Also add reversal legacy stockMove for backward compat
+  const legacyType = isIn ? 'out' : 'in';
+  await addStockMove({ date:todayISO(), productId:orig.productId, type:legacyType, qty:reverseQty, unitCost:orig.unitCost, note:`${revDocNo} — ${reason}`, source:'cancellation', seq:Date.now() });
+
+  return reversal;
+}
+
+// ── Inventory Valuation  ─────────────────────────────────────────────────────
+function computeInventoryValuation(asOfDate){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  return tracked.map(p=>{
+    const pos = computeStockPositionV2(p.id, asOfDate||null);
+    return { product:p, qty:pos.qty, avgCost:pos.avgCost, value:pos.value };
+  });
+}
+
+// ── GL Balance for a given account code ──────────────────────────────────────
+function glBalance(accountCode, asOfDate){
+  const lines = STATE.journal.filter(l=>l.code===accountCode && (!asOfDate||l.date<=asOfDate));
+  const dr = lines.reduce((s,l)=>s+(l.debit||0),0);
+  const cr = lines.reduce((s,l)=>s+(l.credit||0),0);
+  // For asset accounts: dr-cr = balance
+  return Math.round((dr-cr)*100)/100;
+}
+
+// ── Recalculate integrity check ───────────────────────────────────────────────
+function recalcInventoryIntegrity(){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  const results = [];
+  for(const p of tracked){
+    // Recalculate from ledger from scratch
+    const ledger = (STATE.stockLedger||[])
+      .filter(sl=>sl.productId===p.id&&sl.status==='posted')
+      .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
+    let qty = p.openingQty||0, avgCost = p.openingCost||0;
+    for(const sl of ledger){
+      if(sl.inQty>0){
+        const nq=qty+sl.inQty;
+        avgCost=nq>0?(qty*avgCost+sl.inQty*sl.unitCost)/nq:avgCost;
+        qty=nq;
+      } else if(sl.outQty>0){
+        qty-=sl.outQty;
+      }
+      qty=Math.round(qty*10000)/10000;
+      avgCost=Math.round(avgCost*10000)/10000;
+    }
+    const calcValue=Math.round(qty*avgCost*100)/100;
+    const storedPos=computeStockPositionV2(p.id,null);
+    const qtyDiff=Math.abs(qty-storedPos.qty);
+    const valDiff=Math.abs(calcValue-storedPos.value);
+    results.push({product:p,calcQty:qty,calcAvg:avgCost,calcVal:calcValue,storedQty:storedPos.qty,storedAvg:storedPos.avgCost,storedVal:storedPos.value,qtyDiff,valDiff,ok:qtyDiff<0.0001&&valDiff<0.01});
+  }
+  return results;
+}
+
+// ── renderInventoryView — Enhanced UI ────────────────────────────────────────
+function renderInventoryView(root){
+  const activeTab = STATE.ui.invActiveTab||'ledger';
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+
+  root.innerHTML = `
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('invV2Title')}</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-outline" onclick="openInvSettingsModal()">${t('invV2SettingsBtn')}</button>
+        <button class="btn" onclick="openInvNewTxModal()">${t('invV2NewTxBtn')}</button>
+      </div>
+    </div>
+    <div class="hint" style="margin-bottom:12px">${t('invV2Hint')}</div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--line);margin-bottom:16px;flex-wrap:wrap">
+      ${['ledger','valuation','stocktake','recon'].map(tab=>`
+        <button onclick="STATE.ui.invActiveTab='${tab}';renderApp()" style="padding:8px 16px;border:none;background:none;cursor:pointer;font-weight:600;border-bottom:${activeTab===tab?'3px solid var(--gold)':'3px solid transparent'};color:${activeTab===tab?'var(--gold)':'var(--muted)'}">
+          ${tab==='stocktake'?'🔢 ':''} ${t('invV2Tab'+tab.charAt(0).toUpperCase()+tab.slice(1))}
+        </button>`).join('')}
+    </div>
+    <div id="invTabContent"></div>
+  </div>`;
+
+  const tabRoot = root.querySelector('#invTabContent');
+  if(activeTab==='ledger')     renderInvLedgerTab(tabRoot, tracked);
+  if(activeTab==='valuation')  renderInvValuationTab(tabRoot, tracked);
+  if(activeTab==='stocktake')  renderInvStocktakeTab(tabRoot, tracked);
+  if(activeTab==='recon')      renderInvReconTab(tabRoot, tracked);
+}
+
+// ── Tab: Stock Ledger ─────────────────────────────────────────────────────────
+function renderInvLedgerTab(root, tracked){
+  const selProd   = STATE.ui.invSelProduct||null;
+  const filterFrom= STATE.ui.invFilterFrom||'';
+  const filterTo  = STATE.ui.invFilterTo||'';
+  const filterType= STATE.ui.invFilterType||'';
+
+  const txTypeOptions = ['opening','purchase','purchase-return','sale','sale-return','adjustment','issue','receipt'];
+
+  // Product selector
+  root.innerHTML = `
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+    <div>
+      <label class="lbl">${t('invV2ProductLabel')}</label>
+      <select id="invProdSel" class="input" style="min-width:200px">
+        <option value="">— ${t('invV2FilterAll')} —</option>
+        ${tracked.map(p=>`<option value="${p.id}" ${selProd==p.id?'selected':''}>${escapeHtml(p.name)} (${escapeHtml(p.unit||'')})</option>`).join('')}
+      </select>
+    </div>
+    <div><label class="lbl">${t('invV2FilterFromDate')}</label><input type="date" id="invFilterFrom" class="input" value="${filterFrom}"></div>
+    <div><label class="lbl">${t('invV2FilterToDate')}</label><input type="date" id="invFilterTo" class="input" value="${filterTo}"></div>
+    <div>
+      <label class="lbl">${t('invV2FilterTxType')}</label>
+      <select id="invFilterType" class="input">
+        <option value="">— ${t('invV2FilterAll')} —</option>
+        ${txTypeOptions.map(ty=>`<option value="${ty}" ${filterType===ty?'selected':''}>${t('invV2TxType'+ty.split('-').map((w,i)=>i===0?w.charAt(0).toUpperCase()+w.slice(1):w.charAt(0).toUpperCase()+w.slice(1)).join(''))}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+
+  // Wire filters
+  ['invProdSel','invFilterFrom','invFilterTo','invFilterType'].forEach(id=>{
+    const el=root.querySelector('#'+id);
+    if(el) el.addEventListener('change',e=>{
+      if(id==='invProdSel') STATE.ui.invSelProduct=e.target.value||null;
+      if(id==='invFilterFrom') STATE.ui.invFilterFrom=e.target.value;
+      if(id==='invFilterTo')   STATE.ui.invFilterTo=e.target.value;
+      if(id==='invFilterType') STATE.ui.invFilterType=e.target.value;
+      renderApp();
+    });
+  });
+
+  // Render stock card per selected product OR list
+  const displayProds = selProd ? tracked.filter(p=>p.id==selProd) : tracked;
+
+  if(!displayProds.length){
+    root.insertAdjacentHTML('beforeend',`<div class="empty">${t('noTrackedProducts')}</div>`);
+    return;
+  }
+
+  for(const prod of displayProds){
+    const ledger = (STATE.stockLedger||[])
+      .filter(sl=>{
+        if(sl.productId!==prod.id) return false;
+        if(filterFrom && sl.date<filterFrom) return false;
+        if(filterTo   && sl.date>filterTo)   return false;
+        if(filterType && sl.txType!==filterType) return false;
+        return true;
+      })
+      .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
+
+    const pos = computeStockPositionV2(prod.id,null);
+    const totalIn  = ledger.filter(sl=>sl.status==='posted').reduce((s,sl)=>s+sl.inQty,0);
+    const totalOut = ledger.filter(sl=>sl.status==='posted').reduce((s,sl)=>s+sl.outQty,0);
+
+    root.insertAdjacentHTML('beforeend',`
+    <div class="card" style="margin-bottom:16px;padding:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        <div>
+          <span style="font-weight:700;font-size:15px">${escapeHtml(prod.name)}</span>
+          <span class="hint" style="margin-right:8px">${escapeHtml(prod.code||'')}</span>
+          <span class="badge" style="background:var(--gold-dim);color:var(--gold);padding:2px 8px;border-radius:8px;font-size:11px">${escapeHtml(prod.unit||'')}</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="font-size:13px;font-weight:600">
+            ${t('inventoryQtyCol')}: <span style="color:${pos.qty<0?'var(--brick)':'var(--gold)'}">${fmt(pos.qty)}</span>
+            &nbsp;|&nbsp; ${t('inventoryAvgCostCol')}: ${fmt(pos.avgCost)}
+            &nbsp;|&nbsp; ${t('inventoryValueCol')}: <strong>${fmt(pos.value)}</strong>
+          </span>
+        </div>
+      </div>
+      <!-- Summary row -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;background:rgba(255,255,255,.04);padding:8px 12px;border-radius:6px;font-size:12px">
+        <span>${t('invV2StockCardOpeningQty')}: <strong>${fmt(prod.openingQty||0)}</strong></span>
+        <span>${t('invV2StockCardTotalIn')}: <strong style="color:#4caf50">${fmt(totalIn)}</strong></span>
+        <span>${t('invV2StockCardTotalOut')}: <strong style="color:var(--brick)">${fmt(totalOut)}</strong></span>
+        <span>${t('invV2StockCardClosingQty')}: <strong>${fmt(pos.qty)}</strong></span>
+        <span>${t('invV2StockCardCurrentAvgCost')}: <strong>${fmt(pos.avgCost)}</strong></span>
+        <span>${t('invV2StockCardCurrentValue')}: <strong>${fmt(pos.value)}</strong></span>
+      </div>
+      <!-- Ledger table -->
+      <div class="table-wrap" style="font-size:12px">
+        <table><thead><tr>
+          <th>${t('date')}</th><th>${t('invV2DocNoLabel')}</th><th>${t('invV2TxTypeLabel')}</th>
+          <th class="num">${t('invV2InQtyCol')}</th><th class="num">${t('invV2OutQtyCol')}</th>
+          <th class="num">${t('invV2BalanceQtyCol')}</th>
+          <th class="num">${t('invV2UnitCostLabel')}</th><th class="num">${t('invV2TotalCostLabel')}</th>
+          <th class="num">${t('invV2AvgCostAfterCol')}</th><th class="num">${t('invV2ValueAfterCol')}</th>
+          <th>${t('invV2JournalLinkLabel')}</th><th>${t('invV2StatusLabel')}</th><th></th>
+        </tr></thead><tbody>
+        ${(()=>{
+          if(!ledger.length) return `<tr><td colspan="13"><div class="empty">${t('invV2NoLedgerEntries')}</div></td></tr>`;
+          // opening row from product
+          let rows='';
+          if(prod.openingQty) rows+=`<tr style="opacity:.7"><td>—</td><td>—</td><td>${t('invV2TxTypeOpening')}</td>
+            <td class="num">${fmt(prod.openingQty)}</td><td class="num">—</td><td class="num">${fmt(prod.openingQty)}</td>
+            <td class="num">${fmt(prod.openingCost||0)}</td><td class="num">${fmt((prod.openingQty||0)*(prod.openingCost||0))}</td>
+            <td class="num">${fmt(prod.openingCost||0)}</td><td class="num">${fmt((prod.openingQty||0)*(prod.openingCost||0))}</td>
+            <td>—</td><td><span class="badge" style="background:rgba(76,175,80,.15);color:#4caf50;padding:1px 7px;border-radius:8px;font-size:10px">${t('invV2StatusPosted')}</span></td><td></td></tr>`;
+          rows+=ledger.map(sl=>{
+            const statusColor = sl.status==='posted'?'rgba(76,175,80,.15)':sl.status==='cancelled'?'rgba(200,50,50,.15)':'rgba(255,193,7,.15)';
+            const statusText  = sl.status==='posted'?'#4caf50':sl.status==='cancelled'?'var(--brick)':'#ffc107';
+            const statusLabel = t('invV2Status'+sl.status.charAt(0).toUpperCase()+sl.status.slice(1));
+            const txTypeKey = 'invV2TxType'+sl.txType.split('-').map((w,i)=>i===0?w.charAt(0).toUpperCase()+w.slice(1):w.charAt(0).toUpperCase()+w.slice(1)).join('');
+            return `<tr style="${sl.status==='cancelled'?'opacity:.5;text-decoration:line-through':''}">
+              <td>${sl.date}</td>
+              <td style="font-weight:600">${escapeHtml(sl.docNo||'')}</td>
+              <td>${t(txTypeKey)||sl.txType}</td>
+              <td class="num" style="color:#4caf50">${sl.inQty>0?fmt(sl.inQty):'—'}</td>
+              <td class="num" style="color:var(--brick)">${sl.outQty>0?fmt(sl.outQty):'—'}</td>
+              <td class="num" style="font-weight:700">${fmt(sl.qtyAfter)}</td>
+              <td class="num">${fmt(sl.unitCost)}</td>
+              <td class="num">${fmt(sl.totalCost)}</td>
+              <td class="num">${fmt(sl.avgCostAfter)}</td>
+              <td class="num" style="font-weight:700">${fmt(sl.valueAfter)}</td>
+              <td>${sl.journalEntry?`<span class="drill" onclick="STATE.ui.view='accountstatement';STATE.ui.selectedAccount=null;renderApp()" title="${sl.journalEntry}">#${sl.journalEntry}</span>`:'—'}</td>
+              <td><span class="badge" style="background:${statusColor};color:${statusText};padding:1px 7px;border-radius:8px;font-size:10px">${statusLabel}</span></td>
+              <td>${sl.status==='posted'?`<span class="drill" style="color:var(--brick);font-size:11px" onclick="openInvCancelModal('${sl.id}')">${t('invV2CancelBtn')}</span>`:''}
+              ${sl.reason?`<span class="hint" style="font-size:10px" title="${escapeHtml(sl.reason)}">ℹ</span>`:''}
+              </td>
+            </tr>`;
+          }).join('');
+          return rows;
+        })()}
+        </tbody></table>
+      </div>
+    </div>`);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  STOCKTAKE MODULE — Physical Inventory Count & Variance Posting
+//  جرد فعلي — عد مادي — تسوية الفروق
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Tab: Physical Count (Stocktake) ──────────────────────────────────────────
+function renderInvStocktakeTab(root, tracked){
+  const sessions = (STATE.stocktakeSessions||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const openSessionId = STATE.ui.stOpenSessionId||null;
+
+  // If a session is open for editing, render it inline
+  if(openSessionId){
+    const sess = sessions.find(s=>s.id===openSessionId);
+    if(sess){ renderStocktakeSession(root, sess, tracked); return; }
+  }
+
+  // Session list view
+  const statusColor = s => ({draft:'rgba(255,193,7,.18)',counted:'rgba(76,175,80,.15)',posted:'rgba(33,150,243,.15)',cancelled:'rgba(200,50,50,.12)'}[s]||'');
+  const statusTextColor = s => ({draft:'#ffc107',counted:'#4caf50',posted:'#2196f3',cancelled:'var(--brick)'}[s]||'var(--muted)');
+  const statusLabel = s => t('stStatus'+s.charAt(0).toUpperCase()+s.slice(1));
+
+  root.innerHTML = `
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+    <div>
+      <div style="font-weight:700;font-size:15px">🔢 ${t('stSessionTitle')}</div>
+      <div class="hint">${t('stNeverCounted')||''}</div>
+    </div>
+    <button class="btn" onclick="openStocktakeNewSessionModal()">${t('stNewSession')}</button>
+  </div>
+
+  ${!sessions.length ? `<div class="empty">${t('stNoSessions')}</div>` : `
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('stSessionName')}</th>
+    <th>${t('stSessionDate')}</th>
+    <th class="num">${t('stTotalItems')}</th>
+    <th class="num">${t('stItemsWithDiff')}</th>
+    <th class="num">${t('stTotalDiffValue')}</th>
+    <th>${t('stSessionStatus')}</th>
+    <th>${t('stSessionNotes')}</th>
+    <th></th>
+  </tr></thead><tbody>
+  ${sessions.map(sess=>{
+    const lines = sess.lines||[];
+    const itemsWithDiff = lines.filter(l=>Math.abs(l.diff||0)>0.0001).length;
+    const totalDiffVal  = Math.round(lines.reduce((s,l)=>s+Math.abs(l.diffValue||0),0)*100)/100;
+    return `<tr>
+      <td style="font-weight:600">${escapeHtml(sess.name)}</td>
+      <td>${sess.date}</td>
+      <td class="num">${lines.length}</td>
+      <td class="num" style="color:${itemsWithDiff>0?'var(--brick)':'#4caf50'};font-weight:${itemsWithDiff>0?700:400}">${itemsWithDiff}</td>
+      <td class="num" style="color:${totalDiffVal>0?'var(--brick)':'inherit'}">${totalDiffVal>0?fmt(totalDiffVal):'—'}</td>
+      <td><span style="background:${statusColor(sess.status)};color:${statusTextColor(sess.status)};padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700">${statusLabel(sess.status)}</span></td>
+      <td class="hint" style="font-size:12px">${escapeHtml(sess.notes||'')}</td>
+      <td style="white-space:nowrap">
+        ${sess.status==='draft'||sess.status==='counted' ? `
+          <span class="drill" onclick="STATE.ui.stOpenSessionId='${sess.id}';renderApp()">✏️ ${t('stEditSession')}</span>
+          <span class="drill" style="color:#4caf50;margin-right:8px" onclick="openStocktakePostModal('${sess.id}')">✅ ${t('stPostSession')}</span>
+        ` : ''}
+        ${sess.status==='posted' ? `<span class="drill" onclick="STATE.ui.stOpenSessionId='${sess.id}';renderApp()">👁 ${t('stOpenSession')}</span>` : ''}
+        ${sess.status==='draft' ? `<span class="drill" style="color:var(--brick);margin-right:8px" onclick="cancelStocktakeSession('${sess.id}')">🗑 ${t('stCancelSession')}</span>` : ''}
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>`}`;
+}
+
+// ── Render an open session for editing / viewing ──────────────────────────────
+function renderStocktakeSession(root, sess, tracked){
+  const isReadOnly = sess.status==='posted'||sess.status==='cancelled';
+  const lines = sess.lines||[];
+
+  // Recompute system qty and diff for each line (live)
+  const enrichedLines = lines.map(l=>{
+    const pos = computeStockPositionV2(l.productId, sess.date);
+    const prod = STATE.products.find(p=>p.id===l.productId);
+    const sysQty   = Math.round(pos.qty*10000)/10000;
+    const counted  = l.countedQty!==undefined&&l.countedQty!==''&&l.countedQty!==null ? parseFloat(l.countedQty) : null;
+    const diff     = counted!==null ? Math.round((counted-sysQty)*10000)/10000 : null;
+    const diffVal  = diff!==null ? Math.round(diff*pos.avgCost*100)/100 : null;
+    return { ...l, prod, sysQty, counted, diff, diffVal, avgCost:pos.avgCost };
+  });
+
+  const totalItems    = enrichedLines.length;
+  const itemsWithDiff = enrichedLines.filter(l=>l.diff!==null&&Math.abs(l.diff)>0.0001).length;
+  const totalDiffVal  = Math.round(enrichedLines.filter(l=>l.diffVal!==null).reduce((s,l)=>s+Math.abs(l.diffVal),0)*100)/100;
+  const allCounted    = enrichedLines.length>0 && enrichedLines.every(l=>l.counted!==null);
+
+  root.innerHTML = `
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <span class="drill" onclick="STATE.ui.stOpenSessionId=null;renderApp()" style="font-size:13px">← ${t('stSessionTitle')}</span>
+    <span class="hint">/</span>
+    <span style="font-weight:700">${escapeHtml(sess.name)}</span>
+    <span class="hint">${sess.date}</span>
+    <span style="background:${sess.status==='posted'?'rgba(33,150,243,.15)':sess.status==='counted'?'rgba(76,175,80,.15)':'rgba(255,193,7,.18)'};color:${sess.status==='posted'?'#2196f3':sess.status==='counted'?'#4caf50':'#ffc107'};padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700;margin-right:auto">
+      ${t('stStatus'+sess.status.charAt(0).toUpperCase()+sess.status.slice(1))}
+    </span>
+    ${!isReadOnly?`<button class="btn btn-outline" style="font-size:12px;padding:5px 12px" onclick="printStocktakeSheet('${sess.id}')">🖨 ${t('stPrintSheet')}</button>`:''}
+    ${!isReadOnly?`<button class="btn" style="font-size:12px;padding:5px 12px;background:#4caf50" onclick="openStocktakePostModal('${sess.id}')">✅ ${t('stPostSession')}</button>`:''}
+  </div>
+
+  <!-- Summary cards -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="card" style="margin:0;padding:8px 16px;min-width:120px">
+      <div class="hint" style="margin:0;font-size:11px">${t('stTotalItems')}</div>
+      <div style="font-weight:800;font-size:18px">${totalItems}</div>
+    </div>
+    <div class="card" style="margin:0;padding:8px 16px;min-width:120px">
+      <div class="hint" style="margin:0;font-size:11px">${t('stItemsWithDiff')}</div>
+      <div style="font-weight:800;font-size:18px;color:${itemsWithDiff>0?'var(--brick)':'#4caf50'}">${itemsWithDiff}</div>
+    </div>
+    <div class="card" style="margin:0;padding:8px 16px;min-width:140px">
+      <div class="hint" style="margin:0;font-size:11px">${t('stTotalDiffValue')}</div>
+      <div style="font-weight:800;font-size:18px;color:${totalDiffVal>0?'var(--brick)':'#4caf50'}">${totalDiffVal>0?fmt(totalDiffVal):'—'}</div>
+    </div>
+    ${sess.notes?`<div class="card" style="margin:0;padding:8px 16px;flex:1;min-width:160px">
+      <div class="hint" style="margin:0;font-size:11px">${t('stSessionNotes')}</div>
+      <div style="font-size:13px">${escapeHtml(sess.notes)}</div>
+    </div>`:''}
+  </div>
+
+  <!-- Add items row (draft/counted only) -->
+  ${!isReadOnly?`
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <select id="stAddProdSel" class="input" style="min-width:220px">
+      <option value="">— ${t('stAddProduct')} —</option>
+      ${tracked.filter(p=>!lines.find(l=>l.productId===p.id)).map(p=>
+        `<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.unit||'')})</option>`
+      ).join('')}
+    </select>
+    <button class="btn btn-outline" onclick="stAddProductToSession('${sess.id}')">+ ${t('stAddProduct')}</button>
+    <button class="btn btn-outline" onclick="stAddAllProducts('${sess.id}')">📋 ${t('stAddAllProducts')}</button>
+  </div>`:''}
+
+  <!-- Count lines table -->
+  <div class="table-wrap">
+    <table id="stLinesTable"><thead><tr>
+      <th>${t('prodNameCol')}</th>
+      <th>${t('prodCodeCol')}</th>
+      <th>${t('prodUnitCol')}</th>
+      <th class="num">${t('stSystemQty')}</th>
+      <th class="num">${t('stCountedQty')}</th>
+      <th class="num">${t('stDiff')}</th>
+      <th class="num">${t('stDiffValue')}</th>
+      <th>${t('stReason')}</th>
+      ${!isReadOnly?'<th></th>':''}
+    </tr></thead><tbody>
+    ${enrichedLines.length===0
+      ? `<tr><td colspan="${isReadOnly?8:9}"><div class="empty">${t('stNoLines')}</div></td></tr>`
+      : enrichedLines.map((l,idx)=>{
+          const diffColor = l.diff===null?'inherit':l.diff>0?'#4caf50':l.diff<0?'var(--brick)':'inherit';
+          const diffLabel = l.diff===null?'—':l.diff>0?`+${fmt(l.diff)}`:fmt(l.diff);
+          return `<tr data-idx="${idx}">
+            <td style="font-weight:600">${escapeHtml(l.prod?.name||'')}</td>
+            <td class="hint">${escapeHtml(l.prod?.code||'')}</td>
+            <td>${escapeHtml(l.prod?.unit||'')}</td>
+            <td class="num">${fmt(l.sysQty)}</td>
+            <td class="num">
+              ${isReadOnly
+                ? `<span style="font-weight:700">${l.counted!==null?fmt(l.counted):'—'}</span>`
+                : `<input type="number" step="0.0001" class="input st-count-input" style="width:100px;text-align:center;font-weight:700"
+                     data-idx="${idx}" data-sessid="${sess.id}"
+                     value="${l.counted!==null?l.counted:''}"
+                     placeholder="${t('stCountedQtyHint')}">`
+              }
+            </td>
+            <td class="num" style="color:${diffColor};font-weight:${l.diff!==null&&l.diff!==0?700:400}">
+              ${diffLabel}
+            </td>
+            <td class="num" style="color:${diffColor}">
+              ${l.diffVal!==null?(l.diff>0?'+':'')+fmt(l.diffVal):'—'}
+            </td>
+            <td>
+              ${isReadOnly
+                ? `<span class="hint">${escapeHtml(l.reason||'')}</span>`
+                : `<input class="input st-reason-input" style="font-size:12px" data-idx="${idx}" data-sessid="${sess.id}"
+                     value="${escapeHtml(l.reason||'')}" placeholder="${t('stReasonRequired')}">`
+              }
+            </td>
+            ${!isReadOnly?`<td><span class="drill" style="color:var(--brick);font-size:12px" onclick="stRemoveProductFromSession('${sess.id}',${idx})">✕</span></td>`:''}
+          </tr>`;
+        }).join('')
+    }
+    </tbody></table>
+  </div>
+  ${sess.status==='posted'?`
+  <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+    ${t('stPostedBy')}: <strong>${escapeHtml(sess.postedBy||'')}</strong>
+    &nbsp;|&nbsp; ${t('stPostedAt')}: ${sess.postedAt?sess.postedAt.slice(0,16).replace('T',' '):''}
+  </div>`:''}`;
+
+  // Wire live-update inputs
+  if(!isReadOnly){
+    root.querySelectorAll('.st-count-input').forEach(inp=>{
+      inp.addEventListener('input', ()=> stSaveCountedQty(sess.id, parseInt(inp.dataset.idx), parseFloat(inp.value)));
+    });
+    root.querySelectorAll('.st-reason-input').forEach(inp=>{
+      inp.addEventListener('input', ()=> stSaveReason(sess.id, parseInt(inp.dataset.idx), inp.value));
+    });
+  }
+}
+
+// ── Stocktake helper functions ────────────────────────────────────────────────
+
+function stSaveCountedQty(sessId, idx, val){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess||!sess.lines[idx]) return;
+  sess.lines[idx].countedQty = isNaN(val)?null:val;
+  // Recompute diff
+  const pos = computeStockPositionV2(sess.lines[idx].productId, sess.date);
+  const diff = val!==null&&!isNaN(val) ? Math.round((val-pos.qty)*10000)/10000 : null;
+  sess.lines[idx].diff = diff;
+  sess.lines[idx].diffValue = diff!==null ? Math.round(diff*pos.avgCost*100)/100 : null;
+  sess.lines[idx].avgCost = pos.avgCost;
+  // Mark as counted if all lines have a value
+  if(sess.lines.every(l=>l.countedQty!==null&&l.countedQty!==undefined)) sess.status='counted';
+  storeSet('stocktakeSessions', STATE.stocktakeSessions).catch(()=>{});
+  // Re-render summary without full page reload (update diff cells only)
+  renderApp();
+}
+
+function stSaveReason(sessId, idx, val){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess||!sess.lines[idx]) return;
+  sess.lines[idx].reason = val;
+  storeSet('stocktakeSessions', STATE.stocktakeSessions).catch(()=>{});
+}
+
+async function stAddProductToSession(sessId){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+  const sel = document.getElementById('stAddProdSel');
+  if(!sel||!sel.value) return;
+  const prodId = parseInt(sel.value);
+  if(sess.lines.find(l=>l.productId===prodId)) return;
+  const pos = computeStockPositionV2(prodId, sess.date);
+  sess.lines.push({ productId:prodId, systemQty:pos.qty, countedQty:null, diff:null, diffValue:null, reason:'', avgCost:pos.avgCost });
+  await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+  renderApp();
+}
+
+async function stAddAllProducts(sessId){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  let added = 0;
+  for(const p of tracked){
+    if(sess.lines.find(l=>l.productId===p.id)) continue;
+    const pos = computeStockPositionV2(p.id, sess.date);
+    sess.lines.push({ productId:p.id, systemQty:pos.qty, countedQty:null, diff:null, diffValue:null, reason:'', avgCost:pos.avgCost });
+    added++;
+  }
+  if(added>0) await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+  renderApp();
+}
+
+async function stRemoveProductFromSession(sessId, idx){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+  sess.lines.splice(idx,1);
+  await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+  renderApp();
+}
+
+async function cancelStocktakeSession(sessId){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+  if(!confirm(t('stCancelConfirm'))) return;
+  sess.status = 'cancelled';
+  sess.cancelledBy = currentUserName();
+  sess.cancelledAt = new Date().toISOString();
+  await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+  renderApp();
+}
+
+// ── Modal: New Stocktake Session ──────────────────────────────────────────────
+function openStocktakeNewSessionModal(){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:440px;width:97%">
+    <h3>🔢 ${t('stNewSession')}</h3>
+    <div style="display:grid;gap:10px;margin-bottom:14px">
+      <div><label class="lbl">${t('stSessionName')}</label>
+        <input id="stSessName" class="input" placeholder="مثال: جرد يناير 2026" value="جرد ${new Date().toLocaleDateString('ar-EG',{month:'long',year:'numeric'})}">
+      </div>
+      <div><label class="lbl">${t('stSessionDate')}</label>
+        <input type="date" id="stSessDate" class="input" value="${todayISO()}">
+      </div>
+      <div><label class="lbl">${t('stSessionNotes')}</label>
+        <textarea id="stSessNotes" class="input" rows="2" placeholder="ملاحظات اختيارية..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="stSaveNewSess">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#stSaveNewSess').onclick = async()=>{
+    const name = overlay.querySelector('#stSessName').value.trim();
+    if(!name){ showToast(t('stSessionNameRequired')); return; }
+    const sess = {
+      id: 'st_'+Date.now()+Math.random().toString(36).slice(2,6),
+      name, date: overlay.querySelector('#stSessDate').value||todayISO(),
+      notes: overlay.querySelector('#stSessNotes').value.trim(),
+      status: 'draft', lines: [],
+      createdBy: currentUserName(), createdAt: new Date().toISOString(),
+      postedBy:'', postedAt:'', cancelledBy:'', cancelledAt:''
+    };
+    if(!STATE.stocktakeSessions) STATE.stocktakeSessions=[];
+    STATE.stocktakeSessions.push(sess);
+    await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+    overlay.style.display='none'; overlay.innerHTML='';
+    // Open the new session immediately
+    STATE.ui.stOpenSessionId = sess.id;
+    STATE.ui.invActiveTab = 'stocktake';
+    renderApp();
+    showToast(t('stSessionSaved'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Modal: Confirm & Post stocktake differences ───────────────────────────────
+function openStocktakePostModal(sessId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+
+  // Refresh system qty before showing
+  const linesWithDiff = (sess.lines||[]).map(l=>{
+    const pos = computeStockPositionV2(l.productId, sess.date);
+    const prod = STATE.products.find(p=>p.id===l.productId);
+    const counted = l.countedQty!==null&&l.countedQty!==undefined ? parseFloat(l.countedQty) : null;
+    const diff = counted!==null ? Math.round((counted-pos.qty)*10000)/10000 : null;
+    const diffVal = diff!==null ? Math.round(diff*pos.avgCost*100)/100 : null;
+    return { ...l, prod, sysQty:pos.qty, counted, diff, diffVal, avgCost:pos.avgCost };
+  }).filter(l=>l.diff!==null&&Math.abs(l.diff)>0.0001);
+
+  const totalDiffVal = Math.round(linesWithDiff.reduce((s,l)=>s+Math.abs(l.diffVal||0),0)*100)/100;
+  const uncountedCount = (sess.lines||[]).filter(l=>l.countedQty===null||l.countedQty===undefined).length;
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:560px;width:97%;max-height:88vh;overflow-y:auto">
+    <h3>✅ ${t('stPostSession')}: ${escapeHtml(sess.name)}</h3>
+    ${uncountedCount>0?`<div style="background:rgba(255,193,7,.15);border:1px solid rgba(255,193,7,.4);padding:8px 12px;border-radius:6px;margin-bottom:10px;color:#ffc107;font-size:13px">
+      ⚠ ${uncountedCount} صنف لم يتم عدّه بعد — سيُتجاهل عند الترحيل.
+    </div>`:''}
+    ${linesWithDiff.length===0?`
+      <div style="text-align:center;padding:20px;color:#4caf50;font-size:15px;font-weight:700">
+        ✓ ${t('stZeroDiff')}
+      </div>
+    `:`
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="card" style="margin:0;padding:8px 16px">
+        <div class="hint" style="margin:0;font-size:11px">${t('stItemsWithDiff')}</div>
+        <div style="font-weight:800;font-size:18px;color:var(--brick)">${linesWithDiff.length}</div>
+      </div>
+      <div class="card" style="margin:0;padding:8px 16px">
+        <div class="hint" style="margin:0;font-size:11px">${t('stTotalDiffValue')}</div>
+        <div style="font-weight:800;font-size:18px;color:var(--brick)">${fmt(totalDiffVal)}</div>
+      </div>
+    </div>
+    <div class="table-wrap" style="margin-bottom:12px;font-size:12px">
+      <table><thead><tr>
+        <th>${t('prodNameCol')}</th>
+        <th class="num">${t('stSystemQty')}</th>
+        <th class="num">${t('stCountedQty')}</th>
+        <th class="num">${t('stDiff')}</th>
+        <th class="num">${t('stDiffValue')}</th>
+        <th>${t('stReason')}</th>
+      </tr></thead><tbody>
+      ${linesWithDiff.map(l=>`<tr>
+        <td style="font-weight:600">${escapeHtml(l.prod?.name||'')} <span class="hint">(${escapeHtml(l.prod?.unit||'')})</span></td>
+        <td class="num">${fmt(l.sysQty)}</td>
+        <td class="num" style="font-weight:700">${fmt(l.counted)}</td>
+        <td class="num" style="color:${l.diff>0?'#4caf50':'var(--brick)'};font-weight:700">${l.diff>0?'+':''}${fmt(l.diff)}</td>
+        <td class="num" style="color:${l.diff>0?'#4caf50':'var(--brick)'}">${l.diff>0?'+':''}${fmt(l.diffVal)}</td>
+        <td class="hint">${escapeHtml(l.reason||'—')}</td>
+      </tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div class="hint" style="margin-bottom:10px">${t('stPostConfirm')}</div>`}
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      ${linesWithDiff.length>0?`<button class="btn" id="stConfirmPost" style="background:#4caf50">✅ ${t('stPostSession')}</button>`:`<button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('closeBtn')||'إغلاق'}</button>`}
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  const postBtn = overlay.querySelector('#stConfirmPost');
+  if(postBtn) postBtn.onclick = async()=>{
+    postBtn.disabled=true; postBtn.textContent='جاري الترحيل...';
+    try{
+      await postStocktakeSession(sessId);
+      overlay.style.display='none'; overlay.innerHTML='';
+      STATE.ui.stOpenSessionId=null;
+      renderApp();
+      showToast(t('stPostSuccess').replace('${count}',linesWithDiff.length),4000);
+    } catch(err){ showToast(err.message,5000); postBtn.disabled=false; postBtn.textContent=t('stPostSession'); }
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Core: Post stocktake adjustments to stock ledger ─────────────────────────
+async function postStocktakeSession(sessId){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) throw new Error('Stocktake session not found');
+  if(sess.status==='posted') throw new Error('هذه الجلسة مرحّلة بالفعل.');
+
+  const user = currentUserName();
+  const now  = new Date().toISOString();
+  let posted = 0;
+
+  for(const line of sess.lines){
+    const counted = line.countedQty!==null&&line.countedQty!==undefined ? parseFloat(line.countedQty) : null;
+    if(counted===null) continue; // skip uncounted lines
+
+    const pos  = computeStockPositionV2(line.productId, sess.date);
+    const diff = Math.round((counted - pos.qty)*10000)/10000;
+    if(Math.abs(diff)<0.0001) continue; // no variance — skip
+
+    const prod = STATE.products.find(p=>p.id===line.productId);
+    const reason = (line.reason||'').trim()||`جرد فعلي — ${sess.name}`;
+
+    // Create a stockLedger adjustment entry (signed diff passed as adjustedBaseQty)
+    await postInventoryTransaction({
+      productId : line.productId,
+      txType    : 'adjustment',
+      date      : sess.date,
+      docNo     : `${sessId.slice(0,8)}-${prod?.code||line.productId}`,
+      qty       : Math.abs(diff),
+      unitType  : 'base',
+      unitCost  : pos.avgCost,
+      reason    : reason,
+      source    : 'stocktake',
+      adjustedBaseQty: diff   // signed: positive=surplus, negative=shortage
+    });
+
+    // Update line with final values
+    line.diff      = diff;
+    line.diffValue = Math.round(diff*pos.avgCost*100)/100;
+    line.avgCost   = pos.avgCost;
+    posted++;
+  }
+
+  sess.status   = 'posted';
+  sess.postedBy = user;
+  sess.postedAt = now;
+  await storeSet('stocktakeSessions', STATE.stocktakeSessions);
+  return posted;
+}
+
+// ── Print count sheet ─────────────────────────────────────────────────────────
+function printStocktakeSheet(sessId){
+  const sess = (STATE.stocktakeSessions||[]).find(s=>s.id===sessId);
+  if(!sess) return;
+  const company = STATE.settings?.companyName||'';
+  const lines   = sess.lines||[];
+  const enriched = lines.map(l=>{
+    const prod = STATE.products.find(p=>p.id===l.productId);
+    const pos  = computeStockPositionV2(l.productId, sess.date);
+    return { prod, sysQty: pos.qty };
+  });
+
+  const w = window.open('','_blank');
+  if(!w){ showToast('الرجاء السماح بالنوافذ المنبثقة'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+  <title>ورقة جرد — ${sess.name}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#fff;color:#111;padding:24px;font-size:13px}
+    h1{font-size:17px;font-weight:800;margin-bottom:2px}
+    .sub{color:#555;font-size:12px;margin-bottom:16px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#1F2E3B;color:#fff;padding:8px 10px;text-align:right;font-size:12px}
+    td{padding:9px 10px;border-bottom:1px solid #ddd;vertical-align:middle}
+    td.num{direction:ltr;text-align:left;font-variant-numeric:tabular-nums}
+    tr:nth-child(even) td{background:#f9f9f9}
+    .count-box{display:inline-block;width:100px;height:26px;border:1.5px solid #999;border-radius:3px;vertical-align:middle}
+    .sig{margin-top:40px;display:flex;gap:60px}
+    .sig-block{border-top:1px solid #555;min-width:160px;padding-top:6px;font-size:12px;color:#555;text-align:center}
+    @media print{body{padding:10px}}
+  </style></head><body>
+  <h1>${company}</h1>
+  <div class="sub">
+    ورقة جرد فعلي — <strong>${sess.name}</strong>
+    &nbsp;|&nbsp; تاريخ الجرد: <strong>${sess.date}</strong>
+    ${sess.notes?'&nbsp;|&nbsp; '+sess.notes:''}
+  </div>
+  <div style="font-size:12px;color:#555;margin-bottom:8px">
+    وقت الطباعة: ${new Date().toLocaleString('ar-EG')}
+    &nbsp;|&nbsp; عدد الأصناف: ${lines.length}
+  </div>
+  <table>
+    <thead><tr>
+      <th style="width:32px">#</th>
+      <th>كود الصنف</th>
+      <th>اسم الصنف</th>
+      <th>الوحدة</th>
+      <th class="num" style="width:100px">كمية النظام</th>
+      <th style="width:140px;text-align:center">الكمية الفعلية</th>
+      <th style="width:120px">الفرق</th>
+      <th>السبب</th>
+    </tr></thead>
+    <tbody>
+    ${enriched.map((r,i)=>`<tr>
+      <td>${i+1}</td>
+      <td>${escapeHtml(r.prod?.code||'')}</td>
+      <td style="font-weight:600">${escapeHtml(r.prod?.name||'')}</td>
+      <td>${escapeHtml(r.prod?.unit||'')}</td>
+      <td class="num">${fmt(r.sysQty)}</td>
+      <td style="text-align:center"><span class="count-box"></span></td>
+      <td></td>
+      <td></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <div class="sig">
+    <div class="sig-block">اسم العادّ &amp; التوقيع</div>
+    <div class="sig-block">المراجع &amp; التوقيع</div>
+    <div class="sig-block">المدير المالي &amp; التوقيع</div>
+  </div>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// ── Tab: Inventory Valuation ──────────────────────────────────────────────────
+function renderInvValuationTab(root, tracked){
+  const asOf = STATE.ui.inventoryAsOf || todayISO();
+  const rows = computeInventoryValuation(asOf);
+  const totalVal = Math.round(rows.reduce((s,r)=>s+r.value,0)*100)/100;
+
+  root.innerHTML = `
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+    <div><label class="lbl">${t('agingAsOfLabel')}</label><input type="date" id="invValAsOf" class="input" value="${asOf}"></div>
+    <div class="card" style="margin:0;padding:8px 18px">
+      <div class="hint" style="margin:0">${t('invV2ValuationTotal')}</div>
+      <div style="font-weight:800;font-size:18px">${fmt(totalVal)}</div>
+    </div>
+  </div>
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('invV2ValuationItemCode')}</th><th>${t('invV2ValuationItemName')}</th>
+    <th>${t('prodUnitCol')}</th><th class="num">${t('invV2ValuationQty')}</th>
+    <th class="num">${t('invV2ValuationAvgCost')}</th><th class="num">${t('invV2ValuationValue')}</th>
+  </tr></thead><tbody>
+    ${rows.map(r=>`<tr>
+      <td>${escapeHtml(r.product.code||'')}</td>
+      <td style="font-weight:600">${escapeHtml(r.product.name)}</td>
+      <td>${escapeHtml(r.product.unit||'')}</td>
+      <td class="num" style="color:${r.qty<0?'var(--brick)':'inherit'}">${fmt(r.qty)}</td>
+      <td class="num">${fmt(r.avgCost)}</td>
+      <td class="num" style="font-weight:700">${fmt(r.value)}</td>
+    </tr>`).join('')}
+    <tr style="border-top:2px solid var(--line);font-weight:800">
+      <td colspan="5" style="text-align:end">${t('invV2ValuationTotal')}</td>
+      <td class="num">${fmt(totalVal)}</td>
+    </tr>
+  </tbody></table></div>`;
+
+  root.querySelector('#invValAsOf').addEventListener('change',e=>{ STATE.ui.inventoryAsOf=e.target.value; renderApp(); });
+}
+
+// ── Tab: Reconciliation ───────────────────────────────────────────────────────
+function renderInvReconTab(root, tracked){
+  const asOf = STATE.ui.inventoryAsOf || todayISO();
+  const rows = tracked.map(p=>{
+    const pos = computeStockPositionV2(p.id, asOf);
+    const glAcc = p.inventoryAccount;
+    const glBal = glAcc ? glBalance(glAcc, asOf) : null;
+    const diff  = glBal!==null ? Math.round((glBal - pos.value)*100)/100 : null;
+    return { product:p, invVal:pos.value, glAcc, glBal, diff };
+  });
+
+  const recalc = recalcInventoryIntegrity();
+  const hasDiscrepancy = recalc.some(r=>!r.ok);
+
+  root.innerHTML = `
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+    <div><label class="lbl">${t('agingAsOfLabel')}</label><input type="date" id="invReconAsOf" class="input" value="${asOf}"></div>
+    <button class="btn btn-outline" onclick="renderApp()" style="margin-top:18px">${t('invV2RecalcBtn')}</button>
+  </div>
+
+  <!-- GL Reconciliation -->
+  <h3 style="margin:0 0 8px;font-size:14px">${t('invV2ReconTitle')}</h3>
+  <div class="table-wrap" style="margin-bottom:20px"><table><thead><tr>
+    <th>${t('invV2ValuationItemName')}</th><th>${t('invV2ValuationItemCode')}</th>
+    <th>${t('prodInvAccountLabel')}</th>
+    <th class="num">${t('invV2ReconInvValue')}</th>
+    <th class="num">${t('invV2ReconGLValue')}</th>
+    <th class="num">${t('invV2ReconDiff')}</th>
+    <th>${t('invV2StatusLabel')}</th>
+  </tr></thead><tbody>
+    ${rows.map(r=>`<tr>
+      <td style="font-weight:600">${escapeHtml(r.product.name)}</td>
+      <td>${escapeHtml(r.product.code||'')}</td>
+      <td>${r.glAcc||'—'} ${r.glAcc?escapeHtml(accName(r.glAcc)):''}</td>
+      <td class="num">${fmt(r.invVal)}</td>
+      <td class="num">${r.glBal!==null?fmt(r.glBal):'—'}</td>
+      <td class="num" style="color:${r.diff&&Math.abs(r.diff)>0.01?'var(--brick)':'inherit'}">${r.diff!==null?fmt(r.diff):'—'}</td>
+      <td>${r.diff===null?'—':Math.abs(r.diff)<0.01
+        ?`<span style="color:#4caf50;font-weight:700">${t('invV2ReconOK')}</span>`
+        :`<span style="color:var(--brick);font-weight:700">${t('invV2ReconMismatch')}</span>`}</td>
+    </tr>`).join('')}
+  </tbody></table></div>
+
+  <!-- Internal integrity check -->
+  <h3 style="margin:0 0 8px;font-size:14px">${t('invV2RecalcTitle')}</h3>
+  <div class="hint" style="margin-bottom:8px">${t('invV2RecalcDesc')}</div>
+  ${!hasDiscrepancy
+    ? `<div style="color:#4caf50;font-weight:700;padding:10px">${t('invV2NoDiscrepancy')}</div>`
+    : `<div style="color:var(--brick);font-weight:700;padding:6px 0 10px">${t('invV2DiscrepancyFound').replace('${count}',recalc.filter(r=>!r.ok).length)}</div>
+       <div class="table-wrap"><table><thead><tr>
+         <th>${t('invV2ValuationItemName')}</th>
+         <th class="num">Calc Qty</th><th class="num">Stored Qty</th><th class="num">Δ Qty</th>
+         <th class="num">Calc Val</th><th class="num">Stored Val</th><th class="num">Δ Val</th>
+       </tr></thead><tbody>
+       ${recalc.filter(r=>!r.ok).map(r=>`<tr>
+         <td>${escapeHtml(r.product.name)}</td>
+         <td class="num">${fmt(r.calcQty)}</td><td class="num">${fmt(r.storedQty)}</td><td class="num" style="color:var(--brick)">${fmt(r.qtyDiff)}</td>
+         <td class="num">${fmt(r.calcVal)}</td><td class="num">${fmt(r.storedVal)}</td><td class="num" style="color:var(--brick)">${fmt(r.valDiff)}</td>
+       </tr>`).join('')}
+       </tbody></table></div>`
+  }`;
+
+  root.querySelector('#invReconAsOf').addEventListener('change',e=>{ STATE.ui.inventoryAsOf=e.target.value; renderApp(); });
+}
+
+// ── Modal: New Stock Transaction ──────────────────────────────────────────────
+function openInvNewTxModal(){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  const txTypes = ['opening','purchase','purchase-return','sale','sale-return','adjustment','issue','receipt'];
+  const expAccounts = STATE.accounts.filter(a=>a.type==='المصروفات'||a.type==='تكلفة المبيعات');
+
+  overlay.innerHTML = `
+  <div class="modal-box" style="max-width:520px;width:97%;max-height:90vh;overflow-y:auto">
+    <h3>${t('invV2NewTxTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('invV2ProductLabel')}</label>
+        <select id="invTxProduct" class="input">
+          <option value="">— ${t('invV2ProductRequired')} —</option>
+          ${tracked.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.unit||'')})</option>`).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('invV2TxTypeLabel')}</label>
+        <select id="invTxType" class="input">
+          ${txTypes.map(ty=>`<option value="${ty}">${t('invV2TxType'+ty.split('-').map((w,i)=>i===0?w.charAt(0).toUpperCase()+w.slice(1):w.charAt(0).toUpperCase()+w.slice(1)).join(''))}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('date')}</label><input type="date" id="invTxDate" class="input" value="${todayISO()}"></div>
+      <div><label class="lbl">${t('invV2DocNoLabel')} (${t('invV2FilterAll')} optional)</label><input id="invTxDocNo" class="input" placeholder="auto"></div>
+
+      <!-- UOM info (populated on product change) -->
+      <div style="grid-column:1/-1" id="invTxUomInfo"></div>
+
+      <div><label class="lbl">${t('invV2UnitLabel')}</label>
+        <select id="invTxUnitType" class="input">
+          <option value="base">Base</option>
+          <option value="purchase">Purchase Unit</option>
+          <option value="sale">Sale/Issue Unit</option>
+        </select>
+      </div>
+      <div><label class="lbl" id="invTxQtyLabel">${t('invV2QtyLabel')}</label>
+        <input type="number" id="invTxQty" class="input" step="0.0001" min="0.0001" value="1">
+      </div>
+      <div id="invTxBaseQtyDiv" style="display:none">
+        <label class="lbl">${t('invV2BaseQtyLabel')}</label>
+        <input type="number" id="invTxBaseQty" class="input" readonly style="opacity:.7">
+      </div>
+
+      <!-- For adjustment: physical count input -->
+      <div id="invTxPhysDiv" style="display:none;grid-column:1/-1">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div><label class="lbl">${t('invV2SystemQtyLabel')}</label><input type="number" id="invTxSysQty" class="input" readonly style="opacity:.7" value="0"></div>
+          <div><label class="lbl">${t('invV2PhysicalQtyLabel')}</label><input type="number" id="invTxPhysQty" class="input" step="0.0001" value="0"></div>
+          <div><label class="lbl">${t('invV2DiffQtyLabel')}</label><input type="number" id="invTxDiffQty" class="input" readonly style="opacity:.7;color:var(--gold)" value="0"></div>
+        </div>
+      </div>
+
+      <div><label class="lbl">${t('invV2UnitCostLabel')}</label>
+        <input type="number" id="invTxUnitCost" class="input" step="0.0001" min="0" value="0">
+      </div>
+      <div><label class="lbl">${t('invV2TotalCostLabel')}</label>
+        <input type="number" id="invTxTotalCost" class="input" readonly style="opacity:.7" value="0">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('invV2ReasonLabel')}</label>
+        <textarea id="invTxReason" class="input" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="invTxSaveBtn">${t('invV2PostBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  const getEl = id=>overlay.querySelector('#'+id);
+  const updateCalc=()=>{
+    const prod=STATE.products.find(p=>p.id==getEl('invTxProduct').value);
+    const qty=parseFloat(getEl('invTxQty').value)||0;
+    const unitType=getEl('invTxUnitType').value;
+    const cost=parseFloat(getEl('invTxUnitCost').value)||0;
+    const txType=getEl('invTxType').value;
+    if(prod){
+      const conv=unitType==='purchase'?(prod.purchaseConvFactor||1):unitType==='sale'?(prod.saleConvFactor||1):1;
+      const baseQty=Math.round(qty*conv*10000)/10000;
+      getEl('invTxBaseQty').value=baseQty;
+      getEl('invTxBaseQtyDiv').style.display=conv!==1?'block':'none';
+      getEl('invTxTotalCost').value=Math.round(qty*cost*100)/100;
+      // For adjustment: compute sys qty & diff
+      if(txType==='adjustment'){
+        const pos=computeStockPositionV2(prod.id,null);
+        getEl('invTxSysQty').value=pos.qty;
+        const physQty=parseFloat(getEl('invTxPhysQty').value)||0;
+        getEl('invTxDiffQty').value=Math.round((physQty-pos.qty)*10000)/10000;
+        getEl('invTxPhysDiv').style.display='block';
+        getEl('invTxQty').closest('div').style.display='none'; // hide qty field for adj
+      } else {
+        getEl('invTxPhysDiv').style.display='none';
+        getEl('invTxQty').closest('div').style.display='block';
+      }
+      // UOM info
+      let uomHtml='';
+      if(prod.purchaseUnit||prod.saleUnit){
+        uomHtml=`<div class="hint" style="background:rgba(255,255,255,.05);padding:6px 10px;border-radius:6px">
+          ${t('invV2BaseUnitLabel')}: <strong>${escapeHtml(prod.unit||'')}</strong>`;
+        if(prod.purchaseUnit) uomHtml+=` &nbsp;|&nbsp; ${t('invV2PurchaseUnitLabel')}: <strong>${escapeHtml(prod.purchaseUnit)}</strong> = ${prod.purchaseConvFactor||1} ${escapeHtml(prod.unit||'')}`;
+        if(prod.saleUnit) uomHtml+=` &nbsp;|&nbsp; ${t('invV2SaleUnitLabel')}: <strong>${escapeHtml(prod.saleUnit)}</strong> = ${prod.saleConvFactor||1} ${escapeHtml(prod.unit||'')}`;
+        uomHtml+='</div>';
+      }
+      getEl('invTxUomInfo').innerHTML=uomHtml;
+    }
+  };
+  ['invTxProduct','invTxQty','invTxUnitType','invTxUnitCost','invTxType','invTxPhysQty'].forEach(id=>{
+    const el=getEl(id);
+    if(el) el.addEventListener('input',updateCalc);
+    if(el) el.addEventListener('change',updateCalc);
+  });
+  updateCalc();
+
+  getEl('invTxSaveBtn').onclick=async()=>{
+    try{
+      const prodId=getEl('invTxProduct').value;
+      if(!prodId){ showToast(t('invV2ProductRequired')); return; }
+      const prod=STATE.products.find(p=>p.id==prodId);
+      const txType=getEl('invTxType').value;
+      const date=getEl('invTxDate').value||todayISO();
+      const docNo=getEl('invTxDocNo').value.trim()||'';
+      const unitType=getEl('invTxUnitType').value;
+      const unitCost=parseFloat(getEl('invTxUnitCost').value)||0;
+      const reason=getEl('invTxReason').value.trim();
+
+      if(txType==='adjustment'){
+        const physQty=parseFloat(getEl('invTxPhysQty').value)||0;
+        const sysQty=parseFloat(getEl('invTxSysQty').value)||0;
+        const diff=Math.round((physQty-sysQty)*10000)/10000;
+        await postInventoryTransaction({ productId:prod.id, txType:'adjustment', date, docNo, qty:Math.abs(diff), unitType:'base', unitCost, reason, source:'manual', adjustedBaseQty:diff });
+      } else {
+        const qty=parseFloat(getEl('invTxQty').value)||0;
+        if(qty<=0){ showToast(t('invV2QtyRequired')); return; }
+        await postInventoryTransaction({ productId:prod.id, txType, date, docNo, qty, unitType, unitCost, reason, source:'manual' });
+      }
+      overlay.style.display='none'; overlay.innerHTML='';
+      renderApp();
+      showToast(t('invV2PostedToast'));
+    } catch(err){ showToast(err.message,4000); }
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Modal: Cancel a Stock Ledger Entry ───────────────────────────────────────
+function openInvCancelModal(slId){
+  const overlay=document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const sl=(STATE.stockLedger||[]).find(s=>s.id===slId);
+  if(!sl) return;
+  const prod=STATE.products.find(p=>p.id===sl.productId);
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:440px;width:97%">
+    <h3>${t('invV2CancelBtn')}: ${escapeHtml(sl.docNo||slId)}</h3>
+    <div class="hint" style="margin-bottom:12px">${t('invV2CancelConfirm')}</div>
+    <div style="background:rgba(255,255,255,.05);padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px">
+      <div>${t('invV2ProductLabel')}: <strong>${escapeHtml(prod?.name||'')}</strong></div>
+      <div>${t('date')}: ${sl.date} &nbsp;|&nbsp; ${t('invV2TxTypeLabel')}: ${sl.txType}</div>
+      <div>${t('invV2InQtyCol')}: ${fmt(sl.inQty)} &nbsp;|&nbsp; ${t('invV2OutQtyCol')}: ${fmt(sl.outQty)} &nbsp;|&nbsp; ${t('invV2UnitCostLabel')}: ${fmt(sl.unitCost)}</div>
+    </div>
+    <div><label class="lbl">${t('invV2CancelReasonLabel')}</label><textarea id="cancelReason" class="input" rows="2"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" style="background:var(--brick)" id="confirmCancelBtn">${t('invV2CancelBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#confirmCancelBtn').onclick=async()=>{
+    const reason=overlay.querySelector('#cancelReason').value.trim();
+    if(!reason){ showToast(t('invV2CancelReasonRequired')); return; }
+    try{
+      await cancelInventoryTransaction(slId,reason);
+      overlay.style.display='none'; overlay.innerHTML='';
+      renderApp();
+      showToast(t('invV2CancelledToast'));
+    } catch(err){ showToast(err.message,4000); }
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Modal: Inventory Settings ─────────────────────────────────────────────────
+function openInvSettingsModal(){
+  const overlay=document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const s=STATE.invSettings||{};
+  const expAccounts=STATE.accounts.filter(a=>a.type==='المصروفات'||a.type==='تكلفة المبيعات');
+  const invAccounts=STATE.accounts.filter(a=>a.type==='الأصول المتداولة');
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:480px;width:97%">
+    <h3>${t('invV2SettingsTitle')}</h3>
+    <div style="display:grid;gap:12px;margin-bottom:14px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="invSetNeg" ${s.allowNegativeStock?'checked':''}>
+        <div><div style="font-weight:600">${t('invV2AllowNegativeLabel')}</div>
+          <div class="hint">${t('invV2AllowNegativeHint')}</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="invSetCOGS" ${s.autoPostCOGS?'checked':''}>
+        <div><div style="font-weight:600">${t('invV2AutoPostCOGSLabel')}</div>
+          <div class="hint">${t('invV2AutoPostCOGSHint')}</div></div>
+      </label>
+      <div><label class="lbl">${t('invV2COGSAccountLabel')}</label>
+        <select id="invSetCOGSAcc" class="input">
+          <option value="">—</option>
+          ${expAccounts.map(a=>`<option value="${a.code}" ${s.cogsAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('invV2AdjAccountLabel')}</label>
+        <select id="invSetAdjAcc" class="input">
+          <option value="">—</option>
+          ${[...expAccounts,...invAccounts].map(a=>`<option value="${a.code}" ${s.adjustmentAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveInvSettings">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveInvSettings').onclick=async()=>{
+    STATE.invSettings={
+      allowNegativeStock:overlay.querySelector('#invSetNeg').checked,
+      autoPostCOGS:overlay.querySelector('#invSetCOGS').checked,
+      cogsAccount:overlay.querySelector('#invSetCOGSAcc').value,
+      adjustmentAccount:overlay.querySelector('#invSetAdjAcc').value
+    };
+    await storeSet('invSettings',STATE.invSettings);
+    overlay.style.display='none'; overlay.innerHTML='';
+    showToast(t('invV2SavedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Navigation sub-views for enhanced inventory ───────────────────────────────
+// Stock Card shortcut: navigate to inventory tab and pre-select product
+function openStockCard(productId){
+  STATE.ui.view='inventory';
+  STATE.ui.invActiveTab='ledger';
+  STATE.ui.invSelProduct=productId;
+  renderApp();
+}
+
+// ── Wire enhanced inventory into postPurchaseInvoiceDraft ────────────────────
+// The existing postPurchaseInvoiceDraft already calls addStockMove for purchase
+// items. We ALSO create a stockLedger entry for tracked items with inventory
+// accounts. This piggybacks on the existing call without replacing it.
+const _origPostPurchaseInvoiceDraft = typeof postPurchaseInvoiceDraft !== 'undefined' ? postPurchaseInvoiceDraft : null;
+
+// ── Wire enhanced inventory into postInvoiceDraft ─────────────────────────────
+// Same pattern: after a sale invoice posts, if autoPostCOGS is on, create a
+// stockLedger entry that will also auto-post the COGS journal entry.
+// The existing postInvoiceDraft already handles the revenue side; we only
+// add the COGS / inventory-out effect here.
+// NOTE: we hook in via the existing addStockMove() shim + direct stockLedger
+// push to avoid replacing the carefully-built postInvoiceDraft function.
+
+
 function computeInvoiceTotals(lines){
   let subtotal=0, discountTotal=0, taxTotal=0;
   lines.forEach(l=>{
@@ -13177,6 +15560,38 @@ async function postInvoiceDraft(draft){
     if(prod?.trackInventory){
       const pos = computeStockPosition(prod.id, draft.date);
       await addStockMove({ date:draft.date, productId:prod.id, type:'out', qty:l.qty, unitCost:pos.avgCost, note:`فاتورة ${entryNo}`, source:'sales-invoice', seq });
+      // Enhanced: also create a stockLedger entry for perpetual tracking
+      try {
+        // Temporarily disable autoPostCOGS to avoid double-posting: the sales invoice
+        // already handles the revenue side; COGS is added below separately
+        const savedAutoPost = STATE.invSettings?.autoPostCOGS;
+        if(STATE.invSettings) STATE.invSettings.autoPostCOGS = false;
+        const slEntry = await postInventoryTransaction({
+          productId: prod.id, txType: 'sale', date: draft.date,
+          docNo: entryNo, qty: l.qty, unitType: 'base',
+          unitCost: pos.avgCost, reason: `فاتورة ${entryNo}`, source: 'invoice-auto'
+        });
+        if(STATE.invSettings) STATE.invSettings.autoPostCOGS = savedAutoPost;
+        // If autoPostCOGS is on, post the COGS entry NOW (after revenue lines are collected)
+        if(savedAutoPost && prod.inventoryAccount && (prod.cogsAccount||STATE.invSettings?.cogsAccount)){
+          const cogsAcc = prod.cogsAccount||STATE.invSettings?.cogsAccount;
+          const invAcc = prod.inventoryAccount;
+          const cogsAmt = Math.round(l.qty*pos.avgCost*100)/100;
+          if(cogsAmt>0){
+            const cogsEntryNo = await reserveNextEntryNumber('مخزون', draft.date);
+            let cseq = STATE.meta.journalSeqCounter||0;
+            const cogsLines = [
+              { entry:cogsEntryNo, date:draft.date, code:cogsAcc, name:accName(cogsAcc), debit:cogsAmt, credit:0, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:cogsAmt, product:prod.name, journal:'مخزون', curAmt:cogsAmt, ref:`ت.ب.م — فاتورة ${entryNo}`, source:'inventory-auto', seq:++cseq },
+              { entry:cogsEntryNo, date:draft.date, code:invAcc, name:accName(invAcc), debit:0, credit:cogsAmt, cur:'EGP', convFactor:1, partner:cust.name, cc:'', ccAmt:-cogsAmt, product:prod.name, journal:'مخزون', curAmt:-cogsAmt, ref:`ت.ب.م — فاتورة ${entryNo}`, source:'inventory-auto', seq:++cseq }
+            ];
+            await commitEntryEdit([], cogsLines);
+            STATE.meta.journalSeqCounter = cseq;
+            slEntry.journalEntry = cogsEntryNo;
+            // Update persisted ledger entry with journal link
+            await storeSet('stockLedger', STATE.stockLedger);
+          }
+        }
+      } catch(invErr){ /* non-fatal: legacy stockMove already created above */ }
     }
   }
   if(totals.taxTotal>0 && STATE.accountsByCode['212102']){
@@ -13523,6 +15938,20 @@ async function postPurchaseInvoiceDraft(draft){
     if(l.productId){
       const unitCost = l.qty>0 ? Math.round((net/l.qty)*10000)/10000 : l.unitPrice;
       await addStockMove({ date:draft.date, productId:l.productId, type:'in', qty:l.qty, unitCost, note:`فاتورة مورد ${entryNo}`, source:'purchase-invoice', seq });
+      // Enhanced: also create a stockLedger entry for perpetual tracking
+      const prod = STATE.products.find(p=>p.id===l.productId);
+      if(prod?.trackInventory){
+        try {
+          const savedAutoPost = STATE.invSettings?.autoPostCOGS;
+          if(STATE.invSettings) STATE.invSettings.autoPostCOGS = false; // purchase invoice already handles accounting
+          await postInventoryTransaction({
+            productId: l.productId, txType: 'purchase', date: draft.date,
+            docNo: entryNo, qty: l.qty, unitType: 'base',
+            unitCost, reason: `فاتورة مورد ${entryNo} — ${draft.vendorName||''}`, source: 'purchase-invoice-auto'
+          });
+          if(STATE.invSettings) STATE.invSettings.autoPostCOGS = savedAutoPost;
+        } catch(invErr){ /* non-fatal */ }
+      }
     }
   }
   if(totals.taxTotal>0){
