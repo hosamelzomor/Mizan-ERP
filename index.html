@@ -1568,6 +1568,23 @@ const I18N = {
     stPostedAt:'وقت الترحيل',
     stDiffQtyPos:'زيادة',
     stDiffQtyNeg:'نقص',
+    // ── Cross-links & Dashboard KPI (Arabic) ─────────────────────────────────
+    invLinkTitle:'حركات المخزون المرتبطة',
+    invLinkNoMoves:'لا توجد حركات مخزون مرتبطة بهذه الفاتورة.',
+    invLinkViewCard:'عرض بطاقة الصنف',
+    invLinkViewJE:'عرض القيد',
+    invLinkDocNo:'رقم الحركة',
+    invLinkProduct:'الصنف',
+    invLinkQty:'الكمية',
+    invLinkCost:'التكلفة',
+    invLinkAvgCost:'متوسط التكلفة',
+    invLinkTotalCost:'إجمالي التكلفة',
+    invLinkType:'النوع',
+    dashInvKpiLabel:'قيمة المخزون',
+    dashInvKpiNote:'إجمالي تقييم المخزون بالمتوسط المرجّح',
+    dashInvKpiItems:'صنف متتبَّع',
+    glInvLinkTitle:'حركة المخزون المرتبطة',
+    glInvLinkNone:'لا توجد حركة مخزون مرتبطة بهذا القيد.',
     invV2NewTxTitle:'حركة مخزون جديدة',
     invV2ProductLabel:'الصنف',
     invV2CreatedByLabel:'أنشأها',
@@ -2241,6 +2258,23 @@ const I18N = {
     stPostedAt:'Posted At',
     stDiffQtyPos:'Surplus',
     stDiffQtyNeg:'Shortage',
+    // ── Cross-links & Dashboard KPI (English) ─────────────────────────────────
+    invLinkTitle:'Linked Stock Movements',
+    invLinkNoMoves:'No stock movements linked to this invoice.',
+    invLinkViewCard:'View Stock Card',
+    invLinkViewJE:'View Journal Entry',
+    invLinkDocNo:'Doc No.',
+    invLinkProduct:'Product',
+    invLinkQty:'Qty',
+    invLinkCost:'Unit Cost',
+    invLinkAvgCost:'Avg Cost After',
+    invLinkTotalCost:'Total Cost',
+    invLinkType:'Type',
+    dashInvKpiLabel:'Inventory Value',
+    dashInvKpiNote:'Total inventory at moving weighted average cost',
+    dashInvKpiItems:'tracked item(s)',
+    glInvLinkTitle:'Linked Stock Movement',
+    glInvLinkNone:'No stock movement linked to this journal entry.',
     invV2NewTxTitle:'New Stock Transaction',
     invV2ProductLabel:'Product',
     invV2CreatedByLabel:'Created By',
@@ -10105,6 +10139,7 @@ function renderDashboard(root){
       ${kpiSpark(t('totalRevenuePeriod'), fmt(is.revenue+is.otherIncome), '', t('revenueKpiNote'), revenueSeries)}
       ${kpiSpark(t('netEquity'), fmt(bs.equityTotal), bs.equityTotal>=0?'pos':'neg', `${t('asOfLabel')} ${asOf}`, equitySeries)}
       ${kpiSpark(t('workingCapital'), fmt(rt.workingCapital), rt.workingCapital>=0?'pos':'neg', t('workingCapitalNote'), wcSeries)}
+      ${dashboardInventoryKpi()}
     </div>
 
     <div class="grid-2">
@@ -12077,15 +12112,19 @@ function renderAccountStatementView(root, alwaysCombined){
           ${sorted.length ? sorted.map(r=>{
             const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
             const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : null;
-            return `<tr>
+            const isInvLinePA = r.source==='inventory-auto'||r.source==='inventory-reversal'||r.source==='stocktake';
+            const invProdPA = isInvLinePA && r.product ? STATE.products.find(p=>p.name===r.product) : null;
+            return `<tr ${isInvLinePA?'style="background:rgba(255,193,7,.04)"':''}>
             <td class="num">${r.seq||''}</td>
             <td class="num">${r.date}</td>
             <td class="num">${escapeHtml(r.entry)}</td>
             <td>${escapeHtml(r.ref||'')}</td>
-            <td class="${r.partner?'drill':''}" ${r.partner?`onclick="drillToPartner('${jsAttrEscape(r.partner)}')"`:''}>${escapeHtml(r.partner||'')}</td>
+            <td class="${r.partner?'drill':''}" ${r.partner?`onclick="drillToPartner('${jsAttrEscape(r.partner)}')"`:''}>
+              ${escapeHtml(r.partner||'')}
+            </td>
             <td class="num-cell num">${r.dispDebit?fmt(r.dispDebit):''}</td>
             <td class="num-cell num">${r.dispCredit?fmt(r.dispCredit):''}</td>
-            <td>${r.product?escapeHtml(r.product):'—'}</td>
+            <td>${r.product?escapeHtml(r.product):'—'}${invProdPA?` <span class="drill" style="font-size:10px;opacity:.7" title="${t('invLinkViewCard')}" onclick="event.stopPropagation();openStockCard(${invProdPA.id})">📦</span>`:''}</td>
             <td class="num-cell num">${r.curAmt?fmt(r.curAmt)+' '+escapeHtml(r.cur||''):'—'}</td>
             <td class="num-cell num">${convFactor!=null?fmt(convFactor):'—'}</td>
             <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
@@ -12303,14 +12342,16 @@ function renderCustomerLedgerPage(root, cfg){
         ${sorted.length ? sorted.map(r=>{
           const hasFx = r.curAmt && r.cur && r.cur!=='EGP';
           const convFactor = hasFx ? (r.dispDebit||r.dispCredit)/Math.abs(r.curAmt) : null;
-          return `<tr>
+          const isInvLine = r.source==='inventory-auto'||r.source==='inventory-reversal'||r.source==='stocktake';
+          const invProd = isInvLine && r.product ? STATE.products.find(p=>p.name===r.product) : null;
+          return `<tr ${isInvLine?'style="background:rgba(255,193,7,.04)"':''}>
           <td class="num">${r.date}</td>
           <td class="num">${escapeHtml(r.entry)}</td>
           <td class="drill" onclick="drillToAccount('${jsAttrEscape(r.code)}')">${r.code} ${escapeHtml(accName(r.code)||r.name||'')}</td>
           <td>${escapeHtml(r.ref||'')}</td>
           <td class="num-cell num">${r.dispDebit?fmt(r.dispDebit):''}</td>
           <td class="num-cell num">${r.dispCredit?fmt(r.dispCredit):''}</td>
-          <td>${r.product?escapeHtml(r.product):'—'}</td>
+          <td>${r.product?escapeHtml(r.product):'—'}${invProd?` <span class="drill" style="font-size:10px;opacity:.7" title="${t('invLinkViewCard')}" onclick="openStockCard(${invProd.id})">📦</span>`:''}</td>
           <td class="num-cell num">${r.curAmt?fmt(r.curAmt)+' '+escapeHtml(r.cur||''):'—'}</td>
           <td class="num-cell num">${convFactor!=null?fmt(convFactor):'—'}</td>
           <td class="num-cell num ${r.running>=0?'pos-text':'neg-text'}">${fmt(r.running)}</td>
@@ -15318,6 +15359,112 @@ function journalPaymentsAgainst(entryNo, invoiceNo){
 }
 
 // ── VIEW: Sales Invoices ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  CROSS-MODULE LINKS — Inventory ↔ Invoices ↔ Journal
+//  ربط المخزون بالفواتير والأستاذ العام في الاتجاهين
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Get all stockLedger entries linked to a given invoice/journal entry number.
+// Matches on: docNo (direct), relatedSlId chain, or journalEntry field.
+function getStockMovesForEntry(entryNo){
+  if(!entryNo) return [];
+  const ledger = STATE.stockLedger||[];
+  return ledger.filter(sl=>
+    sl.docNo === entryNo ||
+    sl.journalEntry === entryNo ||
+    sl.relatedSlId === entryNo ||
+    sl.reason?.includes(entryNo) ||
+    sl.source === 'invoice-auto' && sl.docNo === entryNo ||
+    sl.source === 'purchase-invoice-auto' && sl.docNo === entryNo
+  );
+}
+
+// Get all stockLedger entries for a given product (for the stock card link)
+function getStockLedgerForProduct(productId){
+  return (STATE.stockLedger||[]).filter(sl=>sl.productId===productId && sl.status==='posted')
+    .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
+}
+
+// Render a compact stock movements panel — used inside invoice detail modals
+// and below invoice table rows.
+function renderInvLinksPanel(entryNo, context){
+  // context: 'sales' | 'purchase'
+  const moves = getStockMovesForEntry(entryNo);
+  if(!moves.length) return `<div class="hint" style="padding:8px 0;font-size:12px">📦 ${t('invLinkNoMoves')}</div>`;
+
+  const txTypeLabel = ty => {
+    const key = 'invV2TxType'+ty.split('-').map((w,i)=>w.charAt(0).toUpperCase()+w.slice(1)).join('');
+    return t(key)||ty;
+  };
+
+  return `
+  <div style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
+    <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--gold-dim)">
+      📦 ${t('invLinkTitle')} (${moves.length})
+    </div>
+    <div class="table-wrap" style="font-size:11px">
+      <table><thead><tr>
+        <th>${t('invLinkDocNo')}</th>
+        <th>${t('date')}</th>
+        <th>${t('invLinkProduct')}</th>
+        <th>${t('invLinkType')}</th>
+        <th class="num">${t('invLinkQty')}</th>
+        <th class="num">${t('invLinkCost')}</th>
+        <th class="num">${t('invLinkTotalCost')}</th>
+        <th class="num">${t('invLinkAvgCost')}</th>
+        <th></th>
+      </tr></thead><tbody>
+      ${moves.map(sl=>{
+        const prod = STATE.products.find(p=>p.id===sl.productId);
+        const qty  = sl.inQty>0 ? sl.inQty : sl.outQty;
+        const sign = sl.inQty>0 ? '+' : '−';
+        const signColor = sl.inQty>0 ? '#4caf50' : 'var(--brick)';
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(sl.docNo||'')}</td>
+          <td>${sl.date}</td>
+          <td>${escapeHtml(prod?.name||sl.productId)}</td>
+          <td>${txTypeLabel(sl.txType)}</td>
+          <td class="num" style="color:${signColor};font-weight:700">${sign}${fmt(qty)} ${escapeHtml(prod?.unit||'')}</td>
+          <td class="num">${fmt(sl.unitCost)}</td>
+          <td class="num" style="font-weight:700">${fmt(sl.totalCost)}</td>
+          <td class="num">${fmt(sl.avgCostAfter)}</td>
+          <td style="white-space:nowrap">
+            <span class="drill" style="font-size:10px" title="${t('invLinkViewCard')}"
+              onclick="openStockCard(${sl.productId})">📋</span>
+            ${sl.journalEntry?`<span class="drill" style="font-size:10px;margin-right:4px" title="${t('invLinkViewJE')}"
+              onclick="drillToEntry('${sl.journalEntry}')">📒</span>`:''}
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody></table>
+    </div>
+  </div>`;
+}
+
+// Navigate to a specific journal entry in the account statement / journal view
+function drillToEntry(entryNo){
+  STATE.ui.view = 'journalentries';
+  STATE.ui.jeFilterEntry = entryNo;
+  renderApp();
+}
+
+// ── Inventory KPI for Dashboard ───────────────────────────────────────────────
+function dashboardInventoryKpi(){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  if(!tracked.length) return '';
+  const totalVal = Math.round(
+    tracked.reduce((s,p)=>s+computeStockPositionV2(p.id,null).value, 0)*100
+  )/100;
+  const itemCount = tracked.length;
+  return kpiSpark(
+    t('dashInvKpiLabel'),
+    fmt(totalVal),
+    totalVal>0?'pos':'',
+    `${itemCount} ${t('dashInvKpiItems')} — ${t('dashInvKpiNote')}`,
+    [] // no sparkline series needed
+  );
+}
+
 function renderInvoicesView(root){
   const posted = getJournalInvoices();
   const drafts = STATE.invoiceDrafts;
@@ -15380,6 +15527,9 @@ function renderInvoicesView(root){
       ${rows.map(({inv,remaining})=>{
         const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
         const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
+        const invMoves = getStockMovesForEntry(inv.entryNo);
+        const hasInvMoves = invMoves.length>0;
+        const isExpanded = STATE.ui.invExpandedInvoice===inv.entryNo;
         return `<tr>
           <td style="font-weight:600">${escapeHtml(inv.invoiceNo)}</td>
           <td>${inv.date||'—'}</td>
@@ -15392,8 +15542,11 @@ function renderInvoicesView(root){
             <span class="drill" title="${t('completeDataBtn')}" onclick="openInvoiceExtrasModal('${inv.entryNo}')">✎</span>
             <span class="drill" style="margin-right:6px;opacity:.7" title="${t('printBtn')}" onclick="printInvoice('${inv.entryNo}')">🖨</span>
             <span class="drill" style="margin-right:6px;opacity:.7" title="${t('recordPaymentBtn')}" onclick="openCashVoucherModal(null, {type:'receipt', invoiceEntryNo:'${inv.entryNo}', invoiceNo:'${inv.invoiceNo}', customerName:${JSON.stringify(inv.customerName)}, arAccount:'${inv.arAccount}', suggestedAmount:${remaining}})">💰</span>
+            ${hasInvMoves?`<span class="drill" style="margin-right:6px;font-size:12px" title="${t('invLinkTitle')}" onclick="STATE.ui.invExpandedInvoice=STATE.ui.invExpandedInvoice==='${inv.entryNo}'?null:'${inv.entryNo}';renderApp()">📦${isExpanded?'▲':'▼'}</span>`:''}
           </td>
-        </tr>`;
+        </tr>
+        ${isExpanded?`<tr><td colspan="8" style="padding:0 10px 10px;background:rgba(0,0,0,.12)">${renderInvLinksPanel(inv.entryNo,'sales')}</td></tr>`:''}`;
+      }).join('')}
       }).join('')}
     </tbody></table></div>`}
   </div>`;
@@ -15760,6 +15913,9 @@ function renderPurchaseInvoicesView(root){
       ${rows.map(({inv,remaining})=>{
         const statusColor = remaining<=0?'var(--green)':'var(--ink-soft)';
         const statusLabel = remaining<=0?t('invStatusPaid'):t('invStatusOutstanding');
+        const invMoves = getStockMovesForEntry(inv.entryNo);
+        const hasInvMoves = invMoves.length>0;
+        const isExpanded = STATE.ui.invExpandedPurchase===inv.entryNo;
         return `<tr>
           <td style="font-weight:600">${escapeHtml(inv.invoiceNo)}</td>
           <td>${inv.date||'—'}</td>
@@ -15771,8 +15927,11 @@ function renderPurchaseInvoicesView(root){
           <td style="white-space:nowrap">
             <span class="drill" title="${t('completeDataBtn')}" onclick="openPurchaseInvoiceExtrasModal('${inv.entryNo}')">✎</span>
             <span class="drill" style="margin-right:6px;opacity:.7" title="${t('recordPaymentBtn')}" onclick="openCashVoucherModal(null, {type:'payment', invoiceEntryNo:'${inv.entryNo}', invoiceNo:'${inv.invoiceNo}', customerName:${JSON.stringify(inv.vendorName)}, apAccount:'${inv.apAccount}', suggestedAmount:${remaining}})">💰</span>
+            ${hasInvMoves?`<span class="drill" style="margin-right:6px;font-size:12px" title="${t('invLinkTitle')}" onclick="STATE.ui.invExpandedPurchase=STATE.ui.invExpandedPurchase==='${inv.entryNo}'?null:'${inv.entryNo}';renderApp()">📦${isExpanded?'▲':'▼'}</span>`:''}
           </td>
-        </tr>`;
+        </tr>
+        ${isExpanded?`<tr><td colspan="8" style="padding:0 10px 10px;background:rgba(0,0,0,.12)">${renderInvLinksPanel(inv.entryNo,'purchase')}</td></tr>`:''}`;
+      }).join('')}
       }).join('')}
     </tbody></table></div>`}
   </div>`;
