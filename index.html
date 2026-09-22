@@ -1585,6 +1585,192 @@ const I18N = {
     dashInvKpiItems:'صنف متتبَّع',
     glInvLinkTitle:'حركة المخزون المرتبطة',
     glInvLinkNone:'لا توجد حركة مخزون مرتبطة بهذا القيد.',
+    // ── Warehouses (Arabic) ───────────────────────────────────────────────────
+    whTitle:'المستودعات',
+    whNavLabel:'المستودعات',
+    whNewBtn:'+ مستودع جديد',
+    whCode:'الكود',
+    whName:'اسم المستودع',
+    whLocation:'الموقع / العنوان',
+    whIsDefault:'افتراضي',
+    whStatus:'الحالة',
+    whNotes:'ملاحظات',
+    whActive:'نشط',
+    whInactive:'متوقف',
+    whEditTitle:'تعديل المستودع',
+    whNewTitle:'مستودع جديد',
+    whCodeRequired:'كود المستودع مطلوب.',
+    whNameRequired:'اسم المستودع مطلوب.',
+    whDeleteConfirm:'هل تريد حذف المستودع "${name}"؟ لا يمكن حذف مستودع فيه حركات مخزون.',
+    whHasMoves:'لا يمكن حذف مستودع فيه حركات مخزون مرحّلة.',
+    whSetDefault:'تعيين كافتراضي',
+    whDefaultBadge:'افتراضي',
+    whNoWarehouses:'لا توجد مستودعات بعد. أنشئ مستودعاً واحداً على الأقل.',
+    whSaved:'تم حفظ المستودع.',
+    whDeleted:'تم حذف المستودع.',
+    whTotalItems:'عدد الأصناف',
+    whTotalValue:'إجمالي القيمة',
+    whStockByWarehouse:'المخزون حسب المستودع',
+    whTransferTitle:'تحويل بين مستودعات',
+    whTransferNewBtn:'تحويل جديد',
+    whTransferFrom:'من مستودع',
+    whTransferTo:'إلى مستودع',
+    whTransferFromRequired:'اختر مستودع المصدر.',
+    whTransferToRequired:'اختر مستودع الوجهة.',
+    whTransferSameError:'المستودع المصدر والوجهة لا يمكن أن يكونا نفس المستودع.',
+    whTransferProduct:'الصنف',
+    whTransferQty:'الكمية',
+    whTransferDate:'تاريخ التحويل',
+    whTransferReason:'السبب',
+    whTransferDocNo:'رقم التحويل',
+    whTransferPosted:'تم تسجيل التحويل بنجاح.',
+    whTransferInsufficient:'الكمية المتاحة في المستودع المصدر غير كافية.',
+    whFilterLabel:'المستودع',
+    whAllWarehouses:'كل المستودعات',
+    whTransferType:'تحويل داخلي',
+    whTransferHistory:'سجل التحويلات',
+    whNoTransfers:'لا توجد تحويلات بعد.',
+    whOpeningPerWh:'يمكن تعيين رصيد افتتاحي مختلف لكل مستودع.',
+    whDefaultWarehouseLabel:'المستودع الافتراضي',
+    whDefaultWarehouseHint:'يُستخدم تلقائياً في الفواتير وحركات المخزون إذا لم يُحدَّد مستودع.',
+    // ── Reorder Point (Arabic) ────────────────────────────────────────────────
+    reorderSectionTitle:'إعدادات إعادة الطلب',
+    reorderPointLabel:'حد إعادة الطلب',
+    reorderPointHint:'لما الكمية تنزل لهذا الحد أو أقل يظهر تنبيه',
+    maxStockLabel:'الكمية القصوى',
+    maxStockHint:'الحد الأقصى للمخزون (للتقرير فقط)',
+    leadTimeDaysLabel:'مدة الاستلام (أيام)',
+    preferredSupplierLabel:'المورد المفضل',
+    reorderAlertTitle:'تنبيهات إعادة الطلب',
+    reorderAlertDesc:'الأصناف التي وصلت إلى حد إعادة الطلب أو تجاوزته.',
+    reorderAlertNone:'لا توجد أصناف تحتاج إعادة طلب حالياً.',
+    reorderCurrentQty:'الكمية الحالية',
+    reorderPointCol:'حد الطلب',
+    reorderQtyNeeded:'الكمية المطلوبة',
+    reorderLeadTime:'مدة الاستلام',
+    reorderSupplier:'المورد',
+    reorderCreatePO:'إنشاء طلب شراء',
+    reorderBelowMin:'تحت الحد',
+    reorderAtMin:'عند الحد',
+    reorderTabTitle:'تنبيهات الطلب',
+    // ── Landed Cost (Arabic) ──────────────────────────────────────────────────
+    landedCostSectionTitle:'تكلفة الإحضار (Landed Cost)',
+    landedCostHint:'نسبة إضافية تُضاف تلقائياً على تكلفة الوحدة عند الاستلام (شحن + جمارك + تأمين...)',
+    landedCostPctLabel:'نسبة تكلفة الإحضار %',
+    landedCostPctHint:'مثال: 15% يعني كل وحدة بـ 100 تُسجَّل بـ 115 في المخزون',
+    landedCostApplied:'تكلفة الإحضار المُضافة',
+    landedCostBase:'التكلفة الأساسية',
+    landedCostTotal:'التكلفة الإجمالية',
+    // ── BOM (Arabic) ──────────────────────────────────────────────────────────
+    bomTitle:'قوائم المكونات (BOM)',
+    bomNewBtn:'+ BOM جديدة',
+    bomEditTitle:'تعديل BOM',
+    bomNewTitle:'BOM جديدة',
+    bomProduct:'المنتج النهائي',
+    bomComponents:'المكونات',
+    bomAddComponent:'+ إضافة مكون',
+    bomComponent:'المكون',
+    bomQtyRequired:'الكمية المطلوبة',
+    bomUnit:'الوحدة',
+    bomNotes:'ملاحظات',
+    bomSaved:'تم حفظ BOM.',
+    bomDeleted:'تم حذف BOM.',
+    bomDeleteConfirm:'هل تريد حذف قائمة مكونات "${name}"؟',
+    bomNoBOMs:'لا توجد قوائم مكونات بعد.',
+    bomNoComponents:'لا توجد مكونات في هذه القائمة.',
+    bomVersion:'الإصدار',
+    bomStatus:'الحالة',
+    bomActive:'نشطة',
+    bomDraft:'مسودة',
+    bomObsolete:'قديمة',
+    bomTotalCost:'التكلفة الإجمالية',
+    bomTabTitle:'قوائم المكونات',
+    // ── Work Orders (Arabic) ──────────────────────────────────────────────────
+    woTitle:'أوامر الإنتاج',
+    woNewBtn:'+ أمر إنتاج جديد',
+    woNewTitle:'أمر إنتاج جديد',
+    woEditTitle:'تعديل أمر الإنتاج',
+    woNumber:'رقم الأمر',
+    woProduct:'المنتج النهائي',
+    woBOM:'قائمة المكونات',
+    woQtyPlanned:'الكمية المخططة',
+    woQtyProduced:'الكمية المنتجة',
+    woStartDate:'تاريخ البدء',
+    woEndDate:'تاريخ الانتهاء المتوقع',
+    woActualEndDate:'تاريخ الانتهاء الفعلي',
+    woStatus:'الحالة',
+    woStatusDraft:'مسودة',
+    woStatusReleased:'مُصدَر',
+    woStatusInProgress:'جاري الإنتاج',
+    woStatusCompleted:'مكتمل',
+    woStatusCancelled:'ملغى',
+    woWarehouseIn:'مستودع المواد الخام',
+    woWarehouseOut:'مستودع المنتج النهائي',
+    woConsumption:'استهلاك المواد',
+    woProduction:'إنتاج',
+    woPostBtn:'ترحيل الإنتاج',
+    woPostConfirm:'هل تريد ترحيل الإنتاج؟ سيتم خصم المواد الخام وإضافة المنتج النهائي للمخزون.',
+    woPosted:'تم ترحيل أمر الإنتاج.',
+    woCancelled:'تم إلغاء أمر الإنتاج.',
+    woNone:'لا توجد أوامر إنتاج بعد.',
+    woWIPAccount:'حساب الإنتاج تحت التشغيل (WIP)',
+    woLaborCost:'تكلفة العمالة',
+    woOverheadCost:'مصاريف إضافية',
+    woTotalCost:'إجمالي تكلفة الإنتاج',
+    woCostPerUnit:'التكلفة للوحدة',
+    woTabTitle:'أوامر الإنتاج',
+    // ── Batch Tracking (Arabic) ───────────────────────────────────────────────
+    batchTitle:'تتبع الدُّفعات (Batch/Lot)',
+    batchNo:'رقم الدفعة',
+    batchMfgDate:'تاريخ الإنتاج',
+    batchExpDate:'تاريخ انتهاء الصلاحية',
+    batchQty:'كمية الدفعة',
+    batchSupplier:'المورد / المصدر',
+    batchStatus:'الحالة',
+    batchActive:'نشطة',
+    batchExpired:'منتهية',
+    batchExpiryAlert:'تنبيهات انتهاء الصلاحية',
+    batchExpiryAlertNone:'لا توجد دُفعات تنتهي صلاحيتها قريباً.',
+    batchDaysLeft:'أيام متبقية',
+    batchExpiredLabel:'منتهية الصلاحية',
+    batchAlertDays:'تنبيه قبل (أيام)',
+    batchNoBatches:'لا توجد دُفعات مسجّلة لهذا الصنف.',
+    batchTabTitle:'الدُّفعات',
+    // ── Serial Numbers (Arabic) ───────────────────────────────────────────────
+    serialTitle:'الأرقام التسلسلية',
+    serialNo:'الرقم التسلسلي',
+    serialStatus:'الحالة',
+    serialAvailable:'متاح',
+    serialSold:'مُباع',
+    serialReturned:'مُرجَّع',
+    serialScrapped:'مُهلَك',
+    serialReceiveDate:'تاريخ الاستلام',
+    serialSoldDate:'تاريخ البيع',
+    serialCustomer:'العميل',
+    serialWarrantyDate:'انتهاء الضمان',
+    serialNoSerials:'لا توجد أرقام تسلسلية لهذا الصنف.',
+    serialTabTitle:'الأرقام التسلسلية',
+    // ── Reports (Arabic) ──────────────────────────────────────────────────────
+    invReportsTitle:'تقارير المخزون',
+    rptABCTitle:'تحليل ABC',
+    rptABCDesc:'تصنيف الأصناف حسب قيمتها النسبية من إجمالي المخزون.',
+    rptAClass:'فئة A — الأعلى قيمة (80% من الإجمالي)',
+    rptBClass:'فئة B — متوسطة (15%)',
+    rptCClass:'فئة C — الأقل قيمة (5%)',
+    rptSlowMovingTitle:'الأصناف الراكدة',
+    rptSlowMovingDesc:'الأصناف التي لم تتحرك خلال الفترة المحددة.',
+    rptSlowMovingDays:'أيام بدون حركة',
+    rptSlowMovingLastMove:'آخر حركة',
+    rptSlowMovingNone:'لا توجد أصناف راكدة بالمعيار المحدد.',
+    rptAgingTitle:'تقادم المخزون',
+    rptAgingDesc:'توزيع المخزون حسب عمره بناءً على المشتريات.',
+    rptAgingBucket:'نطاق العمر',
+    rptAgingQty:'الكمية',
+    rptAgingValue:'القيمة',
+    rptAgingPct:'النسبة',
+    rptPurchaseNeedTitle:'تقرير المشتريات المطلوبة',
+    rptPurchaseNeedDesc:'الأصناف التي وصلت لحد إعادة الطلب وتحتاج لمشتريات.',
+    rptTabTitle:'التقارير',
     invV2NewTxTitle:'حركة مخزون جديدة',
     invV2ProductLabel:'الصنف',
     invV2CreatedByLabel:'أنشأها',
@@ -1633,6 +1819,14 @@ const I18N = {
     importJournalTitle:'3. القيود المحاسبية — استيراد أولي أو تحديث دوري',
     importJournalDesc:'ارفع ملف القيود القديمة كاملة عند الإعداد لأول مرة، أو ملف "عنصر اليومية (account.move.line)" الجديد المُصدَّر من أودو في كل مرة تريد تحديث النظام. سيتم تجاهل أي قيد تم استيراده من قبل تلقائياً (بدون تكرار).',
     updateLogTitle:'سجل التحديثات', legacyImportLabel:'استيراد أولي', updateImportLabel:'تحديث', newCountLabel:'جديد', skippedDuplicateLabel:'مكرر تم تجاهله',
+    deleteImportBtn:'حذف الاستيراد',
+    deleteImportConfirmTitle:'حذف بيانات الاستيراد',
+    deleteImportConfirmMsg:'سيتم حذف ${count} قيد مرتبط بالملف "${filename}" من دفتر اليومية. هذا الإجراء لا يمكن التراجع عنه.',
+    deleteImportSuccess:'تم حذف ${count} قيد من الملف "${filename}" بنجاح.',
+    deleteImportNoEntries:'لا يمكن تحديد القيود المرتبطة بهذا الاستيراد (سجل قديم).',
+    deleteImportPartial:'تحذير: تم حذف ${count} قيد — بعض القيود ربما تُستخدم في مواضع أخرى.',
+    importEntriesLabel:'قيود',
+    importYearsLabel:'السنوات المتأثرة',
     noImportYet:'لم يتم إجراء أي عملية استيراد بعد', processingEllipsis:'جاري المعالجة...',
     accountsImportResult:'تم: ${added} حساب جديد، ${updated} حساب محدَّث. الإجمالي ${total}.',
     fileReadError:'حدث خطأ في قراءة الملف: ', groupsImportResult:'تم تحميل ${total} مجموعة.',
@@ -1700,6 +1894,8 @@ const I18N = {
     downloadFullBackupBtn:'⬇ تنزيل نسخة احتياطية كاملة', restoreFromBackupBtn:'⬆ استعادة من نسخة احتياطية',
     backupDownloaded:'تم تنزيل النسخة الاحتياطية', backupDownloadError:'تعذّر إنشاء النسخة الاحتياطية', backupRestored:'تمت الاستعادة بنجاح — تم تحديث النظام',
     backupRestoreError:'تعذّرت الاستعادة — تأكد أن الملف نسخة احتياطية صحيحة من هذا النظام', restoreConfirmTitle:'استعادة نسخة احتياطية',
+    backupRestoreConfirmTitle:'تأكيد استعادة النسخة الاحتياطية',
+    backupRestoreConfirmMsg:'سيتم استبدال كل البيانات الحالية بالنسخة الاحتياطية. هذا الإجراء لا يمكن التراجع عنه.',
     restoreConfirmMsg:'هذا الإجراء سيستبدل كل البيانات الحالية (شجرة الحسابات، المجموعات، القيود، الإعدادات) بمحتوى الملف المُختار. لا يمكن التراجع عن هذا الإجراء إلا برفع نسخة احتياطية أخرى. هل أنت متأكد؟',
     backupSectionTitle:'نسخة احتياطية واستعادة', backupSectionDesc:'نزّل نسخة كاملة من كل بيانات النظام (شجرة الحسابات، القيود، المخزون، الجرد، الإعدادات) في ملف JSON واحد. عند الاستعادة على جهاز آخر، كل الأرقام هتكون نفس اللي في النسخة الأصلية بالظبط.',
     glPageIndicator:'صفحة ${page} من ${total} — إجمالي ${count} حركة (الإجماليات والتصدير يشملان كل الحركات المطابقة للفلاتر، مش الصفحة الحالية بس)',
@@ -1966,6 +2162,8 @@ const I18N = {
     downloadFullBackupBtn:'⬇ Download Full Backup', restoreFromBackupBtn:'⬆ Restore From Backup',
     backupDownloaded:'Backup downloaded', backupDownloadError:'Could not create the backup', backupRestored:'Restore successful — the system has been updated',
     backupRestoreError:'Restore failed — make sure the file is a valid backup from this system', restoreConfirmTitle:'Restore Backup',
+    backupRestoreConfirmTitle:'Confirm Backup Restore',
+    backupRestoreConfirmMsg:'All current data will be replaced with the backup. This cannot be undone.',
     restoreConfirmMsg:'This will replace ALL current data (chart of accounts, groups, journal entries, settings) with the content of the selected file. This cannot be undone except by uploading another backup. Are you sure?',
     backupSectionTitle:'Backup & Restore', backupSectionDesc:'Download a complete copy of all system data (chart of accounts, groups, journal entries, settings) in a single file you can keep somewhere safe, or use it to restore the system on another device or after a problem.',
     glPageIndicator:'Page ${page} of ${total} — ${count} movements total (totals and export cover every matching movement, not just this page)',
@@ -2275,6 +2473,192 @@ const I18N = {
     dashInvKpiItems:'tracked item(s)',
     glInvLinkTitle:'Linked Stock Movement',
     glInvLinkNone:'No stock movement linked to this journal entry.',
+    // ── Warehouses (English) ──────────────────────────────────────────────────
+    whTitle:'Warehouses',
+    whNavLabel:'Warehouses',
+    whNewBtn:'+ New Warehouse',
+    whCode:'Code',
+    whName:'Warehouse Name',
+    whLocation:'Location / Address',
+    whIsDefault:'Default',
+    whStatus:'Status',
+    whNotes:'Notes',
+    whActive:'Active',
+    whInactive:'Inactive',
+    whEditTitle:'Edit Warehouse',
+    whNewTitle:'New Warehouse',
+    whCodeRequired:'Warehouse code is required.',
+    whNameRequired:'Warehouse name is required.',
+    whDeleteConfirm:'Delete warehouse "${name}"? Warehouses with posted stock movements cannot be deleted.',
+    whHasMoves:'Cannot delete a warehouse that has posted stock movements.',
+    whSetDefault:'Set as Default',
+    whDefaultBadge:'Default',
+    whNoWarehouses:'No warehouses yet. Create at least one warehouse.',
+    whSaved:'Warehouse saved.',
+    whDeleted:'Warehouse deleted.',
+    whTotalItems:'Items',
+    whTotalValue:'Total Value',
+    whStockByWarehouse:'Stock by Warehouse',
+    whTransferTitle:'Warehouse Transfer',
+    whTransferNewBtn:'New Transfer',
+    whTransferFrom:'From Warehouse',
+    whTransferTo:'To Warehouse',
+    whTransferFromRequired:'Select source warehouse.',
+    whTransferToRequired:'Select destination warehouse.',
+    whTransferSameError:'Source and destination warehouses cannot be the same.',
+    whTransferProduct:'Product',
+    whTransferQty:'Quantity',
+    whTransferDate:'Transfer Date',
+    whTransferReason:'Reason',
+    whTransferDocNo:'Transfer No.',
+    whTransferPosted:'Transfer posted successfully.',
+    whTransferInsufficient:'Insufficient quantity in source warehouse.',
+    whFilterLabel:'Warehouse',
+    whAllWarehouses:'All Warehouses',
+    whTransferType:'Internal Transfer',
+    whTransferHistory:'Transfer History',
+    whNoTransfers:'No transfers yet.',
+    whOpeningPerWh:'You can set a different opening balance per warehouse.',
+    whDefaultWarehouseLabel:'Default Warehouse',
+    whDefaultWarehouseHint:'Used automatically in invoices and stock transactions when no warehouse is specified.',
+    // ── Reorder Point (English) ───────────────────────────────────────────────
+    reorderSectionTitle:'Reorder Settings',
+    reorderPointLabel:'Reorder Point',
+    reorderPointHint:'Alert is triggered when quantity reaches or falls below this level',
+    maxStockLabel:'Maximum Stock',
+    maxStockHint:'Maximum stock level (reporting only)',
+    leadTimeDaysLabel:'Lead Time (days)',
+    preferredSupplierLabel:'Preferred Supplier',
+    reorderAlertTitle:'Reorder Alerts',
+    reorderAlertDesc:'Items that have reached or fallen below their reorder point.',
+    reorderAlertNone:'No items need reordering right now.',
+    reorderCurrentQty:'Current Qty',
+    reorderPointCol:'Reorder Point',
+    reorderQtyNeeded:'Qty to Order',
+    reorderLeadTime:'Lead Time',
+    reorderSupplier:'Supplier',
+    reorderCreatePO:'Create PO',
+    reorderBelowMin:'Below Min',
+    reorderAtMin:'At Min',
+    reorderTabTitle:'Reorder Alerts',
+    // ── Landed Cost (English) ─────────────────────────────────────────────────
+    landedCostSectionTitle:'Landed Cost',
+    landedCostHint:'Additional % added automatically to unit cost on receipt (freight, customs, insurance...)',
+    landedCostPctLabel:'Landed Cost %',
+    landedCostPctHint:'Example: 15% means a unit costing 100 is recorded at 115 in inventory',
+    landedCostApplied:'Landed Cost Added',
+    landedCostBase:'Base Cost',
+    landedCostTotal:'Total Cost',
+    // ── BOM (English) ─────────────────────────────────────────────────────────
+    bomTitle:'Bill of Materials (BOM)',
+    bomNewBtn:'+ New BOM',
+    bomEditTitle:'Edit BOM',
+    bomNewTitle:'New BOM',
+    bomProduct:'Finished Product',
+    bomComponents:'Components',
+    bomAddComponent:'+ Add Component',
+    bomComponent:'Component',
+    bomQtyRequired:'Qty Required',
+    bomUnit:'Unit',
+    bomNotes:'Notes',
+    bomSaved:'BOM saved.',
+    bomDeleted:'BOM deleted.',
+    bomDeleteConfirm:'Delete BOM "${name}"?',
+    bomNoBOMs:'No bills of materials yet.',
+    bomNoComponents:'No components in this BOM.',
+    bomVersion:'Version',
+    bomStatus:'Status',
+    bomActive:'Active',
+    bomDraft:'Draft',
+    bomObsolete:'Obsolete',
+    bomTotalCost:'Total Cost',
+    bomTabTitle:'BOM',
+    // ── Work Orders (English) ─────────────────────────────────────────────────
+    woTitle:'Work Orders',
+    woNewBtn:'+ New Work Order',
+    woNewTitle:'New Work Order',
+    woEditTitle:'Edit Work Order',
+    woNumber:'WO Number',
+    woProduct:'Finished Product',
+    woBOM:'Bill of Materials',
+    woQtyPlanned:'Planned Qty',
+    woQtyProduced:'Produced Qty',
+    woStartDate:'Start Date',
+    woEndDate:'Expected End Date',
+    woActualEndDate:'Actual End Date',
+    woStatus:'Status',
+    woStatusDraft:'Draft',
+    woStatusReleased:'Released',
+    woStatusInProgress:'In Progress',
+    woStatusCompleted:'Completed',
+    woStatusCancelled:'Cancelled',
+    woWarehouseIn:'Raw Materials Warehouse',
+    woWarehouseOut:'Finished Goods Warehouse',
+    woConsumption:'Material Consumption',
+    woProduction:'Production',
+    woPostBtn:'Post Production',
+    woPostConfirm:'Post this work order? Raw materials will be consumed and the finished product added to stock.',
+    woPosted:'Work order posted.',
+    woCancelled:'Work order cancelled.',
+    woNone:'No work orders yet.',
+    woWIPAccount:'Work-in-Progress (WIP) Account',
+    woLaborCost:'Labor Cost',
+    woOverheadCost:'Overhead Cost',
+    woTotalCost:'Total Production Cost',
+    woCostPerUnit:'Cost per Unit',
+    woTabTitle:'Work Orders',
+    // ── Batch Tracking (English) ──────────────────────────────────────────────
+    batchTitle:'Batch / Lot Tracking',
+    batchNo:'Batch / Lot No.',
+    batchMfgDate:'Manufacturing Date',
+    batchExpDate:'Expiry Date',
+    batchQty:'Batch Qty',
+    batchSupplier:'Supplier / Source',
+    batchStatus:'Status',
+    batchActive:'Active',
+    batchExpired:'Expired',
+    batchExpiryAlert:'Expiry Alerts',
+    batchExpiryAlertNone:'No batches expiring soon.',
+    batchDaysLeft:'Days Left',
+    batchExpiredLabel:'Expired',
+    batchAlertDays:'Alert Before (days)',
+    batchNoBatches:'No batches recorded for this item.',
+    batchTabTitle:'Batches',
+    // ── Serial Numbers (English) ──────────────────────────────────────────────
+    serialTitle:'Serial Numbers',
+    serialNo:'Serial No.',
+    serialStatus:'Status',
+    serialAvailable:'Available',
+    serialSold:'Sold',
+    serialReturned:'Returned',
+    serialScrapped:'Scrapped',
+    serialReceiveDate:'Received',
+    serialSoldDate:'Sold Date',
+    serialCustomer:'Customer',
+    serialWarrantyDate:'Warranty Expiry',
+    serialNoSerials:'No serial numbers for this item.',
+    serialTabTitle:'Serial Numbers',
+    // ── Reports (English) ─────────────────────────────────────────────────────
+    invReportsTitle:'Inventory Reports',
+    rptABCTitle:'ABC Analysis',
+    rptABCDesc:'Classify items by their relative value as a percentage of total inventory.',
+    rptAClass:'Class A — High Value (top 80%)',
+    rptBClass:'Class B — Medium Value (next 15%)',
+    rptCClass:'Class C — Low Value (remaining 5%)',
+    rptSlowMovingTitle:'Slow-Moving Items',
+    rptSlowMovingDesc:'Items with no stock movement in the specified period.',
+    rptSlowMovingDays:'Days without movement',
+    rptSlowMovingLastMove:'Last Movement',
+    rptSlowMovingNone:'No slow-moving items found for the selected criteria.',
+    rptAgingTitle:'Inventory Aging',
+    rptAgingDesc:'Distribution of stock by age based on purchase receipts.',
+    rptAgingBucket:'Age Range',
+    rptAgingQty:'Quantity',
+    rptAgingValue:'Value',
+    rptAgingPct:'%',
+    rptPurchaseNeedTitle:'Purchase Requirements',
+    rptPurchaseNeedDesc:'Items at or below reorder point that need to be purchased.',
+    rptTabTitle:'Reports',
     invV2NewTxTitle:'New Stock Transaction',
     invV2ProductLabel:'Product',
     invV2CreatedByLabel:'Created By',
@@ -2323,6 +2707,14 @@ const I18N = {
     importJournalTitle:'3. Journal Entries — initial import or periodic update',
     importJournalDesc:'Upload the complete historical entries file when setting up for the first time, or the new "Journal Item (account.move.line)" file exported from Odoo each time you want to update the system. Any entry already imported before is automatically skipped (no duplicates).',
     updateLogTitle:'Update Log', legacyImportLabel:'Initial import', updateImportLabel:'Update', newCountLabel:'new', skippedDuplicateLabel:'duplicate skipped',
+    deleteImportBtn:'Delete Import',
+    deleteImportConfirmTitle:'Delete Import Data',
+    deleteImportConfirmMsg:'This will delete ${count} journal entries linked to "${filename}". This cannot be undone.',
+    deleteImportSuccess:'Successfully deleted ${count} entries from "${filename}".',
+    deleteImportNoEntries:'Cannot identify entries for this import (old log entry — no entry numbers saved).',
+    deleteImportPartial:'Warning: deleted ${count} entries — some may have been referenced elsewhere.',
+    importEntriesLabel:'entries',
+    importYearsLabel:'Years affected',
     noImportYet:'No import has been done yet', processingEllipsis:'Processing...',
     accountsImportResult:'Done: ${added} new account(s), ${updated} updated account(s). Total ${total}.',
     fileReadError:'Error reading the file: ', groupsImportResult:'Loaded ${total} group(s).',
@@ -4215,7 +4607,7 @@ async function collectAllLocalData(){
     'invoiceDrafts','invoiceExtras',
     'purchaseInvoiceDrafts','purchaseInvoiceExtras',
     'recurringTemplates','voucherExtras',
-    'stockMoves','stockLedger','stocktakeSessions','invSettings',
+    'stockMoves','stockLedger','warehouses','boms','workOrders','batches','serialNumbers','stocktakeSessions','invSettings',
   ];
   // Journal shards: journal:YYYY — collect from both sources
   const journalShardKeys = keysFromStorage.filter(k=>k.startsWith('journal:'));
@@ -4244,30 +4636,38 @@ async function applyRemoteDataToLocal(dataObj){
 
   DRIVE.applyingRemote = true;
   try{
-    // 1. Write every key in the backup — including all journal:YYYY shards
+    // ── Step 1: Delete ALL existing journal shards on this device first.
+    // This is the root cause of "wrong numbers on another device":
+    // storeList returns bare keys (no prefix), and we must delete them all
+    // before writing the backup's shards — otherwise old shards from
+    // years not in the backup accumulate and corrupt the totals.
+    const existingShards = await storeList('journal:');
+    for(const k of existingShards){
+      await storeDelete(k);
+    }
+
+    // ── Step 2: Write every key from the backup.
+    // journal:YYYY shards are written fresh with no old data remaining.
     for(const k of Object.keys(dataObj)){
-      if(k.startsWith('__')) continue; // skip metadata keys
+      if(k.startsWith('__')) continue; // skip metadata markers
       await storeSet(k, dataObj[k]);
     }
 
-    // 2. Safety: if the backup has __journalShardKeys, delete any LOCAL shard
-    //    that is NOT in the backup (e.g. old data from a different year that
-    //    would corrupt the restored journal if left behind).
-    const backupShardKeys = dataObj.__journalShardKeys || [];
-    const localShardKeys  = await storeList('journal:');
-    for(const k of localShardKeys){
-      if(!backupShardKeys.includes(k)){
-        await storeDelete(k);
-      }
-    }
-
-    // 3. Similarly clear inventory keys that exist locally but not in backup
-    //    (e.g. stocktakeSessions added after the backup was made)
-    const inventoryKeys = ['stockLedger','stocktakeSessions','invSettings','stockMoves'];
-    for(const k of inventoryKeys){
+    // ── Step 3: Clear any local inventory/module keys that are NOT in
+    // the backup — prevents stale data from a newer local version
+    // bleeding into a restored state.
+    const clearIfMissing = [
+      'stockLedger','warehouses','stocktakeSessions','invSettings',
+      'stockMoves','bankReconciliations','clearedTxSeqs',
+      'assetModels','assets','depEntries',
+      'prepaidExpenses','prepaidDepEntries',
+      'invoiceDrafts','invoiceExtras',
+      'purchaseInvoiceDrafts','purchaseInvoiceExtras',
+      'recurringTemplates','voucherExtras','projects','projectTx',
+    ];
+    for(const k of clearIfMissing){
       if(!(k in dataObj)){
-        // Key missing from backup means it didn't exist at backup time — clear local
-        await storeSet(k, Array.isArray(STATE[k]) ? [] : {});
+        await storeSet(k, []);
       }
     }
   }finally{
@@ -4283,22 +4683,19 @@ async function downloadFullBackup(){
     const data = await collectAllLocalData();
     const json = JSON.stringify(data, null, 2);
 
-    // Integrity summary shown in toast
-    const shardCount  = (data.__journalShardKeys||[]).length;
-    const lineCount   = data.__journalLineCount||0;
-    const invCount    = data.__inventoryLedgerCount||0;
+    const shardCount = (data.__journalShardKeys||[]).length;
+    const lineCount  = data.__journalLineCount||0;
+    const invCount   = data.__inventoryLedgerCount||0;
 
     const blob = new Blob([json], { type:'application/json' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href     = url;
     a.download = `mizan_backup_${todayISO()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
 
-    showToast(`${t('backupDownloaded')} — ${lineCount} قيد، ${invCount} حركة مخزون، ${shardCount} سنة`, 5000);
+    showToast(`${t('backupDownloaded')} — ${lineCount} قيد — ${invCount} حركة مخزون — ${shardCount} سنة`, 5000);
   }catch(e){ showToast(t('backupDownloadError') + ': ' + e.message, 5000); }
 }
 
@@ -4312,26 +4709,33 @@ async function restoreFromBackupFile(file){
     if(!data || typeof data !== 'object' || Array.isArray(data))
       throw new Error('ملف غير صالح — ليس نسخة احتياطية من ميزان');
 
-    // Warn the user about what they're restoring
     const lineCount  = data.__journalLineCount  || '؟';
     const invCount   = data.__inventoryLedgerCount || '؟';
     const stCount    = data.__stocktakeSessionCount || '؟';
     const backupDate = data.__createdAt ? data.__createdAt.slice(0,16).replace('T',' ') : '؟';
+    const shardKeys  = data.__journalShardKeys || [];
 
-    // Apply to local storage
+    // Confirm with user before overwriting
+    await new Promise((resolve, reject)=>{
+      showConfirmModal(
+        t('backupRestoreConfirmTitle')||'استعادة نسخة احتياطية',
+        `${t('backupRestoreConfirmMsg')||'سيتم استبدال كل البيانات الحالية بالنسخة الاحتياطية.'}\n\nتاريخ النسخة: ${backupDate}\nعدد القيود: ${lineCount}\nسنوات: ${shardKeys.length}`,
+        resolve,
+        reject
+      );
+    });
+
     await applyRemoteDataToLocal(data);
-
-    // Reload STATE completely from the freshly-written storage
     await initApp();
-
-    // Push to Drive if connected
     try{ scheduleDriveSync(); }catch(e){}
-
     showToast(
-      `${t('backupRestored')} — ${lineCount} قيد — ${invCount} حركة مخزون — ${stCount} جلسة جرد — تاريخ النسخة: ${backupDate}`,
+      `${t('backupRestored')} — ${lineCount} قيد — ${invCount} حركة مخزون — تاريخ النسخة: ${backupDate}`,
       6000
     );
-  }catch(e){ showToast(t('backupRestoreError') + ': ' + e.message, 6000); }
+  }catch(e){
+    if(e && e.message) showToast(t('backupRestoreError') + ': ' + e.message, 6000);
+    // If user cancelled confirm modal, e is undefined — silent exit
+  }
 }
 
 // Runs once right after sign-in: Drive is treated as the source of truth for
@@ -4458,26 +4862,41 @@ const STATE = {
   //   cancelledAt : ISO timestamp
   // }
   stockLedger: [],
-  // stocktakeSessions: physical inventory count sessions
-  // Each session has a list of lines (one per product) with system qty,
-  // counted qty, and variance. Posting a session creates stockLedger
-  // adjustment entries for every line with a non-zero variance.
+  // warehouses: list of physical storage locations
   // Schema: {
-  //   id        : 'st_...'
-  //   name      : display name (e.g. 'جرد يناير 2026')
-  //   date      : 'YYYY-MM-DD'
-  //   notes     : free text
-  //   status    : 'draft' | 'counted' | 'posted' | 'cancelled'
-  //   lines     : [{ productId, systemQty, countedQty, diff, reason, avgCost, diffValue }]
-  //   createdBy / createdAt / postedBy / postedAt / cancelledBy / cancelledAt
+  //   id       : 'wh_...'
+  //   code     : short code (e.g. 'WH-01', 'MAIN')
+  //   name     : display name (e.g. 'المستودع الرئيسي')
+  //   location : address / city
+  //   isDefault: true = used when no warehouse is specified
+  //   status   : 'active' | 'inactive'
+  //   notes    : free text
   // }
+  // The warehouseId field is added to every stockLedger entry.
+  // computeStockPositionV2(productId, asOfDate, warehouseId?) returns
+  // stock for a specific warehouse or all warehouses combined.
+  warehouses: [],
+  // boms: Bill of Materials
+  // { id, name, productId, version, status:'active'|'draft'|'obsolete',
+  //   components:[{productId, qty, unit}], laborCost, overheadCost, notes }
+  boms: [],
+  // workOrders: Production Work Orders
+  // { id, woNo, bomId, productId, qtyPlanned, qtyProduced,
+  //   startDate, endDate, actualEndDate,
+  //   warehouseInId, warehouseOutId, laborCost, overheadCost,
+  //   status:'draft'|'released'|'inprogress'|'completed'|'cancelled',
+  //   wipAccount, journalEntry, createdBy, createdAt, postedBy, postedAt }
+  workOrders: [],
+  // batches: Batch/Lot tracking per item
+  // { id, productId, batchNo, mfgDate, expDate, qty, supplierId,
+  //   status:'active'|'expired', notes, createdAt }
+  batches: [],
+  // serialNumbers: Serial number tracking per item
+  // { id, productId, serialNo, status:'available'|'sold'|'returned'|'scrapped',
+  //   receiveDate, soldDate, customerId, warrantyDate, notes }
+  serialNumbers: [],
   stocktakeSessions: [],
-  // invSettings: inventory-wide configuration
-  // allowNegativeStock: false = block issue if qty would go negative
-  // autoPostCOGS: true = auto-create COGS journal entry on sales
-  // cogsAccount: default COGS account code (can be overridden per product)
-  // adjustmentAccount: default inventory adjustment / variance account code
-  invSettings: { allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'' },
+  invSettings: { allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'', defaultWarehouseId:'' },
   voucherExtras: [],   // [{entryNo, serial, description}] — print-only supplementary data (friendly serial number, wording) for receipt/payment vouchers that live in the journal under 'سند قبض'/'سند صرف'.
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
@@ -6216,7 +6635,15 @@ async function mergeJournalImport(lines, filename, mode){
   STATE.meta.lastImportAt = new Date().toISOString();
   STATE.meta.totalLines = STATE.journal.length;
   if(lastLine){ STATE.meta.lastEntry = lastLine.entry; STATE.meta.lastEntryDate = lastLine.date; }
-  STATE.meta.log.unshift({ date: STATE.meta.lastImportAt, filename, mode, added: toAdd.length, skipped: lines.length - toAdd.length, totalRows: lines.length });
+  // Save the entry numbers and years affected — needed for "delete import" feature
+  const importedEntryNos = [...new Set(toAdd.map(l=>l.entry))];
+  const importedYears    = [...new Set(toAdd.map(l=>l.date.slice(0,4)))];
+  const logId = 'imp_'+Date.now()+Math.random().toString(36).slice(2,6);
+  STATE.meta.log.unshift({
+    id: logId, date: STATE.meta.lastImportAt, filename, mode,
+    added: toAdd.length, skipped: lines.length - toAdd.length, totalRows: lines.length,
+    entryNos: importedEntryNos, years: importedYears
+  });
   STATE.meta.log = STATE.meta.log.slice(0, 30);
   await storeSet('meta', STATE.meta);
   return { added: toAdd.length, skipped: lines.length - toAdd.length };
@@ -7862,7 +8289,9 @@ async function resetSystem(){
       // left behind when the person explicitly asks to reset everything.
       const auxKeys = ['assetModels','assets','depEntries','prepaidExpenses','prepaidDepEntries','projects','projectTx',
         'customers','products','invoiceDrafts','invoiceExtras','purchaseInvoiceDrafts','purchaseInvoiceExtras',
-        'recurringTemplates','stockMoves','stockLedger','stocktakeSessions','invSettings','bankReconciliations','clearedTxSeqs'];
+        'recurringTemplates','stockMoves','stockLedger','warehouses',
+        'boms','workOrders','batches','serialNumbers',
+        'stocktakeSessions','invSettings','bankReconciliations','clearedTxSeqs'];
       for(const k of auxKeys){ try{ await storeSet(k, Array.isArray(STATE[k]) ? [] : (typeof STATE[k]==='object'&&STATE[k]!==null ? {} : [])); }catch(e){} }
 
       // Chart of Accounts / Account Groups: explicitly SET to an empty array
@@ -8069,6 +8498,11 @@ async function initApp(){
   STATE.recurringTemplates = (await storeGet('recurringTemplates')) || [];
   STATE.stockMoves = (await storeGet('stockMoves')) || [];
   STATE.stockLedger = (await storeGet('stockLedger')) || [];
+  STATE.warehouses  = (await storeGet('warehouses'))  || [];
+  STATE.boms        = (await storeGet('boms'))        || [];
+  STATE.workOrders  = (await storeGet('workOrders'))  || [];
+  STATE.batches     = (await storeGet('batches'))     || [];
+  STATE.serialNumbers = (await storeGet('serialNumbers')) || [];
   STATE.stocktakeSessions = (await storeGet('stocktakeSessions')) || [];
   const savedInvSettings = (await storeGet('invSettings')) || {};
   STATE.invSettings = Object.assign({ allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'' }, savedInvSettings);
@@ -8224,6 +8658,12 @@ const NAV = [
   {id:'products', label:'المنتجات والخدمات', labelEn:'Products & Services', icon:'target'},
   {id:'salesbyproduct', label:'تحليل المبيعات حسب المنتج', labelEn:'Sales by Product', icon:'target'},
   {id:'inventory', label:'المخزون', labelEn:'Inventory', icon:'factory'},
+  {id:'warehouses',   label:'المستودعات',       labelEn:'Warehouses',    icon:'factory', parent:'inventory'},
+  {id:'bom',          label:'قوائم المكونات',    labelEn:'BOM',           icon:'factory', parent:'inventory'},
+  {id:'workorders',   label:'أوامر الإنتاج',     labelEn:'Work Orders',   icon:'factory', parent:'inventory'},
+  {id:'invbatches',   label:'الدُّفعات',          labelEn:'Batches',       icon:'factory', parent:'inventory'},
+  {id:'invserials',   label:'الأرقام التسلسلية', labelEn:'Serials',       icon:'factory', parent:'inventory'},
+  {id:'invreports',   label:'تقارير المخزون',    labelEn:'Inv. Reports',  icon:'factory', parent:'inventory'},
   {id:'projects', label:'متابعة المشاريع والتحصيل', labelEn:'Project & Collection Tracking', icon:'target'},
 
   {section:'المشتريات والموردين', sectionEn:'Purchases & Vendors'},
@@ -9092,8 +9532,17 @@ async function loadDemoData(){
   STATE.ui.view    = 'dashboard';
   STATE.ui.filters = { start:'2026-01-01', end:'2026-09-30', years:[], months:[] };
   // Persist enhanced inventory to IndexedDB so it survives a page reload
+  // ── Warehouses ────────────────────────────────────────────────────────────
+  STATE.warehouses = [
+    { id:'wh_main', code:'MAIN', name:'المستودع الرئيسي', location:'المقر الرئيسي', isDefault:true,  status:'active', notes:'' },
+    { id:'wh_ret',  code:'RET',  name:'مستودع المرتجعات', location:'المقر الرئيسي', isDefault:false, status:'active', notes:'مخصص لمرتجعات العملاء والموردين' },
+    { id:'wh_b1',   code:'B1',   name:'مستودع الفرع الأول', location:'فرع القاهرة',  isDefault:false, status:'active', notes:'' },
+  ];
+  STATE.invSettings = { allowNegativeStock:false, autoPostCOGS:false, cogsAccount:'511101', adjustmentAccount:'511101', defaultWarehouseId:'wh_main' };
+
   try {
     await storeSet('stockLedger', STATE.stockLedger);
+    await storeSet('warehouses', STATE.warehouses);
     await storeSet('stocktakeSessions', STATE.stocktakeSessions || []);
     await storeSet('invSettings', STATE.invSettings);
   } catch(e){ /* non-fatal */ }
@@ -9102,6 +9551,95 @@ async function loadDemoData(){
 }
 
 
+// ── Delete a specific import from the journal and update log ─────────────────
+async function deleteImportEntry(logId){
+  const logEntry = STATE.meta.log.find(l=>l.id===logId);
+  if(!logEntry){
+    showToast('سجل الاستيراد غير موجود.'); return;
+  }
+
+  // Old log entries (before v2) don't have entryNos saved
+  if(!logEntry.entryNos || !logEntry.entryNos.length){
+    showToast(t('deleteImportNoEntries'), 4000); return;
+  }
+
+  const entryNosSet = new Set(logEntry.entryNos);
+  const filename = logEntry.filename||'';
+  const count = logEntry.added||logEntry.entryNos.length;
+
+  showConfirmModal(
+    t('deleteImportConfirmTitle'),
+    t('deleteImportConfirmMsg')
+      .replace('${count}', count)
+      .replace('${filename}', filename),
+    async () => {
+      try{
+        // Remove matching lines from STATE.journal
+        const before = STATE.journal.length;
+        STATE.journal = STATE.journal.filter(l => !entryNosSet.has(l.entry));
+        const deleted = before - STATE.journal.length;
+
+        // Rebuild and persist affected shards
+        const years = logEntry.years || [...new Set(logEntry.entryNos.map(e=>{
+          // Try to derive year from entry number or just use all years
+          return null;
+        }).filter(Boolean))];
+
+        // Re-shard: group remaining journal by year and save each shard
+        const byYear = {};
+        for(const l of STATE.journal){
+          const y = l.date.slice(0,4);
+          (byYear[y] = byYear[y]||[]).push(l);
+        }
+        // Get all existing shard years (from storage)
+        const allShardKeys = await storeList('journal:');
+        for(const sk of allShardKeys){
+          const y = sk.replace('journal:','');
+          if(byYear[y]){
+            await storeSet(sk, byYear[y]);
+          } else {
+            // Year shard is now empty — delete it
+            await storeDelete(sk);
+          }
+        }
+        // Write any new years in byYear that weren't in storage yet
+        for(const y of Object.keys(byYear)){
+          if(!allShardKeys.includes('journal:'+y)){
+            await storeSet('journal:'+y, byYear[y]);
+          }
+        }
+
+        // Update meta
+        STATE.meta.totalLines = STATE.journal.length;
+        // Remove this log entry
+        STATE.meta.log = STATE.meta.log.filter(l=>l.id!==logId);
+        // Recalculate lastEntry and lastEntryDate
+        if(STATE.journal.length > 0){
+          const sorted = [...STATE.journal].sort((a,b)=>b.date.localeCompare(a.date)||b.entry.localeCompare(a.entry));
+          STATE.meta.lastEntry = sorted[0].entry;
+          STATE.meta.lastEntryDate = sorted[0].date;
+        } else {
+          STATE.meta.lastEntry = null;
+          STATE.meta.lastEntryDate = null;
+        }
+        await storeSet('meta', STATE.meta);
+
+        // Rebuild account index and re-render
+        rebuildAccountIndex();
+        renderApp();
+        showToast(
+          t('deleteImportSuccess')
+            .replace('${count}', deleted)
+            .replace('${filename}', filename),
+          5000
+        );
+      } catch(err){
+        showToast('خطأ أثناء الحذف: ' + err.message, 5000);
+      }
+    }
+  );
+}
+
 function resetDemoData(){
   showConfirmModal(
     t('resetDemoBtn'),
@@ -9109,7 +9647,9 @@ function resetDemoData(){
     () => {
       STATE.journal = []; STATE.accounts = []; STATE.groups = [];
       STATE.meta = { lastImportAt:null, lastEntry:null, lastEntryDate:null, totalLines:0, log:[], journalSeqCounter:0 };
-      STATE.stockMoves = []; STATE.stockLedger = []; STATE.stocktakeSessions = [];
+      STATE.stockMoves = []; STATE.stockLedger = []; STATE.warehouses = [];
+      STATE.boms = []; STATE.workOrders = []; STATE.batches = []; STATE.serialNumbers = [];
+      STATE.stocktakeSessions = [];
       STATE.invSettings = { allowNegativeStock:false, autoPostCOGS:false, cogsAccount:'', adjustmentAccount:'' };
       STATE.settings.companyName = '';
       STATE.settings.companyNameEn = '';
@@ -9121,6 +9661,7 @@ function resetDemoData(){
       STATE.ui.filters = { start:'', end:'', years:[], months:[] };
       STATE.ui.glAccounts = []; STATE.ui.glPartners = []; STATE.ui.glJournals = []; STATE.ui.glCostCenters = [];
       storeSet('stockLedger',[]).catch(()=>{});
+      storeSet('warehouses',[]).catch(()=>{});
       storeSet('stocktakeSessions',[]).catch(()=>{});
       storeSet('invSettings',{}).catch(()=>{});
       renderApp();
@@ -9625,7 +10166,13 @@ function renderApp(){
     customers: renderCustomersView,
     products: renderProductsView,
     salesbyproduct: renderSalesByProductView,
-    inventory: renderInventoryView,
+    inventory:   renderInventoryView,
+    warehouses:  renderWarehousesView,
+    bom:         renderBOMView,
+    workorders:  renderWorkOrdersView,
+    invbatches:  renderInvBatchesView,
+    invserials:  renderInvSerialsView,
+    invreports:  renderInvReportsView,
     invoices: renderInvoicesView,
     purchaseinvoices: renderPurchaseInvoicesView,
     cashvouchers: renderCashVouchersView,
@@ -9941,7 +10488,7 @@ function buildRatiosDashCharts(){
   }
 }
 function needsFilters(view){
-  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport','cashvouchers','invoices','salesbyproduct','inventory','projects','purchaseinvoices','agingreport','vatreturn'].includes(view);
+  return ['dashboard','liquidity','fxrevaluation','cashflow','trialbalance','accountstatement','journalentries','partnerstatement','otherbalances','costcenters','statements','manufacturing','ratios','notes','depentries','assetreport','cashvouchers','invoices','salesbyproduct','inventory','warehouses','bom','workorders','invbatches','invserials','invreports','projects','purchaseinvoices','agingreport','vatreturn'].includes(view);
 }
 
 function renderCurrencyBar(){
@@ -10140,6 +10687,31 @@ function renderDashboard(root){
       ${kpiSpark(t('netEquity'), fmt(bs.equityTotal), bs.equityTotal>=0?'pos':'neg', `${t('asOfLabel')} ${asOf}`, equitySeries)}
       ${kpiSpark(t('workingCapital'), fmt(rt.workingCapital), rt.workingCapital>=0?'pos':'neg', t('workingCapitalNote'), wcSeries)}
       ${dashboardInventoryKpi()}
+      ${(()=>{
+        const alerts = getReorderAlerts();
+        if(!alerts.length) return '';
+        return kpi(
+          '🔔 '+t('reorderAlertTitle'),
+          alerts.length+' '+t('reorderBelowMin'),
+          'neg',
+          `<span class="drill" onclick="STATE.ui.view='invreports';STATE.ui.invRptTab='reorder';renderApp()">${t('reorderAlertDesc')}</span>`
+        );
+      })()}
+      ${(()=>{
+        const alertDays = STATE.invSettings?.batchAlertDays||30;
+        const today = todayISO();
+        const expiring = (STATE.batches||[]).filter(b=>{
+          if(!b.expDate||b.status==='expired') return false;
+          return Math.ceil((new Date(b.expDate)-new Date(today))/(1000*60*60*24))<=alertDays;
+        });
+        if(!expiring.length) return '';
+        return kpi(
+          '⚠ '+t('batchExpiryAlert'),
+          expiring.length+' '+t('batchTitle'),
+          'neg',
+          `<span class="drill" onclick="STATE.ui.view='invbatches';renderApp()">${t('batchExpiryAlert')}</span>`
+        );
+      })()}
     </div>
 
     <div class="grid-2">
@@ -11259,14 +11831,34 @@ function renderImportView(root){
 
     <div class="card">
       <h2>${ICONS.clock.replace('currentColor','var(--gold-dim)')} ${t('updateLogTitle')} <span class="badge-count">${STATE.meta.log.length}</span></h2>
-      ${STATE.meta.log.length ? STATE.meta.log.map(l => `
-        <div class="log-item">
-          <span>${escapeHtml(l.filename)} <span class="hint">(${l.mode==='legacy'?t('legacyImportLabel'):t('updateImportLabel')})</span></span>
-          <span>${fmtDateTime(l.date)}</span>
-          <span class="pill pill-em">+${fmtInt(l.added)} ${t('newCountLabel')}</span>
-          <span class="pill pill-gold">${fmtInt(l.skipped)} ${t('skippedDuplicateLabel')}</span>
-        </div>
-      `).join('') : emptyMini(t('noImportYet'))}
+      ${STATE.meta.log.length ? `
+      <div class="table-wrap" style="font-size:13px">
+        <table><thead><tr>
+          <th>${t('stSessionDate')}</th>
+          <th>${t('stSessionName')}</th>
+          <th>${t('invV2TxTypeLabel')}</th>
+          <th class="num">${t('importEntriesLabel')}</th>
+          <th class="num">${t('skippedDuplicateLabel')}</th>
+          <th>${t('importYearsLabel')}</th>
+          <th></th>
+        </tr></thead><tbody>
+        ${STATE.meta.log.map(l=>`<tr>
+          <td style="white-space:nowrap">${fmtDateTime(l.date)}</td>
+          <td style="font-weight:600">${escapeHtml(l.filename||'')}</td>
+          <td><span class="hint">${l.mode==='legacy'?t('legacyImportLabel'):t('updateImportLabel')}</span></td>
+          <td class="num"><span class="pill pill-em">+${fmtInt(l.added)}</span></td>
+          <td class="num"><span class="pill pill-gold">${fmtInt(l.skipped)}</span></td>
+          <td class="hint" style="font-size:11px">${(l.years||[]).join(', ')||'—'}</td>
+          <td>
+            ${l.id && l.entryNos && l.entryNos.length ?
+              `<span class="drill" style="color:var(--brick);font-size:12px"
+                onclick="deleteImportEntry('${l.id}')">🗑 ${t('deleteImportBtn')}</span>`
+              : `<span class="hint" style="font-size:11px">—</span>`
+            }
+          </td>
+        </tr>`).join('')}
+        </tbody></table>
+      </div>` : emptyMini(t('noImportYet'))}
     </div>
   `;
 
@@ -13715,6 +14307,34 @@ function openProductModal(prodId, prefillName){
             ${expAccounts.map(a=>`<option value="${a.code}" ${existing?.cogsAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
           </select>
         </div>
+        <!-- Reorder & Procurement settings -->
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
+          <div style="font-weight:600;margin-bottom:8px">📊 ${t('reorderSectionTitle')}</div>
+        </div>
+        <div><label class="lbl">${t('reorderPointLabel')}</label>
+          <input id="prodReorderPoint" type="number" step="0.01" min="0" class="input" value="${existing?.reorderPoint||0}">
+          <div class="hint" style="margin-top:3px">${t('reorderPointHint')}</div>
+        </div>
+        <div><label class="lbl">${t('maxStockLabel')}</label>
+          <input id="prodMaxStock" type="number" step="0.01" min="0" class="input" value="${existing?.maxStock||0}">
+          <div class="hint" style="margin-top:3px">${t('maxStockHint')}</div>
+        </div>
+        <div><label class="lbl">${t('leadTimeDaysLabel')}</label>
+          <input id="prodLeadTime" type="number" step="1" min="0" class="input" value="${existing?.leadTimeDays||0}">
+        </div>
+        <div><label class="lbl">${t('preferredSupplierLabel')}</label>
+          <input id="prodSupplier" class="input" value="${escapeHtml(existing?.preferredSupplier||'')}">
+        </div>
+        <!-- Landed cost -->
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
+          <div style="font-weight:600;margin-bottom:4px">🚢 ${t('landedCostSectionTitle')}</div>
+          <div class="hint" style="margin-bottom:8px">${t('landedCostHint')}</div>
+        </div>
+        <div><label class="lbl">${t('landedCostPctLabel')}</label>
+          <input id="prodLandedCostPct" type="number" step="0.01" min="0" class="input" value="${existing?.landedCostPct||0}">
+          <div class="hint" style="margin-top:3px">${t('landedCostPctHint')}</div>
+        </div>
+        <div></div>
         <!-- UOM section -->
         <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
           <div style="font-weight:600;margin-bottom:8px">${t('invV2UomSectionTitle')}</div>
@@ -13761,6 +14381,13 @@ function openProductModal(prodId, prefillName){
       openingCost: parseFloat(overlay.querySelector('#prodOpeningCost').value)||0,
       inventoryAccount: overlay.querySelector('#prodInvAccount').value,
       cogsAccount: overlay.querySelector('#prodCOGSAccount').value,
+      // Reorder settings
+      reorderPoint: parseFloat(overlay.querySelector('#prodReorderPoint')?.value)||0,
+      maxStock:     parseFloat(overlay.querySelector('#prodMaxStock')?.value)||0,
+      leadTimeDays: parseInt(overlay.querySelector('#prodLeadTime')?.value)||0,
+      preferredSupplier: overlay.querySelector('#prodSupplier')?.value.trim()||'',
+      // Landed cost
+      landedCostPct: parseFloat(overlay.querySelector('#prodLandedCostPct')?.value)||0,
       notes: overlay.querySelector('#prodNotes').value.trim(),
       status: 'active'
     };
@@ -13830,17 +14457,56 @@ function unitLabel(product, unitType){
 // ── Perpetual stock position (v2) — reads stockLedger ───────────────────────
 // This replaces computeStockPosition() for items tracked in stockLedger.
 // Falls back gracefully to legacy stockMoves for items not yet migrated.
-function computeStockPositionV2(productId, asOfDate){
+function computeStockPositionV2(productId, asOfDate, warehouseId){
   const prod = STATE.products.find(p=>p.id===productId);
   if(!prod) return { qty:0, avgCost:0, value:0 };
 
   // Check whether this item has any posted ledger entries
+  // If warehouseId supplied → filter to that warehouse only
+  // avgCost is always GLOBAL (company-wide moving weighted average)
+  // regardless of warehouse — cost is pooled, location is separate
   const ledger = (STATE.stockLedger||[])
+    .filter(sl=>{
+      if(sl.productId!==productId) return false;
+      if(sl.status!=='posted') return false;
+      if(asOfDate && sl.date>asOfDate) return false;
+      if(warehouseId && sl.warehouseId && sl.txType!=='transfer-out-global' && sl.txType!=='transfer-in-global'){
+        // warehouse-specific filter: only include entries for this warehouse
+        // Transfer entries carry explicit warehouseId
+        return sl.warehouseId===warehouseId;
+      }
+      return true; // no warehouse filter = global
+    })
+    .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
+
+  if(warehouseId){
+    // Per-warehouse qty — recalculate from scratch for this warehouse
+    // avgCost comes from global position (weighted average is company-wide)
+    let whQty = prod.openingQty&&!warehouseId ? prod.openingQty : 0;
+    // Check if there's a warehouse-specific opening
+    const whOpening = (STATE.stockLedger||[]).find(sl=>
+      sl.productId===productId && sl.status==='posted' &&
+      sl.txType==='opening' && sl.warehouseId===warehouseId &&
+      (!asOfDate||sl.date<=asOfDate)
+    );
+    if(whOpening) whQty = 0; // will accumulate from ledger
+    for(const sl of ledger){
+      whQty += sl.inQty - sl.outQty;
+      whQty = Math.round(whQty*10000)/10000;
+    }
+    const globalPos = computeStockPositionV2(productId, asOfDate, null);
+    return { qty: whQty, avgCost: globalPos.avgCost, value: Math.round(whQty*globalPos.avgCost*100)/100, warehouseId };
+  }
+
+  // Global position (no warehouse filter)
+  const allLedger = (STATE.stockLedger||[])
     .filter(sl=>sl.productId===productId && sl.status==='posted' && (!asOfDate||sl.date<=asOfDate))
     .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
 
-  if(ledger.length>0){
-    const last = ledger[ledger.length-1];
+  if(allLedger.length>0){
+    // Find the last GLOBAL (non-warehouse-specific) entry for avg cost
+    // Use the last entry that updated the global average
+    const last = allLedger[allLedger.length-1];
     return { qty: last.qtyAfter, avgCost: last.avgCostAfter, value: last.valueAfter };
   }
 
@@ -13906,9 +14572,17 @@ function currentUserName(){
 // writes to stockLedger, optionally creates journal entry, persists atomically.
 // Returns the created stockLedger entry (or throws on validation failure).
 async function postInventoryTransaction(params){
-  // params: { productId, txType, date, docNo?, qty, unitType, unitCost, reason, source, refEntryNo? }
+  // params: { productId, txType, date, docNo?, qty, unitType, unitCost, reason, source, refEntryNo?, warehouseId? }
   const { productId, txType, date, qty, unitType='base', unitCost=0, reason='', source='manual', refEntryNo='' } = params;
-  let { docNo } = params;
+  let { docNo, warehouseId } = params;
+
+  // Resolve warehouse: use provided, else default, else first active
+  if(!warehouseId){
+    warehouseId = STATE.invSettings?.defaultWarehouseId ||
+      (STATE.warehouses||[]).find(w=>w.isDefault&&w.status==='active')?.id ||
+      (STATE.warehouses||[]).find(w=>w.status==='active')?.id ||
+      'default';
+  }
 
   // --- Validation ---
   const prod = STATE.products.find(p=>p.id===productId);
@@ -13920,14 +14594,20 @@ async function postInventoryTransaction(params){
   if(conv<=0) throw new Error(t('invV2ZeroConvError'));
   const baseQty = Math.round(qty*conv*10000)/10000;
 
-  // Determine if this is incoming or outgoing
+  // ── Apply Landed Cost for incoming transactions ───────────────────────────
+  // If the product has a landedCostPct set and this is a purchase/receipt/opening,
+  // inflate the unitCost by that percentage before calculating the weighted average.
   const INCOMING = ['opening','purchase','sale-return','receipt'];
   const OUTGOING = ['sale','purchase-return','issue'];
+  let effectiveUnitCost = unitCost;
+  if(INCOMING.includes(txType) && (prod.landedCostPct||0)>0 && unitCost>0){
+    effectiveUnitCost = Math.round(unitCost * (1 + prod.landedCostPct/100) * 10000)/10000;
+  }
   const isIn  = INCOMING.includes(txType);
-  const isOut = OUTGOING.includes(txType) || txType==='adjustment'; // adjustment can be ± handled below
+  const isOut = OUTGOING.includes(txType) || txType==='adjustment';
 
   // Get current position (before this move)
-  const posBefore = computeStockPositionV2(productId, null); // as of NOW (ignore future-dating for now)
+  const posBefore = computeStockPositionV2(productId, null);
   const qtyBefore = Math.round(posBefore.qty*10000)/10000;
   const avgBefore = Math.round(posBefore.avgCost*10000)/10000;
   const valBefore = Math.round(qtyBefore*avgBefore*100)/100;
@@ -13943,9 +14623,12 @@ async function postInventoryTransaction(params){
     }
   }
 
-  // Opening balance: only one allowed per product
+  // Opening balance: only one allowed per product per warehouse
   if(txType==='opening'){
-    const hasOpening = (STATE.stockLedger||[]).some(sl=>sl.productId===productId&&sl.txType==='opening'&&sl.status==='posted');
+    const hasOpening = (STATE.stockLedger||[]).some(sl=>
+      sl.productId===productId && sl.txType==='opening' && sl.status==='posted' &&
+      (sl.warehouseId||'default')===(warehouseId||'default')
+    );
     if(hasOpening) throw new Error(t('invV2OpeningAlreadyExists'));
   }
 
@@ -13953,17 +14636,11 @@ async function postInventoryTransaction(params){
   let qtyAfter, avgCostAfter, inQty=0, outQty=0;
 
   if(txType==='adjustment'){
-    // adjustment: qty is the DIFFERENCE (can be negative)
-    // We pass signed qty for adjustments; the caller passes positive qty + sign in adjustedQty
-    // For simplicity: if isIn style, add; if isOut style, subtract
-    // The UI will pass positive qty and store the sign in txType or a separate param.
-    // Here we handle: params.adjustedBaseQty (signed) overrides
     const signedBase = params.adjustedBaseQty !== undefined ? params.adjustedBaseQty : baseQty;
     qtyAfter = Math.round((qtyBefore + signedBase)*10000)/10000;
-    avgCostAfter = avgBefore; // avg cost unchanged on adjustment (no cost input for negative adj)
-    if(signedBase>0 && unitCost>0){
-      // If adding stock with a cost, recalculate avg
-      const newTotalVal = qtyBefore*avgBefore + signedBase*unitCost;
+    avgCostAfter = avgBefore;
+    if(signedBase>0 && effectiveUnitCost>0){
+      const newTotalVal = qtyBefore*avgBefore + signedBase*effectiveUnitCost;
       avgCostAfter = qtyAfter>0 ? Math.round(newTotalVal/qtyAfter*10000)/10000 : avgBefore;
     }
     inQty  = signedBase>0 ? signedBase : 0;
@@ -13973,10 +14650,10 @@ async function postInventoryTransaction(params){
     outQty = 0;
     const newTotalQty = qtyBefore + baseQty;
     if(newTotalQty>0){
-      const newTotalVal = qtyBefore*avgBefore + baseQty*unitCost;
+      const newTotalVal = qtyBefore*avgBefore + baseQty*effectiveUnitCost;
       avgCostAfter = Math.round(newTotalVal/newTotalQty*10000)/10000;
     } else {
-      avgCostAfter = unitCost; // edge case: no prior stock
+      avgCostAfter = effectiveUnitCost;
     }
     qtyAfter = Math.round(newTotalQty*10000)/10000;
   } else {
@@ -13987,9 +14664,6 @@ async function postInventoryTransaction(params){
     avgCostAfter = avgBefore;
   }
 
-  const totalCost = isIn ? Math.round(inQty*unitCost*100)/100
-                   : outQty>0 ? Math.round(outQty*avgCostAfter*100)/100
-                   : 0;
   const valAfter = Math.round(qtyAfter*avgCostAfter*100)/100;
 
   // --- Generate doc number if not provided ---
@@ -13999,13 +14673,18 @@ async function postInventoryTransaction(params){
   const user = currentUserName();
 
   // --- Create the ledger entry ---
+  const totalCostIN = isIn ? Math.round(inQty*effectiveUnitCost*100)/100 : 0;
   const entry = {
     id: 'sl_'+Date.now()+Math.random().toString(36).slice(2,8),
     date, docNo, productId, txType,
+    warehouseId: warehouseId||'default',
     unit: unitLabel(prod, unitType) || prod.unit,
     qty, baseQty: txType==='adjustment'?(params.adjustedBaseQty||baseQty):baseQty,
-    inQty, outQty, unitCost,
-    totalCost: isIn ? totalCost : Math.round((outQty||Math.abs(params.adjustedBaseQty||0))*avgCostAfter*100)/100,
+    inQty, outQty,
+    unitCost: effectiveUnitCost,          // cost actually used (includes landed cost)
+    baseCost: unitCost,                   // original cost before landed cost
+    landedCostPct: prod.landedCostPct||0, // for audit trail
+    totalCost: isIn ? totalCostIN : Math.round((outQty||Math.abs(params.adjustedBaseQty||0))*avgCostAfter*100)/100,
     qtyBefore, qtyAfter, avgCostBefore: avgBefore, avgCostAfter, valueBefore: valBefore, valueAfter: valAfter,
     status: 'posted', journalEntry: '', relatedSlId: refEntryNo||'',
     reason, source, createdBy: user, createdAt: now, postedBy: user, postedAt: now,
@@ -14178,6 +14857,105 @@ async function cancelInventoryTransaction(slId, reason){
 }
 
 // ── Inventory Valuation  ─────────────────────────────────────────────────────
+// ── Warehouse helpers ─────────────────────────────────────────────────────────
+function getDefaultWarehouse(){
+  const whs = STATE.warehouses||[];
+  return whs.find(w=>w.isDefault&&w.status==='active') ||
+         whs.find(w=>w.status==='active') || null;
+}
+function warehouseName(whId){
+  if(!whId||whId==='default') return t('whAllWarehouses');
+  const wh = (STATE.warehouses||[]).find(w=>w.id===whId);
+  return wh ? wh.name : whId;
+}
+function nextWhTransferNo(){
+  const existing = (STATE.stockLedger||[])
+    .map(sl=>sl.docNo||'').filter(d=>d.startsWith('TRF-'))
+    .map(d=>parseInt(d.split('-')[1])||0);
+  const max = existing.length>0 ? Math.max(...existing) : 0;
+  return `TRF-${String(max+1).padStart(4,'0')}`;
+}
+
+// ── Post a warehouse-to-warehouse transfer ────────────────────────────────────
+// A transfer does NOT change global qty or avgCost — it only moves units
+// between locations. Two ledger entries are created:
+//   1. transfer-out: from warehouse (outQty, avgCost unchanged)
+//   2. transfer-in:  to warehouse   (inQty,  avgCost unchanged — cost pooled)
+async function postWarehouseTransfer({ productId, fromWhId, toWhId, date, qty, unitType='base', reason='', docNo }){
+  if(!fromWhId) throw new Error(t('whTransferFromRequired'));
+  if(!toWhId)   throw new Error(t('whTransferToRequired'));
+  if(fromWhId===toWhId) throw new Error(t('whTransferSameError'));
+
+  const prod = STATE.products.find(p=>p.id===productId);
+  if(!prod) throw new Error(t('invV2ProductRequired'));
+  if(!qty||qty<=0) throw new Error(t('invV2QtyRequired'));
+
+  const conv = unitType==='purchase'?(prod.purchaseConvFactor||1):unitType==='sale'?(prod.saleConvFactor||1):1;
+  const baseQty = Math.round(qty*conv*10000)/10000;
+
+  // Check available qty in source warehouse
+  const srcPos = computeStockPositionV2(productId, null, fromWhId);
+  if(!STATE.invSettings?.allowNegativeStock && srcPos.qty < baseQty){
+    throw new Error(t('whTransferInsufficient') +
+      ` (${t('stSystemQty')}: ${fmt(srcPos.qty)}, ${t('invV2QtyLabel')}: ${fmt(baseQty)})`);
+  }
+
+  const globalPos = computeStockPositionV2(productId, null, null);
+  const avgCost   = globalPos.avgCost;
+  const now       = new Date().toISOString();
+  const user      = currentUserName();
+  if(!docNo) docNo = nextWhTransferNo();
+
+  // 1. OUT from source warehouse
+  const outEntry = {
+    id: 'sl_trf_out_'+Date.now()+Math.random().toString(36).slice(2,8),
+    date, docNo, productId, txType:'transfer-out',
+    warehouseId: fromWhId,
+    unit: unitLabel(prod,unitType)||prod.unit, qty, baseQty,
+    inQty:0, outQty:baseQty, unitCost:avgCost,
+    totalCost:Math.round(baseQty*avgCost*100)/100,
+    qtyBefore:srcPos.qty, qtyAfter:Math.round((srcPos.qty-baseQty)*10000)/10000,
+    avgCostBefore:avgCost, avgCostAfter:avgCost,
+    valueBefore:srcPos.value, valueAfter:Math.round((srcPos.qty-baseQty)*avgCost*100)/100,
+    status:'posted', journalEntry:'', relatedSlId:'',
+    reason:`${t('whTransferTitle')}: ${warehouseName(fromWhId)} → ${warehouseName(toWhId)}${reason?' — '+reason:''}`,
+    source:'transfer', createdBy:user, createdAt:now, postedBy:user, postedAt:now,
+    cancelledBy:'', cancelledAt:''
+  };
+
+  // 2. IN to destination warehouse
+  const dstPos = computeStockPositionV2(productId, null, toWhId);
+  const inEntry = {
+    id: 'sl_trf_in_'+Date.now()+Math.random().toString(36).slice(2,8),
+    date, docNo, productId, txType:'transfer-in',
+    warehouseId: toWhId,
+    unit: unitLabel(prod,unitType)||prod.unit, qty, baseQty,
+    inQty:baseQty, outQty:0, unitCost:avgCost,
+    totalCost:Math.round(baseQty*avgCost*100)/100,
+    qtyBefore:dstPos.qty, qtyAfter:Math.round((dstPos.qty+baseQty)*10000)/10000,
+    avgCostBefore:avgCost, avgCostAfter:avgCost,
+    valueBefore:dstPos.value, valueAfter:Math.round((dstPos.qty+baseQty)*avgCost*100)/100,
+    status:'posted', journalEntry:'', relatedSlId:outEntry.id,
+    reason:outEntry.reason, source:'transfer',
+    createdBy:user, createdAt:now, postedBy:user, postedAt:now,
+    cancelledBy:'', cancelledAt:''
+  };
+  outEntry.relatedSlId = inEntry.id;
+
+  // Note: global qtyBefore/qtyAfter on transfer entries reflect GLOBAL position
+  // unchanged — transfers are location moves only, so we also record global
+  // snapshot for audit but do NOT update the global weighted average.
+  outEntry.globalQtyBefore = globalPos.qty;
+  outEntry.globalQtyAfter  = globalPos.qty; // unchanged
+  inEntry.globalQtyBefore  = globalPos.qty;
+  inEntry.globalQtyAfter   = globalPos.qty;
+
+  if(!STATE.stockLedger) STATE.stockLedger=[];
+  STATE.stockLedger.push(outEntry, inEntry);
+  await storeSet('stockLedger', STATE.stockLedger);
+  return { outEntry, inEntry, docNo };
+}
+
 function computeInventoryValuation(asOfDate){
   const tracked = STATE.products.filter(p=>p.trackInventory);
   return tracked.map(p=>{
@@ -14226,6 +15004,1269 @@ function recalcInventoryIntegrity(){
 }
 
 // ── renderInventoryView — Enhanced UI ────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+//  WAREHOUSES VIEW — صفحة المستودعات الكاملة
+// ══════════════════════════════════════════════════════════════════════════════
+function renderWarehousesView(root){
+  const warehouses = STATE.warehouses||[];
+  const activeTab  = STATE.ui.whActiveTab||'list';
+
+  root.innerHTML = `
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">${ICONS.factory.replace('currentColor','var(--gold-dim)')} ${t('whTitle')}</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-outline" onclick="openWarehouseTransferModal()">🔄 ${t('whTransferNewBtn')}</button>
+        <button class="btn" onclick="openWarehouseModal(null)">+ ${t('whNewBtn')}</button>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--line);margin-bottom:16px;flex-wrap:wrap">
+      ${['list','stock','transfers'].map(tab=>`
+        <button onclick="STATE.ui.whActiveTab='${tab}';renderApp()"
+          style="padding:8px 16px;border:none;background:none;cursor:pointer;font-weight:600;
+          border-bottom:${activeTab===tab?'3px solid var(--gold)':'3px solid transparent'};
+          color:${activeTab===tab?'var(--gold)':'var(--muted)'}">
+          ${{list:'📋 المستودعات',stock:'📦 المخزون حسب المستودع',transfers:'🔄 التحويلات'}[tab]}
+        </button>`).join('')}
+    </div>
+    <div id="whTabContent"></div>
+  </div>`;
+
+  const tabRoot = root.querySelector('#whTabContent');
+  if(activeTab==='list')      renderWhListTab(tabRoot, warehouses);
+  if(activeTab==='stock')     renderWhStockTab(tabRoot, warehouses);
+  if(activeTab==='transfers') renderWhTransfersTab(tabRoot, warehouses);
+}
+
+// ── Tab: Warehouse List ───────────────────────────────────────────────────────
+function renderWhListTab(root, warehouses){
+  if(!warehouses.length){
+    root.innerHTML=`<div class="empty">${t('whNoWarehouses')}</div>`;
+    return;
+  }
+  root.innerHTML=`
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('whCode')}</th><th>${t('whName')}</th><th>${t('whLocation')}</th>
+    <th>${t('whStatus')}</th><th>${t('whIsDefault')}</th>
+    <th class="num">${t('whTotalItems')}</th><th class="num">${t('whTotalValue')}</th>
+    <th></th>
+  </tr></thead><tbody>
+  ${warehouses.map(wh=>{
+    const tracked = STATE.products.filter(p=>p.trackInventory);
+    const whItems = tracked.filter(p=>{
+      const pos = computeStockPositionV2(p.id, null, wh.id);
+      return pos.qty!==0;
+    });
+    const whValue = Math.round(whItems.reduce((s,p)=>s+computeStockPositionV2(p.id,null,wh.id).value,0)*100)/100;
+    return `<tr>
+      <td style="font-weight:700">${escapeHtml(wh.code)}</td>
+      <td style="font-weight:600">${escapeHtml(wh.name)}</td>
+      <td class="hint">${escapeHtml(wh.location||'')}</td>
+      <td><span style="color:${wh.status==='active'?'#4caf50':'var(--muted)'}">${wh.status==='active'?t('whActive'):t('whInactive')}</span></td>
+      <td>${wh.isDefault?`<span style="background:rgba(255,193,7,.2);color:#ffc107;padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700">${t('whDefaultBadge')}</span>`:'—'}</td>
+      <td class="num">${whItems.length}</td>
+      <td class="num" style="font-weight:700">${fmt(whValue)}</td>
+      <td style="white-space:nowrap">
+        <span class="drill" onclick="openWarehouseModal('${wh.id}')">✏️</span>
+        ${!wh.isDefault?`<span class="drill" style="margin-right:6px;font-size:11px" onclick="setDefaultWarehouse('${wh.id}')">⭐ ${t('whSetDefault')}</span>`:''}
+        <span class="drill" style="color:var(--brick);margin-right:6px;font-size:11px" onclick="deleteWarehouse('${wh.id}')">🗑</span>
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>`;
+}
+
+// ── Tab: Stock by Warehouse ───────────────────────────────────────────────────
+function renderWhStockTab(root, warehouses){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  if(!tracked.length){ root.innerHTML=`<div class="empty">${t('noTrackedProducts')}</div>`; return; }
+  if(!warehouses.length){ root.innerHTML=`<div class="empty">${t('whNoWarehouses')}</div>`; return; }
+
+  const activeWhs = warehouses.filter(w=>w.status==='active');
+
+  // Build grid: rows=products, cols=warehouses
+  root.innerHTML=`
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('prodCodeCol')}</th>
+    <th>${t('prodNameCol')}</th>
+    <th>${t('prodUnitCol')}</th>
+    ${activeWhs.map(w=>`<th class="num" style="white-space:nowrap">${escapeHtml(w.name)}<br><span class="hint" style="font-size:10px">${escapeHtml(w.code)}</span></th>`).join('')}
+    <th class="num" style="font-weight:800">${t('whAllWarehouses')}</th>
+    <th class="num">${t('invV2ValuationAvgCost')}</th>
+    <th class="num" style="font-weight:800">${t('invV2ValuationValue')}</th>
+  </tr></thead><tbody>
+  ${tracked.map(p=>{
+    const globalPos = computeStockPositionV2(p.id, null, null);
+    const whQtys = activeWhs.map(w=>computeStockPositionV2(p.id,null,w.id).qty);
+    return `<tr>
+      <td class="hint">${escapeHtml(p.code||'')}</td>
+      <td style="font-weight:600">
+        <span class="drill" onclick="openStockCard(${p.id})">${escapeHtml(p.name)}</span>
+      </td>
+      <td>${escapeHtml(p.unit||'')}</td>
+      ${whQtys.map(q=>`<td class="num" style="color:${q<0?'var(--brick)':q===0?'var(--muted)':'inherit'}">${q!==0?fmt(q):'—'}</td>`).join('')}
+      <td class="num" style="font-weight:800;color:${globalPos.qty<0?'var(--brick)':'inherit'}">${fmt(globalPos.qty)}</td>
+      <td class="num">${fmt(globalPos.avgCost)}</td>
+      <td class="num" style="font-weight:800">${fmt(globalPos.value)}</td>
+    </tr>`;
+  }).join('')}
+  <tr style="border-top:2px solid var(--line);font-weight:800;background:rgba(255,255,255,.04)">
+    <td colspan="3" style="text-align:end">${t('invV2ValuationTotal')}</td>
+    ${activeWhs.map(w=>{
+      const whTotal = Math.round(tracked.reduce((s,p)=>s+computeStockPositionV2(p.id,null,w.id).value,0)*100)/100;
+      return `<td class="num">${fmt(whTotal)}</td>`;
+    }).join('')}
+    <td class="num">${fmt(Math.round(tracked.reduce((s,p)=>s+computeStockPositionV2(p.id,null,null).value,0)*100)/100)}</td>
+    <td></td>
+    <td class="num">${fmt(Math.round(tracked.reduce((s,p)=>s+computeStockPositionV2(p.id,null,null).value,0)*100)/100)}</td>
+  </tr>
+  </tbody></table></div>`;
+}
+
+// ── Tab: Transfer History ─────────────────────────────────────────────────────
+function renderWhTransfersTab(root, warehouses){
+  const transfers = (STATE.stockLedger||[])
+    .filter(sl=>sl.txType==='transfer-out' && sl.status==='posted')
+    .sort((a,b)=>b.date.localeCompare(a.date)||(b.createdAt||'').localeCompare(a.createdAt||''));
+
+  if(!transfers.length){
+    root.innerHTML=`<div class="empty">${t('whNoTransfers')}</div>`;
+    return;
+  }
+
+  root.innerHTML=`
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('date')}</th>
+    <th>${t('whTransferDocNo')}</th>
+    <th>${t('whTransferProduct')}</th>
+    <th>${t('whTransferFrom')}</th>
+    <th>${t('whTransferTo')}</th>
+    <th class="num">${t('whTransferQty')}</th>
+    <th class="num">${t('invV2UnitCostLabel')}</th>
+    <th class="num">${t('invV2TotalCostLabel')}</th>
+    <th>${t('invV2ReasonLabel')}</th>
+  </tr></thead><tbody>
+  ${transfers.map(sl=>{
+    const prod = STATE.products.find(p=>p.id===sl.productId);
+    // Find the matching transfer-in entry
+    const inEntry = (STATE.stockLedger||[]).find(s=>s.id===sl.relatedSlId&&s.txType==='transfer-in');
+    const toWhId  = inEntry?.warehouseId||'';
+    return `<tr>
+      <td>${sl.date}</td>
+      <td style="font-weight:600">${escapeHtml(sl.docNo||'')}</td>
+      <td>
+        <span class="drill" onclick="openStockCard(${sl.productId})">${escapeHtml(prod?.name||sl.productId)}</span>
+        <span class="hint" style="font-size:11px"> (${escapeHtml(prod?.unit||'')})</span>
+      </td>
+      <td>${escapeHtml(warehouseName(sl.warehouseId))}</td>
+      <td>${escapeHtml(warehouseName(toWhId))}</td>
+      <td class="num" style="font-weight:700">${fmt(sl.outQty)}</td>
+      <td class="num">${fmt(sl.unitCost)}</td>
+      <td class="num">${fmt(sl.totalCost)}</td>
+      <td class="hint" style="font-size:12px">${escapeHtml(sl.reason||'')}</td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>`;
+}
+
+// ── Modal: New / Edit Warehouse ───────────────────────────────────────────────
+function openWarehouseModal(whId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = whId ? (STATE.warehouses||[]).find(w=>w.id===whId) : null;
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:440px;width:97%">
+    <h3>${existing?t('whEditTitle'):t('whNewTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="lbl">${t('whCode')}</label>
+        <input id="whCode" class="input" value="${escapeHtml(existing?.code||'')}" placeholder="WH-01">
+      </div>
+      <div><label class="lbl">${t('whStatus')}</label>
+        <select id="whStatus" class="input">
+          <option value="active"  ${(!existing||existing.status==='active')?'selected':''}>${t('whActive')}</option>
+          <option value="inactive" ${existing?.status==='inactive'?'selected':''}>${t('whInactive')}</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('whName')}</label>
+        <input id="whName" class="input" value="${escapeHtml(existing?.name||'')}">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('whLocation')}</label>
+        <input id="whLocation" class="input" value="${escapeHtml(existing?.location||'')}">
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="whIsDefault" ${existing?.isDefault?'checked':''}>
+          <span>${t('whIsDefault')} — ${t('whDefaultBadge')}</span>
+        </label>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('whNotes')}</label>
+        <textarea id="whNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveWhBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  overlay.querySelector('#saveWhBtn').onclick = async()=>{
+    const code = overlay.querySelector('#whCode').value.trim().toUpperCase();
+    const name = overlay.querySelector('#whName').value.trim();
+    if(!code){ showToast(t('whCodeRequired')); return; }
+    if(!name){ showToast(t('whNameRequired')); return; }
+    const isDefault = overlay.querySelector('#whIsDefault').checked;
+
+    if(!STATE.warehouses) STATE.warehouses=[];
+
+    // If setting as default, unset others
+    if(isDefault) STATE.warehouses.forEach(w=>{ w.isDefault=false; });
+
+    const rec = {
+      id: existing ? existing.id : 'wh_'+Date.now()+Math.random().toString(36).slice(2,6),
+      code, name, location: overlay.querySelector('#whLocation').value.trim(),
+      isDefault, status: overlay.querySelector('#whStatus').value,
+      notes: overlay.querySelector('#whNotes').value.trim()
+    };
+
+    if(existing){
+      const idx = STATE.warehouses.findIndex(w=>w.id===whId);
+      STATE.warehouses[idx] = rec;
+    } else {
+      // If first warehouse, make it default
+      if(!STATE.warehouses.length) rec.isDefault=true;
+      STATE.warehouses.push(rec);
+      // Update invSettings defaultWarehouseId
+      if(rec.isDefault){
+        STATE.invSettings.defaultWarehouseId = rec.id;
+        await storeSet('invSettings', STATE.invSettings);
+      }
+    }
+    await storeSet('warehouses', STATE.warehouses);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp();
+    showToast(t('whSaved'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ── Set a warehouse as default ────────────────────────────────────────────────
+async function setDefaultWarehouse(whId){
+  (STATE.warehouses||[]).forEach(w=>{ w.isDefault = w.id===whId; });
+  STATE.invSettings.defaultWarehouseId = whId;
+  await storeSet('warehouses', STATE.warehouses);
+  await storeSet('invSettings', STATE.invSettings);
+  renderApp();
+  showToast(t('whSaved'));
+}
+
+// ── Delete a warehouse ────────────────────────────────────────────────────────
+async function deleteWarehouse(whId){
+  const wh = (STATE.warehouses||[]).find(w=>w.id===whId);
+  if(!wh) return;
+  // Check for existing stock movements
+  const hasMoves = (STATE.stockLedger||[]).some(sl=>sl.warehouseId===whId && sl.status==='posted');
+  if(hasMoves){ showToast(t('whHasMoves'), 4000); return; }
+  showConfirmModal(
+    t('deleteImportConfirmTitle'),
+    t('whDeleteConfirm').replace('${name}', wh.name),
+    async()=>{
+      STATE.warehouses = STATE.warehouses.filter(w=>w.id!==whId);
+      await storeSet('warehouses', STATE.warehouses);
+      renderApp();
+      showToast(t('whDeleted'));
+    }
+  );
+}
+
+// ── Modal: Warehouse Transfer ─────────────────────────────────────────────────
+function openWarehouseTransferModal(prefillProductId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const warehouses = (STATE.warehouses||[]).filter(w=>w.status==='active');
+  const tracked    = STATE.products.filter(p=>p.trackInventory);
+  if(!warehouses.length){ showToast(t('whNoWarehouses'), 3000); return; }
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:480px;width:97%">
+    <h3>🔄 ${t('whTransferTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('whTransferProduct')}</label>
+        <select id="trfProduct" class="input">
+          <option value="">— ${t('invV2ProductRequired')} —</option>
+          ${tracked.map(p=>`<option value="${p.id}" ${p.id==prefillProductId?'selected':''}>${escapeHtml(p.name)} (${escapeHtml(p.unit||'')})</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('whTransferFrom')}</label>
+        <select id="trfFrom" class="input">
+          ${warehouses.map(w=>`<option value="${w.id}" ${w.isDefault?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('whTransferTo')}</label>
+        <select id="trfTo" class="input">
+          ${warehouses.map((w,i)=>`<option value="${w.id}" ${!w.isDefault&&i===1?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('whTransferDate')}</label>
+        <input type="date" id="trfDate" class="input" value="${todayISO()}">
+      </div>
+      <div><label class="lbl">${t('whTransferQty')}</label>
+        <input type="number" id="trfQty" class="input" step="0.0001" min="0.0001" value="1">
+      </div>
+      <!-- Available qty display -->
+      <div style="grid-column:1/-1" id="trfAvailDiv"></div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('whTransferReason')}</label>
+        <input id="trfReason" class="input" placeholder="${t('stReasonRequired')}">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="trfPostBtn">🔄 ${t('whTransferNewBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  const getEl=id=>overlay.querySelector('#'+id);
+
+  const updateAvail=()=>{
+    const prodId = getEl('trfProduct').value;
+    const fromId = getEl('trfFrom').value;
+    if(prodId && fromId){
+      const pos = computeStockPositionV2(parseInt(prodId), null, fromId);
+      getEl('trfAvailDiv').innerHTML=`<div class="hint" style="background:rgba(255,255,255,.05);padding:6px 10px;border-radius:6px">
+        ${t('stSystemQty')} في <strong>${escapeHtml(warehouseName(fromId))}</strong>:
+        <strong style="color:${pos.qty<=0?'var(--brick)':'#4caf50'}">${fmt(pos.qty)}</strong>
+        ${STATE.products.find(p=>p.id==prodId)?.unit||''}
+      </div>`;
+    } else {
+      getEl('trfAvailDiv').innerHTML='';
+    }
+  };
+  ['trfProduct','trfFrom'].forEach(id=>getEl(id)?.addEventListener('change', updateAvail));
+  if(prefillProductId) updateAvail();
+
+  getEl('trfPostBtn').onclick=async()=>{
+    const prodId  = parseInt(getEl('trfProduct').value);
+    const fromId  = getEl('trfFrom').value;
+    const toId    = getEl('trfTo').value;
+    const date    = getEl('trfDate').value||todayISO();
+    const qty     = parseFloat(getEl('trfQty').value)||0;
+    const reason  = getEl('trfReason').value.trim();
+    try{
+      await postWarehouseTransfer({ productId:prodId, fromWhId:fromId, toWhId:toId, date, qty, unitType:'base', reason });
+      overlay.style.display='none'; overlay.innerHTML='';
+      renderApp();
+      showToast(t('whTransferPosted'), 4000);
+    } catch(err){ showToast(err.message, 4000); }
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  REORDER ALERTS — تنبيهات إعادة الطلب
+// ══════════════════════════════════════════════════════════════════════════════
+function getReorderAlerts(){
+  return STATE.products.filter(p=>p.trackInventory && p.reorderPoint>0).map(p=>{
+    const pos = computeStockPositionV2(p.id, null, null);
+    const atOrBelow = pos.qty <= p.reorderPoint;
+    const qtyNeeded = Math.max(0, (p.maxStock||p.reorderPoint*3) - pos.qty);
+    return { product:p, qty:pos.qty, atOrBelow, qtyNeeded };
+  }).filter(r=>r.atOrBelow);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  BOM VIEW — قوائم المكونات
+// ══════════════════════════════════════════════════════════════════════════════
+function renderBOMView(root){
+  const boms = STATE.boms||[];
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  root.innerHTML=`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">⚙ ${t('bomTitle')}</h2>
+      <button class="btn" onclick="openBOMModal(null)">+ ${t('bomNewBtn')}</button>
+    </div>
+    ${!boms.length ? `<div class="empty">${t('bomNoBOMs')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('bomProduct')}</th><th>${t('bomVersion')}</th>
+      <th class="num">${t('bomComponents')}</th>
+      <th class="num">${t('bomTotalCost')}</th>
+      <th>${t('bomStatus')}</th><th></th>
+    </tr></thead><tbody>
+    ${boms.map(bom=>{
+      const prod = STATE.products.find(p=>p.id===bom.productId);
+      const totalMatCost = (bom.components||[]).reduce((s,c)=>{
+        const cp = STATE.products.find(p=>p.id===c.productId);
+        const pos = cp ? computeStockPositionV2(cp.id,null,null) : {avgCost:0};
+        return s + (c.qty||0)*pos.avgCost;
+      },0);
+      const totalCost = Math.round((totalMatCost + (bom.laborCost||0) + (bom.overheadCost||0))*100)/100;
+      const statusColor = {active:'#4caf50',draft:'#ffc107',obsolete:'var(--muted)'}[bom.status]||'var(--muted)';
+      return `<tr>
+        <td style="font-weight:600">${escapeHtml(prod?.name||'')}</td>
+        <td class="hint">${escapeHtml(bom.version||'1.0')}</td>
+        <td class="num">${(bom.components||[]).length}</td>
+        <td class="num" style="font-weight:700">${fmt(totalCost)}</td>
+        <td><span style="color:${statusColor}">${t('bom'+bom.status.charAt(0).toUpperCase()+bom.status.slice(1))}</span></td>
+        <td style="white-space:nowrap">
+          <span class="drill" onclick="openBOMModal('${bom.id}')">✏️</span>
+          <span class="drill" style="color:var(--brick);margin-right:6px" onclick="deleteBOM('${bom.id}')">🗑</span>
+          ${bom.status==='active'?`<span class="drill" style="color:#4caf50;margin-right:6px" onclick="openWorkOrderFromBOM('${bom.id}')">▶ ${t('woNewBtn').replace('+ ','')}</span>`:''}
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function openBOMModal(bomId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = bomId ? (STATE.boms||[]).find(b=>b.id===bomId) : null;
+  const tracked  = STATE.products.filter(p=>p.trackInventory);
+  const components = existing?.components ? JSON.parse(JSON.stringify(existing.components)) : [];
+
+  const renderComponents = ()=>{
+    const tbody = overlay.querySelector('#bomComponentsTbody');
+    if(!tbody) return;
+    tbody.innerHTML = components.map((c,i)=>{
+      const cp = STATE.products.find(p=>p.id===c.productId);
+      const pos = cp ? computeStockPositionV2(cp.id,null,null) : {avgCost:0,qty:0};
+      return `<tr>
+        <td><select class="input bom-comp-prod" data-idx="${i}" style="min-width:160px">
+          <option value="">—</option>
+          ${tracked.map(p=>`<option value="${p.id}" ${p.id===c.productId?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+        </select></td>
+        <td><input type="number" class="input bom-comp-qty" data-idx="${i}" step="0.001" min="0.001" value="${c.qty||1}" style="width:80px"></td>
+        <td class="hint">${escapeHtml(cp?.unit||'')}</td>
+        <td class="num hint">${fmt(pos.avgCost)}</td>
+        <td class="num hint">${fmt(Math.round((c.qty||1)*pos.avgCost*100)/100)}</td>
+        <td><span class="drill" style="color:var(--brick)" onclick="bomRemoveComp(${i})">✕</span></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="6"><div class="empty">${t('bomNoComponents')}</div></td></tr>`;
+  };
+
+  // Make accessible globally for event handlers
+  window._bomComponents = components;
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:620px;width:97%;max-height:90vh;overflow-y:auto">
+    <h3>⚙ ${existing?t('bomEditTitle'):t('bomNewTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('bomProduct')}</label>
+        <select id="bomProd" class="input">
+          <option value="">—</option>
+          ${tracked.map(p=>`<option value="${p.id}" ${existing?.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('bomVersion')}</label><input id="bomVersion" class="input" value="${escapeHtml(existing?.version||'1.0')}"></div>
+      <div><label class="lbl">${t('bomStatus')}</label>
+        <select id="bomStatus" class="input">
+          <option value="draft"    ${(!existing||existing.status==='draft')?'selected':''}>${t('bomDraft')}</option>
+          <option value="active"   ${existing?.status==='active'?'selected':''}>${t('bomActive')}</option>
+          <option value="obsolete" ${existing?.status==='obsolete'?'selected':''}>${t('bomObsolete')}</option>
+        </select>
+      </div>
+      <div><label class="lbl">${t('woLaborCost')}</label><input type="number" id="bomLabor" class="input" step="0.01" min="0" value="${existing?.laborCost||0}"></div>
+      <div><label class="lbl">${t('woOverheadCost')}</label><input type="number" id="bomOverhead" class="input" step="0.01" min="0" value="${existing?.overheadCost||0}"></div>
+    </div>
+    <div style="font-weight:600;margin-bottom:6px">${t('bomComponents')}</div>
+    <div class="table-wrap" style="margin-bottom:8px;font-size:12px">
+      <table><thead><tr>
+        <th>${t('bomComponent')}</th><th class="num">${t('bomQtyRequired')}</th>
+        <th>${t('bomUnit')}</th><th class="num">${t('invV2AvgCostAfterCol')}</th>
+        <th class="num">${t('invV2TotalCostLabel')}</th><th></th>
+      </tr></thead><tbody id="bomComponentsTbody"></tbody></table>
+    </div>
+    <button class="btn btn-outline" style="margin-bottom:12px;font-size:12px" onclick="bomAddComp()">+ ${t('bomAddComponent')}</button>
+    <div><label class="lbl">${t('bomNotes')}</label><textarea id="bomNotes" class="input" rows="2">${escapeHtml(existing?.notes||'')}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveBOMBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  renderComponents();
+
+  // Wire component inputs (event delegation)
+  overlay.querySelector('#bomComponentsTbody').addEventListener('change', e=>{
+    const idx = parseInt(e.target.dataset.idx);
+    if(isNaN(idx)) return;
+    if(e.target.classList.contains('bom-comp-prod')) window._bomComponents[idx].productId=parseInt(e.target.value)||0;
+    if(e.target.classList.contains('bom-comp-qty'))  window._bomComponents[idx].qty=parseFloat(e.target.value)||1;
+    renderComponents();
+  });
+
+  window.bomAddComp = ()=>{ window._bomComponents.push({productId:0,qty:1}); renderComponents(); };
+  window.bomRemoveComp = (i)=>{ window._bomComponents.splice(i,1); renderComponents(); };
+
+  overlay.querySelector('#saveBOMBtn').onclick=async()=>{
+    const productId = parseInt(overlay.querySelector('#bomProd').value)||0;
+    if(!productId){ showToast(t('invV2ProductRequired')); return; }
+    const rec = {
+      id: existing ? existing.id : 'bom_'+Date.now()+Math.random().toString(36).slice(2,6),
+      productId, version: overlay.querySelector('#bomVersion').value.trim()||'1.0',
+      status: overlay.querySelector('#bomStatus').value,
+      components: window._bomComponents.filter(c=>c.productId&&c.qty>0),
+      laborCost:    parseFloat(overlay.querySelector('#bomLabor').value)||0,
+      overheadCost: parseFloat(overlay.querySelector('#bomOverhead').value)||0,
+      notes: overlay.querySelector('#bomNotes').value.trim()
+    };
+    if(!STATE.boms) STATE.boms=[];
+    if(existing){ const idx=STATE.boms.findIndex(b=>b.id===bomId); STATE.boms[idx]=rec; }
+    else STATE.boms.push(rec);
+    await storeSet('boms', STATE.boms);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp(); showToast(t('bomSaved'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+async function deleteBOM(bomId){
+  const bom = (STATE.boms||[]).find(b=>b.id===bomId);
+  if(!bom) return;
+  const prod = STATE.products.find(p=>p.id===bom.productId);
+  showConfirmModal(t('bomDeleteConfirm').replace('${name}',prod?.name||bomId),'',async()=>{
+    STATE.boms = STATE.boms.filter(b=>b.id!==bomId);
+    await storeSet('boms', STATE.boms);
+    renderApp(); showToast(t('bomDeleted'));
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  WORK ORDERS — أوامر الإنتاج
+// ══════════════════════════════════════════════════════════════════════════════
+function renderWorkOrdersView(root){
+  const wos = (STATE.workOrders||[]).slice().sort((a,b)=>b.startDate?.localeCompare(a.startDate||'')||0);
+  const statusColor = s=>({draft:'#ffc107',released:'#2196f3',inprogress:'var(--gold)',completed:'#4caf50',cancelled:'var(--muted)'}[s]||'var(--muted)');
+
+  root.innerHTML=`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">🏭 ${t('woTitle')}</h2>
+      <button class="btn" onclick="openWorkOrderModal(null)">+ ${t('woNewBtn')}</button>
+    </div>
+    ${!wos.length ? `<div class="empty">${t('woNone')}</div>` : `
+    <div class="table-wrap"><table><thead><tr>
+      <th>${t('woNumber')}</th><th>${t('woProduct')}</th><th>${t('woBOM')}</th>
+      <th class="num">${t('woQtyPlanned')}</th><th class="num">${t('woQtyProduced')}</th>
+      <th>${t('woStartDate')}</th><th>${t('woEndDate')}</th>
+      <th class="num">${t('woTotalCost')}</th><th>${t('woStatus')}</th><th></th>
+    </tr></thead><tbody>
+    ${wos.map(wo=>{
+      const prod = STATE.products.find(p=>p.id===wo.productId);
+      const bom  = (STATE.boms||[]).find(b=>b.id===wo.bomId);
+      const totalCost = Math.round(((wo.laborCost||0)+(wo.overheadCost||0))*100)/100;
+      const statusLabel = t('woStatus'+wo.status.charAt(0).toUpperCase()+wo.status.slice(1));
+      return `<tr>
+        <td style="font-weight:700">${escapeHtml(wo.woNo||'')}</td>
+        <td style="font-weight:600">${escapeHtml(prod?.name||'')}</td>
+        <td class="hint">${escapeHtml(bom ? `${bom.version}` : '—')}</td>
+        <td class="num">${fmt(wo.qtyPlanned||0)} ${escapeHtml(prod?.unit||'')}</td>
+        <td class="num">${fmt(wo.qtyProduced||0)}</td>
+        <td>${wo.startDate||'—'}</td>
+        <td>${wo.endDate||'—'}</td>
+        <td class="num">${totalCost?fmt(totalCost):'—'}</td>
+        <td><span style="color:${statusColor(wo.status)};font-weight:700">${statusLabel}</span></td>
+        <td style="white-space:nowrap">
+          ${wo.status!=='completed'&&wo.status!=='cancelled'?`
+            <span class="drill" onclick="openWorkOrderModal('${wo.id}')">✏️</span>
+            <span class="drill" style="color:#4caf50;margin-right:6px" onclick="postWorkOrder('${wo.id}')">▶ ${t('woPostBtn')}</span>
+          `:`<span class="drill" onclick="openWorkOrderModal('${wo.id}')">👁</span>`}
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>`}
+  </div>`;
+}
+
+function nextWONumber(){
+  const existing = (STATE.workOrders||[]).map(w=>w.woNo||'').filter(n=>n.startsWith('WO-')).map(n=>parseInt(n.split('-')[1])||0);
+  return `WO-${String((existing.length?Math.max(...existing):0)+1).padStart(4,'0')}`;
+}
+
+function openWorkOrderFromBOM(bomId){
+  STATE.ui.view='workorders'; renderApp();
+  setTimeout(()=>openWorkOrderModal(null, bomId), 100);
+}
+
+function openWorkOrderModal(woId, prefillBomId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = woId ? (STATE.workOrders||[]).find(w=>w.id===woId) : null;
+  const boms     = (STATE.boms||[]).filter(b=>b.status==='active');
+  const warehouses = (STATE.warehouses||[]).filter(w=>w.status==='active');
+  const tracked    = STATE.products.filter(p=>p.trackInventory);
+  const wipAccs    = STATE.accounts.filter(a=>a.type==='الأصول المتداولة');
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:520px;width:97%;max-height:90vh;overflow-y:auto">
+    <h3>🏭 ${existing?t('woEditTitle'):t('woNewTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div><label class="lbl">${t('woNumber')}</label>
+        <input id="woNo" class="input" value="${escapeHtml(existing?.woNo||nextWONumber())}">
+      </div>
+      <div><label class="lbl">${t('woStatus')}</label>
+        <select id="woStatus" class="input">
+          ${['draft','released','inprogress','completed','cancelled'].map(s=>
+            `<option value="${s}" ${(existing?.status||'draft')===s?'selected':''}>${t('woStatus'+s.charAt(0).toUpperCase()+s.slice(1))}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('woBOM')}</label>
+        <select id="woBOM" class="input" onchange="woUpdateFromBOM(this.value)">
+          <option value="">— ${t('invV2FilterAll')} —</option>
+          ${boms.map(b=>{ const p=STATE.products.find(pr=>pr.id===b.productId); return `<option value="${b.id}" ${(existing?.bomId||prefillBomId)===b.id?'selected':''}>${escapeHtml(p?.name||'')} v${b.version}</option>`; }).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('woProduct')}</label>
+        <select id="woProduct" class="input">
+          ${tracked.map(p=>`<option value="${p.id}" ${existing?.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('woQtyPlanned')}</label>
+        <input type="number" id="woQtyPlanned" class="input" step="0.001" min="0.001" value="${existing?.qtyPlanned||1}">
+      </div>
+      <div><label class="lbl">${t('woQtyProduced')}</label>
+        <input type="number" id="woQtyProduced" class="input" step="0.001" min="0" value="${existing?.qtyProduced||0}">
+      </div>
+      <div><label class="lbl">${t('woStartDate')}</label>
+        <input type="date" id="woStart" class="input" value="${existing?.startDate||todayISO()}">
+      </div>
+      <div><label class="lbl">${t('woEndDate')}</label>
+        <input type="date" id="woEnd" class="input" value="${existing?.endDate||''}">
+      </div>
+      <div><label class="lbl">${t('woWarehouseIn')}</label>
+        <select id="woWhIn" class="input">
+          ${warehouses.map(w=>`<option value="${w.id}" ${existing?.warehouseInId===w.id||w.isDefault?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('woWarehouseOut')}</label>
+        <select id="woWhOut" class="input">
+          ${warehouses.map(w=>`<option value="${w.id}" ${existing?.warehouseOutId===w.id||w.isDefault?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('woLaborCost')}</label>
+        <input type="number" id="woLabor" class="input" step="0.01" min="0" value="${existing?.laborCost||0}">
+      </div>
+      <div><label class="lbl">${t('woOverheadCost')}</label>
+        <input type="number" id="woOverhead" class="input" step="0.01" min="0" value="${existing?.overheadCost||0}">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('woWIPAccount')}</label>
+        <select id="woWIP" class="input">
+          <option value="">—</option>
+          ${wipAccs.map(a=>`<option value="${a.code}" ${existing?.wipAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveWOBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+
+  window.woUpdateFromBOM = (bomId)=>{
+    const bom = (STATE.boms||[]).find(b=>b.id===bomId);
+    if(!bom) return;
+    overlay.querySelector('#woProduct').value = bom.productId;
+    overlay.querySelector('#woLabor').value = bom.laborCost||0;
+    overlay.querySelector('#woOverhead').value = bom.overheadCost||0;
+  };
+  if(prefillBomId && !existing) window.woUpdateFromBOM(prefillBomId);
+
+  overlay.querySelector('#saveWOBtn').onclick=async()=>{
+    const rec = {
+      id: existing?.id||'wo_'+Date.now()+Math.random().toString(36).slice(2,6),
+      woNo:           overlay.querySelector('#woNo').value.trim(),
+      bomId:          overlay.querySelector('#woBOM').value||'',
+      productId:      parseInt(overlay.querySelector('#woProduct').value)||0,
+      qtyPlanned:     parseFloat(overlay.querySelector('#woQtyPlanned').value)||1,
+      qtyProduced:    parseFloat(overlay.querySelector('#woQtyProduced').value)||0,
+      startDate:      overlay.querySelector('#woStart').value,
+      endDate:        overlay.querySelector('#woEnd').value,
+      warehouseInId:  overlay.querySelector('#woWhIn').value,
+      warehouseOutId: overlay.querySelector('#woWhOut').value,
+      laborCost:      parseFloat(overlay.querySelector('#woLabor').value)||0,
+      overheadCost:   parseFloat(overlay.querySelector('#woOverhead').value)||0,
+      wipAccount:     overlay.querySelector('#woWIP').value,
+      status:         overlay.querySelector('#woStatus').value,
+      journalEntry:   existing?.journalEntry||'',
+      createdBy:      existing?.createdBy||currentUserName(),
+      createdAt:      existing?.createdAt||new Date().toISOString(),
+    };
+    if(!STATE.workOrders) STATE.workOrders=[];
+    if(existing){ const idx=STATE.workOrders.findIndex(w=>w.id===woId); STATE.workOrders[idx]=rec; }
+    else STATE.workOrders.push(rec);
+    await storeSet('workOrders', STATE.workOrders);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp(); showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+async function postWorkOrder(woId){
+  const wo = (STATE.workOrders||[]).find(w=>w.id===woId);
+  if(!wo){ showToast('أمر الإنتاج غير موجود'); return; }
+  if(!confirm(t('woPostConfirm'))) return;
+
+  const bom  = (STATE.boms||[]).find(b=>b.id===wo.bomId);
+  const prod  = STATE.products.find(p=>p.id===wo.productId);
+  if(!prod){ showToast(t('invV2ProductRequired')); return; }
+
+  const qty = wo.qtyProduced || wo.qtyPlanned;
+  let totalMatCost = 0;
+
+  try {
+    // 1. Consume raw materials (issue from source warehouse)
+    if(bom?.components?.length){
+      for(const comp of bom.components){
+        const compQty = (comp.qty||0) * qty;
+        if(compQty<=0) continue;
+        const compPos = computeStockPositionV2(comp.productId, null, null);
+        await postInventoryTransaction({
+          productId:   comp.productId,
+          txType:      'issue',
+          date:        todayISO(),
+          docNo:       wo.woNo,
+          qty:         compQty,
+          unitType:    'base',
+          unitCost:    compPos.avgCost,
+          reason:      `${t('woConsumption')}: ${wo.woNo}`,
+          source:      'workorder',
+          warehouseId: wo.warehouseInId
+        });
+        totalMatCost += Math.round(compQty*compPos.avgCost*100)/100;
+      }
+    }
+
+    // 2. Add finished product to output warehouse
+    const unitCost = qty>0 ? Math.round((totalMatCost + (wo.laborCost||0) + (wo.overheadCost||0))/qty*10000)/10000 : 0;
+    await postInventoryTransaction({
+      productId:   wo.productId,
+      txType:      'receipt',
+      date:        todayISO(),
+      docNo:       wo.woNo,
+      qty,
+      unitType:    'base',
+      unitCost,
+      reason:      `${t('woProduction')}: ${wo.woNo}`,
+      source:      'workorder',
+      warehouseId: wo.warehouseOutId
+    });
+
+    // 3. Mark WO as completed
+    wo.status        = 'completed';
+    wo.qtyProduced   = qty;
+    wo.actualEndDate = todayISO();
+    wo.postedBy      = currentUserName();
+    wo.postedAt      = new Date().toISOString();
+    await storeSet('workOrders', STATE.workOrders);
+    renderApp();
+    showToast(t('woPosted'), 4000);
+  } catch(err){ showToast(err.message, 5000); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  BATCH / LOT TRACKING — تتبع الدُّفعات
+// ══════════════════════════════════════════════════════════════════════════════
+function renderInvBatchesView(root){
+  const batches  = STATE.batches||[];
+  const alertDays = STATE.invSettings?.batchAlertDays||30;
+  const today    = todayISO();
+  const tracked  = STATE.products.filter(p=>p.trackInventory);
+
+  // Expiry alerts
+  const expiring = batches.filter(b=>{
+    if(!b.expDate||b.status==='expired') return false;
+    const daysLeft = Math.ceil((new Date(b.expDate)-new Date(today))/(1000*60*60*24));
+    return daysLeft<=alertDays;
+  }).sort((a,b)=>a.expDate.localeCompare(b.expDate));
+
+  root.innerHTML=`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">📦 ${t('batchTitle')}</h2>
+      <button class="btn" onclick="openBatchModal(null)">+ ${t('bomNewBtn').replace('BOM','دفعة')}</button>
+    </div>
+
+    ${expiring.length?`
+    <div style="background:rgba(255,100,50,.1);border:1px solid rgba(255,100,50,.3);border-radius:8px;padding:12px;margin-bottom:14px">
+      <div style="font-weight:700;margin-bottom:8px;color:#ff6432">⚠ ${t('batchExpiryAlert')} (${expiring.length})</div>
+      ${expiring.map(b=>{
+        const p = STATE.products.find(pr=>pr.id===b.productId);
+        const daysLeft = Math.ceil((new Date(b.expDate)-new Date(today))/(1000*60*60*24));
+        return `<div style="font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.08)">
+          <strong>${escapeHtml(p?.name||'')}</strong> — ${t('batchNo')}: ${escapeHtml(b.batchNo)}
+          — ${t('batchExpDate')}: <strong>${b.expDate}</strong>
+          — <span style="color:${daysLeft<=0?'var(--brick)':'#ffc107'}">${daysLeft<=0?t('batchExpiredLabel'):daysLeft+' '+t('batchDaysLeft')}</span>
+          — ${t('batchQty')}: ${fmt(b.qty)} ${escapeHtml(p?.unit||'')}
+        </div>`;
+      }).join('')}
+    </div>`:''
+    }
+
+    <!-- Filter by product -->
+    <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center">
+      <label class="lbl" style="margin:0">${t('invV2ProductLabel')}:</label>
+      <select id="batchProdFilter" class="input" style="min-width:200px" onchange="STATE.ui.batchProdFilter=this.value;renderApp()">
+        <option value="">— ${t('invV2FilterAll')} —</option>
+        ${tracked.map(p=>`<option value="${p.id}" ${STATE.ui.batchProdFilter==p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+      </select>
+    </div>
+
+    ${(()=>{
+      const filtered = STATE.ui.batchProdFilter
+        ? batches.filter(b=>b.productId==STATE.ui.batchProdFilter)
+        : batches;
+      if(!filtered.length) return `<div class="empty">${t('batchNoBatches')}</div>`;
+      return `<div class="table-wrap"><table><thead><tr>
+        <th>${t('invV2ProductLabel')}</th>
+        <th>${t('batchNo')}</th>
+        <th>${t('batchMfgDate')}</th>
+        <th>${t('batchExpDate')}</th>
+        <th class="num">${t('batchQty')}</th>
+        <th>${t('batchSupplier')}</th>
+        <th>${t('batchStatus')}</th>
+        <th></th>
+      </tr></thead><tbody>
+      ${filtered.sort((a,b)=>(a.expDate||'').localeCompare(b.expDate||'')).map(b=>{
+        const p = STATE.products.find(pr=>pr.id===b.productId);
+        const daysLeft = b.expDate ? Math.ceil((new Date(b.expDate)-new Date(today))/(1000*60*60*24)) : null;
+        const isExpired = daysLeft!==null && daysLeft<=0;
+        const expColor = isExpired?'var(--brick)':daysLeft!==null&&daysLeft<=alertDays?'#ffc107':'inherit';
+        return `<tr ${isExpired?'style="opacity:.7"':''}>
+          <td style="font-weight:600">${escapeHtml(p?.name||'')}</td>
+          <td style="font-weight:700">${escapeHtml(b.batchNo)}</td>
+          <td>${b.mfgDate||'—'}</td>
+          <td style="color:${expColor};font-weight:${expColor!=='inherit'?700:400}">${b.expDate||'—'}</td>
+          <td class="num">${fmt(b.qty)} ${escapeHtml(p?.unit||'')}</td>
+          <td class="hint">${escapeHtml(b.supplier||'')}</td>
+          <td><span style="color:${isExpired?'var(--brick)':'#4caf50'}">${isExpired?t('batchExpired'):t('batchActive')}</span></td>
+          <td><span class="drill" onclick="openBatchModal('${b.id}')">✏️</span></td>
+        </tr>`;
+      }).join('')}
+      </tbody></table></div>`;
+    })()}
+  </div>`;
+}
+
+function openBatchModal(batchId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = batchId ? (STATE.batches||[]).find(b=>b.id===batchId) : null;
+  const tracked  = STATE.products.filter(p=>p.trackInventory);
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:440px;width:97%">
+    <h3>📦 ${existing?t('bomEditTitle').replace('BOM','دفعة'):t('batchTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('invV2ProductLabel')}</label>
+        <select id="btProd" class="input">
+          <option value="">—</option>
+          ${tracked.map(p=>`<option value="${p.id}" ${existing?.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('batchNo')}</label><input id="btNo" class="input" value="${escapeHtml(existing?.batchNo||'')}"></div>
+      <div><label class="lbl">${t('batchQty')}</label><input type="number" id="btQty" class="input" step="0.001" min="0" value="${existing?.qty||0}"></div>
+      <div><label class="lbl">${t('batchMfgDate')}</label><input type="date" id="btMfg" class="input" value="${existing?.mfgDate||''}"></div>
+      <div><label class="lbl">${t('batchExpDate')}</label><input type="date" id="btExp" class="input" value="${existing?.expDate||''}"></div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('batchSupplier')}</label><input id="btSupp" class="input" value="${escapeHtml(existing?.supplier||'')}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveBtBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveBtBtn').onclick=async()=>{
+    const batchNo = overlay.querySelector('#btNo').value.trim();
+    if(!batchNo){ showToast(t('invV2QtyRequired')); return; }
+    const rec = {
+      id: existing?.id||'bt_'+Date.now()+Math.random().toString(36).slice(2,6),
+      productId: parseInt(overlay.querySelector('#btProd').value)||0,
+      batchNo, qty: parseFloat(overlay.querySelector('#btQty').value)||0,
+      mfgDate: overlay.querySelector('#btMfg').value,
+      expDate:  overlay.querySelector('#btExp').value,
+      supplier: overlay.querySelector('#btSupp').value.trim(),
+      status: 'active', createdAt: existing?.createdAt||new Date().toISOString()
+    };
+    if(!STATE.batches) STATE.batches=[];
+    if(existing){ const idx=STATE.batches.findIndex(b=>b.id===batchId); STATE.batches[idx]=rec; }
+    else STATE.batches.push(rec);
+    await storeSet('batches', STATE.batches);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp(); showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  SERIAL NUMBERS — الأرقام التسلسلية
+// ══════════════════════════════════════════════════════════════════════════════
+function renderInvSerialsView(root){
+  const serials  = STATE.serialNumbers||[];
+  const tracked  = STATE.products.filter(p=>p.trackInventory);
+  const filterProd = STATE.ui.serialProdFilter||'';
+  const filterStatus = STATE.ui.serialStatusFilter||'';
+
+  const statusColor = s=>({available:'#4caf50',sold:'#2196f3',returned:'#ffc107',scrapped:'var(--muted)'}[s]||'var(--muted)');
+
+  root.innerHTML=`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <h2 style="margin:0">🔢 ${t('serialTitle')}</h2>
+      <button class="btn" onclick="openSerialModal(null)">+ ${t('serialNo')}</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <select class="input" style="min-width:200px" onchange="STATE.ui.serialProdFilter=this.value;renderApp()">
+        <option value="">— ${t('invV2FilterAll')} —</option>
+        ${tracked.map(p=>`<option value="${p.id}" ${filterProd==p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+      </select>
+      <select class="input" onchange="STATE.ui.serialStatusFilter=this.value;renderApp()">
+        <option value="">— ${t('invV2FilterAll')} —</option>
+        ${['available','sold','returned','scrapped'].map(s=>`<option value="${s}" ${filterStatus===s?'selected':''}>${t('serial'+s.charAt(0).toUpperCase()+s.slice(1))}</option>`).join('')}
+      </select>
+    </div>
+    ${(()=>{
+      const filtered = serials.filter(s=>
+        (!filterProd||s.productId==filterProd) &&
+        (!filterStatus||s.status===filterStatus)
+      );
+      if(!filtered.length) return `<div class="empty">${t('serialNoSerials')}</div>`;
+      return `<div class="table-wrap"><table><thead><tr>
+        <th>${t('invV2ProductLabel')}</th>
+        <th>${t('serialNo')}</th>
+        <th>${t('serialStatus')}</th>
+        <th>${t('serialReceiveDate')}</th>
+        <th>${t('serialSoldDate')}</th>
+        <th>${t('serialCustomer')}</th>
+        <th>${t('serialWarrantyDate')}</th>
+        <th></th>
+      </tr></thead><tbody>
+      ${filtered.map(s=>{
+        const p = STATE.products.find(pr=>pr.id===s.productId);
+        return `<tr>
+          <td style="font-weight:600">${escapeHtml(p?.name||'')}</td>
+          <td style="font-weight:700;font-family:monospace">${escapeHtml(s.serialNo)}</td>
+          <td><span style="color:${statusColor(s.status)};font-weight:700">${t('serial'+s.status.charAt(0).toUpperCase()+s.status.slice(1))}</span></td>
+          <td>${s.receiveDate||'—'}</td>
+          <td>${s.soldDate||'—'}</td>
+          <td class="hint">${escapeHtml(s.customer||'')}</td>
+          <td class="${!s.warrantyDate||s.warrantyDate<todayISO()?'hint':''}">${s.warrantyDate||'—'}</td>
+          <td><span class="drill" onclick="openSerialModal('${s.id}')">✏️</span></td>
+        </tr>`;
+      }).join('')}
+      </tbody></table></div>`;
+    })()}
+  </div>`;
+}
+
+function openSerialModal(serialId){
+  const overlay = document.getElementById('newEntryModalOverlay');
+  if(!overlay) return;
+  const existing = serialId ? (STATE.serialNumbers||[]).find(s=>s.id===serialId) : null;
+  const tracked  = STATE.products.filter(p=>p.trackInventory);
+
+  overlay.innerHTML=`
+  <div class="modal-box" style="max-width:440px;width:97%">
+    <h3>🔢 ${t('serialTitle')}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="grid-column:1/-1"><label class="lbl">${t('invV2ProductLabel')}</label>
+        <select id="srProd" class="input">
+          ${tracked.map(p=>`<option value="${p.id}" ${existing?.productId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('serialNo')}</label>
+        <input id="srNo" class="input" value="${escapeHtml(existing?.serialNo||'')}" placeholder="SN-XXXX">
+      </div>
+      <div><label class="lbl">${t('serialStatus')}</label>
+        <select id="srStatus" class="input">
+          ${['available','sold','returned','scrapped'].map(s=>`<option value="${s}" ${(existing?.status||'available')===s?'selected':''}>${t('serial'+s.charAt(0).toUpperCase()+s.slice(1))}</option>`).join('')}
+        </select>
+      </div>
+      <div><label class="lbl">${t('serialReceiveDate')}</label>
+        <input type="date" id="srRecv" class="input" value="${existing?.receiveDate||todayISO()}">
+      </div>
+      <div><label class="lbl">${t('serialSoldDate')}</label>
+        <input type="date" id="srSold" class="input" value="${existing?.soldDate||''}">
+      </div>
+      <div><label class="lbl">${t('serialWarrantyDate')}</label>
+        <input type="date" id="srWarr" class="input" value="${existing?.warrantyDate||''}">
+      </div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('serialCustomer')}</label>
+        <input id="srCust" class="input" value="${escapeHtml(existing?.customer||'')}">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
+      <button class="btn" id="saveSrBtn">${t('saveBtn')}</button>
+    </div>
+  </div>`;
+  overlay.style.display='flex';
+  overlay.querySelector('#saveSrBtn').onclick=async()=>{
+    const serialNo = overlay.querySelector('#srNo').value.trim();
+    if(!serialNo){ showToast(t('invV2ProductRequired')); return; }
+    const rec = {
+      id: existing?.id||'sn_'+Date.now()+Math.random().toString(36).slice(2,6),
+      productId:   parseInt(overlay.querySelector('#srProd').value)||0,
+      serialNo, status: overlay.querySelector('#srStatus').value,
+      receiveDate: overlay.querySelector('#srRecv').value,
+      soldDate:    overlay.querySelector('#srSold').value,
+      warrantyDate:overlay.querySelector('#srWarr').value,
+      customer:    overlay.querySelector('#srCust').value.trim(),
+    };
+    if(!STATE.serialNumbers) STATE.serialNumbers=[];
+    if(existing){ const idx=STATE.serialNumbers.findIndex(s=>s.id===serialId); STATE.serialNumbers[idx]=rec; }
+    else STATE.serialNumbers.push(rec);
+    await storeSet('serialNumbers', STATE.serialNumbers);
+    overlay.style.display='none'; overlay.innerHTML='';
+    renderApp(); showToast(t('savedToast'));
+  };
+  overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  INVENTORY REPORTS — تقارير المخزون
+// ══════════════════════════════════════════════════════════════════════════════
+function renderInvReportsView(root){
+  const activeTab = STATE.ui.invRptTab||'reorder';
+  root.innerHTML=`
+  <div class="card">
+    <h2 style="margin:0 0 14px">📊 ${t('invReportsTitle')}</h2>
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--line);margin-bottom:16px;flex-wrap:wrap">
+      ${[
+        ['reorder','🔔 '+t('reorderTabTitle')],
+        ['abc','📊 '+t('rptABCTitle')],
+        ['slowmoving','🐢 '+t('rptSlowMovingTitle')],
+        ['aging','⏳ '+t('rptAgingTitle')],
+        ['purchaseneed','🛒 '+t('rptPurchaseNeedTitle')],
+      ].map(([id,label])=>`
+        <button onclick="STATE.ui.invRptTab='${id}';renderApp()"
+          style="padding:8px 14px;border:none;background:none;cursor:pointer;font-weight:600;font-size:12px;
+          border-bottom:${activeTab===id?'3px solid var(--gold)':'3px solid transparent'};
+          color:${activeTab===id?'var(--gold)':'var(--muted)'}">
+          ${label}
+        </button>`).join('')}
+    </div>
+    <div id="rptContent"></div>
+  </div>`;
+
+  const rpt = root.querySelector('#rptContent');
+  if(activeTab==='reorder')     renderRptReorder(rpt);
+  if(activeTab==='abc')         renderRptABC(rpt);
+  if(activeTab==='slowmoving')  renderRptSlowMoving(rpt);
+  if(activeTab==='aging')       renderRptAging(rpt);
+  if(activeTab==='purchaseneed')renderRptPurchaseNeed(rpt);
+}
+
+function renderRptReorder(root){
+  const alerts = getReorderAlerts();
+  root.innerHTML=`
+  <div class="hint" style="margin-bottom:12px">${t('reorderAlertDesc')}</div>
+  ${!alerts.length ? `<div style="color:#4caf50;font-weight:700;padding:10px">✓ ${t('reorderAlertNone')}</div>` : `
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th><th>${t('prodUnitCol')}</th>
+    <th class="num">${t('reorderCurrentQty')}</th>
+    <th class="num">${t('reorderPointCol')}</th>
+    <th class="num">${t('reorderQtyNeeded')}</th>
+    <th class="num">${t('reorderLeadTime')}</th>
+    <th>${t('reorderSupplier')}</th>
+    <th></th>
+  </tr></thead><tbody>
+  ${alerts.map(a=>`<tr>
+    <td style="font-weight:600">${escapeHtml(a.product.name)}</td>
+    <td class="hint">${escapeHtml(a.product.code||'')}</td>
+    <td>${escapeHtml(a.product.unit||'')}</td>
+    <td class="num" style="color:var(--brick);font-weight:700">${fmt(a.qty)}</td>
+    <td class="num">${fmt(a.product.reorderPoint)}</td>
+    <td class="num" style="color:#4caf50;font-weight:700">${fmt(a.qtyNeeded)}</td>
+    <td class="num">${a.product.leadTimeDays||'—'} ${a.product.leadTimeDays?'يوم':''}</td>
+    <td class="hint">${escapeHtml(a.product.preferredSupplier||'—')}</td>
+    <td><span class="drill" style="color:#4caf50;font-size:12px" onclick="STATE.ui.view='purchaseinvoices';renderApp()">🛒 ${t('reorderCreatePO')}</span></td>
+  </tr>`).join('')}
+  </tbody></table></div>`}`;
+}
+
+function renderRptABC(root){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  const rows = tracked.map(p=>{
+    const pos = computeStockPositionV2(p.id,null,null);
+    return { product:p, value:pos.value };
+  }).filter(r=>r.value>0).sort((a,b)=>b.value-a.value);
+
+  const total = rows.reduce((s,r)=>s+r.value,0);
+  let cumPct=0;
+  const withClass = rows.map(r=>{
+    cumPct += total>0 ? r.value/total*100 : 0;
+    const cls = cumPct<=80?'A':cumPct<=95?'B':'C';
+    return { ...r, pct:total>0?r.value/total*100:0, cumPct, cls };
+  });
+
+  root.innerHTML=`
+  <div class="hint" style="margin-bottom:8px">${t('rptABCDesc')}</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+    ${[['A','#4caf50'],['B','#ffc107'],['C','var(--muted)']].map(([cls,color])=>{
+      const clsItems = withClass.filter(r=>r.cls===cls);
+      const clsVal = Math.round(clsItems.reduce((s,r)=>s+r.value,0)*100)/100;
+      return `<div class="card" style="margin:0;padding:8px 16px;min-width:140px">
+        <div style="font-size:11px;color:${color};font-weight:800">فئة ${cls}</div>
+        <div style="font-weight:800;font-size:16px">${fmt(clsVal)}</div>
+        <div class="hint" style="margin:0;font-size:11px">${clsItems.length} صنف</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="table-wrap"><table><thead><tr>
+    <th>الفئة</th><th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th>
+    <th class="num">${t('invV2ValuationQty')}</th>
+    <th class="num">${t('invV2ValuationValue')}</th>
+    <th class="num">% من الإجمالي</th>
+    <th class="num">% تراكمي</th>
+  </tr></thead><tbody>
+  ${withClass.map(r=>{
+    const clsColor = {A:'#4caf50',B:'#ffc107',C:'var(--muted)'}[r.cls];
+    const pos = computeStockPositionV2(r.product.id,null,null);
+    return `<tr>
+      <td><span style="background:rgba(${r.cls==='A'?'76,175,80':r.cls==='B'?'255,193,7':'150,150,150'},.2);color:${clsColor};padding:2px 10px;border-radius:8px;font-weight:800">${r.cls}</span></td>
+      <td style="font-weight:600">${escapeHtml(r.product.name)}</td>
+      <td class="hint">${escapeHtml(r.product.code||'')}</td>
+      <td class="num">${fmt(pos.qty)}</td>
+      <td class="num" style="font-weight:700">${fmt(r.value)}</td>
+      <td class="num">${r.pct.toFixed(1)}%</td>
+      <td class="num">${r.cumPct.toFixed(1)}%</td>
+    </tr>`;
+  }).join('')}
+  </tbody></table></div>`;
+}
+
+function renderRptSlowMoving(root){
+  const days = STATE.ui.slowMovingDays||90;
+  const cutoff = new Date(Date.now() - days*24*60*60*1000).toISOString().slice(0,10);
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+
+  const rows = tracked.map(p=>{
+    const moves = (STATE.stockLedger||[]).filter(sl=>sl.productId===p.id&&sl.status==='posted');
+    const lastMove = moves.length ? moves.sort((a,b)=>b.date.localeCompare(a.date))[0].date : null;
+    const isSlow = !lastMove || lastMove < cutoff;
+    const pos = computeStockPositionV2(p.id,null,null);
+    return { product:p, lastMove, isSlow, pos };
+  }).filter(r=>r.isSlow && r.pos.qty>0);
+
+  root.innerHTML=`
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+    <label class="lbl" style="margin:0">${t('rptSlowMovingDays')}:</label>
+    <input type="number" class="input" style="width:80px" value="${days}"
+      onchange="STATE.ui.slowMovingDays=parseInt(this.value)||90;renderApp()">
+    <span class="hint">${t('rptSlowMovingDesc')}</span>
+  </div>
+  ${!rows.length ? `<div style="color:#4caf50;font-weight:700;padding:10px">✓ ${t('rptSlowMovingNone')}</div>` : `
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('prodNameCol')}</th><th>${t('prodCodeCol')}</th>
+    <th class="num">${t('reorderCurrentQty')}</th>
+    <th class="num">${t('invV2ValuationValue')}</th>
+    <th>${t('rptSlowMovingLastMove')}</th>
+  </tr></thead><tbody>
+  ${rows.sort((a,b)=>(a.lastMove||'').localeCompare(b.lastMove||'')).map(r=>`<tr>
+    <td style="font-weight:600">${escapeHtml(r.product.name)}</td>
+    <td class="hint">${escapeHtml(r.product.code||'')}</td>
+    <td class="num">${fmt(r.pos.qty)}</td>
+    <td class="num" style="font-weight:700">${fmt(r.pos.value)}</td>
+    <td style="color:var(--brick)">${r.lastMove||t('stNeverCounted')}</td>
+  </tr>`).join('')}
+  </tbody></table></div>`}`;
+}
+
+function renderRptAging(root){
+  const tracked = STATE.products.filter(p=>p.trackInventory);
+  const today   = todayISO();
+  const buckets  = [
+    {label:'0–30 يوم',   min:0,  max:30},
+    {label:'31–60 يوم',  min:31, max:60},
+    {label:'61–90 يوم',  min:61, max:90},
+    {label:'91–180 يوم', min:91, max:180},
+    {label:'180+ يوم',   min:181,max:99999},
+  ];
+
+  // For each product, group its IN ledger entries by age
+  const bucketTotals = buckets.map(()=>({ qty:0, value:0 }));
+  for(const p of tracked){
+    const inMoves = (STATE.stockLedger||[]).filter(sl=>sl.productId===p.id&&sl.status==='posted'&&sl.inQty>0);
+    for(const sl of inMoves){
+      const ageDays = Math.floor((new Date(today)-new Date(sl.date))/(1000*60*60*24));
+      const bi = buckets.findIndex(b=>ageDays>=b.min&&ageDays<=b.max);
+      if(bi>=0){
+        bucketTotals[bi].qty   += sl.inQty;
+        bucketTotals[bi].value += sl.totalCost||0;
+      }
+    }
+  }
+  const totalValue = bucketTotals.reduce((s,b)=>s+b.value,0);
+
+  root.innerHTML=`
+  <div class="hint" style="margin-bottom:12px">${t('rptAgingDesc')}</div>
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('rptAgingBucket')}</th>
+    <th class="num">${t('rptAgingQty')}</th>
+    <th class="num">${t('rptAgingValue')}</th>
+    <th class="num">${t('rptAgingPct')}</th>
+  </tr></thead><tbody>
+  ${buckets.map((b,i)=>`<tr>
+    <td style="font-weight:600">${b.label}</td>
+    <td class="num">${fmt(Math.round(bucketTotals[i].qty*100)/100)}</td>
+    <td class="num" style="font-weight:700">${fmt(Math.round(bucketTotals[i].value*100)/100)}</td>
+    <td class="num">${totalValue>0?(bucketTotals[i].value/totalValue*100).toFixed(1)+'%':'—'}</td>
+  </tr>`).join('')}
+  <tr style="border-top:2px solid var(--line);font-weight:800">
+    <td>${t('invV2ValuationTotal')}</td>
+    <td class="num">${fmt(Math.round(bucketTotals.reduce((s,b)=>s+b.qty,0)*100)/100)}</td>
+    <td class="num">${fmt(Math.round(totalValue*100)/100)}</td>
+    <td class="num">100%</td>
+  </tr>
+  </tbody></table></div>`;
+}
+
+function renderRptPurchaseNeed(root){
+  const alerts = getReorderAlerts();
+  root.innerHTML=`
+  <div class="hint" style="margin-bottom:12px">${t('rptPurchaseNeedDesc')}</div>
+  ${!alerts.length ? `<div style="color:#4caf50;font-weight:700;padding:10px">✓ ${t('reorderAlertNone')}</div>` : `
+  <div class="table-wrap"><table><thead><tr>
+    <th>${t('prodNameCol')}</th>
+    <th class="num">${t('reorderCurrentQty')}</th>
+    <th class="num">${t('reorderPointCol')}</th>
+    <th class="num">${t('maxStockLabel')}</th>
+    <th class="num">${t('reorderQtyNeeded')}</th>
+    <th class="num">التكلفة التقديرية</th>
+    <th>${t('reorderLeadTime')}</th>
+    <th>${t('reorderSupplier')}</th>
+  </tr></thead><tbody>
+  ${alerts.map(a=>{
+    const pos = computeStockPositionV2(a.product.id,null,null);
+    const estCost = Math.round(a.qtyNeeded * pos.avgCost * (1+(a.product.landedCostPct||0)/100) * 100)/100;
+    return `<tr>
+      <td style="font-weight:600">${escapeHtml(a.product.name)}</td>
+      <td class="num" style="color:var(--brick);font-weight:700">${fmt(a.qty)}</td>
+      <td class="num">${fmt(a.product.reorderPoint)}</td>
+      <td class="num">${fmt(a.product.maxStock||0)}</td>
+      <td class="num" style="color:#4caf50;font-weight:700">${fmt(a.qtyNeeded)} ${escapeHtml(a.product.unit||'')}</td>
+      <td class="num">${fmt(estCost)}</td>
+      <td class="num hint">${a.product.leadTimeDays||'—'} ${a.product.leadTimeDays?'يوم':''}</td>
+      <td class="hint">${escapeHtml(a.product.preferredSupplier||'—')}</td>
+    </tr>`;
+  }).join('')}
+  <tr style="border-top:2px solid var(--line);font-weight:800">
+    <td colspan="5">${t('invV2ValuationTotal')}</td>
+    <td class="num">${fmt(Math.round(alerts.reduce((s,a)=>{
+      const pos=computeStockPositionV2(a.product.id,null,null);
+      return s+a.qtyNeeded*pos.avgCost*(1+(a.product.landedCostPct||0)/100);
+    },0)*100)/100)}</td>
+    <td colspan="2"></td>
+  </tr>
+  </tbody></table></div>`}`;
+}
+
 function renderInventoryView(root){
   const activeTab = STATE.ui.invActiveTab||'ledger';
   const tracked = STATE.products.filter(p=>p.trackInventory);
@@ -14259,12 +16300,14 @@ function renderInventoryView(root){
 
 // ── Tab: Stock Ledger ─────────────────────────────────────────────────────────
 function renderInvLedgerTab(root, tracked){
-  const selProd   = STATE.ui.invSelProduct||null;
-  const filterFrom= STATE.ui.invFilterFrom||'';
-  const filterTo  = STATE.ui.invFilterTo||'';
-  const filterType= STATE.ui.invFilterType||'';
+  const selProd    = STATE.ui.invSelProduct||null;
+  const filterFrom = STATE.ui.invFilterFrom||'';
+  const filterTo   = STATE.ui.invFilterTo||'';
+  const filterType = STATE.ui.invFilterType||'';
+  const filterWh   = STATE.ui.invFilterWh||'';
 
-  const txTypeOptions = ['opening','purchase','purchase-return','sale','sale-return','adjustment','issue','receipt'];
+  const txTypeOptions = ['opening','purchase','purchase-return','sale','sale-return','adjustment','issue','receipt','transfer-in','transfer-out'];
+  const warehouses = STATE.warehouses||[];
 
   // Product selector
   root.innerHTML = `
@@ -14282,19 +16325,27 @@ function renderInvLedgerTab(root, tracked){
       <label class="lbl">${t('invV2FilterTxType')}</label>
       <select id="invFilterType" class="input">
         <option value="">— ${t('invV2FilterAll')} —</option>
-        ${txTypeOptions.map(ty=>`<option value="${ty}" ${filterType===ty?'selected':''}>${t('invV2TxType'+ty.split('-').map((w,i)=>i===0?w.charAt(0).toUpperCase()+w.slice(1):w.charAt(0).toUpperCase()+w.slice(1)).join(''))}</option>`).join('')}
+        ${txTypeOptions.map(ty=>`<option value="${ty}" ${filterType===ty?'selected':''}>${t('invV2TxType'+ty.split('-').map((w,i)=>i===0?w.charAt(0).toUpperCase()+w.slice(1):w.charAt(0).toUpperCase()+w.slice(1)).join(''))||ty}</option>`).join('')}
       </select>
     </div>
+    ${warehouses.length>0?`<div>
+      <label class="lbl">${t('whFilterLabel')}</label>
+      <select id="invFilterWh" class="input">
+        <option value="">— ${t('whAllWarehouses')} —</option>
+        ${warehouses.map(w=>`<option value="${w.id}" ${filterWh===w.id?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+      </select>
+    </div>`:''}
   </div>`;
 
   // Wire filters
-  ['invProdSel','invFilterFrom','invFilterTo','invFilterType'].forEach(id=>{
+  ['invProdSel','invFilterFrom','invFilterTo','invFilterType','invFilterWh'].forEach(id=>{
     const el=root.querySelector('#'+id);
     if(el) el.addEventListener('change',e=>{
-      if(id==='invProdSel') STATE.ui.invSelProduct=e.target.value||null;
+      if(id==='invProdSel')  STATE.ui.invSelProduct=e.target.value||null;
       if(id==='invFilterFrom') STATE.ui.invFilterFrom=e.target.value;
       if(id==='invFilterTo')   STATE.ui.invFilterTo=e.target.value;
       if(id==='invFilterType') STATE.ui.invFilterType=e.target.value;
+      if(id==='invFilterWh')   STATE.ui.invFilterWh=e.target.value;
       renderApp();
     });
   });
@@ -14314,11 +16365,12 @@ function renderInvLedgerTab(root, tracked){
         if(filterFrom && sl.date<filterFrom) return false;
         if(filterTo   && sl.date>filterTo)   return false;
         if(filterType && sl.txType!==filterType) return false;
+        if(filterWh   && sl.warehouseId && sl.warehouseId!==filterWh) return false;
         return true;
       })
       .sort((a,b)=>a.date.localeCompare(b.date)||(a.createdAt||'').localeCompare(b.createdAt||''));
 
-    const pos = computeStockPositionV2(prod.id,null);
+    const pos = computeStockPositionV2(prod.id, null, filterWh||null);
     const totalIn  = ledger.filter(sl=>sl.status==='posted').reduce((s,sl)=>s+sl.inQty,0);
     const totalOut = ledger.filter(sl=>sl.status==='posted').reduce((s,sl)=>s+sl.outQty,0);
 
@@ -14355,6 +16407,7 @@ function renderInvLedgerTab(root, tracked){
           <th class="num">${t('invV2BalanceQtyCol')}</th>
           <th class="num">${t('invV2UnitCostLabel')}</th><th class="num">${t('invV2TotalCostLabel')}</th>
           <th class="num">${t('invV2AvgCostAfterCol')}</th><th class="num">${t('invV2ValueAfterCol')}</th>
+          ${warehouses.length>1?`<th>${t('whFilterLabel')}</th>`:''}
           <th>${t('invV2JournalLinkLabel')}</th><th>${t('invV2StatusLabel')}</th><th></th>
         </tr></thead><tbody>
         ${(()=>{
@@ -15052,6 +17105,14 @@ function openInvNewTxModal(){
       </div>
       <div><label class="lbl">${t('date')}</label><input type="date" id="invTxDate" class="input" value="${todayISO()}"></div>
       <div><label class="lbl">${t('invV2DocNoLabel')} (${t('invV2FilterAll')} optional)</label><input id="invTxDocNo" class="input" placeholder="auto"></div>
+      <div style="grid-column:1/-1"><label class="lbl">${t('whFilterLabel')}</label>
+        <select id="invTxWarehouse" class="input">
+          ${(STATE.warehouses||[]).filter(w=>w.status==='active').map(w=>
+            `<option value="${w.id}" ${w.isDefault?'selected':''}>${escapeHtml(w.name)} (${escapeHtml(w.code)})</option>`
+          ).join('')}
+          ${!(STATE.warehouses||[]).length?`<option value="default">${t('whAllWarehouses')}</option>`:''}
+        </select>
+      </div>
 
       <!-- UOM info (populated on product change) -->
       <div style="grid-column:1/-1" id="invTxUomInfo"></div>
@@ -15152,16 +17213,17 @@ function openInvNewTxModal(){
       const unitType=getEl('invTxUnitType').value;
       const unitCost=parseFloat(getEl('invTxUnitCost').value)||0;
       const reason=getEl('invTxReason').value.trim();
+      const warehouseId=getEl('invTxWarehouse')?.value||STATE.invSettings?.defaultWarehouseId||'';
 
       if(txType==='adjustment'){
         const physQty=parseFloat(getEl('invTxPhysQty').value)||0;
         const sysQty=parseFloat(getEl('invTxSysQty').value)||0;
         const diff=Math.round((physQty-sysQty)*10000)/10000;
-        await postInventoryTransaction({ productId:prod.id, txType:'adjustment', date, docNo, qty:Math.abs(diff), unitType:'base', unitCost, reason, source:'manual', adjustedBaseQty:diff });
+        await postInventoryTransaction({ productId:prod.id, txType:'adjustment', date, docNo, qty:Math.abs(diff), unitType:'base', unitCost, reason, source:'manual', adjustedBaseQty:diff, warehouseId });
       } else {
         const qty=parseFloat(getEl('invTxQty').value)||0;
         if(qty<=0){ showToast(t('invV2QtyRequired')); return; }
-        await postInventoryTransaction({ productId:prod.id, txType, date, docNo, qty, unitType, unitCost, reason, source:'manual' });
+        await postInventoryTransaction({ productId:prod.id, txType, date, docNo, qty, unitType, unitCost, reason, source:'manual', warehouseId });
       }
       overlay.style.display='none'; overlay.innerHTML='';
       renderApp();
@@ -15547,7 +17609,6 @@ function renderInvoicesView(root){
         </tr>
         ${isExpanded?`<tr><td colspan="8" style="padding:0 10px 10px;background:rgba(0,0,0,.12)">${renderInvLinksPanel(inv.entryNo,'sales')}</td></tr>`:''}`;
       }).join('')}
-      }).join('')}
     </tbody></table></div>`}
   </div>`;
   attachSortEvents();
@@ -15931,7 +17992,6 @@ function renderPurchaseInvoicesView(root){
           </td>
         </tr>
         ${isExpanded?`<tr><td colspan="8" style="padding:0 10px 10px;background:rgba(0,0,0,.12)">${renderInvLinksPanel(inv.entryNo,'purchase')}</td></tr>`:''}`;
-      }).join('')}
       }).join('')}
     </tbody></table></div>`}
   </div>`;
