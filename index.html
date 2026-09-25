@@ -1398,6 +1398,23 @@ const I18N = {
     agingCurrentCol:'غير مستحق بعد', agingB1_30Col:'1-30 يوم', agingB31_60Col:'31-60 يوم', agingB61_90Col:'61-90 يوم', agingB90PlusCol:'أكثر من 90 يوم', agingTotalCol:'الإجمالي',
     noAgingData:'لا يوجد أرصدة مستحقة حاليًا.',
     vatReturnTitle:'إقرار ضريبة القيمة المضافة', vatReturnHint:'صافي الضريبة المستحقة للفترة = ضريبة المخرجات (على المبيعات) ناقص ضريبة المدخلات (على المشتريات القابلة للخصم)، بناءً على حركة حسابي الضريبة في اليومية خلال الفترة المحددة.',
+    vatPaidAccountLabel:'حساب ضريبة ق.م (مدينة / مسدّدة)',
+    vatPaidAccountHint:'المبالغ التي تم سدادها فعلاً لمصلحة الضرائب',
+    vatPayableAccountLabel:'حساب ضريبة ق.م (دائنة / مستحقة)',
+    vatPayableAccountHint:'الضريبة المستحقة على الشركة وغير المسدّدة بعد',
+    vatPaidLabel:'ضريبة مسدّدة (مدفوعة فعلاً)',
+    vatPayableLabel:'ضريبة مستحقة (دائنة في الميزانية)',
+    vatPaidBalance:'رصيد ح/ ضريبة مسدّدة',
+    vatPayableBalance:'رصيد ح/ ضريبة مستحقة',
+    vatSettlementTitle:'تسوية الضريبة',
+    vatSettlementDesc:'الفرق بين الضريبة المحسوبة والمسدّدة والمستحقة',
+    vatNetFromAccounts:'صافي الضريبة (مخرجات − مدخلات)',
+    vatAlreadyPaid:'ما تم سداده من ح/ ضريبة مسدّدة',
+    vatRemainingDue:'المتبقي المستحق للسداد',
+    vatExcessPaid:'مبلغ مدفوع زيادة (رصيد دائن مدين)',
+    vatSettlementOK:'الضريبة مسدّدة بالكامل ✓',
+    vatAccountsSectionTitle:'حسابات الضريبة الأربعة',
+    vatAccounts4Hint:'يمكنك تحديد الحسابات الأربعة لضريبة القيمة المضافة حتى يعرض الإقرار صورة كاملة عن الضريبة المحسوبة والمسدّدة والمستحقة.',
     vatAccountsMissingHint:'حساب "ضريبة القيمة المضافة الدائنة" (212102) أو "ضريبة القيمة المضافة المدينة" (114103) مش موجودين في شجرة الحسابات — أضفهم عشان يظهر الإقرار صحيح.',
     vatOutputAccountLabel:'حساب ضريبة المخرجات (دائن)', vatInputAccountLabel:'حساب ضريبة المدخلات (مدين)',
     resetSystemFullWarning:'سيتم حذف كل البيانات المخزّنة نهائياً: جميع قيود اليومية، شجرة الحسابات، مجموعات الحسابات، وكل بيانات باقي وحدات النظام (الأصول والإهلاك، العملاء والموردين، المنتجات، الفواتير، القيود المتكررة، المخزون، مطابقات البنك، المشاريع) — والعودة لحالة البداية قبل استيراد أي بيانات. <strong>هذا الإجراء لا يمكن التراجع عنه.</strong>',
@@ -1771,6 +1788,26 @@ const I18N = {
     rptPurchaseNeedTitle:'تقرير المشتريات المطلوبة',
     rptPurchaseNeedDesc:'الأصناف التي وصلت لحد إعادة الطلب وتحتاج لمشتريات.',
     rptTabTitle:'التقارير',
+    // ── Tracking settings (Arabic) ────────────────────────────────────────────
+    trackingSettingsTitle:'إعدادات التتبع',
+    trackBatchLabel:'تتبع الدُّفعات (Batch/Lot)',
+    trackBatchHint:'لازم تحدد رقم الدفعة عند كل حركة واردة وصادرة',
+    trackSerialLabel:'تتبع الأرقام التسلسلية',
+    trackSerialHint:'لازم تحدد الرقم التسلسلي عند كل حركة واردة وصادرة',
+    invSettingsBatchAlertDays:'تنبيه انتهاء الصلاحية قبل (أيام)',
+    invSettingsWIPAccount:'حساب الإنتاج تحت التشغيل (WIP)',
+    invSettingsDefaultWH:'المستودع الافتراضي',
+    // ── Stocktake session per-warehouse (Arabic) ──────────────────────────────
+    stWarehouseLabel:'المستودع',
+    stSelectWarehouse:'اختر المستودع',
+    // ── Work order next number ────────────────────────────────────────────────
+    woProdQtyMismatch:'الكمية المنتجة لا يمكن أن تتجاوز الكمية المخططة.',
+    woInsufficientMaterial:'مواد خام غير كافية للإنتاج.',
+    woNoBOM:'هذا الأمر ليس مرتبطاً بـ BOM — سيتم إضافة المنتج فقط دون خصم مواد.',
+    // ── Export/Print ──────────────────────────────────────────────────────────
+    exportCSV:'تصدير CSV',
+    printReport:'طباعة التقرير',
+    closeBtn:'إغلاق',
     invV2NewTxTitle:'حركة مخزون جديدة',
     invV2ProductLabel:'الصنف',
     invV2CreatedByLabel:'أنشأها',
@@ -2286,6 +2323,23 @@ const I18N = {
     agingCurrentCol:'Not Yet Due', agingB1_30Col:'1-30 Days', agingB31_60Col:'31-60 Days', agingB61_90Col:'61-90 Days', agingB90PlusCol:'Over 90 Days', agingTotalCol:'Total',
     noAgingData:'No outstanding balances right now.',
     vatReturnTitle:'VAT Return', vatReturnHint:'Net VAT due for the period = output tax (on sales) minus input tax (on deductible purchases), based on the movement of the VAT accounts in the journal during the chosen period.',
+    vatPaidAccountLabel:'VAT Account (Debit / Paid)',
+    vatPaidAccountHint:'Amounts actually paid to the tax authority',
+    vatPayableAccountLabel:'VAT Account (Credit / Payable)',
+    vatPayableAccountHint:'Tax owed by the company but not yet paid',
+    vatPaidLabel:'VAT Paid (actually remitted)',
+    vatPayableLabel:'VAT Payable (credit balance)',
+    vatPaidBalance:'Balance — VAT Paid Account',
+    vatPayableBalance:'Balance — VAT Payable Account',
+    vatSettlementTitle:'VAT Settlement',
+    vatSettlementDesc:'Difference between computed, paid and payable tax',
+    vatNetFromAccounts:'Net VAT (Output − Input)',
+    vatAlreadyPaid:'Already paid via VAT Paid account',
+    vatRemainingDue:'Remaining amount due',
+    vatExcessPaid:'Overpaid (debit balance)',
+    vatSettlementOK:'Fully settled ✓',
+    vatAccountsSectionTitle:'Four VAT Accounts',
+    vatAccounts4Hint:'Configure all four VAT accounts so the return shows a complete picture of computed, paid and payable tax.',
     vatAccountsMissingHint:'The "VAT Payable" (212102) or "VAT Recoverable" (114103) account isn\'t in the chart of accounts — add them for the return to show correctly.',
     vatOutputAccountLabel:'Output VAT Account (Payable)', vatInputAccountLabel:'Input VAT Account (Recoverable)',
     resetSystemFullWarning:'This permanently deletes all stored data: every journal entry, the chart of accounts, account groups, and all data in every other module (Assets & Depreciation, Customers & Vendors, Products, Invoices, Recurring Entries, Inventory, Bank Reconciliations, Projects) — returning to the initial state before any data was imported. <strong>This action cannot be undone.</strong>',
@@ -2659,6 +2713,23 @@ const I18N = {
     rptPurchaseNeedTitle:'Purchase Requirements',
     rptPurchaseNeedDesc:'Items at or below reorder point that need to be purchased.',
     rptTabTitle:'Reports',
+    // ── Tracking settings (English) ───────────────────────────────────────────
+    trackingSettingsTitle:'Tracking Settings',
+    trackBatchLabel:'Batch / Lot Tracking',
+    trackBatchHint:'Batch number required on every incoming and outgoing transaction',
+    trackSerialLabel:'Serial Number Tracking',
+    trackSerialHint:'Serial number required on every incoming and outgoing transaction',
+    invSettingsBatchAlertDays:'Expiry Alert Before (days)',
+    invSettingsWIPAccount:'Work-in-Progress (WIP) Account',
+    invSettingsDefaultWH:'Default Warehouse',
+    stWarehouseLabel:'Warehouse',
+    stSelectWarehouse:'Select Warehouse',
+    woProdQtyMismatch:'Produced quantity cannot exceed planned quantity.',
+    woInsufficientMaterial:'Insufficient raw materials for production.',
+    woNoBOM:'No BOM linked — product will be added without consuming materials.',
+    exportCSV:'Export CSV',
+    printReport:'Print Report',
+    closeBtn:'Close',
     invV2NewTxTitle:'New Stock Transaction',
     invV2ProductLabel:'Product',
     invV2CreatedByLabel:'Created By',
@@ -4896,7 +4967,7 @@ const STATE = {
   //   receiveDate, soldDate, customerId, warrantyDate, notes }
   serialNumbers: [],
   stocktakeSessions: [],
-  invSettings: { allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'', defaultWarehouseId:'' },
+  invSettings: { allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'', defaultWarehouseId:'', batchAlertDays:30, wipAccount:'' },
   voucherExtras: [],   // [{entryNo, serial, description}] — print-only supplementary data (friendly serial number, wording) for receipt/payment vouchers that live in the journal under 'سند قبض'/'سند صرف'.
   projects: [],        // [{id,name,currency,amount,seller,startDate}] — project/collection tracker, independent of the journal
   projectTx: [],        // [{id(=own row id),projectId,date,type:'deal'|'collection'|'invoicing',amount,invoiceNo,exRate,remarks}]
@@ -8505,7 +8576,7 @@ async function initApp(){
   STATE.serialNumbers = (await storeGet('serialNumbers')) || [];
   STATE.stocktakeSessions = (await storeGet('stocktakeSessions')) || [];
   const savedInvSettings = (await storeGet('invSettings')) || {};
-  STATE.invSettings = Object.assign({ allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'' }, savedInvSettings);
+  STATE.invSettings = Object.assign({ allowNegativeStock: false, autoPostCOGS: false, cogsAccount:'', adjustmentAccount:'', defaultWarehouseId:'', batchAlertDays:30, wipAccount:'' }, savedInvSettings);
   STATE.voucherExtras = (await storeGet('voucherExtras')) || [];
   // One-time migration from the earlier standalone invoices/cashVouchers
   // arrays (now replaced by journal-derived lists + these lightweight
@@ -14337,6 +14408,24 @@ function openProductModal(prodId, prefillName){
           <div class="hint" style="margin-top:3px">${t('landedCostPctHint')}</div>
         </div>
         <div></div>
+        <!-- Tracking flags -->
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
+          <div style="font-weight:600;margin-bottom:8px">🔍 ${t('trackingSettingsTitle')}</div>
+        </div>
+        <div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="prodTrackBatch" ${existing?.trackBatch?'checked':''}>
+            <div><div style="font-weight:600">${t('trackBatchLabel')}</div>
+              <div class="hint">${t('trackBatchHint')}</div></div>
+          </label>
+        </div>
+        <div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="prodTrackSerial" ${existing?.trackSerial?'checked':''}>
+            <div><div style="font-weight:600">${t('trackSerialLabel')}</div>
+              <div class="hint">${t('trackSerialHint')}</div></div>
+          </label>
+        </div>
         <!-- UOM section -->
         <div style="grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;margin-top:4px">
           <div style="font-weight:600;margin-bottom:8px">${t('invV2UomSectionTitle')}</div>
@@ -14390,6 +14479,8 @@ function openProductModal(prodId, prefillName){
       preferredSupplier: overlay.querySelector('#prodSupplier')?.value.trim()||'',
       // Landed cost
       landedCostPct: parseFloat(overlay.querySelector('#prodLandedCostPct')?.value)||0,
+      trackBatch:  overlay.querySelector('#prodTrackBatch')?.checked  || false,
+      trackSerial: overlay.querySelector('#prodTrackSerial')?.checked || false,
       notes: overlay.querySelector('#prodNotes').value.trim(),
       status: 'active'
     };
@@ -16408,7 +16499,7 @@ function renderInvLedgerTab(root, tracked){
           <th class="num">${t('invV2InQtyCol')}</th><th class="num">${t('invV2OutQtyCol')}</th>
           <th class="num">${t('invV2BalanceQtyCol')}</th>
           <th class="num">${t('invV2UnitCostLabel')}</th><th class="num">${t('invV2TotalCostLabel')}</th>
-          <th class="num">${t('invV2AvgCostAfterCol')}</th><th class="num">${t('invV2ValueAfterCol')}</th>
+          <th>${t('invV2AvgCostAfterCol')}</th><th class="num">${t('invV2ValueAfterCol')}</th>
           ${warehouses.length>1?`<th>${t('whFilterLabel')}</th>`:''}
           <th>${t('invV2JournalLinkLabel')}</th><th>${t('invV2StatusLabel')}</th><th></th>
         </tr></thead><tbody>
@@ -16433,10 +16524,11 @@ function renderInvLedgerTab(root, tracked){
               <td class="num" style="color:#4caf50">${sl.inQty>0?fmt(sl.inQty):'—'}</td>
               <td class="num" style="color:var(--brick)">${sl.outQty>0?fmt(sl.outQty):'—'}</td>
               <td class="num" style="font-weight:700">${fmt(sl.qtyAfter)}</td>
-              <td class="num">${fmt(sl.unitCost)}</td>
+              <td class="num">${fmt(sl.unitCost)}${sl.landedCostPct>0?` <span class="hint" style="font-size:10px" title="${t('landedCostApplied')}: ${sl.landedCostPct}%">+${sl.landedCostPct}%</span>`:''}</td>
               <td class="num">${fmt(sl.totalCost)}</td>
               <td class="num">${fmt(sl.avgCostAfter)}</td>
               <td class="num" style="font-weight:700">${fmt(sl.valueAfter)}</td>
+              ${warehouses.length>1?`<td class="hint" style="font-size:11px">${sl.warehouseId&&sl.warehouseId!=='default'?escapeHtml(warehouseName(sl.warehouseId)):'—'}</td>`:''}
               <td>${sl.journalEntry?`<span class="drill" onclick="STATE.ui.view='accountstatement';STATE.ui.selectedAccount=null;renderApp()" title="${sl.journalEntry}">#${sl.journalEntry}</span>`:'—'}</td>
               <td><span class="badge" style="background:${statusColor};color:${statusText};padding:1px 7px;border-radius:8px;font-size:10px">${statusLabel}</span></td>
               <td>${sl.status==='posted'?`<span class="drill" style="color:var(--brick);font-size:11px" onclick="openInvCancelModal('${sl.id}')">${t('invV2CancelBtn')}</span>`:''}
@@ -16490,8 +16582,8 @@ function renderInvStocktakeTab(root, tracked){
     <th class="num">${t('stItemsWithDiff')}</th>
     <th class="num">${t('stTotalDiffValue')}</th>
     <th>${t('stSessionStatus')}</th>
-    <th>${t('stSessionNotes')}</th>
-    <th></th>
+    <th>${t('stWarehouseLabel')}</th>
+    <th>${t('stSessionNotes')}</th>    <th></th>
   </tr></thead><tbody>
   ${sessions.map(sess=>{
     const lines = sess.lines||[];
@@ -16504,6 +16596,7 @@ function renderInvStocktakeTab(root, tracked){
       <td class="num" style="color:${itemsWithDiff>0?'var(--brick)':'#4caf50'};font-weight:${itemsWithDiff>0?700:400}">${itemsWithDiff}</td>
       <td class="num" style="color:${totalDiffVal>0?'var(--brick)':'inherit'}">${totalDiffVal>0?fmt(totalDiffVal):'—'}</td>
       <td><span style="background:${statusColor(sess.status)};color:${statusTextColor(sess.status)};padding:2px 10px;border-radius:8px;font-size:11px;font-weight:700">${statusLabel(sess.status)}</span></td>
+      <td class="hint" style="font-size:12px">${sess.warehouseId?escapeHtml(warehouseName(sess.warehouseId)):'—'}</td>
       <td class="hint" style="font-size:12px">${escapeHtml(sess.notes||'')}</td>
       <td style="white-space:nowrap">
         ${sess.status==='draft'||sess.status==='counted' ? `
@@ -16525,7 +16618,7 @@ function renderStocktakeSession(root, sess, tracked){
 
   // Recompute system qty and diff for each line (live)
   const enrichedLines = lines.map(l=>{
-    const pos = computeStockPositionV2(l.productId, sess.date);
+    const pos = computeStockPositionV2(l.productId, sess.date, sess.warehouseId||null);
     const prod = STATE.products.find(p=>p.id===l.productId);
     const sysQty   = Math.round(pos.qty*10000)/10000;
     const counted  = l.countedQty!==undefined&&l.countedQty!==''&&l.countedQty!==null ? parseFloat(l.countedQty) : null;
@@ -16687,7 +16780,7 @@ async function stAddProductToSession(sessId){
   if(!sel||!sel.value) return;
   const prodId = parseInt(sel.value);
   if(sess.lines.find(l=>l.productId===prodId)) return;
-  const pos = computeStockPositionV2(prodId, sess.date);
+  const pos = computeStockPositionV2(prodId, sess.date, sess.warehouseId||null);
   sess.lines.push({ productId:prodId, systemQty:pos.qty, countedQty:null, diff:null, diffValue:null, reason:'', avgCost:pos.avgCost });
   await storeSet('stocktakeSessions', STATE.stocktakeSessions);
   renderApp();
@@ -16700,7 +16793,7 @@ async function stAddAllProducts(sessId){
   let added = 0;
   for(const p of tracked){
     if(sess.lines.find(l=>l.productId===p.id)) continue;
-    const pos = computeStockPositionV2(p.id, sess.date);
+    const pos = computeStockPositionV2(p.id, sess.date, sess.warehouseId||null);
     sess.lines.push({ productId:p.id, systemQty:pos.qty, countedQty:null, diff:null, diffValue:null, reason:'', avgCost:pos.avgCost });
     added++;
   }
@@ -16731,6 +16824,7 @@ async function cancelStocktakeSession(sessId){
 function openStocktakeNewSessionModal(){
   const overlay = document.getElementById('newEntryModalOverlay');
   if(!overlay) return;
+  const warehouses = (STATE.warehouses||[]).filter(w=>w.status==='active');
   overlay.innerHTML = `
   <div class="modal-box" style="max-width:440px;width:97%">
     <h3>🔢 ${t('stNewSession')}</h3>
@@ -16741,6 +16835,13 @@ function openStocktakeNewSessionModal(){
       <div><label class="lbl">${t('stSessionDate')}</label>
         <input type="date" id="stSessDate" class="input" value="${todayISO()}">
       </div>
+      ${warehouses.length>1?`<div><label class="lbl">${t('stWarehouseLabel')}</label>
+        <select id="stSessWH" class="input">
+          <option value="">${t('whAllWarehouses')}</option>
+          ${warehouses.map(w=>`<option value="${w.id}" ${w.isDefault?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+        <div class="hint" style="margin-top:3px">لو اخترت مستودع معين، الجرد هيبقى مخصص لكميات ذلك المستودع</div>
+      </div>`:''}
       <div><label class="lbl">${t('stSessionNotes')}</label>
         <textarea id="stSessNotes" class="input" rows="2" placeholder="ملاحظات اختيارية..."></textarea>
       </div>
@@ -16757,6 +16858,7 @@ function openStocktakeNewSessionModal(){
     const sess = {
       id: 'st_'+Date.now()+Math.random().toString(36).slice(2,6),
       name, date: overlay.querySelector('#stSessDate').value||todayISO(),
+      warehouseId: overlay.querySelector('#stSessWH')?.value||'',
       notes: overlay.querySelector('#stSessNotes').value.trim(),
       status: 'draft', lines: [],
       createdBy: currentUserName(), createdAt: new Date().toISOString(),
@@ -16766,7 +16868,6 @@ function openStocktakeNewSessionModal(){
     STATE.stocktakeSessions.push(sess);
     await storeSet('stocktakeSessions', STATE.stocktakeSessions);
     overlay.style.display='none'; overlay.innerHTML='';
-    // Open the new session immediately
     STATE.ui.stOpenSessionId = sess.id;
     STATE.ui.invActiveTab = 'stocktake';
     renderApp();
@@ -16784,7 +16885,7 @@ function openStocktakePostModal(sessId){
 
   // Refresh system qty before showing
   const linesWithDiff = (sess.lines||[]).map(l=>{
-    const pos = computeStockPositionV2(l.productId, sess.date);
+    const pos = computeStockPositionV2(l.productId, sess.date, sess.warehouseId||null);
     const prod = STATE.products.find(p=>p.id===l.productId);
     const counted = l.countedQty!==null&&l.countedQty!==undefined ? parseFloat(l.countedQty) : null;
     const diff = counted!==null ? Math.round((counted-pos.qty)*10000)/10000 : null;
@@ -16871,7 +16972,7 @@ async function postStocktakeSession(sessId){
     const counted = line.countedQty!==null&&line.countedQty!==undefined ? parseFloat(line.countedQty) : null;
     if(counted===null) continue; // skip uncounted lines
 
-    const pos  = computeStockPositionV2(line.productId, sess.date);
+    const pos  = computeStockPositionV2(line.productId, sess.date, sess.warehouseId||null);
     const diff = Math.round((counted - pos.qty)*10000)/10000;
     if(Math.abs(diff)<0.0001) continue; // no variance — skip
 
@@ -16889,6 +16990,7 @@ async function postStocktakeSession(sessId){
       unitCost  : pos.avgCost,
       reason    : reason,
       source    : 'stocktake',
+      warehouseId: sess.warehouseId||STATE.invSettings?.defaultWarehouseId||'',
       adjustedBaseQty: diff   // signed: positive=surplus, negative=shortage
     });
 
@@ -17115,6 +17217,29 @@ function openInvNewTxModal(){
           ${!(STATE.warehouses||[]).length?`<option value="default">${t('whAllWarehouses')}</option>`:''}
         </select>
       </div>
+      <!-- Batch & Serial fields — shown dynamically when product requires them -->
+      <div id="invTxBatchDiv" style="display:none;grid-column:1/-1">
+        <label class="lbl">📦 ${t('batchNo')}</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="invTxBatchSel" class="input" style="min-width:180px" onchange="invTxBatchSelChange(this)">
+            <option value="">— ${t('bomNewBtn').replace('+ ','')} —</option>
+          </select>
+          <span class="hint" style="white-space:nowrap">أو جديد:</span>
+          <input id="invTxBatchNew" class="input" placeholder="${t('batchNo')}..." style="flex:1">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px" id="invTxBatchDates">
+          <div><label class="lbl" style="font-size:11px">${t('batchMfgDate')}</label>
+            <input type="date" id="invTxBatchMfg" class="input"></div>
+          <div><label class="lbl" style="font-size:11px">${t('batchExpDate')}</label>
+            <input type="date" id="invTxBatchExp" class="input"></div>
+        </div>
+      </div>
+      <div id="invTxSerialDiv" style="display:none;grid-column:1/-1">
+        <label class="lbl">🔢 ${t('serialNo')}</label>
+        <input id="invTxSerial" class="input" placeholder="SN-XXXX, SN-YYYY (يمكن إدخال أكثر من رقم مفصولة بفاصلة)">
+        <div class="hint" style="margin-top:3px">للصادر: اختر أرقام من المتاح فوق</div>
+        <div id="invTxSerialAvail" style="margin-top:6px"></div>
+      </div>
 
       <!-- UOM info (populated on product change) -->
       <div style="grid-column:1/-1" id="invTxUomInfo"></div>
@@ -17180,10 +17305,41 @@ function openInvNewTxModal(){
         const physQty=parseFloat(getEl('invTxPhysQty').value)||0;
         getEl('invTxDiffQty').value=Math.round((physQty-pos.qty)*10000)/10000;
         getEl('invTxPhysDiv').style.display='block';
-        getEl('invTxQty').closest('div').style.display='none'; // hide qty field for adj
+        getEl('invTxQty').closest('div').style.display='none';
       } else {
         getEl('invTxPhysDiv').style.display='none';
         getEl('invTxQty').closest('div').style.display='block';
+      }
+      // Batch tracking
+      const INCOMING=['opening','purchase','sale-return','receipt'];
+      const isIn=INCOMING.includes(txType);
+      if(prod.trackBatch){
+        getEl('invTxBatchDiv').style.display='block';
+        // Populate existing batches for this product (outgoing = pick from list)
+        const batches=(STATE.batches||[]).filter(b=>b.productId===prod.id&&b.status==='active');
+        const sel=getEl('invTxBatchSel');
+        sel.innerHTML=`<option value="">— ${isIn?'دفعة جديدة':'اختر الدفعة'} —</option>`+
+          batches.map(b=>`<option value="${b.id}">${escapeHtml(b.batchNo)} (${fmt(b.qty)} ${escapeHtml(prod.unit||'')}) ${b.expDate?'| '+b.expDate:''}</option>`).join('');
+        // For outgoing: show date fields only on new
+        getEl('invTxBatchDates').style.display=isIn?'grid':'none';
+      } else {
+        getEl('invTxBatchDiv').style.display='none';
+      }
+      // Serial tracking
+      if(prod.trackSerial){
+        getEl('invTxSerialDiv').style.display='block';
+        if(!isIn){
+          // Show available serials for this product
+          const avail=(STATE.serialNumbers||[]).filter(s=>s.productId===prod.id&&s.status==='available');
+          getEl('invTxSerialAvail').innerHTML=avail.length?
+            `<div style="font-size:11px;max-height:80px;overflow-y:auto;background:rgba(255,255,255,.04);padding:6px;border-radius:4px">`+
+            avail.map(s=>`<span class="drill" style="font-size:11px;display:inline-block;margin:2px;padding:2px 8px;background:rgba(255,255,255,.08);border-radius:4px" onclick="document.getElementById('invTxSerial').value=(document.getElementById('invTxSerial').value?document.getElementById('invTxSerial').value+',':'')+${JSON.stringify(s.serialNo)}">+${escapeHtml(s.serialNo)}</span>`).join('')+
+            `</div>` : `<div class="hint" style="font-size:11px">${t('serialNoSerials')}</div>`;
+        } else {
+          getEl('invTxSerialAvail').innerHTML=`<div class="hint" style="font-size:11px">أدخل الأرقام التسلسلية الجديدة مفصولة بفاصلة</div>`;
+        }
+      } else {
+        getEl('invTxSerialDiv').style.display='none';
       }
       // UOM info
       let uomHtml='';
@@ -17217,16 +17373,38 @@ function openInvNewTxModal(){
       const reason=getEl('invTxReason').value.trim();
       const warehouseId=getEl('invTxWarehouse')?.value||STATE.invSettings?.defaultWarehouseId||'';
 
+      // Collect batch/serial data if applicable
+      let batchData=null, serialNos=[], baseQtyUsed=0;
+      if(prod.trackBatch){
+        const batchId=getEl('invTxBatchSel')?.value||'';
+        const batchNo=getEl('invTxBatchNew')?.value.trim()||'';
+        const mfgDate=getEl('invTxBatchMfg')?.value||'';
+        const expDate=getEl('invTxBatchExp')?.value||'';
+        if(!batchId&&!batchNo){ showToast(t('batchNo')+' مطلوب'); return; }
+        batchData={batchId, batchNo, mfgDate, expDate};
+      }
+      if(prod.trackSerial){
+        const raw=getEl('invTxSerial')?.value||'';
+        serialNos=raw.split(',').map(s=>s.trim()).filter(Boolean);
+      }
+
+      let slEntry;
       if(txType==='adjustment'){
         const physQty=parseFloat(getEl('invTxPhysQty').value)||0;
         const sysQty=parseFloat(getEl('invTxSysQty').value)||0;
         const diff=Math.round((physQty-sysQty)*10000)/10000;
-        await postInventoryTransaction({ productId:prod.id, txType:'adjustment', date, docNo, qty:Math.abs(diff), unitType:'base', unitCost, reason, source:'manual', adjustedBaseQty:diff, warehouseId });
+        slEntry=await postInventoryTransaction({ productId:prod.id, txType:'adjustment', date, docNo, qty:Math.abs(diff), unitType:'base', unitCost, reason, source:'manual', adjustedBaseQty:diff, warehouseId });
+        baseQtyUsed=Math.abs(diff);
       } else {
         const qty=parseFloat(getEl('invTxQty').value)||0;
         if(qty<=0){ showToast(t('invV2QtyRequired')); return; }
-        await postInventoryTransaction({ productId:prod.id, txType, date, docNo, qty, unitType, unitCost, reason, source:'manual', warehouseId });
+        const conv=unitType==='purchase'?(prod.purchaseConvFactor||1):unitType==='sale'?(prod.saleConvFactor||1):1;
+        baseQtyUsed=Math.round(qty*conv*10000)/10000;
+        slEntry=await postInventoryTransaction({ productId:prod.id, txType, date, docNo, qty, unitType, unitCost, reason, source:'manual', warehouseId });
       }
+      // Post batch/serial records
+      if(slEntry) await postBatchSerialAfterTx(prod, txType, baseQtyUsed, slEntry, batchData, serialNos);
+
       overlay.style.display='none'; overlay.innerHTML='';
       renderApp();
       showToast(t('invV2PostedToast'));
@@ -17278,17 +17456,18 @@ function openInvSettingsModal(){
   const s=STATE.invSettings||{};
   const expAccounts=STATE.accounts.filter(a=>a.type==='المصروفات'||a.type==='تكلفة المبيعات');
   const invAccounts=STATE.accounts.filter(a=>a.type==='الأصول المتداولة');
+  const warehouses =(STATE.warehouses||[]).filter(w=>w.status==='active');
   overlay.innerHTML=`
-  <div class="modal-box" style="max-width:480px;width:97%">
-    <h3>${t('invV2SettingsTitle')}</h3>
-    <div style="display:grid;gap:12px;margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-        <input type="checkbox" id="invSetNeg" ${s.allowNegativeStock?'checked':''}>
+  <div class="modal-box" style="max-width:520px;width:97%;max-height:90vh;overflow-y:auto">
+    <h3>⚙ ${t('invV2SettingsTitle')}</h3>
+    <div style="display:grid;gap:14px;margin-bottom:14px">
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+        <input type="checkbox" id="invSetNeg" ${s.allowNegativeStock?'checked':''} style="margin-top:3px">
         <div><div style="font-weight:600">${t('invV2AllowNegativeLabel')}</div>
           <div class="hint">${t('invV2AllowNegativeHint')}</div></div>
       </label>
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-        <input type="checkbox" id="invSetCOGS" ${s.autoPostCOGS?'checked':''}>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+        <input type="checkbox" id="invSetCOGS" ${s.autoPostCOGS?'checked':''} style="margin-top:3px">
         <div><div style="font-weight:600">${t('invV2AutoPostCOGSLabel')}</div>
           <div class="hint">${t('invV2AutoPostCOGSHint')}</div></div>
       </label>
@@ -17304,6 +17483,21 @@ function openInvSettingsModal(){
           ${[...expAccounts,...invAccounts].map(a=>`<option value="${a.code}" ${s.adjustmentAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
         </select>
       </div>
+      <div><label class="lbl">${t('invSettingsWIPAccount')}</label>
+        <select id="invSetWIP" class="input">
+          <option value="">—</option>
+          ${invAccounts.map(a=>`<option value="${a.code}" ${s.wipAccount===a.code?'selected':''}>${a.code} ${escapeHtml(accName(a.code))}</option>`).join('')}
+        </select>
+      </div>
+      ${warehouses.length?`<div><label class="lbl">${t('invSettingsDefaultWH')}</label>
+        <select id="invSetWH" class="input">
+          <option value="">—</option>
+          ${warehouses.map(w=>`<option value="${w.id}" ${s.defaultWarehouseId===w.id?'selected':''}>${escapeHtml(w.name)}</option>`).join('')}
+        </select>
+      </div>`:''}
+      <div><label class="lbl">⏰ ${t('invSettingsBatchAlertDays')}</label>
+        <input type="number" id="invSetBatchDays" class="input" min="1" max="365" value="${s.batchAlertDays||30}" style="width:120px">
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="this.closest('.modal-overlay').style.display='none'">${t('cancelEdit')}</button>
@@ -17312,15 +17506,19 @@ function openInvSettingsModal(){
   </div>`;
   overlay.style.display='flex';
   overlay.querySelector('#saveInvSettings').onclick=async()=>{
-    STATE.invSettings={
-      allowNegativeStock:overlay.querySelector('#invSetNeg').checked,
-      autoPostCOGS:overlay.querySelector('#invSetCOGS').checked,
-      cogsAccount:overlay.querySelector('#invSetCOGSAcc').value,
-      adjustmentAccount:overlay.querySelector('#invSetAdjAcc').value
-    };
+    STATE.invSettings=Object.assign(STATE.invSettings||{},{
+      allowNegativeStock: overlay.querySelector('#invSetNeg').checked,
+      autoPostCOGS:       overlay.querySelector('#invSetCOGS').checked,
+      cogsAccount:        overlay.querySelector('#invSetCOGSAcc').value,
+      adjustmentAccount:  overlay.querySelector('#invSetAdjAcc').value,
+      wipAccount:         overlay.querySelector('#invSetWIP')?.value||'',
+      defaultWarehouseId: overlay.querySelector('#invSetWH')?.value||'',
+      batchAlertDays:     parseInt(overlay.querySelector('#invSetBatchDays').value)||30,
+    });
     await storeSet('invSettings',STATE.invSettings);
     overlay.style.display='none'; overlay.innerHTML='';
     showToast(t('invV2SavedToast'));
+    renderApp();
   };
   overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.style.display='none'; overlay.innerHTML=''; } });
 }
@@ -17339,6 +17537,66 @@ function openStockCard(productId){
 // items. We ALSO create a stockLedger entry for tracked items with inventory
 // accounts. This piggybacks on the existing call without replacing it.
 const _origPostPurchaseInvoiceDraft = typeof postPurchaseInvoiceDraft !== 'undefined' ? postPurchaseInvoiceDraft : null;
+
+// ── Global helper: batch select change in new tx modal ───────────────────────
+function invTxBatchSelChange(sel){
+  const batchId = sel.value;
+  const datesDiv = document.getElementById('invTxBatchDates');
+  const newInput  = document.getElementById('invTxBatchNew');
+  if(batchId){
+    // Existing batch selected — hide new batch fields, clear new input
+    if(datesDiv) datesDiv.style.display='none';
+    if(newInput) newInput.value='';
+  }
+}
+
+// ── Post-save: create/update Batch and Serial records after inventory tx ──────
+async function postBatchSerialAfterTx(prod, txType, qty, slEntry, batchData, serialNos){
+  const INCOMING = ['opening','purchase','sale-return','receipt'];
+  const isIn = INCOMING.includes(txType);
+
+  // Batch handling
+  if(prod.trackBatch && batchData){
+    const { batchId, batchNo, mfgDate, expDate } = batchData;
+    if(batchId){
+      // Update existing batch qty
+      const b = (STATE.batches||[]).find(bt=>bt.id===batchId);
+      if(b){ b.qty = Math.round((isIn ? b.qty+qty : Math.max(0,b.qty-qty))*10000)/10000; }
+    } else if(batchNo){
+      // Create new batch
+      if(!STATE.batches) STATE.batches=[];
+      STATE.batches.push({
+        id: 'bt_'+Date.now()+Math.random().toString(36).slice(2,6),
+        productId: prod.id, batchNo, qty: isIn?qty:0,
+        mfgDate: mfgDate||'', expDate: expDate||'',
+        supplier:'', status:'active', createdAt: new Date().toISOString()
+      });
+    }
+    await storeSet('batches', STATE.batches);
+  }
+
+  // Serial handling
+  if(prod.trackSerial && serialNos?.length){
+    if(!STATE.serialNumbers) STATE.serialNumbers=[];
+    for(const sn of serialNos){
+      const snTrim = sn.trim();
+      if(!snTrim) continue;
+      const existing = STATE.serialNumbers.find(s=>s.productId===prod.id&&s.serialNo===snTrim);
+      if(isIn){
+        if(!existing){
+          STATE.serialNumbers.push({
+            id:'sn_'+Date.now()+Math.random().toString(36).slice(2,6),
+            productId:prod.id, serialNo:snTrim, status:'available',
+            receiveDate:slEntry.date, soldDate:'', warrantyDate:'', customer:''
+          });
+        }
+      } else {
+        if(existing) existing.status = txType==='sale'?'sold':'scrapped';
+      }
+    }
+    await storeSet('serialNumbers', STATE.serialNumbers);
+  }
+}
 
 // ── Wire enhanced inventory into postInvoiceDraft ─────────────────────────────
 // Same pattern: after a sale invoice posts, if autoPostCOGS is on, create a
@@ -18407,77 +18665,277 @@ function guessVatAccount(mustContain){
 
 function renderVatReturnView(root){
   const today = todayISO();
-  const start = STATE.ui.vatReturnStart || `${today.slice(0,7)}-01`;
-  const end = STATE.ui.vatReturnEnd || today;
-  if(STATE.settings.vatOutputAccount==null) STATE.settings.vatOutputAccount = STATE.accountsByCode['212102'] ? '212102' : guessVatAccount(['ضريبة','دائن']);
-  if(STATE.settings.vatInputAccount==null) STATE.settings.vatInputAccount = STATE.accountsByCode['114103'] ? '114103' : guessVatAccount(['ضريبة','مدين']);
-  const outputCode = STATE.settings.vatOutputAccount;
-  const inputCode = STATE.settings.vatInputAccount;
+
+  // ── Quarter helper ──────────────────────────────────────────────────────────
+  const getQuarterDates = (year, q) => {
+    const ranges = { 1:['01-01','03-31'], 2:['04-01','06-30'], 3:['07-01','09-30'], 4:['10-01','12-31'] };
+    return { start:`${year}-${ranges[q][0]}`, end:`${year}-${ranges[q][1]}` };
+  };
+  const qMode    = STATE.ui.vatQMode    || 'custom';   // 'custom' | 'quarter'
+  const qYear    = STATE.ui.vatQYear    || today.slice(0,4);
+  const qNum     = STATE.ui.vatQNum     || Math.ceil((parseInt(today.slice(5,7)))/3);
+  const qDates   = qMode==='quarter' ? getQuarterDates(qYear, qNum) : null;
+  const start    = qDates ? qDates.start : (STATE.ui.vatReturnStart || `${today.slice(0,7)}-01`);
+  const end      = qDates ? qDates.end   : (STATE.ui.vatReturnEnd   || today);
+
+  // ── Auto-detect 4 VAT accounts ─────────────────────────────────────────────
+  if(STATE.settings.vatOutputAccount==null)
+    STATE.settings.vatOutputAccount  = STATE.accountsByCode?.['212102'] ? '212102' : guessVatAccount(['ضريبة','دائن'])||'';
+  if(STATE.settings.vatInputAccount==null)
+    STATE.settings.vatInputAccount   = STATE.accountsByCode?.['114103'] ? '114103' : guessVatAccount(['ضريبة','مدين'])||'';
+  if(STATE.settings.vatPaidAccount==null)
+    STATE.settings.vatPaidAccount    = guessVatAccount(['ضريبة','مسدد'])||guessVatAccount(['مسدد','ضريبة'])||'';
+  if(STATE.settings.vatPayableAccount==null)
+    STATE.settings.vatPayableAccount = guessVatAccount(['ضريبة','مستحق'])||guessVatAccount(['مستحق','ضريبة'])||'';
+
+  const outputCode  = STATE.settings.vatOutputAccount  || '';
+  const inputCode   = STATE.settings.vatInputAccount   || '';
+  const paidCode    = STATE.settings.vatPaidAccount    || '';
+  const payableCode = STATE.settings.vatPayableAccount || '';
+
   const hasVatAccounts = !!(outputCode && inputCode);
-  const r = hasVatAccounts ? computeVatReturn(start, end, outputCode, inputCode) : { outputVAT:0, inputVAT:0, netDue:0, outputLines:[], inputLines:[] };
+  const r = hasVatAccounts
+    ? computeVatReturn(start, end, outputCode, inputCode)
+    : { outputVAT:0, inputVAT:0, netDue:0, outputLines:[], inputLines:[] };
   const isDue = r.netDue > 0.01, isRefund = r.netDue < -0.01;
-  // Candidate accounts for the pickers: liabilities/current-assets (where VAT
-  // accounts normally live) PLUS whatever is already selected, so an unusual
-  // existing choice never silently disappears from the dropdown.
+
+  // ── GL balances for paid & payable in period ────────────────────────────────
+  const paidLines    = paidCode    ? STATE.journal.filter(l=>l.code===paidCode    && l.date>=start && l.date<=end) : [];
+  const payableLines = payableCode ? STATE.journal.filter(l=>l.code===payableCode && l.date>=start && l.date<=end) : [];
+  const vatPaidAmt   = Math.round((paidLines.reduce((s,l)=>s+(l.debit||0),0) - paidLines.reduce((s,l)=>s+(l.credit||0),0))*100)/100;
+  const vatPayableAllLines = payableCode ? STATE.journal.filter(l=>l.code===payableCode && l.date<=end) : [];
+  const vatPayableBalance  = Math.round((vatPayableAllLines.reduce((s,l)=>s+(l.credit||0),0) - vatPayableAllLines.reduce((s,l)=>s+(l.debit||0),0))*100)/100;
+  const remaining = Math.round((r.netDue - vatPaidAmt)*100)/100;
+
+  // ── Account picker options ──────────────────────────────────────────────────
   const candidateTypes = ['الالتزامات الجارية','الدائن','الأصول المتداولة','المدين'];
-  const vatAccountOptions = STATE.accounts.filter(a=>candidateTypes.includes(a.type) || a.code===outputCode || a.code===inputCode)
-    .sort((a,b)=>a.code.localeCompare(b.code));
+  const vatAccOpts = STATE.accounts.filter(a=>
+    candidateTypes.includes(a.type) ||
+    [outputCode,inputCode,paidCode,payableCode].includes(a.code)
+  ).sort((a,b)=>a.code.localeCompare(b.code));
+  const accoSel = (id,val) => `<select id="${id}" class="input">
+    <option value="">—</option>
+    ${vatAccOpts.map(a=>`<option value="${a.code}" ${val===a.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
+  </select>`;
+
+  // ── Years available from journal ────────────────────────────────────────────
+  const availYears = [...new Set(STATE.journal.map(l=>l.date.slice(0,4)))].sort().reverse();
+  if(!availYears.includes(qYear)) availYears.unshift(qYear);
 
   root.innerHTML = `
   <div class="card">
     <h2>${ICONS.receipt.replace('currentColor','var(--gold-dim)')} ${t('vatReturnTitle')}</h2>
     <div class="desc">${t('vatReturnHint')}</div>
-    ${!hasVatAccounts ? `<div class="hint" style="color:var(--brick)">${t('vatAccountsMissingHint')}</div>` : ''}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0">
-      <div><label class="lbl">${t('vatOutputAccountLabel')}</label>
-        <select id="vatOutputAccountSelect" class="input">
-          <option value="">—</option>
-          ${vatAccountOptions.map(a=>`<option value="${a.code}" ${outputCode===a.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
-        </select>
+
+    <!-- ── Period Selector ── -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:14px 0">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600">
+          <input type="radio" name="vatPMode" value="quarter" ${qMode==='quarter'?'checked':''}
+            onchange="STATE.ui.vatQMode='quarter';renderApp()"> ربع سنوي (Quarter)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600">
+          <input type="radio" name="vatPMode" value="custom" ${qMode==='custom'?'checked':''}
+            onchange="STATE.ui.vatQMode='custom';renderApp()"> فترة مخصصة
+        </label>
       </div>
-      <div><label class="lbl">${t('vatInputAccountLabel')}</label>
-        <select id="vatInputAccountSelect" class="input">
-          <option value="">—</option>
-          ${vatAccountOptions.map(a=>`<option value="${a.code}" ${inputCode===a.code?'selected':''}>${a.code} — ${escapeHtml(accName(a.code))}</option>`).join('')}
-        </select>
+      ${qMode==='quarter' ? `
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><label class="lbl">السنة</label>
+          <select id="vatQYear" class="input" onchange="STATE.ui.vatQYear=this.value;renderApp()">
+            ${availYears.map(y=>`<option value="${y}" ${qYear===y?'selected':''}>${y}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="lbl">الربع</label>
+          <div style="display:flex;gap:6px">
+            ${[1,2,3,4].map(q=>`
+              <button onclick="STATE.ui.vatQNum=${q};renderApp()"
+                style="padding:6px 14px;border-radius:6px;border:2px solid ${qNum===q?'var(--gold)':'var(--line)'};
+                background:${qNum===q?'rgba(184,144,46,.15)':'none'};cursor:pointer;font-weight:700;
+                color:${qNum===q?'var(--gold)':'var(--muted)'}">
+                Q${q}
+                <div style="font-size:10px;font-weight:400;color:var(--muted)">${['يناير-مارس','أبريل-يونيو','يوليو-سبتمبر','أكتوبر-ديسمبر'][q-1]}</div>
+              </button>`).join('')}
+          </div>
+        </div>
+        <div style="background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.3);border-radius:6px;padding:6px 12px;font-size:12px">
+          📅 <strong>Q${qNum} ${qYear}</strong>: ${start} → ${end}
+        </div>
+      </div>` : `
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><label class="lbl">${t('vatPeriodStartLabel')}</label>
+          <input type="date" id="vatStartInput" class="input" value="${start}"></div>
+        <div><label class="lbl">${t('vatPeriodEndLabel')}</label>
+          <input type="date" id="vatEndInput" class="input" value="${end}"></div>
+      </div>`}
+    </div>
+
+    <!-- ── 4-Account Config ── -->
+    <div style="border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px">
+      <div style="font-weight:700;margin-bottom:8px">⚙ ${t('vatAccountsSectionTitle')}</div>
+      <div class="hint" style="margin-bottom:10px">${t('vatAccounts4Hint')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label class="lbl" style="color:#ff9800">⬆ ${t('vatOutputAccountLabel')}</label>
+          ${accoSel('vatOutputAccountSelect',outputCode)}
+        </div>
+        <div>
+          <label class="lbl" style="color:#4caf50">⬇ ${t('vatInputAccountLabel')}</label>
+          ${accoSel('vatInputAccountSelect',inputCode)}
+        </div>
+        <div>
+          <label class="lbl" style="color:#2196f3">💸 ${t('vatPaidAccountLabel')}</label>
+          <div class="hint" style="font-size:11px;margin:2px 0 4px">${t('vatPaidAccountHint')}</div>
+          ${accoSel('vatPaidAccountSelect',paidCode)}
+        </div>
+        <div>
+          <label class="lbl" style="color:var(--brick)">📋 ${t('vatPayableAccountLabel')}</label>
+          <div class="hint" style="font-size:11px;margin:2px 0 4px">${t('vatPayableAccountHint')}</div>
+          ${accoSel('vatPayableAccountSelect',payableCode)}
+        </div>
       </div>
     </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0">
-      <div><label class="lbl">${t('vatPeriodStartLabel')}</label><input type="date" id="vatStartInput" class="input" value="${start}"></div>
-      <div><label class="lbl">${t('vatPeriodEndLabel')}</label><input type="date" id="vatEndInput" class="input" value="${end}"></div>
+
+    <!-- ── KPI Cards: 4 accounts ── -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px">
+      <div class="card" style="margin:0;padding:14px;border-top:3px solid #ff9800">
+        <div class="hint" style="margin:0 0 4px;font-size:11px">⬆ ${t('vatOutputLabel')}</div>
+        <div style="font-size:20px;font-weight:800;color:#ff9800">${fmt(r.outputVAT)}</div>
+        <div class="hint" style="font-size:11px;margin-top:4px">${outputCode?outputCode+' — '+escapeHtml(accName(outputCode)):'—'}</div>
+      </div>
+      <div class="card" style="margin:0;padding:14px;border-top:3px solid #4caf50">
+        <div class="hint" style="margin:0 0 4px;font-size:11px">⬇ ${t('vatInputLabel')}</div>
+        <div style="font-size:20px;font-weight:800;color:#4caf50">${fmt(r.inputVAT)}</div>
+        <div class="hint" style="font-size:11px;margin-top:4px">${inputCode?inputCode+' — '+escapeHtml(accName(inputCode)):'—'}</div>
+      </div>
+      <div class="card" style="margin:0;padding:14px;border-top:3px solid #2196f3">
+        <div class="hint" style="margin:0 0 4px;font-size:11px">💸 ${t('vatPaidBalance')}</div>
+        <div style="font-size:20px;font-weight:800;color:#2196f3">${fmt(vatPaidAmt)}</div>
+        <div class="hint" style="font-size:11px;margin-top:4px">${paidCode?paidCode+' — '+escapeHtml(accName(paidCode)):'—'}</div>
+      </div>
+      <div class="card" style="margin:0;padding:14px;border-top:3px solid var(--brick)">
+        <div class="hint" style="margin:0 0 4px;font-size:11px">📋 ${t('vatPayableBalance')}</div>
+        <div style="font-size:20px;font-weight:800;color:var(--brick)">${fmt(vatPayableBalance)}</div>
+        <div class="hint" style="font-size:11px;margin-top:4px">${payableCode?payableCode+' — '+escapeHtml(accName(payableCode)):'—'}</div>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
-      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${t('vatOutputLabel')}</div><div style="font-size:19px;font-weight:800">${fmt(r.outputVAT)}</div></div>
-      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${t('vatInputLabel')}</div><div style="font-size:19px;font-weight:800">${fmt(r.inputVAT)}</div></div>
-      <div class="card" style="margin:0;padding:14px"><div class="hint" style="margin:0 0 4px">${isRefund?t('vatRefundLabel'):t('vatNetDueLabel')}</div><div style="font-size:19px;font-weight:800;color:${isDue?'var(--brick)':(isRefund?'var(--green)':'inherit')}">${fmt(Math.abs(r.netDue))}</div></div>
+
+    <!-- ── Net Due banner ── -->
+    <div style="background:rgba(${isDue?'200,50,50':isRefund?'76,175,80':'255,255,255'},.08);border:1px solid rgba(${isDue?'200,50,50':isRefund?'76,175,80':'255,255,255'},.25);border-radius:8px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span style="font-weight:700">${isRefund?t('vatRefundLabel'):t('vatNetDueLabel')}</span>
+      <span style="font-size:22px;font-weight:800;color:${isDue?'var(--brick)':isRefund?'#4caf50':'inherit'}">${fmt(Math.abs(r.netDue))}</span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- ── Settlement box ── -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px">
+      <div style="font-weight:700;margin-bottom:10px">📊 ${t('vatSettlementTitle')}</div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:6px 24px;font-size:13px;max-width:400px">
+        <span>${t('vatNetFromAccounts')}</span>
+        <span style="font-weight:700;text-align:end;color:${r.netDue>0?'var(--brick)':'#4caf50'}">${fmt(r.netDue)}</span>
+        ${paidCode?`<span style="color:#2196f3">${t('vatAlreadyPaid')}</span>
+        <span style="font-weight:700;text-align:end;color:#2196f3">(${fmt(vatPaidAmt)})</span>`:''}
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);margin:4px 0"></div>
+        <span style="font-weight:800">${remaining>0.01?t('vatRemainingDue'):remaining<-0.01?t('vatExcessPaid'):t('vatSettlementOK')}</span>
+        <span style="font-weight:800;text-align:end;color:${remaining>0.01?'var(--brick)':'#4caf50'}">${Math.abs(remaining)<0.01?'✓':fmt(Math.abs(remaining))}</span>
+        ${payableCode&&vatPayableBalance?`
+        <div style="grid-column:1/-1;border-top:1px solid var(--line);margin:4px 0"></div>
+        <span class="hint">${t('vatPayableLabel')}</span>
+        <span class="hint" style="text-align:end">${fmt(vatPayableBalance)}</span>`:''}
+      </div>
+    </div>
+
+    <!-- ── Detail tables ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
       <div>
-        <h3 style="font-size:13px;margin:0 0 8px">${t('vatOutputDetailTitle')}</h3>
-        <div class="table-wrap" style="max-height:340px"><table><thead><tr><th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th></tr></thead><tbody>
-          ${r.outputLines.length ? r.outputLines.map(l=>`<tr><td class="num">${l.date}</td><td>${escapeHtml(l.partner||l.ref||'')}</td><td class="num">${fmt(l.credit)}</td></tr>`).join('') : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
+        <h3 style="font-size:13px;margin:0 0 8px;color:#ff9800">⬆ ${t('vatOutputDetailTitle')}</h3>
+        <div class="table-wrap" style="max-height:300px"><table><thead><tr>
+          <th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th>
+        </tr></thead><tbody>
+          ${r.outputLines.length
+            ? r.outputLines.map(l=>`<tr>
+                <td>${l.date}</td>
+                <td>${escapeHtml(l.partner||l.ref||'')}</td>
+                <td class="num">${fmt(l.credit)}</td>
+              </tr>`).join('')+
+              `<tr style="font-weight:700;border-top:2px solid var(--line)">
+                <td colspan="2" style="text-align:end">${t('total')}</td>
+                <td class="num">${fmt(r.outputVAT)}</td>
+              </tr>`
+            : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
         </tbody></table></div>
       </div>
       <div>
-        <h3 style="font-size:13px;margin:0 0 8px">${t('vatInputDetailTitle')}</h3>
-        <div class="table-wrap" style="max-height:340px"><table><thead><tr><th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th></tr></thead><tbody>
-          ${r.inputLines.length ? r.inputLines.map(l=>`<tr><td class="num">${l.date}</td><td>${escapeHtml(l.partner||l.ref||'')}</td><td class="num">${fmt(l.debit)}</td></tr>`).join('') : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
+        <h3 style="font-size:13px;margin:0 0 8px;color:#4caf50">⬇ ${t('vatInputDetailTitle')}</h3>
+        <div class="table-wrap" style="max-height:300px"><table><thead><tr>
+          <th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">${t('agingTotalCol')}</th>
+        </tr></thead><tbody>
+          ${r.inputLines.length
+            ? r.inputLines.map(l=>`<tr>
+                <td>${l.date}</td>
+                <td>${escapeHtml(l.partner||l.ref||'')}</td>
+                <td class="num">${fmt(l.debit)}</td>
+              </tr>`).join('')+
+              `<tr style="font-weight:700;border-top:2px solid var(--line)">
+                <td colspan="2" style="text-align:end">${t('total')}</td>
+                <td class="num">${fmt(r.inputVAT)}</td>
+              </tr>`
+            : `<tr><td colspan="3"><div class="empty">${t('noVatMovementsHint')}</div></td></tr>`}
         </tbody></table></div>
       </div>
     </div>
+
+    <!-- ── Paid account detail ── -->
+    ${paidCode&&paidLines.length?`
+    <div style="margin-bottom:14px">
+      <h3 style="font-size:13px;margin:0 0 8px;color:#2196f3">💸 ${t('vatPaidLabel')} — ${qMode==='quarter'?`Q${qNum} ${qYear}`:start+' → '+end}</h3>
+      <div class="table-wrap" style="max-height:200px"><table><thead><tr>
+        <th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">مدين</th><th class="num">دائن</th>
+      </tr></thead><tbody>
+        ${paidLines.sort((a,b)=>a.date.localeCompare(b.date)).map(l=>`<tr>
+          <td>${l.date}</td><td>${escapeHtml(l.ref||l.partner||'')}</td>
+          <td class="num">${l.debit?fmt(l.debit):''}</td>
+          <td class="num">${l.credit?fmt(l.credit):''}</td>
+        </tr>`).join('')}
+        <tr style="font-weight:700;border-top:2px solid var(--line)">
+          <td colspan="2" style="text-align:end">${t('total')}</td>
+          <td class="num">${fmt(paidLines.reduce((s,l)=>s+(l.debit||0),0))}</td>
+          <td class="num">${fmt(paidLines.reduce((s,l)=>s+(l.credit||0),0))}</td>
+        </tr>
+      </tbody></table></div>
+    </div>`:''}
+
+    <!-- ── Payable account detail ── -->
+    ${payableCode&&payableLines.length?`
+    <div>
+      <h3 style="font-size:13px;margin:0 0 8px;color:var(--brick)">📋 ${t('vatPayableLabel')} — ${qMode==='quarter'?`Q${qNum} ${qYear}`:start+' → '+end}</h3>
+      <div class="table-wrap" style="max-height:200px"><table><thead><tr>
+        <th>${t('date')}</th><th>${t('voucherDescCol')}</th><th class="num">مدين</th><th class="num">دائن</th>
+      </tr></thead><tbody>
+        ${payableLines.sort((a,b)=>a.date.localeCompare(b.date)).map(l=>`<tr>
+          <td>${l.date}</td><td>${escapeHtml(l.ref||l.partner||'')}</td>
+          <td class="num">${l.debit?fmt(l.debit):''}</td>
+          <td class="num">${l.credit?fmt(l.credit):''}</td>
+        </tr>`).join('')}
+        <tr style="font-weight:700;border-top:2px solid var(--line)">
+          <td colspan="2" style="text-align:end">${t('total')}</td>
+          <td class="num">${fmt(payableLines.reduce((s,l)=>s+(l.debit||0),0))}</td>
+          <td class="num">${fmt(payableLines.reduce((s,l)=>s+(l.credit||0),0))}</td>
+        </tr>
+      </tbody></table></div>
+    </div>`:''}
+
   </div>`;
 
-  const startInp = document.getElementById('vatStartInput');
-  if(startInp) startInp.addEventListener('change', e=>{ STATE.ui.vatReturnStart = e.target.value; renderApp(); });
-  const endInp = document.getElementById('vatEndInput');
-  if(endInp) endInp.addEventListener('change', e=>{ STATE.ui.vatReturnEnd = e.target.value; renderApp(); });
-  const outAccSel = document.getElementById('vatOutputAccountSelect');
-  if(outAccSel) outAccSel.addEventListener('change', async e=>{ STATE.settings.vatOutputAccount = e.target.value; await storeSet('settings', STATE.settings); renderApp(); });
-  const inAccSel = document.getElementById('vatInputAccountSelect');
-  if(inAccSel) inAccSel.addEventListener('change', async e=>{ STATE.settings.vatInputAccount = e.target.value; await storeSet('settings', STATE.settings); renderApp(); });
+  // ── Wire events ─────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  $('vatStartInput')?.addEventListener('change', e=>{ STATE.ui.vatReturnStart=e.target.value; renderApp(); });
+  $('vatEndInput')  ?.addEventListener('change', e=>{ STATE.ui.vatReturnEnd  =e.target.value; renderApp(); });
+  const saveAcc = async(key,val)=>{ STATE.settings[key]=val; await storeSet('settings',STATE.settings); renderApp(); };
+  $('vatOutputAccountSelect') ?.addEventListener('change', e=>saveAcc('vatOutputAccount', e.target.value));
+  $('vatInputAccountSelect')  ?.addEventListener('change', e=>saveAcc('vatInputAccount',  e.target.value));
+  $('vatPaidAccountSelect')   ?.addEventListener('change', e=>saveAcc('vatPaidAccount',   e.target.value));
+  $('vatPayableAccountSelect')?.addEventListener('change', e=>saveAcc('vatPayableAccount',e.target.value));
 }
-// Formal, printable invoice built entirely from the journal (customer,
-// totals, the amount spelled out in Arabic words, and a signature/stamp area.
 function printInvoice(entryNo){
   const inv = getJournalInvoices().find(i=>i.entryNo===entryNo);
   if(!inv) return;
